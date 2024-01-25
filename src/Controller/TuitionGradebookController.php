@@ -20,12 +20,18 @@ use App\View\Filter\GradeFilter;
 use App\View\Filter\SectionFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\TuitionFilter;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/book/gradebook')]
 class TuitionGradebookController extends AbstractController {
+
+    #[Route('/keepalive', name: 'gradebook_keepalive')]
+    public function keepAlive(Request $request): Response {
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+    }
 
     #[Route('', name: 'gradebook')]
     public function index(Request $request, TuitionFilter $tuitionFilter, StudentFilter $studentFilter,

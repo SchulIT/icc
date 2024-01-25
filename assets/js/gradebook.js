@@ -1,9 +1,11 @@
 const crypto = require('easy-web-crypto');
 const xlsx = require('xlsx-populate');
+const axios = require('axios').default;
 
 let decryptedKey = null;
 let keyPassword = null;
 
+let isEditModeEntered = false;
 let callbackRegistered = false; // Flag whether the onbeforeunload callback is already registered (to prevent registering twice)
 
 async function exportXlsx() {
@@ -86,6 +88,11 @@ async function decryptAll() {
         let encryptedValue = element.value;
 
         if(select.nodeName.toLowerCase() === 'select') {
+            let form = element.closest('form');
+            if(form !== null && form.getAttribute('data-keepalive-url') !== null) {
+                enterEditMode(form.getAttribute('data-keepalive-url'));
+            }
+
             select.removeAttribute('disabled');
 
             select.addEventListener('change', async function (element) {
@@ -112,6 +119,25 @@ async function decryptAll() {
             select.innerHTML = await crypto.decrypt(decryptedKey, JSON.parse(encryptedValue));
         }
     }
+}
+
+function enterEditMode(keepAliveUrl) {
+    if(isEditModeEntered === true) {
+        return;
+    }
+
+    console.info('Enter edit mode with keep alive url ' + keepAliveUrl);
+
+    // setup keep alive
+    setInterval(async () => {
+        await axios.get(keepAliveUrl);
+    }, 30*1000); // every 30s
+
+    setTimeout(() => {
+        alert('Bitte nun die Noten speichern, um Datenverlust zu vermeiden. Ab sofort erfolgt die Bearbeitung auf eigene Gefahr.');
+    }, 15*60*1000); // after 15mins
+
+    isEditModeEntered = true;
 }
 
 function preventWindowUnload() {

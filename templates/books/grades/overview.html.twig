@@ -62,7 +62,7 @@
                         {% endif %}
                     {% endif %}
 
-                    <form method="post" id="gradeform">
+                    <form method="post" id="gradeform" data-keepalive-url="{{ url('gradebook_keepalive') }}">
                         <div class="bs-callout bs-callout-danger mt-0 d-none" id="save-caution">
                             <h4>{{ 'caution'|trans }}</h4>
                             <p>{{ 'book.grades.caution'|trans }}</p>

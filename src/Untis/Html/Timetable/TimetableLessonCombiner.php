@@ -3,6 +3,7 @@
 namespace App\Untis\Html\Timetable;
 
 use App\Settings\TimetableSettings;
+use App\Utils\ArrayUtils;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class TimetableLessonCombiner {
@@ -50,6 +51,6 @@ class TimetableLessonCombiner {
             && $lessonA->getRoom() === $lessonB->getRoom()
             && $lessonA->getSubject() === $lessonB->getSubject()
             && $lessonA->getTeacher() === $lessonB->getTeacher()
-            && $lessonA->getWeeks() === $lessonB->getWeeks();
+            && ArrayUtils::areEqual($lessonA->getWeeks(), $lessonB->getWeeks());
     }
 }

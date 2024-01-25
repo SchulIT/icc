@@ -63,6 +63,14 @@
                     {% endif %}
 
                     <form method="post" id="gradeform">
+                        <div class="bs-callout bs-callout-danger mt-0 d-none" id="save-caution">
+                            <h4>{{ 'caution'|trans }}</h4>
+                            <p>{{ 'book.grades.caution'|trans }}</p>
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fas fa-save"></i> {{ 'actions.save'|trans }}
+                            </button>
+                        </div>
+
                         <input type="hidden" name="_csrf_token" value="{{ csrf_token('gradebook') }}" />
 
                         <div class="card">

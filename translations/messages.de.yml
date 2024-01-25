@@ -1952,6 +1952,7 @@ book:
         success: Noten erfolgreich gespeichert
         none: Es wurde kein Unterricht bzw. kein Lernender ausgewählt. Bitte zunächst rechts auswählen.
         not_enabled: Für den ausgewählten Unterricht wurden keine Noten festgelegt.
+        caution: Die geänderten Noten wurden bisher nicht gespeichert.
         info:
             foreign_tuition: Nur die Lehrkraft eines Unterrichtes kann Noten eintragen bzw. ändern.
             no_edit_in_student_view: In der Lernenden-Ansicht sind Notenänderungen nicht möglich. Bitte den Unterricht rechts auswählen und die Note dort ändern.

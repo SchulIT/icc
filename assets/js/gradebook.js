@@ -4,6 +4,8 @@ const xlsx = require('xlsx-populate');
 let decryptedKey = null;
 let keyPassword = null;
 
+let callbackRegistered = false; // Flag whether the onbeforeunload callback is already registered (to prevent registering twice)
+
 async function exportXlsx() {
     if(decryptedKey === null) {
         return;
@@ -67,17 +69,18 @@ async function exportXlsx() {
     document.body.removeChild($a);
 }
 
-function decryptAll() {
+async function decryptAll() {
     if(decryptedKey === null) {
         return;
     }
 
-    document.querySelectorAll('[data-encrypted]').forEach(async function(element) {
+    for(let element of document.querySelectorAll('[data-encrypted]')) {
+
         let input = element;
         let select = document.querySelector(element.getAttribute('data-select'));
 
         if(select === null) {
-            return;
+            continue;
         }
 
         let encryptedValue = element.value;
@@ -86,6 +89,7 @@ function decryptAll() {
             select.removeAttribute('disabled');
 
             select.addEventListener('change', async function (element) {
+                preventWindowUnload();
                 let encryptedValue = '';
                 if (this.value !== '') {
                     encryptedValue = JSON.stringify(await crypto.encrypt(decryptedKey, this.value));
@@ -95,19 +99,33 @@ function decryptAll() {
             });
 
             if(encryptedValue === null || encryptedValue === '') {
-                return;
+                continue;
             }
 
             select.value = await crypto.decrypt(decryptedKey, JSON.parse(encryptedValue));
         } else {
             if(encryptedValue === null || encryptedValue === '') {
                 select.innerHTML = '<span class="badge text-bg-secondary">N/A</span>';
-                return;
+                continue;
             }
 
             select.innerHTML = await crypto.decrypt(decryptedKey, JSON.parse(encryptedValue));
         }
-    });
+    }
+}
+
+function preventWindowUnload() {
+    if(callbackRegistered === true) {
+        return;
+    }
+
+    window.onbeforeunload = function() {
+        return '';
+    }
+
+    document.getElementById('save-caution').classList.remove('d-none');
+
+    callbackRegistered = true;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -158,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // Decrypt
-            decryptAll();
+            await decryptAll();
         });
 
         if(window.sessionStorage.getItem('gradebook.psk') !== null) {
@@ -200,4 +218,8 @@ document.addEventListener('DOMContentLoaded', function() {
         $icon.classList.remove('fa-spin');
         $icon.classList.add('fa-download');
     });
+
+    document.getElementById('gradeform')?.addEventListener('submit', function() {
+        window.onbeforeunload = null;
+    })
 });

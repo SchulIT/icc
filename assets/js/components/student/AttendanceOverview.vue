@@ -36,10 +36,11 @@
                 </td>
                 <template v-for="lesson in days[day]">
                   <td class="align-middle p-0" v-if="lesson !== null">
+                    <div class="w-100 d-flex">
                     <div v-for="entry in lesson.entries"
                          @click.prevent="edit(entry)"
                          @contextmenu.prevent="changeExcuseStatus(entry)"
-                         :class="'w-100 p-3 text-center align-middle ' + (entry.attendance !== null && entry.attendance.attendance.type === 1 ? 'text-bg-success' : '') + (entry.attendance !== null && entry.attendance.attendance.type === 0 ? 'text-bg-danger' : '') + (entry.attendance !== null && entry.attendance.attendance.type === 2 ? 'text-bg-warning' : '') + (entry.entry !== null && entry.entry.is_cancelled ? 'text-bg-secondary' : '') + ' ' + (entry.entry !== null && !entry.entry.is_cancelled && !readonly ? 'pointer' : '')"
+                         :class="'flex-fill p-3 text-center align-middle ' + (entry.attendance !== null && entry.attendance.attendance.type === 1 ? 'text-bg-success' : '') + (entry.attendance !== null && entry.attendance.attendance.type === 0 ? 'text-bg-danger' : '') + (entry.attendance !== null && entry.attendance.attendance.type === 2 ? 'text-bg-warning' : '') + (entry.entry !== null && entry.entry.is_cancelled ? 'text-bg-secondary' : '') + ' ' + (entry.entry !== null && !entry.entry.is_cancelled && !readonly ? 'pointer' : '')"
                          :title="entry.entry !== null ? entry.entry.lesson.subject + ' (' + entry.entry.lesson.teachers.join(', ') + ')' + (entry.entry.is_cancelled ? ' [' + entry.entry.cancel_reason + ']' : '') : ''">
                       <div v-if="entry.entry !== null && entry.entry.is_cancelled" class="d-inline">
                         <i class="far fa-calendar-times"></i>
@@ -76,6 +77,7 @@
                           </span>
                         </div>
                       </div>
+                    </div>
                     </div>
                   </td>
                 </template>

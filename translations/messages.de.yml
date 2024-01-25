@@ -331,6 +331,9 @@ actions:
     submit: abschicken
     show: anzeigen
 
+modal:
+    close: Schließen
+
 clipboard:
     copy: In die Zwischenablage kopieren
     success: In die Zwischenablage kopiert
@@ -1832,6 +1835,7 @@ book:
             success: Kommentar erfolgreich angelegt
         show:
             label: Kommentar anzeigen
+            header: Kommentar
         edit:
             label: Kommentar bearbeiten
             success: Kommentar erfolgreich aktualisiert

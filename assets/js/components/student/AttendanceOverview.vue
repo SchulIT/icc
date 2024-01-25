@@ -5,7 +5,6 @@
         <table class="table table-bordered table-hover table-striped card-table">
           <colgroup>
             <col class="column-lg">
-            <col>
             <template v-for="lessonNumber in maxLessons">
               <col class="column-md">
             </template>
@@ -15,21 +14,25 @@
             <template v-for="group in dayGroups">
               <tr>
                 <th>{{ $trans('date.week_label', { 'week': group.week.weekNumber}) }}</th>
-                <th class="text-center"><i class="far fa-comments"></i></th>
                 <th v-for="lessonNumber in maxLessons" class="text-center">{{ lessonNumber }}.</th>
               </tr>
 
               <tr v-for="day in group.days">
                 <td class="align-middle" :id="'date-' + dateId(day)">
-                  {{ weekday(day) }}
-                  <span class="text-muted">
-                    {{ date(day) }}
-                  </span>
-                </td>
-                <td>
-                  <template v-for="comment in getComments(day)">
-                    {{ comment.comment }} [{{comment.teacher}}]
-                  </template>
+                  <div class="d-flex align-items-center">
+                    <div class="flex-fill">
+                    {{ weekday(day) }}
+                    <span class="text-muted ml-1">
+                      {{ date(day) }}
+                    </span>
+                    </div>
+
+                    <div>
+                      <button class="btn btn-sm btn-outline-secondary" @click="openComment(comment.uuid)" v-for="comment in getComments(day)">
+                        <i class="fas fa-comment"></i>
+                      </button>
+                    </div>
+                  </div>
                 </td>
                 <template v-for="lesson in days[day]">
                   <td class="align-middle p-0" v-if="lesson !== null">
@@ -80,6 +83,30 @@
             </template>
           </tbody>
         </table>
+      </div>
+    </div>
+
+    <div v-for="comment in comments" class="modal" :id="'comment-' + comment.uuid">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              {{ $trans('book.comment.show.header')}}
+
+              <span class="badge text-bg-secondary">
+                <i class="fas fa-graduation-cap"></i> {{ comment.teacher }}
+              </span>
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            {{ comment.comment }}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ $trans('modal.close')}}</button>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -246,6 +273,7 @@
 
 import Modal from 'bootstrap/js/dist/modal';
 import Toast from 'bootstrap/js/dist/toast';
+import {comment} from "postcss";
 
 export default {
   name: 'attendance_overview',
@@ -300,8 +328,6 @@ export default {
                 'entry': entry,
                 'attendance': attendance
               });
-
-              console.log(attendance);
             }
           }
 
@@ -326,6 +352,7 @@ export default {
     });
   },
   methods: {
+    comment,
     toDate(dateAsString) {
       return new Date(dateAsString);
     },
@@ -341,6 +368,21 @@ export default {
     },
     getComments(dateAsString) {
       return this.comments.filter(c => c.date === dateAsString);
+    },
+    openComment(uuid) {
+      console.log(this);
+      let modalEl = this.$el.querySelector('#comment-' + uuid);
+
+      if(modalEl === null) {
+        return false;
+      }
+
+      console.log(modalEl);
+
+      let modal = Modal.getOrCreateInstance(modalEl);
+      modal.show();
+
+      return false;
     },
     edit(lesson) {
       if(this.readonly === true) {

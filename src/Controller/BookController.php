@@ -607,6 +607,7 @@ class BookController extends AbstractController {
 
         foreach($info->getComments() as $comment) {
             $comments[] = [
+                'uuid' => $comment->getUuid()->toString(),
                 'date' => $comment->getDate()->format('c'),
                 'teacher' => $comment->getTeacher()->getAcronym(),
                 'comment' => $comment->getText()

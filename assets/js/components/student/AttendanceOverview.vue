@@ -112,7 +112,7 @@
       </div>
     </div>
 
-    <div class="modal" tabindex="-1">
+    <div class="modal" tabindex="-1" id="edit-attendance">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -372,14 +372,11 @@ export default {
       return this.comments.filter(c => c.date === dateAsString);
     },
     openComment(uuid) {
-      console.log(this);
       let modalEl = this.$el.querySelector('#comment-' + uuid);
 
       if(modalEl === null) {
         return false;
       }
-
-      console.log(modalEl);
 
       let modal = Modal.getOrCreateInstance(modalEl);
       modal.show();
@@ -396,7 +393,7 @@ export default {
       }
 
       if(this.modal === null) {
-        this.modal = new Modal(this.$el.querySelector('.modal'));
+        this.modal = new Modal(this.$el.querySelector('#edit-attendance'));
       }
 
       this.editLesson = lesson;

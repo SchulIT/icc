@@ -41,6 +41,7 @@ use App\Repository\BookIntegrityCheckViolationRepositoryInterface;
 use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\GradeResponsibilityRepositoryInterface;
 use App\Repository\LessonAttendanceFlagRepositoryInterface;
+use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Repository\LessonEntryRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
@@ -523,8 +524,7 @@ class BookController extends AbstractController {
                             StudentAwareGradeFilter $gradeFilter, TeacherFilter  $teacherFilter, Request $request,
                             StudentInfoResolver $infoResolver, TuitionRepositoryInterface $tuitionRepository,
                             Sorter $sorter, Grouper $grouper, DateHelper $dateHelper, TimetableSettings $timetableSettings,
-                            LessonEntryRepositoryInterface $entryRepository,
-                            TimetableLessonRepositoryInterface $timetableLessonRepository): Response {
+                            LessonEntryRepositoryInterface $entryRepository, LessonAttendanceRepositoryInterface $lessonAttendanceRepository): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -562,6 +562,12 @@ class BookController extends AbstractController {
         $entries = [ ];
         foreach($tuitions as $tuition) {
             $entries = array_merge($entries, $entryRepository->findAllByTuition($tuition, $min, $max));
+        }
+
+        foreach($lessonAttendanceRepository->findByStudentAndDateRange($student, $min, $max) as $attendance) {
+            if($attendance->getEntry() !== null && !in_array($attendance->getEntry(), $entries)) {
+                $entries[] = $attendance->getEntry();
+            }
         }
 
         /**

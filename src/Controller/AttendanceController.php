@@ -8,6 +8,7 @@ use App\Entity\Teacher;
 use App\Entity\User;
 use App\Grouping\DateWeekOfYearStrategy;
 use App\Grouping\Grouper;
+use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Repository\LessonEntryRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Settings\BookSettings;
@@ -33,7 +34,8 @@ class AttendanceController extends AbstractController {
     public function index(Request $request, StudentFilter $studentFilter, SectionFilter $sectionFilter,
                           BookSettings $bookSettings, TimetableSettings $timetableSettings,
                           TuitionRepositoryInterface $tuitionRepository, LessonEntryRepositoryInterface $entryRepository,
-                          StudentInfoResolver $infoResolver, Sorter $sorter, Grouper $grouper, DateHelper $dateHelper): Response {
+                          StudentInfoResolver $infoResolver, Sorter $sorter, Grouper $grouper, DateHelper $dateHelper,
+                          LessonAttendanceRepositoryInterface $lessonAttendanceRepository): Response {
         if($bookSettings->isAttendanceVisibleForStudentsAndParentsEnabled() === false) {
             throw new AccessDeniedHttpException();
         }
@@ -60,6 +62,12 @@ class AttendanceController extends AbstractController {
 
             foreach($tuitions as $tuition) {
                 $entries = array_merge($entries, $entryRepository->findAllByTuition($tuition, $min, $max));
+            }
+
+            foreach($lessonAttendanceRepository->findByStudentAndDateRange($studentFilterView->getCurrentStudent(), $min, $max) as $attendance) {
+                if($attendance->getEntry() !== null && !in_array($attendance->getEntry(), $entries)) {
+                    $entries[] = $attendance->getEntry();
+                }
             }
 
             /**

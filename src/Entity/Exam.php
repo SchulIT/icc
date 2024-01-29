@@ -48,7 +48,7 @@ class Exam {
     private ?string $description = null;
 
     #[ORM\Column(type: 'boolean')]
-    private bool $tuitionTeachersCanEditExam = true;
+    private bool $tuitionTeachersCanEditExam = false;
 
     /**
      * @var Collection<Tuition>

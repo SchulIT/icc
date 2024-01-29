@@ -80,7 +80,7 @@ class BackupCommand extends Command {
 
         $cmd[] = sprintf(' > %s', $output);
 
-        $process = Process::fromShellCommandline(implode(' ', $cmd), $this->projectPath);
+        $process = Process::fromShellCommandline(implode(' ', $cmd), $this->projectPath, null, null, null);
         $process->run();
 
         $zip->addFile($output, 'dump.sql');

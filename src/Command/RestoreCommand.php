@@ -95,7 +95,7 @@ class RestoreCommand extends Command {
         $cmd[] = u($parts['path'])->trimStart('/')->toString();
         $cmd[] = sprintf(' < %s', $input);
 
-        $process = Process::fromShellCommandline(implode(' ', $cmd), $this->projectPath);
+        $process = Process::fromShellCommandline(implode(' ', $cmd), $this->projectPath, null, null, null);
         $process->run();
 
         unlink($input);

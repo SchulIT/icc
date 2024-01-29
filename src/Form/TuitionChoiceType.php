@@ -41,10 +41,10 @@ class TuitionChoiceType extends SortableEntityType {
         });
         $resolver->setDefault('choice_label', function(Tuition $tuition) {
             if($tuition->getName() === $tuition->getStudyGroup()->getName()) {
-                return sprintf('%s - %s', $tuition->getName(), $tuition->getSubject()->getName());
+                return sprintf('%s - %s [%s]', $tuition->getName(), $tuition->getSubject()->getName(), $tuition->getSection()?->getDisplayName());
             }
 
-            return sprintf('%s - %s - %s', $tuition->getName(), $tuition->getStudyGroup()->getName(), $tuition->getSubject()->getName());
+            return sprintf('%s - %s - %s [%s]', $tuition->getName(), $tuition->getStudyGroup()->getName(), $tuition->getSubject()->getName(), $tuition->getSection()?->getDisplayName());
         });
         $resolver->setDefault('group_by', fn(Tuition $tuition) => implode(', ', $tuition->getStudyGroup()->getGrades()->map(fn(Grade $grade) => $grade->getName())->toArray()));
         $resolver->setDefault('sort_by', $this->stringStrategy);

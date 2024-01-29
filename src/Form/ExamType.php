@@ -93,7 +93,8 @@ class ExamType extends AbstractType {
                             'help' => 'admin.exams.students.info',
                             'label_attr' => [
                                 'class' => 'checkbox-custom'
-                            ]
+                            ],
+                            'data' => true
                         ]);
                 }
             ]);

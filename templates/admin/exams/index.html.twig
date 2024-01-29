@@ -64,11 +64,6 @@
                                         {% else %}
                                             <span class="badge text-bg-danger">{{ 'plans.exams.not_planned'|trans }}</span>
                                         {% endif %}
-
-
-                                        {% for error in errors|default([]) %}
-                                            <i class="fa fa-exclamation-triangle" title="{{ error.message|trans(error.parameters) }}"></i>
-                                        {% endfor %}
                                     </td>
                                     <td class="align-middle">
                                         {% if exam.lessonStart > 0 and exam.lessonEnd > 0 %}
@@ -81,6 +76,12 @@
                                         {% for tuition in exam.tuitions %}
                                             {{ tuition.name }} ({% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})
                                             {%- if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                        {% if errors|default([])|length > 0 %}
+                                        <br>
+                                        {% endif %}
+                                        {% for error in errors|default([]) %}
+                                            <i class="fa fa-exclamation-triangle" title="{{ error.message|trans(error.parameters) }}"></i>
                                         {% endfor %}
                                     </td>
                                     <td class="align-middle">

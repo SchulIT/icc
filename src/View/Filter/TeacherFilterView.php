@@ -9,7 +9,7 @@ class TeacherFilterView implements FilterViewInterface {
     /**
      * @param Teacher[] $teachers
      */
-    public function __construct(private array $teachers, private ?Teacher $currentTeacher)
+    public function __construct(private readonly array $teachers, private readonly ?Teacher $currentTeacher, private readonly bool $isEmpty)
     {
     }
 
@@ -22,6 +22,10 @@ class TeacherFilterView implements FilterViewInterface {
 
     public function getCurrentTeacher(): ?Teacher {
         return $this->currentTeacher;
+    }
+
+    public function isEmpty(): bool {
+        return $this->isEmpty;
     }
 
     public function isEnabled(): bool {

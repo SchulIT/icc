@@ -49,6 +49,6 @@ class TeacherFilter {
 
         $this->sorter->sort($teachers, TeacherStrategy::class);
 
-        return new TeacherFilterView($teachers, $teacher);
+        return new TeacherFilterView($teachers, $teacher, $uuid === '✗');
     }
 }

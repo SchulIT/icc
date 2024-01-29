@@ -134,7 +134,7 @@
                     currentFilters: {
                         section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null,
                         grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null,
-                        teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : null,
+                        teacher: teacherFilter.empty ? '✗' : (teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : null),
                         student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString : null
                     },
                     currentPage: page,

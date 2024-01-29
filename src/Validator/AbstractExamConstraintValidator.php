@@ -3,6 +3,7 @@
 namespace App\Validator;
 
 use App\Entity\Exam;
+use App\Entity\ExamStudent;
 use App\Entity\Student;
 use App\Entity\Tuition;
 use App\Repository\ExamRepositoryInterface;
@@ -17,7 +18,7 @@ abstract class AbstractExamConstraintValidator extends ConstraintValidator {
     {
     }
 
-    protected function initializeCache() {
+    protected function initializeCache(): void {
         if($this->initialized === true) {
             return;
         }
@@ -25,8 +26,10 @@ abstract class AbstractExamConstraintValidator extends ConstraintValidator {
         $exams = $this->examRepository->findAll();
 
         foreach($exams as $exam) {
-            /** @var Student $student */
-            foreach($exam->getStudents() as $student) {
+            /** @var ExamStudent $student */
+            foreach($exam->getStudents() as $examStudent) {
+                $student = $examStudent->getStudent();
+
                 if(!isset($this->examCache[$student->getId()])) {
                     $this->examCache[$student->getId()] = [ ];
                 }

@@ -167,7 +167,7 @@ class BookExporter {
 
             $book->addStudentSummary(
                 (new StudentSummary())
-                    ->setStudent($this->castStudent($student, $section))
+                    ->setStudent($this->castStudent($student, $section, $tuition))
                     ->setLateMinutesCount($info->getLateMinutesCount())
                     ->setAbsentLessonsCount($info->getAbsentLessonsCount())
                     ->setExcuseStatusNotSetLessonCount($info->getNotExcusedOrNotSetLessonsCount())
@@ -294,7 +294,7 @@ class BookExporter {
             ->setIsMissing(true)
             ->setStart($lessonNumber)
             ->setEnd($lessonNumber)
-            ->setSubject($subject !== null ? $subject->getAbbreviation() : null)
+            ->setSubject($subject?->getAbbreviation())
             ->setTeacher($this->castTeacher($lessonEntity->getTuition()->getTeachers()->first()));
 
         return $lesson;
@@ -309,7 +309,7 @@ class BookExporter {
         $lesson = (new Lesson())
             ->setStart($entry->getLessonStart())
             ->setEnd($entry->getLessonEnd())
-            ->setSubject($subject !== null ? $subject->getAbbreviation() : null)
+            ->setSubject($subject?->getAbbreviation())
             ->setReplacementSubject($entry->getReplacementSubject())
             ->setTeacher($this->castTeacher($entry->getTeacher()))
             ->setReplacementTeacher($this->castTeacher($entry->getReplacementTeacher()))
@@ -324,7 +324,7 @@ class BookExporter {
             $exportAttendance = (new Attendance())
                 ->setComment($attendance->getComment())
                 ->setLateMinutesCount($attendance->getLateMinutes())
-                ->setStudent($this->castStudent($attendance->getStudent(), $section))
+                ->setStudent($this->castStudent($attendance->getStudent(), $section, null))
                 ->setType($this->castAttendanceType($attendance->getType()));
 
             $flags = [ ];
@@ -399,7 +399,7 @@ class BookExporter {
             ->setDate($comment->getDate())
             ->setTeacher($this->castTeacher($comment->getTeacher()))
             ->setStudents(
-                $comment->getStudents()->map(fn(StudentEntity $student) => $this->castStudent($student, $section))->toArray()
+                $comment->getStudents()->map(fn(StudentEntity $student) => $this->castStudent($student, $section, null))->toArray()
             )
             ->setComment($comment->getText());
     }
@@ -426,13 +426,21 @@ class BookExporter {
             ->setTitle($teacher->getTitle());
     }
 
-    private function castStudent(StudentEntity $student, SectionEntity $section): Student {
+    private function castStudent(StudentEntity $student, SectionEntity $section, TuitionEntity|null $tuition): Student {
         $grade = $student->getGrade($section);
+        $membershipType = null;
+
+        if($tuition !== null) {
+            /** @var StudyGroupMembership $membership */
+            $membership = $student->getStudyGroupMemberships()->findFirst(fn(int $_, StudyGroupMembership $membership) => $membership->getStudyGroup()->getId() === $tuition->getStudyGroup()->getId());
+            $membershipType = $membership?->getType();
+        }
 
         return (new Student())
             ->setId($student->getExternalId())
             ->setFirstname($student->getFirstname())
             ->setLastname($student->getLastname())
-            ->setGrade($grade !== null ? $grade->getName() : null);
+            ->setGrade($grade?->getName())
+            ->setMembershipType($membershipType);
     }
 }

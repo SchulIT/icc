@@ -80,11 +80,22 @@ document.addEventListener('DOMContentLoaded', function(event) {
             let student = response.students_summary[idx];
             let row = [
                 student.student.lastname,
-                student.student.firstname,
+                student.student.firstname
+            ];
+
+            if(response.grades === null || response.grades.length > 1) {
+                row.push(student.student.grade);
+            }
+
+            if(response.tuition !== null) {
+                row.push(student.student.membership_type);
+            }
+
+            row.push(
                 student.absent_lessons_count,
                 student.not_excused_absent_lessons_count + student.excuse_status_not_set_lessons_count,
                 student.late_minutes_count
-            ];
+            );
 
             for(let flag of response.flags) {
                 let count = 0;
@@ -103,7 +114,17 @@ document.addEventListener('DOMContentLoaded', function(event) {
         pdf.addPage('a4', 'landscape');
 
         pdf.text('Übersicht', 15, 25);
-        let header = ['Nachname', 'Vorname', 'FS (insg.)', 'FS (ue.)', 'Versp. (min)'];
+        let header = ['Nachname', 'Vorname'];
+
+        if(response.grades === null || response.grades.length > 1) {
+            header.push('Klasse');
+        }
+
+        if(response.tuition !== null) {
+            header.push('Art');
+        }
+
+        header.push('FS (insg.)', 'FS (ue.)', 'Versp. (min)');
 
         for(let flag of response.flags) {
             header.push(flag.description);
@@ -157,6 +178,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
                     let data = [];
                     data.push(student.lastname);
                     data.push(student.firstname);
+                    data.push(student.membership_type);
 
                     let grades = matrix[student.id];
 
@@ -171,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
                     scores.push(data);
                 }
 
-                let header = ['Nachname', 'Vorname'];
+                let header = ['Nachname', 'Vorname', 'Art'];
                 students_grades.categories.forEach(function (category) {
                     header.push(category.display_name);
                 });

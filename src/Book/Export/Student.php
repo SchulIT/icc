@@ -27,6 +27,10 @@ class Student {
     #[Serializer\SerializedName('grade')]
     private ?string $grade = null;
 
+    #[Serializer\Type('string')]
+    #[Serializer\SerializedName('membership_type')]
+    private ?string $membershipType = null;
+
     public function getId(): string {
         return $this->id;
     }
@@ -60,6 +64,15 @@ class Student {
 
     public function setGrade(?string $grade): Student {
         $this->grade = $grade;
+        return $this;
+    }
+
+    public function getMembershipType(): ?string {
+        return $this->membershipType;
+    }
+
+    public function setMembershipType(?string $membershipType): Student {
+        $this->membershipType = $membershipType;
         return $this;
     }
 }

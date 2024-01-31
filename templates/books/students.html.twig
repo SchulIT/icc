@@ -38,9 +38,9 @@
                                 <col class="column-md">
                                 <col class="column-md">
                                 {% for flag in flags %}
-                                <col class="column-sm">
-                                {% endfor %}
                                 <col class="column-md">
+                                {% endfor %}
+                                <col class="column-100">
                             </colgroup>
 
                             <thead>
@@ -52,13 +52,8 @@
                                 <th>{{ 'book.students.not_excused'|trans }}</th>
                                 <th>{{ 'book.students.not_set'|trans }}</th>
                                 {% for flag in flags %}
-                                    <th title="{{ flag.description }}">
-                                        <span class="fa-stack fa-1x">
-                                            <i class="{{ flag.icon }} fa-stack-1x"></i>
-                                            {% if flag.stackIcon is not empty %}
-                                                <i class="{{ flag.stackIcon }} fa-stack-1x text-danger"></i>
-                                            {% endif %}
-                                        </span>
+                                    <th>
+                                        {{ flag.description }}
                                     </th>
                                 {% endfor %}
                                 <th></th>
@@ -108,7 +103,14 @@
 
                                     {% for flag in flags %}
                                         {% set count = studentInfo.attendanceFlagCount(flag) %}
-                                        <td class="align-middle">
+                                        <td class="align-middle nowrap">
+                                            <span class="fa-stack fa-1x" title="{{ flag.description }}">
+                                                <i class="{{ flag.icon }} fa-stack-1x"></i>
+                                                {% if flag.stackIcon is not empty %}
+                                                    <i class="{{ flag.stackIcon }} fa-stack-1x text-danger"></i>
+                                                {% endif %}
+                                            </span>
+
                                             {% if count is null %}
                                                 0
                                             {% else %}
@@ -117,7 +119,7 @@
                                         </td>
                                     {% endfor %}
 
-                                    <td class="align-middle">
+                                    <td class="align-middle nowrap">
                                         {% if sectionFilter.currentSection != null %}
                                             <a href="{{ path('book_student', { student: student.uuid }|merge(currentFilter)) }}" class="btn btn-primary btn-sm" title="{{ 'label.details'|trans }}">
                                                 <i class="fas fa-info-circle"></i>

@@ -67,13 +67,11 @@
                                     <td class="align-middle">
                                         <i class="fas fa-user"></i>
                                         {% if sectionFilter.currentSection != null %}
-                                            <a href="{{ path('book_student', { student: student.uuid }|merge(currentFilter)) }}">
-                                                {{ student.lastname }}, {{ student.firstname }}
+                                            {{ student.lastname }}, {{ student.firstname }}
 
-                                                <span class="badge text-bg-primary">
-                                                    {{ student.grade(sectionFilter.currentSection) }}
-                                                </span>
-                                            </a>
+                                            <span class="badge text-bg-primary">
+                                                {{ student.grade(sectionFilter.currentSection) }}
+                                            </span>
                                         {% else %}
                                             {{ student.lastname }}, {{ student.firstname }}
                                         {% endif %}
@@ -121,8 +119,11 @@
 
                                     <td class="align-middle nowrap">
                                         {% if sectionFilter.currentSection != null %}
-                                            <a href="{{ path('book_student', { student: student.uuid }|merge(currentFilter)) }}" class="btn btn-primary btn-sm" title="{{ 'label.details'|trans }}">
-                                                <i class="fas fa-info-circle"></i>
+                                            <a href="{{ path('book_student_attendance', { student: student.uuid }|merge(currentFilter)) }}" class="btn btn-primary btn-sm" title="{{ 'book.attendance.label'|trans }}">
+                                                <i class="fas fa-user-check"></i>
+                                            </a>
+                                            <a href="{{ path('book_student_comments', { student: student.uuid}|merge(currentFilter)) }}" class="btn btn-primary btn-sm" title="{{ 'book.students.comments'|trans }}">
+                                                <i class="fas fa-comments"></i>
                                             </a>
                                             <a href="{{ path('gradebook', { section: sectionFilter.currentSection.uuid, student: student.uuid}) }}" class="btn btn-primary btn-sm" title="{{ 'book.grades.label'|trans }}">
                                                 <i class="fas fa-graduation-cap"></i>

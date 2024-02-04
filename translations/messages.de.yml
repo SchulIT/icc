@@ -1830,6 +1830,7 @@ book:
     comment:
         label: Kommentare
         info: Hier können individuelle Rückmeldungen zu Schülerinnen und Schülern verfasst werden (z.B. Klassenbucheinträge).
+        empty: Hurra, es liegen keine Kommentare vor.
         add:
             label: Neuer Kommentar
             success: Kommentar erfolgreich angelegt

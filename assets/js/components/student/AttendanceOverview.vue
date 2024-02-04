@@ -19,19 +19,11 @@
 
               <tr v-for="day in group.days">
                 <td class="align-middle" :id="'date-' + dateId(day)">
-                  <div class="d-flex align-items-center">
-                    <div class="flex-fill">
+                  <div class="flex-fill">
                     {{ weekday(day) }}
                     <span class="text-muted ml-1">
                       {{ date(day) }}
                     </span>
-                    </div>
-
-                    <div>
-                      <button class="btn btn-sm btn-outline-secondary" @click="openComment(comment.uuid)" v-for="comment in getComments(day)">
-                        <i class="fas fa-comment"></i>
-                      </button>
-                    </div>
                   </div>
                 </td>
                 <template v-for="lesson in days[day]">
@@ -85,30 +77,6 @@
             </template>
           </tbody>
         </table>
-      </div>
-    </div>
-
-    <div v-for="comment in comments" class="modal" :id="'comment-' + comment.uuid">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">
-              {{ $trans('book.comment.show.header')}}
-
-              <span class="badge text-bg-secondary">
-                <i class="fas fa-graduation-cap"></i> {{ comment.teacher }}
-              </span>
-            </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            {{ comment.comment }}
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ $trans('modal.close')}}</button>
-          </div>
-        </div>
-
       </div>
     </div>
 
@@ -283,7 +251,6 @@ export default {
     readonly: Boolean,
     entries: Object,
     attendances: Array,
-    comments: Array,
     dayGroups: Array,
     maxLessons: Number,
     url: String,
@@ -367,21 +334,6 @@ export default {
     },
     dateId(dateAsString) {
       return dateAsString.substring(0, 10);
-    },
-    getComments(dateAsString) {
-      return this.comments.filter(c => c.date === dateAsString);
-    },
-    openComment(uuid) {
-      let modalEl = this.$el.querySelector('#comment-' + uuid);
-
-      if(modalEl === null) {
-        return false;
-      }
-
-      let modal = Modal.getOrCreateInstance(modalEl);
-      modal.show();
-
-      return false;
     },
     edit(lesson) {
       if(this.readonly === true) {

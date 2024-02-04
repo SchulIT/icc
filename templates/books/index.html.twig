@@ -134,7 +134,7 @@
                                         <ul class="list-unstyled mb-0">
                                             {% for info in missingExcuses %}
                                                 <li>
-                                                    <a href="{{ path('book_student', currentFilter|merge({ student: info.student.uuid.toString })) }}">
+                                                    <a href="{{ path('book_student_attendance', currentFilter|merge({ student: info.student.uuid.toString })) }}">
                                                         <i class="fas fa-user-graduate"></i> {{ info.student|student }}
                                                         <span class="badge text-bg-danger rounded-pill">{{ info.notExcusedOrNotSetLessonsCount }}</span>
                                                     </a>
@@ -300,7 +300,7 @@
                                                 <i class="fas fa-edit"></i> {{ 'actions.edit'|trans }}
                                             </a>
 
-                                            <a href="{{ path('remove_book_student', { uuid: comment.uuid }) }}" class="dropdown-item text-danger">
+                                            <a href="{{ path('remove_book_comment', { uuid: comment.uuid }) }}" class="dropdown-item text-danger">
                                                 <i class="fas fa-trash"></i> {{ 'actions.remove'|trans }}
                                             </a>
                                         </div>

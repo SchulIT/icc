@@ -37,6 +37,7 @@ use App\Grouping\LessonDayStrategy;
 use App\Grouping\TuitionGradeGroup;
 use App\Grouping\TuitionGradeStrategy;
 use App\Messenger\RunIntegrityCheckMessage;
+use App\Repository\BookCommentRepositoryInterface;
 use App\Repository\BookIntegrityCheckViolationRepositoryInterface;
 use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\GradeResponsibilityRepositoryInterface;
@@ -518,9 +519,9 @@ class BookController extends AbstractController {
         ]);
     }
 
-    #[Route(path: '/student/{student}', name: 'book_student')]
+    #[Route(path: '/student/{student}/attendance', name: 'book_student_attendance')]
     #[ParamConverter('student', class: Student::class, options: ['mapping' => ['student' => 'uuid']])]
-    public function student(Student $student, SectionFilter $sectionFilter, StudentAwareTuitionFilter $tuitionFilter,
+    public function studentAttendance(Student $student, SectionFilter $sectionFilter, StudentAwareTuitionFilter $tuitionFilter,
                             StudentAwareGradeFilter $gradeFilter, TeacherFilter  $teacherFilter, Request $request,
                             StudentInfoResolver $infoResolver, TuitionRepositoryInterface $tuitionRepository,
                             Sorter $sorter, Grouper $grouper, DateHelper $dateHelper, TimetableSettings $timetableSettings,
@@ -609,18 +610,7 @@ class BookController extends AbstractController {
         $sorter->sort($groups, DateWeekOfYearGroupStrategy::class, SortDirection::Descending);
         $sorter->sortGroupItems($groups, DateStrategy::class, SortDirection::Descending);
 
-        $comments = [ ];
-
-        foreach($info->getComments() as $comment) {
-            $comments[] = [
-                'uuid' => $comment->getUuid()->toString(),
-                'date' => $comment->getDate()->format('c'),
-                'teacher' => $comment->getTeacher()->getAcronym(),
-                'comment' => $comment->getText()
-            ];
-        }
-
-        return $this->render('books/student.html.twig', [
+        return $this->render('books/student_attendance.html.twig', [
             'student' => $student,
             'info' => $info,
             'groups' => $groups,
@@ -629,7 +619,27 @@ class BookController extends AbstractController {
             'tuitionFilter' => $tuitionFilterView,
             'teacherFilter' => $teacherFilterView,
             'numberOfLessons' => $timetableSettings->getMaxLessons(),
-            'entries' => array_values($entries),
+            'entries' => array_values($entries)
+        ]);
+    }
+
+    #[Route(path: '/student/{student}/comments', name: 'book_student_comments')]
+    #[ParamConverter('student', class: Student::class, options: ['mapping' => ['student' => 'uuid']])]
+    public function studentComments(Student $student, SectionFilter $sectionFilter, Request $request, Sorter $sorter,
+                                    BookCommentRepositoryInterface $commentRepository): Response {
+
+        $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
+        $comments = [ ];
+
+        if($sectionFilterView->getCurrentSection() !== null) {
+            $comments = $commentRepository->findAllByDateAndStudent($student, $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd());
+        }
+
+        $sorter->sort($comments, DateStrategy::class);
+
+        return $this->render('books/student_comments.html.twig', [
+            'sectionFilter' => $sectionFilterView,
+            'student' => $student,
             'comments' => $comments
         ]);
     }

@@ -90,7 +90,7 @@ class BookCommentController extends AbstractController {
         ]);
     }
 
-    #[Route(path: '/{uuid}/remove', name: 'remove_book_student')]
+    #[Route(path: '/{uuid}/remove', name: 'remove_book_comment')]
     public function remove(BookComment $comment, Request $request, TranslatorInterface $translator): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'book.comment.remove.confirm',

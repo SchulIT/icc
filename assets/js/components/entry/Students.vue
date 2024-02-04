@@ -151,12 +151,12 @@
           <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][absentLessons]'" :value="attendance.lessons">
           <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][student]'" :value="attendance.student.uuid">
 
-          <div class="d-flex">
-            <div class="flex-fill p-3 pointer flex-grow-1"
+          <div class="d-flex flex-wrap">
+            <div class="flex-fill p-3 pointer"
                  @click="select(attendance)">
               <i class="fa fa-user"></i> {{ attendance.student.lastname }}, {{ attendance.student.firstname }}
             </div>
-            <div class="align-self-center text-right me-3 flex-shrink-1">
+            <div class="d-flex align-self-center text-right my-2 me-3 flex-fill justify-content-end">
               <div class="btn-group" v-if="flags.length > 0">
                 <template v-for="flag in flags">
                   <input type="checkbox" class="btn-check" autocomplete="off" :checked="attendance.flags.includes(flag.id)" :id="uniquePrefix + '_' + attendance.student.uuid + '_' + flag.id" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][flags][]'" :value="flag.id">

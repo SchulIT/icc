@@ -11,10 +11,41 @@
     </ol>
 {% endblock %}
 
+{% block post_javascript %}
+    <script src="{{ asset('build/tuition-choice-filter.js') }}"></script>
+{% endblock %}
+
 {% block content %}
     {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
 
     {{ form_start(form) }}
+
+    <div class="card">
+        <div class="card-header">{{ 'label.general'|trans }}</div>
+        <div class="card-body">
+            {{ form_row(form.date) }}
+            {{ form_row(form.lessonStart) }}
+            {{ form_row(form.lessonEnd) }}
+            {{ form_row(form.description) }}
+            {{ form_row(form.tuitionTeachersCanEditExam) }}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'label.tuitions'|trans }}</div>
+        <div class="card-body">
+            {{ form_row(form.tuitions) }}
+
+            <div class="my-2 row">
+                <label for="tuition_filter" class="col-md-2 col-form-label">{{ 'label.filter'|trans }}</label>
+                <div class="col-md-10">
+                    <input type="text" class="form-control" data-tuition-filter-target="#exam_tuitions">
+                </div>
+            </div>
+
+            {{ form_row(form.addStudents) }}
+        </div>
+    </div>
 
     {{ form_widget(form) }}
 

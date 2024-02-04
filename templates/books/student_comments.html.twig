@@ -1,0 +1,94 @@
+{% extends "main.html.twig" %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('book') }}">{{ 'book.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('book_students') }}">{{ 'book.students.label'|trans }}</a></li>
+        <li class="breadcrumb-item">
+            <a href="{{ path('book_students', { grade: student.grade(sectionFilter.currentSection).uuid.toString, section: sectionFilter.currentSection.uuid }) }}">
+                {{ student.grade(sectionFilter.currentSection).name }}
+            </a>
+        </li>
+        <li class="breadcrumb-item">{{ student.lastname }}, {{ student.firstname }}</li>
+        <li class="breadcrumb-item">{{ 'book.comment.label'|trans }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+
+    {% set currentFilter = {
+        section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null
+    } %}
+
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% if comments is empty %}
+                    <div class="bs-callout bs-callout-success">
+                        <p>{{ 'book.comment.empty'|trans }}</p>
+                    </div>
+                {% endif %}
+
+                {% for comment in comments %}
+                    <div class="card" id="{{ comment.uuid }}">
+                        <div class="card-header">
+                            <i class="fas fa-calendar-alt"></i> {{ comment.date|format_date }}
+
+                            <i class="fas fa-chalkboard-teacher"></i> {{ comment.teacher|teacher }}
+
+                            {% for student in comment.students %}
+                                <i class="fas fa-user-graduate"></i> {{ student|student }}
+                            {% endfor %}
+                        </div>
+                        <div class="card-body">
+                            {{ comment.text }}
+                        </div>
+                        {% set canEdit = is_granted('edit', comment) %}
+                        {% set canDelete = is_granted('remove', comment) %}
+                        {% if canEdit or canDelete %}
+                        <div class="card-footer d-print-none">
+                            {% if canEdit %}
+                                <a href="{{ path('edit_book_comment', { uuid: comment.uuid }) }}" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-edit"></i> {{ 'actions.edit'|trans }}
+                                </a>
+                            {% endif %}
+
+                            {% if canDelete %}
+                                <a href="{{ path('remove_book_comment', { uuid: comment.uuid }) }}" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> {{ 'actions.remove'|trans }}
+                                </a>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="col-md-3 sticky-sidebar">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="far fa-id-card"></i> {{ student.lastname }}, {{ student.firstname }}
+                        </h5>
+
+                        <p>
+                            <i class="fas fa-envelope"></i> <a href="mailto:{{ student.email }}">{{ student.email }}</a>
+                        </p>
+
+                        <p>
+                            <i class="fas fa-graduation-cap"></i>
+                            {% include "_includes/grade_teachers.html.twig" with { grade: student.grade(sectionFilter.currentSection), section: sectionFilter.currentSection } %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        {% include "_filter/section.html.twig" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

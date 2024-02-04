@@ -26,6 +26,10 @@ class LessonAttendance implements JsonSerializable, Stringable {
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?LessonEntry $entry = null;
 
+    #[ORM\Column(type: 'integer')]
+    #[Assert\GreaterThan(0)]
+    private int $lesson = 0;
+
     #[Assert\NotNull]
     #[ORM\ManyToOne(targetEntity: Student::class)]
     #[ORM\JoinColumn]
@@ -35,9 +39,8 @@ class LessonAttendance implements JsonSerializable, Stringable {
     #[ORM\Column(type: 'integer')]
     private int $lateMinutes = 0;
 
-    #[Assert\GreaterThanOrEqual(0)]
-    #[ORM\Column(type: 'integer')]
-    private ?int $absentLessons = 0;
+    #[ORM\Column(type: 'boolean')]
+    private bool $isZeroAbsentLesson = false;
 
     #[Assert\NotBlank(allowNull: true)]
     #[ORM\Column(type: 'text', nullable: true)]
@@ -80,6 +83,15 @@ class LessonAttendance implements JsonSerializable, Stringable {
         return $this;
     }
 
+    public function getLesson(): int {
+        return $this->lesson;
+    }
+
+    public function setLesson(int $lesson): LessonAttendance {
+        $this->lesson = $lesson;
+        return $this;
+    }
+
     public function getStudent(): ?Student {
         return $this->student;
     }
@@ -98,12 +110,12 @@ class LessonAttendance implements JsonSerializable, Stringable {
         return $this;
     }
 
-    public function getAbsentLessons(): ?int {
-        return $this->absentLessons;
+    public function isZeroAbsentLesson(): bool {
+        return $this->isZeroAbsentLesson;
     }
 
-    public function setAbsentLessons(?int $absentLessons): LessonAttendance {
-        $this->absentLessons = $absentLessons;
+    public function setIsZeroAbsentLesson(bool $isZeroAbsentLesson): LessonAttendance {
+        $this->isZeroAbsentLesson = $isZeroAbsentLesson;
         return $this;
     }
 
@@ -146,10 +158,11 @@ class LessonAttendance implements JsonSerializable, Stringable {
             'type' => $this->getType(),
             'student' => $this->getStudent(),
             'minutes' => $this->getLateMinutes(),
-            'lessons' => $this->getAbsentLessons(),
+            'is_zero_absent_lesson' => $this->isZeroAbsentLesson(),
             'excuse_status' => $this->getExcuseStatus(),
             'comment' => $this->getComment(),
-            'flags' => $this->flags->toArray()
+            'flags' => $this->flags->toArray(),
+            'lesson' => $this->getLesson()
         ];
     }
 

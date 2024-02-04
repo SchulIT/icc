@@ -82,8 +82,7 @@ class StudentAbsenceController extends AbstractController {
 
         $note = new StudentAbsence();
         $note->setFrom($timeHelper->getLessonDateForDateTime($this->getTodayOrNextDay($dateHelper, $settings->getNextDayThresholdTime())));
-        $note->setUntil(new DateLesson());
-        $note->getUntil()->setLesson($timetableSettings->getMaxLessons());
+        $note->setUntil((new DateLesson())->setDate(clone $note->getFrom()->getDate())->setLesson($timetableSettings->getMaxLessons()));
 
         $form = $this->createForm(StudentAbsenceType::class, $note);
         $form->handleRequest($request);

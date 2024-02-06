@@ -109,7 +109,7 @@ class ExamAdminController extends AbstractController {
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            if($form->get('group_tuitions')->get('addStudents')->getData() === true) {
+            if($form->get('addStudents')->getData() === true) {
                 $this->examStudentsResolver->setExamStudents(
                     $exam,
                     $this->examStudentsResolver->resolveExamStudentsFromMembership($exam)
@@ -207,7 +207,7 @@ class ExamAdminController extends AbstractController {
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            if($form->get('group_tuitions')->get('addStudents')->getData() === true) {
+            if($form->get('addStudents')->getData() === true) {
                 $this->examStudentsResolver->setExamStudents(
                     $exam,
                     $this->examStudentsResolver->resolveExamStudentsFromMembership($exam)

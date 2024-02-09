@@ -1,0 +1,16 @@
+{% if isChoice is not defined %}
+    {% set isChoice = true %}
+{% endif %}
+<form role="form" method="get" class="form hidden-print">
+    {% include "_filter/_params.html.twig" %}
+
+    <div class="mb-3 {{ class|default('') }}">
+        <label for="day" class="form-label">{{ 'label.parents_day'|trans }}:</label>
+        <select name="day" id="day" class="form-control" data-trigger="{{ trigger|default("submit") }}" data-choice="{{ isChoice ? 'true' : 'false' }}">
+            <option value="" placeholder>{{ 'label.select.parents_day'|trans }}</option>
+            {% for day in parentsDayFilter.parentsDays %}
+                <option value="{{ day.uuid }}" {% if parentsDayFilter.currentParentsDay != null and parentsDayFilter.currentParentsDay.id == day.id %}selected="selected"{% endif %}>{{ day.title }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</form>

@@ -7,6 +7,7 @@ use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\WikiArticleRepositoryInterface;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\ListsVoter;
+use App\Security\Voter\ParentsDayAppointmentVoter;
 use App\Security\Voter\ResourceReservationVoter;
 use App\Security\Voter\StudentAbsenceVoter;
 use App\Security\Voter\TeacherAbsenceVoter;
@@ -72,6 +73,13 @@ class Builder {
                 'route' => 'student_attendance'
             ])
                 ->setExtra('icon', 'fa-solid fa-chalkboard-user');
+        }
+
+        if($this->authorizationChecker->isGranted(ParentsDayAppointmentVoter::VIEW)) {
+            $menu->addChild('parents_day.label', [
+                'route' => 'parents_day'
+            ])
+                ->setExtra('icon', 'fa-solid fa-people-arrows');
         }
 
         if($this->authorizationChecker->isGranted('ROLE_BOOK_VIEWER')) {

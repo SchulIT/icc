@@ -51,6 +51,7 @@ label:
         section: Abschnitt auswählen
         tuition: Unterricht auswählen
         lms: Lernplattform auswählen
+        parents_day: Elternsprechtag auswählen
     search:
         student: Lernenden suchen
     scope: Bereich
@@ -294,6 +295,19 @@ label:
     columns:
         label: Spalten
         help: Anzahl der Spalten, auf die die Inhalte aufgeteilt werden.
+    parents_day: Elternsprechtag
+    blocked:
+        label: Termin blockieren
+        help: Wenn diese Option aktiv ist, wird der Termin freigehalten und ist nicht buchbar.
+    duration:
+        label: Dauer
+        help_minutes: in Minuten
+    booking_allowed_from:
+        label: Start Terminbuchung
+        help: Ab diesem Datum können Eltern Termine für den Elternsprechtag buchen. Bereits vorab können Lehrkräfte Termine ins System eintragen.
+    booking_allowed_until:
+        label: Ende Terminbuchung
+        help: Bis zu diesem Datum (einschließlich) können Eltern Termine für den Elternsprechtag buchen. Danach ist eine Buchung nur über die Fachlehrkraft möglich.
 
 markdown:
     label: Markdown
@@ -1484,6 +1498,22 @@ admin:
             success: Merkmal erfolgreich gelöscht
             confirm: 'Soll das Merkmal %flag% wirklich gelöscht werden? Dokumentierte Anwesenheiten mit diesem Merkmal verlieren das Merkmal. Die Anwesenheiten werden dabei nicht gelöscht.'
 
+    parents_day:
+        label: Elternsprechtag
+        empty: Keine Elternsprechtage geplant.
+        add:
+            label: Neuer Elternsprechtag
+            success: Elternsprechtag erfolgreich angelegt
+        edit:
+            label: Elternspechtag bearbeiten
+            success: Elternsprechtag erfolgreich aktualisiert
+        remove:
+            label: Elternsprechtag löschen
+            success: Elternsprechtag erfolgreich gelöscht
+            confirm: 'Soll der Elternsprechtag %title% wirklich gelöscht werden? Alle bereits erstellten Termine werden gelöscht.'
+        appointments:
+
+
 tools:
     label: Tools
 
@@ -2153,3 +2183,79 @@ attendance:
     info: Bitte beachten, dass Lehrkräfte Anwesenheiten ggf. zeitverzögert eintragen. Bei Rückfragen bitte an die Fachlehrkraft oder die Klassen-/Stufenleitung wenden.
     delay: Anwesenheiten sind erst am Folgetag einsehbar.
     legend: Die einzelnen Farben spiegeln die Anwesenheit wieder. Ist eine Zelle weiß, so fand hier kein Unterricht statt (z.B. Freistunde in der Oberstufe) oder die Lehrkraft hat noch keine Eintragung vorgenommen.
+
+parents_day:
+    label: Elternsprechtag
+    empty: In nächster Zeit ist kein Elternsprechtag.
+    prepare:
+        label: Elternsprechtag vorbereiten
+        introduction: Bitte zunächst über den Filter einen Unterricht auswählen.
+        help: Hier können Informationen zu Lernenden hinterlegt werden, bspw. ob Termine erwünscht oder nicht notwendig sind.
+        cancelled:
+            label: Termin abgesagt
+        not_necessary:
+            label: Kein Termin benötigt
+        requested:
+            label: Termin erwünscht
+    appointments:
+        empty:
+            not_available: Aktuell werden für diesen Elternsprechtag keine Termine angeboten.
+            nothing_booked: Bisher wurden keine Termine gebucht
+        title:
+            students: Gebuchte Termine
+            teachers: Terminübersicht
+        blocked: geblockt
+        available: verfügbar
+        not_available: nicht verfügbar
+        already_booked: Termin gebucht
+        another_appointment_booked: Kollidiert mit anderem Termin
+        booked: Termin gebucht
+        add:
+            label: Mehrere Termine erstellen
+            help: Hier können für einen bestimmten Zeitbereich Termine mit derselben Dauer erstellt werden, die von Eltern gebucht werden können.
+            success: Termine erfolgreich erstellt
+        add_single:
+            label: Einzelnen Termin erstellen
+            help: Hier kann ein einzelner Termin erstellt werden.
+            success: Termin erfolgreich erstellt
+        edit:
+            label: Termin bearbeiten
+            success: Termin erfolgreich aktualisiert
+        cancel:
+            label: Termin absagen
+        assign:
+            label: Termin zuweisen
+            info: Der Termin wird den ausgewählten Kindern zugewiesen.
+            success: Der Termin ist nun zugewiesen.
+        block:
+            label: Termin blockieren
+            info: Durch das Blocken von Terminen werden diese nicht gelöscht, sodass sie zu einem späteren Zeitpunkt belegt werden können. In der Zwischenzeit ist das Buchen des Termins nicht möglich.
+            caution: Da der Termin bereits belegt ist, wird der Termin für die Eltern gelöscht.
+            confirm: Der Zeitraum von %start% bis %end% soll blockiert werden.
+            success: Der Zeitraum wird nun blockiert.
+        unblock:
+            label: Termin nicht blockieren
+            info: Durch das Aufheben der Blockierung wird der Termin wieder für alle Eltern freigegeben und kann gebucht werden.
+            confirm: Der Zeitraum wird nicht blockiert, sodass Termine gebucht werden können.
+            success: Der Zeitraum steht nun zur Verfügung.
+        remove:
+            label: Termin löschen
+            confirm: 'Soll der Termin von %start% bis %end% wirklich gelöscht werden?'
+            info: Nach dem Löschen kann zu diesem Zeitpunkt kein Termin gebucht werden.
+            success: Termin erfolgreich gelöscht
+        book:
+            label: Termin buchen
+            title: Terminübersicht für %teacher%
+            click: Klicken, um Termin zu buchen
+            introduction: Bitte zunächst eine Lehrkraft auswählen und anschließend auf den gewünschten Termin klicken. Zum Umbuchen einfach einen neuen Termin auswählen.
+            success: Termin wurde erfolgreich gebucht
+            already_booked:
+                info: Es wurde bereits ein Termin bei der Lehrkraft erstellt
+                confirm: Bisherigen Termin löschen.
+                help: "Wenn diese Option nicht aktiv ist, wird ein weiterer Termin gebucht. Anderenfalls wird der bisherige Termin gelöscht. Wichtig: es werden nur Termine gelöscht, bei denen keine weitere Lehrkraft teilnimmt."
+        unbook:
+            label: Termin löschen
+            confirm: Soll der Termin wirklich gelöscht werden?
+            success: Termin erfolgreich gelöscht
+        rebook:
+            label: Termin umbuchen

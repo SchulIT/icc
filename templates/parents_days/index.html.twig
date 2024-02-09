@@ -1,0 +1,259 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'parents_day.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% if appointments|length == 0 %}
+                    <div class="bs-callout bs-callout-info">
+                        <h5>{{ 'info.label'|trans }}</h5>
+                        {% if teacherFilter.currentTeacher is not null %}
+                            <p>{{ 'parents_day.appointments.empty.not_available'|trans }}</p>
+                        {% else %}
+                            <p>{{ 'parents_day.appointments.empty.nothing_booked'|trans }}</p>
+                        {% endif %}
+                        {% if is_granted('create-parentsdayappointment') and teacherFilter.currentTeacher is not null and parentsDayFilter.currentParentsDay is not null and teacherFilter.currentTeacher == app.user.teacher %}
+                        <a href="{{ path('add_parents_day_appointments', { uuid: parentsDayFilter.currentParentsDay.uuid }) }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus"></i> {{ 'parents_day.appointments.add.label'|trans }}
+                        </a>
+                        <a href="{{ path('add_parents_day_appointment', { uuid: parentsDayFilter.currentParentsDay.uuid }) }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus"></i> {{ 'parents_day.appointments.add_single.label'|trans }}
+                        </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                {% if appointments|length > 0 %}
+                <div class="card">
+                    <div class="card-header">
+                        {% if teacherFilter.currentTeacher is not null %}
+                            {{ 'parents_day.appointments.title.teachers'|trans }}
+                        {% else %}
+                            {{ 'parents_day.appointments.title.students'|trans }}
+                        {% endif %}
+                    </div>
+
+                    <div class="list-group list-group-flush">
+                        {% for appointment in appointments %}
+                            <div class="list-group-item d-flex">
+                                <div class="flex-fill align-self-center">
+                                {{ appointment.start|format_time('short') }}-{{ appointment.end|format_time('short') }}
+
+                                {% if appointment.blocked %}
+                                    <span class="badge text-bg-secondary">{{ 'parents_day.appointments.blocked'|trans }}</span>
+                                {% else %}
+                                    {% if appointment.students is empty %}
+                                        <span class="badge text-bg-success">{{ 'parents_day.appointments.available'|trans }}</span>
+                                    {% endif %}
+
+                                    {% if is_granted('details', appointment) %}
+                                        {% for student in appointment.students %}
+                                            <i class="fas fa-user-graduate"></i> {{ student|student(true) }}
+                                        {% endfor %}
+
+                                        {% if not app.user.isTeacher %}
+                                            {% for teacher in appointment.teachers %}
+                                                <i class="fas fa-chalkboard-teacher"></i> {{ teacher|teacher }}
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="badge text-bg-secondary">{{ 'parents_day.appointments.not_available'|trans }}</span>
+                                    {% endif %}
+                                {% endif %}
+                                </div>
+
+                                {% if is_granted('book-parentsdayappointment', parentsDayFilter.currentParentsDay) %}
+                                    {% if appointment.teachers.count == 1 %}
+                                    <a href="{{ path('book_parents_day_appointment_overview', { day: appointment.parentsDay.uuid, teacher: appointment.teachers.first.uuid }) }}" class="btn btn-outline-primary btn-sm">
+                                        {{ 'parents_day.appointments.rebook.label'|trans }}
+                                    </a>
+                                    {% endif %}
+                                    {% if is_granted('unbook', appointment) %}
+                                        <a href="{{ path('unbook_parents_day_appointment', { uuid: appointment.uuid}) }}" class="btn btn-outline-primary btn-sm ms-2" data-modal-form="#modalUnbook" data-teacher="{{ appointment.teachers.first|teacher }}" data-time="{{ appointment.start|format_time('short') }}-{{ appointment.end|format_time('short') }}">
+                                            {{ 'parents_day.appointments.unbook.label'|trans }}
+                                        </a>
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if is_granted('edit', appointment) %}
+                                <div class="dropdown">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <a href="{{ path('assign_parents_day_appointment', { uuid: appointment.uuid}) }}" class="dropdown-item">
+                                            <i class="fas fa-user-check"></i> {{ 'parents_day.appointments.assign.label'|trans }}
+                                        </a>
+
+                                        {% if not appointment.blocked %}
+                                            <a href="{{ path('block_parents_day_appointment', { uuid: appointment.uuid}) }}" class="dropdown-item">
+                                                <i class="fas fa-lock"></i> {{ 'parents_day.appointments.block.label'|trans }}
+                                            </a>
+                                        {% else %}
+                                            <a href="{{ path('unblock_parents_day_appointment', { uuid: appointment.uuid}) }}" class="dropdown-item">
+                                                <i class="fas fa-lock-open"></i> {{ 'parents_day.appointments.unblock.label'|trans }}
+                                            </a>
+                                        {% endif %}
+                                        <div class="dropdown-divider"></div>
+                                        <a href="{{ path('edit_parents_day_appointment', { uuid: appointment.uuid }) }}" class="dropdown-item">
+                                            <i class="fas fa-edit"></i> {{ 'actions.edit'|trans }}
+                                        </a>
+                                        <a href="{{ path('remove_parents_day_appointment', { uuid: appointment.uuid }) }}" class="dropdown-item text-danger">
+                                            <i class="fas fa-trash"></i> {{ 'actions.remove'|trans }}
+                                        </a>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% for studentGroup in tuitions %}
+                    <div class="card">
+                        <div class="card-header">{{ 'lists.tuitions.heading.student'|trans({'%student%': studentGroup.student|student }) }}</div>
+                        <div class="list-group list-group-flush">
+                            {% for teacherGroup in studentGroup.groups %}
+                                {% set alreadyBooked = teacherGroup.teacher in studentGroup.bookedTeachers %}
+                                {% set appointmentRequested = teacherGroup.teacher in studentGroup.teachersWithRequest %}
+                                {% set appointmentNotNecessary = teacherGroup.teacher in studentGroup.teachersNotNecessary %}
+
+                                <div class="list-group-item d-flex {% if alreadyBooked %}bg-success-subtle{% elseif appointmentRequested %}bg-danger-subtle{% endif %}">
+                                    <div class="flex-fill align-self-center">
+                                        {{ teacherGroup.teacher|teacher }}
+
+                                        {% for tuition in teacherGroup.tuitions %}
+                                            <span class="badge text-bg-secondary">{{ tuition.subject.name }}</span>
+                                        {% endfor %}
+
+                                        {% if appointmentRequested %}
+                                            <span class="badge text-bg-danger">{{ 'parents_day.prepare.requested.label'|trans }}</span>
+                                        {% elseif appointmentNotNecessary %}
+                                            <span class="badge text-bg-success">{{ 'parents_day.prepare.not_necessary.label'|trans }}</span>
+                                        {% endif %}
+
+                                        {% if alreadyBooked %}
+                                            <span class="badge text-bg-success">{{ 'parents_day.appointments.already_booked'|trans }}</span>
+                                        {% endif %}
+                                    </div>
+
+                                    {% if not alreadyBooked %}
+                                    <a href="{{ path('book_parents_day_appointment_overview', { day: parentsDayFilter.currentParentsDay.uuid, teacher: teacherGroup.teacher.uuid }) }}" class="btn btn-sm btn-outline-primary">
+                                        {{ 'parents_day.appointments.book.label'|trans }}
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="col-md-3 sticky-sidebar">
+                {% if parentsDayFilter.currentParentsDay is not null %}
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        {% if parentsDayFilter.currentParentsDay is not null and is_granted('book-parentsdayappointment', parentsDayFilter.currentParentsDay) %}
+                            <a href="{{ path('book_parents_day_appointment_overview', { day: parentsDayFilter.currentParentsDay.uuid}) }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-plus"></i> {{ 'parents_day.appointments.book.label'|trans }}
+                            </a>
+                        {% endif %}
+
+                        {% if is_granted('create-parentsdayappointment') %}
+                            <a href="{{ path('add_parents_day_appointments', { uuid: parentsDayFilter.currentParentsDay.uuid }) }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-plus"></i> {{ 'parents_day.appointments.add.label'|trans }}
+                                <div class="text-muted">
+                                    {{ 'parents_day.appointments.add.help'|trans }}
+                                </div>
+                            </a>
+                            <a href="{{ path('add_parents_day_appointment', { uuid: parentsDayFilter.currentParentsDay.uuid }) }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-plus"></i> {{ 'parents_day.appointments.add_single.label'|trans }}
+                                <div class="text-muted">
+                                    {{ 'parents_day.appointments.add.help'|trans }}
+                                </div>
+                            </a>
+                            <a href="{{ path('prepare_parents_day', { uuid: parentsDayFilter.currentParentsDay.uuid }) }}" class="list-group-item list-group-item-action">
+                                <i class="fa-solid fa-bullhorn"></i> {{ 'parents_day.prepare.label'|trans }}
+
+                                <div class="text-muted">
+                                    {{ 'parents_day.prepare.help'|trans }}
+                                </div>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="card">
+                    <div class="card-body">
+                        {% include "_filter/parents_day.html.twig" %}
+
+                        {% if teacherFilter.teachers|length > 0 %}
+                            {% include "_filter/teacher.html.twig" %}
+                        {% endif %}
+
+                        {% if studentFilter.studentGradeGroups|length > 0 %}
+                            {% include "_filter/student.html.twig" %}
+                        {% endif %}
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ path('parents_day') }}" class="btn btn-primary btn-sm">{{ 'filter.reset'|trans }}</a>
+                    </div>
+                </div>
+
+                <div class="w-100">
+                    <a href="#" class="btn btn-primary btn-sm float-right" data-trigger="scroll">
+                        <i class="fa fa-arrow-up"></i> {{ 'actions.top'|trans }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal with-form" tabindex="-1" id="modalUnbook">
+        <form method="post">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        {{ 'parents_day.appointments.unbook.label'|trans }}
+                        <span class="badge text-bg-primary teacher"></span>
+                        <span class="badge text-bg-secondary time"></span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-check">
+                        <input type="checkbox" id="confirm_group_general_confirm" name="confirm[group_general][confirm]" required="required" class="form-check-input" value="1">
+                        <label class="checkbox-custom form-check-label required" for="confirm_group_general_confirm">{{ 'parents_day.appointments.unbook.confirm'|trans}}</label>
+                    </div>
+
+                    <input type="hidden" name="confirm[_token]" value="{{ csrf_token('unbook_appointment') }}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'actions.cancel'|trans }}</button>
+                    <button type="submit" class="btn btn-primary">{{ 'actions.confirm'|trans }}</button>
+                </div>
+            </div>
+        </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    {% if app.user.isStudentOrParent %}
+    <script src="{{ asset('build/parents_day.js') }}"></script>
+    {% endif %}
+{% endblock %}

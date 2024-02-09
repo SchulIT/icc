@@ -20,12 +20,12 @@ class TeacherFilter {
     {
     }
 
-    public function handle(?string $uuid, ?Section $section, User $user, bool $setDefaultTeacher): TeacherFilterView {
+    public function handle(?string $uuid, ?Section $section, User $user, bool $setDefaultTeacher, bool $alwaysShowEveryTeacher = false): TeacherFilterView {
         $isStudentOrParent = $user->isStudentOrParent();
 
         $teachers = [ ];
 
-        if($isStudentOrParent !== true && $section !== null) {
+        if($alwaysShowEveryTeacher || ($isStudentOrParent !== true && $section !== null)) {
             $teachers = $this->teacherRepository->findAllBySection($section);
 
             if(count($teachers) === 0 && $this->generalSettings->getCurrentSectionId() !== null && $section->getId() !== $this->generalSettings->getCurrentSectionId()) {

@@ -1,0 +1,129 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'parents_day.appointments.book.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('parents_day') }}">{{ 'parents_day.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="bs-callout bs-callout-info">
+                    <h5>{{ 'info.label'|trans }}</h5>
+                    <p>{{ 'parents_day.appointments.book.introduction'|trans }}</p>
+                </div>
+
+                {% if appointments|length == 0 and teacherFilter.currentTeacher is not null %}
+                    <div class="bs-callout bs-callout-info">
+                        <h5>{{ 'info.label'|trans }}</h5>
+                        <p>{{ 'parents_day.appointments.empty.not_available'|trans }}</p>
+                    </div>
+                {% endif %}
+
+                {% if appointments|length > 0 %}
+                <div class="card">
+                    <div class="card-header">
+                        {{ 'parents_day.appointments.book.title'|trans({'%teacher%': teacherFilter.currentTeacher|teacher }) }}
+                    </div>
+
+                    <div class="list-group list-group-flush">
+                        {% for appointment in appointments %}
+                            {% set colliding = appointment in unavailableAppointments %}
+                            <a class="list-group-item list-group-item-action d-flex" {% if is_granted('book', appointment) and not colliding %} href="{{ path('book_parents_day_appointment', { uuid: appointment.uuid }) }}" data-modal-form="#modalBook" data-teacher="{{ teacherFilter.currentTeacher|teacher }}" data-time="{{ appointment.start|format_time('short') }}-{{ appointment.end|format_time('short') }}"{% endif %}>
+                                <div class="flex-fill">
+                                {{ appointment.start|format_time('short') }}-{{ appointment.end|format_time('short') }}
+
+                                    {% if not appointment.blocked and is_granted('details', appointment) %}
+                                        <span class="badge text-bg-success">{{ 'parents_day.appointments.booked'|trans }}</span>
+                                    {% elseif colliding %}
+                                        <span class="badge text-bg-danger">{{ 'parents_day.appointments.another_appointment_booked'|trans }}</span>
+                                    {% elseif appointment.blocked or appointment.students is not empty%}
+                                        <span class="badge text-bg-danger">{{ 'parents_day.appointments.not_available'|trans }}</span>
+                                    {% else %}
+                                        <span class="badge text-bg-success">{{ 'parents_day.appointments.available'|trans }}</span>
+
+                                        <span class="badge text-bg-primary">{{ 'parents_day.appointments.book.click'|trans }}</span>
+                                    {% endif %}
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-md-3 sticky-sidebar">
+                <div class="card">
+                    <div class="card-body">
+                        {% include "_filter/parents_day.html.twig" %}
+
+                        {% if teacherFilter.teachers|length > 0 %}
+                            {% include "_filter/teacher.html.twig" %}
+                        {% endif %}
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ path('parents_day') }}" class="btn btn-primary btn-sm">{{ 'filter.reset'|trans }}</a>
+                    </div>
+                </div>
+
+                <div class="w-100">
+                    <a href="#" class="btn btn-primary btn-sm float-right" data-trigger="scroll">
+                        <i class="fa fa-arrow-up"></i> {{ 'actions.top'|trans }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal with-form" tabindex="-1" id="modalBook">
+        {{ form_start(bookForm) }}
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        {{ 'parents_day.appointments.book.label'|trans }}
+                        <span class="badge text-bg-primary teacher"></span>
+                        <span class="badge text-bg-secondary time"></span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% if alreadyBookedWithTeacher %}
+                        <div class="bs-callout bs-callout-info mt-0">
+                            <h5>{{ 'info.label'|trans }}</h5>
+                            <p>{{ 'parents_day.appointments.book.already_booked.info'|trans }}</p>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="removeOldAppointments" value="true" id="removeOldAppointments" checked="checked">
+                                <label class="form-check-label" for="removeOldAppointments">
+                                    {{ 'parents_day.appointments.book.already_booked.confirm'|trans }}
+                                </label>
+                                <div class="form-text">
+                                    {{ 'parents_day.appointments.book.already_booked.help'|trans }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {{ form_widget(bookForm) }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'actions.cancel'|trans }}</button>
+                    <button type="submit" class="btn btn-primary">{{ 'actions.confirm'|trans }}</button>
+                </div>
+            </div>
+        </div>
+        {{ form_end(bookForm) }}
+    </div>
+
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script src="{{ asset('build/parents_day.js') }}"></script>
+{% endblock %}

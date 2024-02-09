@@ -17,7 +17,7 @@ class TuitionFilter {
     {
     }
 
-    public function handle(?string $tuitionUuid, ?Section $section, User $user): TuitionFilterView {
+    public function handle(?string $tuitionUuid, ?Section $section, User $user, bool $onlyOwn = false): TuitionFilterView {
         if($section === null) {
             return new TuitionFilterView([], null);
         }
@@ -27,6 +27,11 @@ class TuitionFilter {
         if($user->isStudentOrParent()) {
             $tuitions = ArrayUtils::createArrayWithKeys(
                 $this->repository->findAllByStudents($user->getStudents()->toArray(), $section),
+                $keyFunc
+            );
+        } else if($user->isTeacher() && $onlyOwn) {
+            $tuitions = ArrayUtils::createArrayWithKeys(
+                $this->repository->findAllByTeacher($user->getTeacher(), $section),
                 $keyFunc
             );
         } else {

@@ -1,0 +1,96 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'parents_day.prepare.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('parents_day') }}">{{ 'parents_day.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ parentsDay.title }}</li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="bs-callout bs-callout-info">
+                    <h5>{{ 'info.label'|trans }}</h5>
+                    <p>{{ 'parents_day.prepare.introduction'|trans }}</p>
+                </div>
+
+                {% if form is not null  %}
+                    {{ form_start(form) }}
+                    <div class="card">
+                        <div class="card-header d-flex">
+                            <div class="flex-fill">{{ tuitionFilter.currentTuition.name }}</div>
+
+                            <div class="flex-shrink-0">
+                                {% for teacher in tuitionFilter.currentTuition.teachers %}
+                                    <i class="fas fa-chalkboard-teacher"></i> {{ teacher|teacher }}
+                                {% endfor %}
+
+                                <i class="fa fa-users"></i> {{ tuitionFilter.currentTuition.studyGroup.memberships|length }}
+                            </div>
+                        </div>
+                        <table class="card-table table table-striped table-bordered">
+                            <colgroup>
+                                <col>
+                                <col class="column-lg">
+                                <col class="column-lg">
+                            </colgroup>
+                            <thead>
+                            <tbody>
+                            {% for student in form.students %}
+                                <tr>
+                                    <td class="align-middle">
+                                        {{ student.vars.value.student|student }}
+                                    </td>
+                                    <td class="align-middle">
+                                        {{ form_widget(student.isAppointmentNotNecessary) }}
+                                    </td>
+                                    <td class="align-middle">
+                                        {{ form_widget(student.isAppointmentRequested) }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <i class="fas fa-save"></i> {{ 'actions.save'|trans }}
+                    </button>
+
+                    {{ form_end(form) }}
+                {% endif %}
+            </div>
+            <div class="col-md-3 sticky-sidebar">
+                <div class="card">
+                    <div class="card-body">
+                        {% include "_filter/tuition.html.twig" %}
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ path('parents_day') }}" class="btn btn-primary btn-sm">{{ 'filter.reset'|trans }}</a>
+                    </div>
+                </div>
+
+                <div class="w-100">
+                    <a href="#" class="btn btn-primary btn-sm float-right" data-trigger="scroll">
+                        <i class="fa fa-arrow-up"></i> {{ 'actions.top'|trans }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script src="{{ asset('build/parents_day.js') }}"></script>
+{% endblock %}

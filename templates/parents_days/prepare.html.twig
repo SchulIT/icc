@@ -15,16 +15,22 @@
     <div class="container-fluid px-0">
         <div class="row">
             <div class="col-md-9">
+                {% if form is null %}
                 <div class="bs-callout bs-callout-info">
                     <h5>{{ 'info.label'|trans }}</h5>
                     <p>{{ 'parents_day.prepare.introduction'|trans }}</p>
                 </div>
+                {% endif %}
 
                 {% if form is not null  %}
                     {{ form_start(form) }}
                     <div class="card">
                         <div class="card-header d-flex">
-                            <div class="flex-fill">{{ tuitionFilter.currentTuition.name }}</div>
+                            <div class="flex-fill">
+                                {{ tuitionFilter.currentTuition.name }}
+
+                                {% for grade in tuitionFilter.currentTuition.studyGroup.grades %}<span class="badge text-bg-primary">{{ grade.name }}</span> {% endfor %}
+                            </div>
 
                             <div class="flex-shrink-0">
                                 {% for teacher in tuitionFilter.currentTuition.teachers %}
@@ -69,12 +75,18 @@
             </div>
             <div class="col-md-3 sticky-sidebar">
                 <div class="card">
-                    <div class="card-body">
-                        {% include "_filter/tuition.html.twig" %}
-                    </div>
-
-                    <div class="card-footer">
-                        <a href="{{ path('parents_day') }}" class="btn btn-primary btn-sm">{{ 'filter.reset'|trans }}</a>
+                    <div class="list-group list-group-flush">
+                        {% for tuition in tuitionFilter.tuitions %}
+                            <a href="{{ path('prepare_parents_day',  { uuid: parentsDay.uuid , tuition: tuition.uuid.toString }) }}" class="list-group-item list-group-item-action {% if tuitionFilter.currentTuition == tuition %}active{% endif %}">
+                                <i class="fas fa-chalkboard"></i>
+                                {% if tuition.displayName is not empty %}
+                                    {{ tuition.displayName }}
+                                {% else %}
+                                    {{ tuition.name }}
+                                {% endif %}
+                                ({% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+                            </a>
+                        {% endfor %}
                     </div>
                 </div>
 

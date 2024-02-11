@@ -1423,6 +1423,7 @@ admin:
                 notifications: Alle Benachrichtigungen im Zeitraum des Abschnittes
                 substitutions: Alle Vertretungen in diesem Abschnitt (inkl. Absenzen, unterrichtsfreie Zeiten und Tagestexte)
                 appointments: Alle Termine in diesem Abschnitt - es werden alle Termine gelöscht, deren Startdatum im Abschnitt liegt
+                parents_day: Alle Elternsprechtage in diesem Abschnitt (inkl. vergebener Termine)
 
             success: Abschnitt erfolgreich gelöscht
 

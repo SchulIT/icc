@@ -27,4 +27,6 @@ interface ParentsDayRepositoryInterface {
     public function persist(ParentsDay $parentsDay): void;
 
     public function remove(ParentsDay $parentsDay): void;
+
+    public function removeRange(DateTime $start, DateTime $end): int;
 }

@@ -36,4 +36,15 @@ class ParentsDayRepository extends AbstractRepository implements ParentsDayRepos
         $this->em->remove($parentsDay);
         $this->em->flush();
     }
+
+    public function removeRange(DateTime $start, DateTime $end): int {
+        return $this->em->createQueryBuilder()
+            ->delete(ParentsDay::class, 'p')
+            ->where('p.date >= :start')
+            ->andWhere('p.date <= :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getQuery()
+            ->execute();
+    }
 }

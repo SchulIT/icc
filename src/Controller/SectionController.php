@@ -10,6 +10,7 @@ use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\FreeTimespanRepositoryInterface;
 use App\Repository\InfotextRepositoryInterface;
 use App\Repository\NotificationRepositoryInterface;
+use App\Repository\ParentsDayRepositoryInterface;
 use App\Repository\ResourceReservationRepositoryInterface;
 use App\Repository\StudentAbsenceRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
@@ -84,7 +85,8 @@ class SectionController extends AbstractController {
                            NotificationRepositoryInterface $notificationRepository, ResourceReservationRepositoryInterface $reservationRepository,
                            AbsenceRepositoryInterface $absenceRepository, FreeTimespanRepositoryInterface $freeTimespanRepository,
                            InfotextRepositoryInterface $infotextRepository, AppointmentRepositoryInterface $appointmentRepository,
-                           ExcuseNoteRepositoryInterface $excuseNoteRepository, BookCommentRepositoryInterface $bookCommentRepository): Response {
+                           ExcuseNoteRepositoryInterface $excuseNoteRepository, BookCommentRepositoryInterface $bookCommentRepository,
+                           ParentsDayRepositoryInterface $parentsDayRepository): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'admin.sections.remove.confirm',
             'message_parameters' => [
@@ -109,6 +111,7 @@ class SectionController extends AbstractController {
             $gradeRepository->removeForSection($section);
             $studentAbsenceRepository->removeRange($section->getStart(), $section->getEnd());
             $teacherAbsenceRepository->removeRange($section->getStart(), $section->getEnd());
+            $parentsDayRepository->removeRange($section->getStart(), $section->getEnd());
 
             $this->repository->remove($section);
             $this->addFlash('success', 'admin.sections.remove.success');

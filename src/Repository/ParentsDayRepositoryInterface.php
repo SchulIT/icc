@@ -14,6 +14,12 @@ interface ParentsDayRepositoryInterface {
     public function findUpcoming(DateTime $from): array;
 
     /**
+     * @param DateTime $date
+     * @return ParentsDay[]
+     */
+    public function findByDate(DateTime $date): array;
+
+    /**
      * @return ParentsDay[]
      */
     public function findAll(): array;

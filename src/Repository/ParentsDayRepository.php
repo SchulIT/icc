@@ -17,6 +17,11 @@ class ParentsDayRepository extends AbstractRepository implements ParentsDayRepos
             ->getResult();
     }
 
+    public function findByDate(DateTime $date): array {
+        return $this->em->getRepository(ParentsDay::class)
+            ->findBy(['date' => $date], ['date' => 'desc']);
+    }
+
     public function findAll(): array {
         return $this->em->getRepository(ParentsDay::class)
             ->findBy([], ['date' => 'desc']);

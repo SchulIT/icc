@@ -35,6 +35,8 @@ use App\Repository\FreeTimespanRepositoryInterface;
 use App\Repository\InfotextRepositoryInterface;
 use App\Repository\LessonEntryRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
+use App\Repository\ParentsDayAppointmentRepositoryInterface;
+use App\Repository\ParentsDayRepositoryInterface;
 use App\Repository\ResourceReservationRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
@@ -59,6 +61,7 @@ use App\Sorting\AbsentStudentStrategy;
 use App\Sorting\AbsentStudyGroupStrategy;
 use App\Sorting\AbsentTeacherStrategy;
 use App\Sorting\MessageStrategy;
+use App\Sorting\ParentsDayAppointmentStrategy;
 use App\Sorting\Sorter;
 use App\Timetable\TimetableTimeHelper;
 use App\Utils\ArrayUtils;
@@ -79,7 +82,8 @@ class DashboardViewHelper {
                                 private AuthorizationCheckerInterface $authorizationChecker, private ValidatorInterface $validator, private DateHelper $dateHelper, private AbsenceResolver $absenceResolver,
                                 private SectionResolverInterface $sectionResolver, private readonly TuitionRepositoryInterface $tuitionRepository, private readonly TeacherAbsenceLessonRepositoryInterface $absenceLessonRepository,
                                 private readonly BookSettings $bookSettings, private readonly LessonEntryRepositoryInterface $lessonEntryRepository, private readonly TeacherRepositoryInterface $teacherRepository,
-                                private readonly StudentRepositoryInterface $studentRepository, private readonly TokenStorageInterface $tokenStorage)
+                                private readonly StudentRepositoryInterface $studentRepository, private readonly TokenStorageInterface $tokenStorage,
+                                private readonly ParentsDayRepositoryInterface $parentsDayRepository, private readonly ParentsDayAppointmentRepositoryInterface $parentsDayAppointmentRepository)
     {
     }
 
@@ -165,6 +169,13 @@ class DashboardViewHelper {
         $this->setCurrentLesson($view);
         $this->addBirthdays($view, $dateTime);
 
+        $appointments = [ ];
+        foreach($this->parentsDayRepository->findByDate($dateTime) as $parentsDay) {
+            $appointments = array_merge($appointments, $this->parentsDayAppointmentRepository->findForTeacher($teacher, $parentsDay));
+        }
+
+        $this->addParentsDayAppointments($view, $appointments);
+
         return $view;
     }
 
@@ -194,6 +205,13 @@ class DashboardViewHelper {
         $this->setCurrentLesson($view);
 
         $this->addExercises($view, $student, $dateTime);
+
+        $appointments = [ ];
+        foreach($this->parentsDayRepository->findByDate($dateTime) as $parentsDay) {
+            $appointments = array_merge($appointments, $this->parentsDayAppointmentRepository->findForStudents([$student], $parentsDay));
+        }
+
+        $this->addParentsDayAppointments($view, $appointments);
 
         return $view;
     }
@@ -233,6 +251,17 @@ class DashboardViewHelper {
             if($startTime <= $now && $now <= $endTime) {
                 $lesson->setIsCurrent(true);
             }
+        }
+    }
+
+    private function addParentsDayAppointments(DashboardView $view, array $appointments): void {
+        if(count($appointments) === 0) {
+            return;
+        }
+
+        $this->sorter->sort($appointments, ParentsDayAppointmentStrategy::class);
+        foreach($appointments as $appointment) {
+            $view->addParentsDayAppointment($appointment);
         }
     }
 

@@ -60,11 +60,9 @@
                                             <i class="fas fa-user-graduate"></i> {{ student|student(true) }}
                                         {% endfor %}
 
-                                        {% if not app.user.isTeacher %}
-                                            {% for teacher in appointment.teachers %}
-                                                <i class="fas fa-chalkboard-teacher"></i> {{ teacher|teacher }}
-                                            {% endfor %}
-                                        {% endif %}
+                                        {% for teacher in appointment.teachers %}
+                                            <i class="fas fa-chalkboard-teacher"></i> {{ teacher|teacher }}
+                                        {% endfor %}
                                     {% else %}
                                         <span class="badge text-bg-secondary">{{ 'parents_day.appointments.not_available'|trans }}</span>
                                     {% endif %}

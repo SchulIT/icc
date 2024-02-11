@@ -677,3 +677,46 @@
         </div>
     {% endif %}
 {% endblock %}
+
+{% block parentsDayAppointments %}
+    {% if view.parentsDayAppointments|length > 0 %}
+        <div class="spacer mb-2">
+            <span>
+                <a id="parentsdayappointments"></a>
+                <i class="fa-solid fa-people-arrows"></i> {{ 'parents_day.label'|trans }}
+            </span>
+        </div>
+
+        <div class="card">
+        <div class="list-group list-group-flush">
+            {% for appointment in view.parentsDayAppointments %}
+                <div class="list-group-item d-flex">
+                    <div class="flex-fill align-self-center">
+                        {{ appointment.start|format_time('short') }}-{{ appointment.end|format_time('short') }}
+
+                        {% if appointment.blocked %}
+                            <span class="badge text-bg-secondary">{{ 'parents_day.appointments.blocked'|trans }}</span>
+                        {% else %}
+                            {% if appointment.students is empty %}
+                                <span class="badge text-bg-success">{{ 'parents_day.appointments.available'|trans }}</span>
+                            {% endif %}
+
+                            {% if is_granted('details', appointment) %}
+                                {% for student in appointment.students %}
+                                    <i class="fas fa-user-graduate"></i> {{ student|student(true) }}
+                                {% endfor %}
+
+                                {% for teacher in appointment.teachers %}
+                                    <i class="fas fa-chalkboard-teacher"></i> {{ teacher|teacher }}
+                                {% endfor %}
+                            {% else %}
+                                <span class="badge text-bg-secondary">{{ 'parents_day.appointments.not_available'|trans }}</span>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        </div>
+    {% endif %}
+{% endblock %}

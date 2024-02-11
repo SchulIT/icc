@@ -108,6 +108,8 @@
                                         <div class="dropdown-divider"></div>
                                         <a href="{{ path('edit_parents_day_appointment', { uuid: appointment.uuid }) }}" class="dropdown-item">
                                             <i class="fas fa-edit"></i> {{ 'actions.edit'|trans }}
+
+                                            <span class="text-muted text-wrap d-block fs-6">{{ 'parents_day.appointments.edit.help'|trans }}</span>
                                         </a>
                                         <a href="{{ path('remove_parents_day_appointment', { uuid: appointment.uuid }) }}" class="dropdown-item text-danger">
                                             <i class="fas fa-trash"></i> {{ 'actions.remove'|trans }}

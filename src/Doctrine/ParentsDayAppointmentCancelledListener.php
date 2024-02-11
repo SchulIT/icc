@@ -11,6 +11,8 @@ use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PreRemoveEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
+use Doctrine\ORM\PersistentCollection;
+use Doctrine\ORM\UnitOfWork;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 
 #[AsDoctrineListener(event: Events::preUpdate)]
@@ -40,6 +42,16 @@ class ParentsDayAppointmentCancelledListener {
 
         $uow = $args->getObjectManager()->getUnitOfWork();
 
+        foreach($uow->getScheduledCollectionDeletions() as $collectionDeletion) {
+            $owner = $collectionDeletion->getOwner();
+
+            if(!$owner instanceof ParentsDayAppointment) {
+                continue;
+            }
+
+            $this->handleCollectionChange($collectionDeletion, $uow, $owner);
+        }
+
         foreach($uow->getScheduledCollectionUpdates() as $collectionUpdate) {
             $owner = $collectionUpdate->getOwner();
 
@@ -47,11 +59,28 @@ class ParentsDayAppointmentCancelledListener {
                 continue;
             }
 
-            /** @var Student|Teacher $studentOrTeacher */
-            foreach($collectionUpdate->getDeleteDiff() as $studentOrTeacher) {
-                if($studentOrTeacher instanceof Student) {
-                    $this->collector->collect(new ParentsDayAppointmentCancelledEvent($owner, $studentOrTeacher));
-                }
+            $this->handleCollectionChange($collectionUpdate, $uow, $owner);
+        }
+    }
+
+    private function handleCollectionChange(PersistentCollection $collection, UnitOfWork $uow, ParentsDayAppointment $appointment): void {
+        $deleted = $collection->getDeleteDiff();
+
+        /*
+         * See https://stackoverflow.com/a/75277454
+         */
+
+        if(count($deleted) === 0) {
+            $clone = clone $collection;
+            $clone->setOwner($collection->getOwner(), $collection->getMapping());
+            $uow->loadCollection($clone);
+            $deleted = $clone->toArray();
+        }
+
+        /** @var Student|Teacher $studentOrTeacher */
+        foreach($deleted as $studentOrTeacher) {
+            if($studentOrTeacher instanceof Student) {
+                $this->collector->collect(new ParentsDayAppointmentCancelledEvent($appointment, $studentOrTeacher));
             }
         }
     }

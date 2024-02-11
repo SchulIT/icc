@@ -68,7 +68,7 @@ class ParentsDayController extends AbstractController {
             if($user->isTeacher() && $teacherFilterView->getCurrentTeacher() !== null) {
                 $appointments = $this->appointmentRepository->findForTeacher($teacherFilterView->getCurrentTeacher(), $parentsDayFilterView->getCurrentParentsDay());
             } else if($user->isStudentOrParent() || $studentFilterView->getCurrentStudent() !== null) {
-                $students = $user->getStudents();
+                $students = $user->getStudents()->toArray();
 
                 if($studentFilterView->getCurrentStudent() !== null) {
                     $students = [ $studentFilterView->getCurrentStudent() ];
@@ -127,25 +127,23 @@ class ParentsDayController extends AbstractController {
         ]);
     }
 
-    #[Route('/book', name: 'book_parents_day_appointment_overview')]
-    public function book(ParentsDayFilter $parentsDayFilter, TeacherFilter $teacherFilter, Request $request, SectionResolverInterface $sectionResolver): Response {
-
+    #[Route('/{uuid}/book', name: 'book_parents_day_appointment_overview')]
+    public function book(ParentsDay $parentsDay, TeacherFilter $teacherFilter, Request $request, SectionResolverInterface $sectionResolver): Response {
+        $this->denyAccessUnlessGranted(ParentsDayAppointmentVoter::BOOK_ANY, $parentsDay);
 
         /** @var User $user */
         $user = $this->getUser();
 
         $teacherFilterView = $teacherFilter->handle($request->query->get('teacher'), $sectionResolver->getCurrentSection(), $user, false, true);
-        $parentsDayFilterView = $parentsDayFilter->handle($request->query->get('day'), $user);
 
-        $this->denyAccessUnlessGranted(ParentsDayAppointmentVoter::BOOK_ANY, $parentsDayFilterView->getCurrentParentsDay());
 
         $appointments = [ ];
         $unavailableAppointments = [ ];
         $alreadyBookedWithTeacher = false;
 
-        if($parentsDayFilterView->getCurrentParentsDay() !== null && $teacherFilterView->getCurrentTeacher() !== null) {
-            $appointments = $this->appointmentRepository->findForTeacher($teacherFilterView->getCurrentTeacher(), $parentsDayFilterView->getCurrentParentsDay());
-            $ownAppointments = $this->appointmentRepository->findForStudents($user->getStudents()->toArray(), $parentsDayFilterView->getCurrentParentsDay());
+        if($teacherFilterView->getCurrentTeacher() !== null) {
+            $appointments = $this->appointmentRepository->findForTeacher($teacherFilterView->getCurrentTeacher(), $parentsDay);
+            $ownAppointments = $this->appointmentRepository->findForStudents($user->getStudents()->toArray(), $parentsDay);
 
             foreach($ownAppointments as $ownAppointment) {
                 foreach($ownAppointment->getTeachers() as $teacher) {
@@ -165,7 +163,7 @@ class ParentsDayController extends AbstractController {
         return $this->render('parents_days/book_overview.html.twig', [
             'appointments' => $appointments,
             'teacherFilter' => $teacherFilterView,
-            'parentsDayFilter' => $parentsDayFilterView,
+            'parentsDay' => $parentsDay,
             'unavailableAppointments' => $unavailableAppointments,
             'alreadyBookedWithTeacher' => $alreadyBookedWithTeacher,
             'bookForm' => $this->createForm(BookParentsDayAppointmentType::class, null, [ 'user' => $this->getUser()])->createView()

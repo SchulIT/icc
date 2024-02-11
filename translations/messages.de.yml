@@ -2210,6 +2210,7 @@ parents_day:
         already_booked: Termin gebucht
         another_appointment_booked: Kollidiert mit anderem Termin
         booked: Termin gebucht
+        booking_unavailable: Buchen nicht möglich
         add:
             label: Mehrere Termine erstellen
             help: Hier können für einen bestimmten Zeitbereich Termine mit derselben Dauer erstellt werden, die von Eltern gebucht werden können.

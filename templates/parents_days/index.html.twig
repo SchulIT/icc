@@ -7,7 +7,7 @@
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
         {% if parentsDayFilter.currentParentsDay is not null %}
-            <li class="breadcrumb-item">{{ parentsDayFilter.currentParentsDay.title }}<span class="badge text-bg-primary">{{ parentsDayFilter.currentParentsDay.date|format_date }}</span></li>
+            <li class="breadcrumb-item">{{ parentsDayFilter.currentParentsDay.title }} <span class="badge text-bg-primary">{{ parentsDayFilter.currentParentsDay.date|format_date }}</span></li>
         {% endif %}
     </ol>
 {% endblock %}

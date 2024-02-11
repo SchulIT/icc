@@ -6,6 +6,7 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
         <li class="breadcrumb-item"><a href="{{ path('parents_day') }}">{{ 'parents_day.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ parentsDay.title }} <span class="badge text-bg-primary">{{ parentsDay.date|format_date }}</span></li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
 {% endblock %}
@@ -60,8 +61,6 @@
             <div class="col-md-3 sticky-sidebar">
                 <div class="card">
                     <div class="card-body">
-                        {% include "_filter/parents_day.html.twig" %}
-
                         {% if teacherFilter.teachers|length > 0 %}
                             {% include "_filter/teacher.html.twig" %}
                         {% endif %}

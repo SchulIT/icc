@@ -4,13 +4,14 @@
 <form role="form" method="get" class="form hidden-print">
     {% include "_filter/_params.html.twig" %}
 
-    <div class="mb-3 {{ class|default('') }}">
-        <label for="day" class="form-label">{{ 'label.parents_day'|trans }}:</label>
-        <select name="day" id="day" class="form-control" data-trigger="{{ trigger|default("submit") }}" data-choice="{{ isChoice ? 'true' : 'false' }}">
-            <option value="" placeholder>{{ 'label.select.parents_day'|trans }}</option>
-            {% for day in parentsDayFilter.parentsDays %}
-                <option value="{{ day.uuid }}" {% if parentsDayFilter.currentParentsDay != null and parentsDayFilter.currentParentsDay.id == day.id %}selected="selected"{% endif %}>{{ day.title }}</option>
-            {% endfor %}
-        </select>
+    <label class="form-label">{{ 'label.parents_day'|trans }}:</label>
+
+    <div class="btn-group-vertical w-100" role="group">
+        {% for day in parentsDayFilter.parentsDays %}
+            <button type="submit" name="day" value="{{ day.uuid }}" class="btn {% if parentsDayFilter.currentParentsDay != null and parentsDayFilter.currentParentsDay.id == day.id %} active {% endif %}btn-outline-secondary text-start">
+                {{ day.title }}
+                <span class="badge text-bg-primary">{{ day.date|format_date }}</span>
+            </button>
+        {% endfor %}
     </div>
 </form>

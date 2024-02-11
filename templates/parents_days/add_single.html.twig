@@ -6,7 +6,7 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
         <li class="breadcrumb-item"><a href="{{ path('parents_day') }}">{{ 'parents_day.label'|trans }}</a></li>
-        <li class="breadcrumb-item">{{ parentsDay.title }}</li>
+        <li class="breadcrumb-item">{{ parentsDay.title }} <span class="badge text-bg-primary">{{ parentsDay.date|format_date }}</span></li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
 {% endblock %}

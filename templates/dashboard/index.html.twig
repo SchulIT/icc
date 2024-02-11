@@ -661,6 +661,23 @@
             </div>
         </div>
     {% endif %}
+
+    {% if app.user.isStudentOrParent and is_granted('parentsdayappointments') and upcomingParentsDays|length > 0 %}
+        {% for parentsDay in upcomingParentsDays %}
+            <div class="bs-callout bs-callout-warning">
+                <div class="d-flex align-items-center">
+                    <p class="me-auto mb-0">
+                        <i class="fa-solid fa-people-arrows"></i> {{ 'dashboard.parents_day.header'|trans({'%date%': parentsDay.date|format_date }) }}
+                    </p>
+                    <div>
+                        <a href="{{ path('parents_day') }}" class="btn btn-outline-primary btn-sm">
+                            {{ 'dashboard.parents_day.link'|trans }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
 {% endblock %}
 
 {% block missingEntries %}

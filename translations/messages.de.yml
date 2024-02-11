@@ -413,6 +413,9 @@ dashboard:
         tuition: Zur Lernendenübersicht
         book: Zum Unterrichtsbuch
         gradebook: Zur Notenübersicht
+    parents_day:
+        header: Es können Termine für den Elternsprechtag am %date% gebucht werden.
+        link: jetzt buchen
 
 plans:
     label: Pläne

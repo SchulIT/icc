@@ -85,3 +85,13 @@ book_comment:
     title: Kommentar im Unterrichtsbuch aktualisiert
     content: Ein Kommentar im Unterrichtsbuch wurde aktualisiert.
   link: Zum Kommentar
+
+parents_day:
+  appointment:
+    created:
+      title: Elternsprechtagstermin erstellt
+      content: Es wurde ein Termin für %student% um %start% bei %teacher% erstellt.
+    cancelled:
+      title: Elternsprechtagstermin abgesagt
+      content: Der Termin für %student% um %start% bei %teacher% wurde abgesagt.
+  link: Zur Elternsprechtagsübersicht

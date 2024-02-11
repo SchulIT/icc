@@ -51,11 +51,17 @@ class ParentsDayAppointmentType extends AbstractType {
             return;
         }
 
-        if(!$user->isTeacher()) {
+        if($options['only_students'] || !$user->isTeacher()) {
             $builder
                 ->remove('start')
                 ->remove('end')
                 ->remove('teachers');
         }
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void {
+        parent::configureOptions($resolver);
+
+        $resolver->setDefault('only_students', false);
     }
 }

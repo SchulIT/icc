@@ -298,7 +298,7 @@ class ParentsDayController extends AbstractController {
     public function assignAppointment(ParentsDayAppointment $appointment, Request $request): Response {
         $this->denyAccessUnlessGranted(ParentsDayAppointmentVoter::EDIT, $appointment);
 
-        $form = $this->createForm(ParentsDayAppointmentType::class, $appointment);
+        $form = $this->createForm(ParentsDayAppointmentType::class, $appointment, [ 'only_students' => true]);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {

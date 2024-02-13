@@ -11,10 +11,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class ParentsDayType extends AbstractType {
 
-    public function __construct(private readonly GradeNameStrategy $gradeNameStrategy) {
-
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
             ->add('title', TextType::class, [

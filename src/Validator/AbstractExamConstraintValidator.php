@@ -26,7 +26,7 @@ abstract class AbstractExamConstraintValidator extends ConstraintValidator {
         $exams = $this->examRepository->findAll();
 
         foreach($exams as $exam) {
-            /** @var ExamStudent $student */
+            /** @var ExamStudent $examStudent */
             foreach($exam->getStudents() as $examStudent) {
                 $student = $examStudent->getStudent();
 

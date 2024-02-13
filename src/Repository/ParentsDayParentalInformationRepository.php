@@ -6,8 +6,6 @@ use App\Entity\ParentsDay;
 use App\Entity\ParentsDayParentalInformation;
 use App\Entity\Student;
 use App\Entity\Teacher;
-use App\Entity\Tuition;
-use function Doctrine\ORM\QueryBuilder;
 
 class ParentsDayParentalInformationRepository extends AbstractTransactionalRepository implements ParentsDayParentalInformationRepositoryInterface {
 

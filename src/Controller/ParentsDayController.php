@@ -431,9 +431,12 @@ class ParentsDayController extends AbstractController {
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
+            /** @var User $user */
+            $user = $this->getUser();
+
             $appointment->setIsCancelled(true);
             $appointment->setCancelReason($form->get('reason')->getData());
-            $appointment->setCancelledBy($this->getUser());
+            $appointment->setCancelledBy($user);
             $this->appointmentRepository->persist($appointment);
 
             $this->addFlash('success', 'parents_day.appointments.cancel.success');
@@ -511,7 +514,7 @@ class ParentsDayController extends AbstractController {
                 if($this->isGranted(ParentsDayAppointmentVoter::CANCEL, $appointment)) {
                     $appointment->setIsCancelled(true);
                     $appointment->setCancelReason($form->get('reason')->getData());
-                    $appointment->setCancelledBy($this->getUser());
+                    $appointment->setCancelledBy($user);
                     $this->appointmentRepository->persist($appointment);
                 }
             }
@@ -524,7 +527,7 @@ class ParentsDayController extends AbstractController {
 
         return $this->render('parents_days/cancel_all.html.twig', [
             'parentsDay' => $parentsDay,
-            'form' => $form?->createView()
+            'form' => $form->createView()
         ]);
     }
 

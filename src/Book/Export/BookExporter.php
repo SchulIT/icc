@@ -431,7 +431,7 @@ class BookExporter {
         $membershipType = null;
 
         if($tuition !== null) {
-            /** @var StudyGroupMembership $membership */
+            /** @var StudyGroupMembership|null $membership */
             $membership = $student->getStudyGroupMemberships()->findFirst(fn(int $_, StudyGroupMembership $membership) => $membership->getStudyGroup()->getId() === $tuition->getStudyGroup()->getId());
             $membershipType = $membership?->getType();
         }

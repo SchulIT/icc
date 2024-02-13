@@ -20,7 +20,7 @@ class ParentsDayAppointment {
     #[ORM\ManyToOne(targetEntity: ParentsDay::class)]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     #[Assert\NotNull]
-    private ParentsDay $parentsDay;
+    private ?ParentsDay $parentsDay;
 
     #[ORM\Column(type: 'boolean')]
     private bool $isBlocked = false;
@@ -151,14 +151,14 @@ class ParentsDayAppointment {
 
     public function getStartDateTime(): DateTime {
         $date = clone $this->getParentsDay()->getDate();
-        $date->setTime($this->getStart()->format('H'), $this->getStart()->format('i'), 0);
+        $date->setTime((int)$this->getStart()->format('H'), (int)$this->getStart()->format('i'), 0);
 
         return $date;
     }
 
     public function getEndDateTime(): DateTime {
         $date = clone $this->getParentsDay()->getDate();
-        $date->setTime($this->getEnd()->format('H'), $this->getEnd()->format('i'), 0);
+        $date->setTime((int)$this->getEnd()->format('H'), (int)$this->getEnd()->format('i'), 0);
 
         return $date;
     }

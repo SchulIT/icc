@@ -62,13 +62,6 @@ class ParentsDayAdminController extends AbstractController {
         ]);
     }
 
-    #[Route('/{uuid}/block', name: 'block_parents_day_appointment', methods: [ Request::METHOD_POST ])]
-    public function block(ParentsDayAppointment $appointment, Request $request): RedirectResponse {
-        if(!$this->isCsrfTokenValid('parents_day_appointment', $request->request->get('_csrf_token'))) {
-
-        }
-    }
-
     #[Route('/{uuid}/remove', name: 'remove_parents_day')]
     public function remove() {
 

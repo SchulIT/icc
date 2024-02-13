@@ -50,7 +50,7 @@ class AppointmentsCreator {
     private function getDateTime(DateTime $dateTime, string $time): DateTime {
         [$hours, $minutes] = explode(':', $time);
 
-        return (clone $dateTime)->setTime($hours, $minutes, 0);
+        return (clone $dateTime)->setTime((int)$hours, (int)$minutes, 0);
     }
 
     /**

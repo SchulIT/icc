@@ -17,17 +17,17 @@ class ParentsDayParentalInformation {
     #[ORM\ManyToOne(targetEntity: ParentsDay::class)]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     #[Assert\NotNull]
-    private ParentsDay $parentsDay;
+    private ?ParentsDay $parentsDay;
 
     #[ORM\ManyToOne(targetEntity: Teacher::class)]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     #[Assert\NotNull]
-    private Teacher $teacher;
+    private ?Teacher $teacher;
 
     #[ORM\ManyToOne(targetEntity: Student::class)]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     #[Assert\NotNull]
-    private Student $student;
+    private ?Student $student;
 
     #[ORM\Column(type: 'boolean')]
     private bool $isAppointmentCancelled = false;

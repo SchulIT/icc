@@ -179,7 +179,7 @@ class DashboardViewHelper {
         return $view;
     }
 
-    public function createViewForStudentOrParent(Student $student, DateTime $dateTime, UserType $userType): DashboardView {
+    public function createViewForStudentOrParent(Student $student, DateTime $dateTime, UserType $userType, User|null $user = null): DashboardView {
         $view = new DashboardView($dateTime);
 
         $studyGroups = $this->studyGroupHelper->getStudyGroups([$student])->toArray();
@@ -208,7 +208,13 @@ class DashboardViewHelper {
 
         $appointments = [ ];
         foreach($this->parentsDayRepository->findByDate($dateTime) as $parentsDay) {
-            $appointments = array_merge($appointments, $this->parentsDayAppointmentRepository->findForStudents([$student], $parentsDay));
+            $appointments = array_merge(
+                $appointments,
+                $this->parentsDayAppointmentRepository->findForStudents(
+                    $user !== null ? $user->getStudents()->toArray() : [$student ],
+                    $parentsDay
+                )
+            );
         }
 
         $this->addParentsDayAppointments($view, $appointments);

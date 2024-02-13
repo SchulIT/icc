@@ -102,7 +102,7 @@ class DashboardController extends AbstractController {
             if($userTypeFilterView->getCurrentType() === null) {
                 $userTypeFilterView->setCurrentType(UserType::Student);
             }
-            $view = $dashboardViewHelper->createViewForStudentOrParent($studentFilterView->getCurrentStudent(), $selectedDate, $userTypeFilterView->getCurrentType());
+            $view = $dashboardViewHelper->createViewForStudentOrParent($studentFilterView->getCurrentStudent(), $selectedDate, $userTypeFilterView->getCurrentType(), $user->isStudentOrParent() ? $user : null);
         } else if($teacherFilterView->getCurrentTeacher() !== null) {
             if($user->getTeacher() === null || $user->getTeacher()->getId() !== $teacherFilterView->getCurrentTeacher()->getId()) {
                 // Only include grade messages if the current user is the selected user in the teacher filter.

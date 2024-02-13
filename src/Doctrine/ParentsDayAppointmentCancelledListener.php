@@ -36,8 +36,16 @@ class ParentsDayAppointmentCancelledListener {
 
 
     public function preUpdate(PreUpdateEventArgs $args): void {
-        if(!$args->getObject() instanceof ParentsDayAppointment) {
+        $appointment = $args->getObject();
+
+        if(!$appointment instanceof ParentsDayAppointment) {
             return;
+        }
+
+        if($args->hasChangedField('isCancelled')) {
+            foreach($appointment->getStudents() as $student) {
+                $this->collector->collect(new ParentsDayAppointmentCancelledEvent($appointment, $student));
+            }
         }
 
         $uow = $args->getObjectManager()->getUnitOfWork();

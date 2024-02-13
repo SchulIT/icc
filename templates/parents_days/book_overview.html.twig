@@ -36,11 +36,15 @@
                     <div class="list-group list-group-flush">
                         {% for appointment in appointments %}
                             {% set colliding = appointment in unavailableAppointments %}
-                            <a class="list-group-item list-group-item-action d-flex" {% if is_granted('book', appointment) and not colliding %} href="{{ path('book_parents_day_appointment', { uuid: appointment.uuid }) }}" data-modal-form="#modalBook" data-teacher="{{ teacherFilter.currentTeacher|teacher }}" data-time="{{ appointment.start|format_time('short') }}-{{ appointment.end|format_time('short') }}"{% endif %}>
+                            <a class="list-group-item list-group-item-action d-flex" {% if is_granted('book', appointment) and not colliding and not appointment.cancelled %} href="{{ path('book_parents_day_appointment', { uuid: appointment.uuid }) }}" data-modal-form="#modalBook" data-teacher="{{ teacherFilter.currentTeacher|teacher }}" data-time="{{ appointment.start|format_time('short') }}-{{ appointment.end|format_time('short') }}"{% endif %}>
                                 <div class="flex-fill">
                                 {{ appointment.start|format_time('short') }}-{{ appointment.end|format_time('short') }}
 
-                                    {% if not appointment.blocked and is_granted('details', appointment) %}
+                                    {% if appointment.cancelled %}
+                                        <span class="badge text-bg-danger">
+                                            <i class="fa-regular fa-calendar-xmark"></i> {{ 'parents_day.appointments.cancelled'|trans }}
+                                        </span>
+                                    {% elseif not appointment.blocked and is_granted('details', appointment) %}
                                         <span class="badge text-bg-success">{{ 'parents_day.appointments.booked'|trans }}</span>
                                     {% elseif colliding %}
                                         <span class="badge text-bg-danger">{{ 'parents_day.appointments.another_appointment_booked'|trans }}</span>

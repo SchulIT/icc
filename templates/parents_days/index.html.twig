@@ -51,10 +51,21 @@
                                 <div class="flex-fill align-self-center">
                                 {{ appointment.start|format_time('short') }}-{{ appointment.end|format_time('short') }}
 
-                                {% if appointment.blocked %}
+                                {% if appointment.cancelled %}
+                                    {% if is_granted('details', appointment) %}
+                                        <span class="badge text-bg-danger">
+                                            <i class="fa-regular fa-calendar-xmark"></i> {{ 'parents_day.appointments.cancelled'|trans }}
+                                        </span>
+
+                                        {{ appointment.cancelReason }}
+                                    {% else %}
+                                        <span class="badge text-bg-secondary">{{ 'parents_day.appointments.not_available'|trans }}</span>
+                                    {% endif %}
+                                {% endif %}
+                                {% if appointment.blocked and not appointment.cancelled %}
                                     <span class="badge text-bg-secondary">{{ 'parents_day.appointments.blocked'|trans }}</span>
                                 {% else %}
-                                    {% if appointment.students is empty %}
+                                    {% if appointment.students is empty and not appointment.cancelled %}
                                         <span class="badge text-bg-success">{{ 'parents_day.appointments.available'|trans }}</span>
                                     {% endif %}
 
@@ -63,9 +74,11 @@
                                             <i class="fas fa-user-graduate"></i> {{ student|student(true) }}
                                         {% endfor %}
 
-                                        {% for teacher in appointment.teachers %}
-                                            <i class="fas fa-chalkboard-teacher"></i> {{ teacher|teacher }}
-                                        {% endfor %}
+                                        {% if appointment.students|length > 0 %}
+                                            {% for teacher in appointment.teachers %}
+                                                <i class="fas fa-chalkboard-teacher"></i> {{ teacher|teacher }}
+                                            {% endfor %}
+                                        {% endif %}
                                     {% else %}
                                         <span class="badge text-bg-secondary">{{ 'parents_day.appointments.not_available'|trans }}</span>
                                     {% endif %}
@@ -171,7 +184,7 @@
             <div class="col-md-3 sticky-sidebar">
                 {% if parentsDayFilter.currentParentsDay is not null %}
                     {% set canBook = is_granted('book-parentsdayappointment', parentsDayFilter.currentParentsDay) %}
-                    {% set canCreate = is_granted('create-parentsdayappointment') %}
+                    {% set canCreate = is_granted('create-parentsdayappointment') and app.user.teacher == teacherFilter.currentTeacher %}
                     {% if canBook or canCreate %}
                         <div class="card">
                             <div class="list-group list-group-flush">
@@ -199,6 +212,13 @@
 
                                         <div class="text-muted">
                                             {{ 'parents_day.prepare.help'|trans }}
+                                        </div>
+                                    </a>
+                                    <a href="{{ path('cancel_all_parents_day_appointments', { uuid: parentsDayFilter.currentParentsDay.uuid}) }}" class="list-group-item list-group-item-action">
+                                        <i class="fa-regular fa-calendar-xmark"></i> {{ 'parents_day.appointments.cancel_all.label'|trans }}
+
+                                        <div class="text-muted">
+                                            {{ 'parents_day.appointments.cancel_all.help'|trans }}
                                         </div>
                                     </a>
                                 {% endif %}

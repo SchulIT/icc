@@ -2211,6 +2211,7 @@ parents_day:
         blocked: geblockt
         available: verfügbar
         not_available: nicht verfügbar
+        cancelled: abgesagt
         already_booked: Termin gebucht
         another_appointment_booked: Kollidiert mit anderem Termin
         booked: Termin gebucht
@@ -2225,9 +2226,15 @@ parents_day:
             success: Termin erfolgreich erstellt
         edit:
             label: Termin bearbeiten
+            help: Zeit ändern, Lernende zuweisen oder entfernen, Lehrkräfte zuweisen oder entfernen
             success: Termin erfolgreich aktualisiert
-        cancel:
-            label: Termin absagen
+        cancel_all:
+            label: Alle Termine absagen
+            help: Hier können (bspw. aufgrund von Krankheit) alle Termine abgesagt werden.
+            confirm: Sollen alle Termine wirklich abgesagt werden?
+            success: Alle Termine wurden abgesagt
+            caution: Diese Aktion kann nicht rückgängig gemacht werden.
+            button: Alle Termine absagen
         assign:
             label: Termin zuweisen
             info: Der Termin wird den ausgewählten Kindern zugewiesen.

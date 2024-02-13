@@ -109,6 +109,10 @@ class ParentsDayAppointmentVoter extends Voter {
             return false;
         }
 
+        if($appointment->isCancelled()) {
+            return false;
+        }
+
         $user = $this->getUser($token);
 
         if(!$user->isTeacher()) {
@@ -154,22 +158,6 @@ class ParentsDayAppointmentVoter extends Voter {
         return $user->isTeacher();
     }
 
-    private function canRequest(ParentsDayAppointment $appointment, TokenInterface $token): bool {
-        if(!$this->canView($token)) {
-            return false;
-        }
-
-        $user = $this->getUser($token);
-
-        foreach($user->getStudents() as $student) {
-            if($student->isFullAged($this->dateHelper->getToday())) {
-                return true;
-            }
-        }
-
-        return $user->isParent();
-    }
-
     private function canBookAny(ParentsDay $parentsDay, TokenInterface $token): bool {
         if(!$this->canView($token)) {
             return false;
@@ -196,7 +184,7 @@ class ParentsDayAppointmentVoter extends Voter {
     }
 
     private function canBook(ParentsDayAppointment $appointment, TokenInterface $token): bool {
-        if($appointment->isBlocked() || $appointment->getStudents()->count() > 0) {
+        if($appointment->isBlocked() || $appointment->isCancelled() || $appointment->getStudents()->count() > 0) {
             return false;
         }
 
@@ -205,6 +193,10 @@ class ParentsDayAppointmentVoter extends Voter {
 
     private function canUnbook(ParentsDayAppointment $appointment, TokenInterface $token): bool {
         if($this->canBookAny($appointment->getParentsDay(), $token) !== true) {
+            return false;
+        }
+
+        if($appointment->isCancelled()) {
             return false;
         }
 

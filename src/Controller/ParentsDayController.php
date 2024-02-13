@@ -7,6 +7,7 @@ use App\Entity\ParentsDayAppointment;
 use App\Entity\User;
 use App\Form\AppointmentsCreatorParamsType;
 use App\Form\BookParentsDayAppointmentType;
+use App\Form\CancelParentsDayAppointmentType;
 use App\Form\ParentsDayAppointmentType;
 use App\Form\ParentsDayParentalInformationType;
 use App\Grouping\Grouper;
@@ -459,6 +460,37 @@ class ParentsDayController extends AbstractController {
             'parentsDay' => $parentsDay,
             'tuitionFilter' => $tuitionFilterView,
             'information' => $information,
+            'form' => $form?->createView()
+        ]);
+    }
+
+    #[Route('/{uuid}/cancel_all', name: 'cancel_all_parents_day_appointments')]
+    public function cancelAllAppointments(ParentsDay $parentsDay, TuitionFilter $tuitionFilter, Request $request): Response {
+        $this->denyAccessUnlessGranted(ParentsDayAppointmentVoter::CREATE);
+
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $form = $this->createForm(CancelParentsDayAppointmentType::class);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $appointments = $this->appointmentRepository->findForTeacher($user->getTeacher(), $parentsDay);
+            foreach($appointments as $appointment) {
+                $appointment->setIsCancelled(true);
+                $appointment->setCancelReason($form->get('reason')->getData());
+
+                $this->appointmentRepository->persist($appointment);
+            }
+
+            $this->addFlash('success', 'parents_day.appointments.cancel_all.succes');
+            return $this->redirectToRoute('parents_day', [
+                'day' => $parentsDay->getUuid()
+            ]);
+        }
+
+        return $this->render('parents_days/cancel_all.html.twig', [
+            'parentsDay' => $parentsDay,
             'form' => $form?->createView()
         ]);
     }

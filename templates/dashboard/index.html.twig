@@ -713,9 +713,9 @@
 
                         {% if appointment.cancelled %}
                             {% if is_granted('details', appointment) %}
-                                <span class="badge text-bg-danger">
-                                            <i class="fa-regular fa-calendar-xmark"></i> {{ 'parents_day.appointments.cancelled'|trans }}
-                                        </span>
+                                <span class="badge text-bg-danger" title="{{ 'parents_day.appointments.cancelled_by'|trans({'%user%': appointment.cancelledBy|user }) }}">
+                                    <i class="fa-regular fa-calendar-xmark"></i> {{ 'parents_day.appointments.cancelled'|trans }}
+                                </span>
 
                                 {{ appointment.cancelReason }}
                             {% else %}

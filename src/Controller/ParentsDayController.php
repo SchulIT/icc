@@ -433,6 +433,7 @@ class ParentsDayController extends AbstractController {
         if($form->isSubmitted() && $form->isValid()) {
             $appointment->setIsCancelled(true);
             $appointment->setCancelReason($form->get('reason')->getData());
+            $appointment->setCancelledBy($this->getUser());
             $this->appointmentRepository->persist($appointment);
 
             $this->addFlash('success', 'parents_day.appointments.cancel.success');
@@ -510,11 +511,12 @@ class ParentsDayController extends AbstractController {
                 if($this->isGranted(ParentsDayAppointmentVoter::CANCEL, $appointment)) {
                     $appointment->setIsCancelled(true);
                     $appointment->setCancelReason($form->get('reason')->getData());
+                    $appointment->setCancelledBy($this->getUser());
                     $this->appointmentRepository->persist($appointment);
                 }
             }
 
-            $this->addFlash('success', 'parents_day.appointments.cancel_all.succes');
+            $this->addFlash('success', 'parents_day.appointments.cancel_all.success');
             return $this->redirectToRoute('parents_day', [
                 'day' => $parentsDay->getUuid()
             ]);

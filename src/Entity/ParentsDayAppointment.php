@@ -55,6 +55,10 @@ class ParentsDayAppointment {
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $cancelReason = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
+    private ?User $cancelledBy = null;
+
     public function __construct() {
         $this->uuid = Uuid::uuid4();
         $this->students = new ArrayCollection();
@@ -157,5 +161,14 @@ class ParentsDayAppointment {
         $date->setTime($this->getEnd()->format('H'), $this->getEnd()->format('i'), 0);
 
         return $date;
+    }
+
+    public function getCancelledBy(): ?User {
+        return $this->cancelledBy;
+    }
+
+    public function setCancelledBy(?User $cancelledBy): ParentsDayAppointment {
+        $this->cancelledBy = $cancelledBy;
+        return $this;
     }
 }

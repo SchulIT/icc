@@ -23,8 +23,4 @@ class AppointmentsCreatorParams {
     public ?string $until = null;
 
     public bool $removeExistingAppointments = true;
-
-    public bool $removeBlockedAppointments = false;
-
-    public bool $removePlannedAppointments = false;
 }

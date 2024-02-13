@@ -308,6 +308,9 @@ label:
     booking_allowed_until:
         label: Ende Terminbuchung
         help: Bis zu diesem Datum (einschließlich) können Eltern Termine für den Elternsprechtag buchen. Danach ist eine Buchung nur über die Fachlehrkraft möglich.
+    remove_existing_appointments:
+        label: Bestehende Termine löschen
+        help: Wenn diese Option aktiv ist, werden bereits erstellte Termine gelöscht, sofern sie nicht gebucht bzw. abgesagt wurden. Ist diese Option nicht aktiv, werden keine Termine zu Zeiten erstellt, an denen es bereits Termine gibt.
 
 markdown:
     label: Markdown

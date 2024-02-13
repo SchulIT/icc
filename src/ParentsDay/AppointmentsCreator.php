@@ -35,7 +35,12 @@ class AppointmentsCreator {
 
             if(count($conflictingAppointments) === 0) {
                 $this->appointmentRepository->persist($newAppointment);
-            } // TODO: conflict handling
+            } else if($params->removeExistingAppointments === true && count($conflictingAppointments) === $this->countAppointmentsToBeRemoved($conflictingAppointments)) {
+                foreach($conflictingAppointments as $conflictingAppointment) {
+                    $this->appointmentRepository->remove($conflictingAppointment);
+                }
+                $this->appointmentRepository->persist($newAppointment);
+            }
 
             $currentStart = (clone $currentStart)->modify(sprintf('+%d minutes', $params->duration));
             $currentEnd = (clone $currentStart)->modify(sprintf('+%d minutes', $params->duration));
@@ -64,5 +69,25 @@ class AppointmentsCreator {
         }
 
         return $conflicts;
+    }
+
+    private function canRemoveAppointment(ParentsDayAppointment $appointment): bool {
+        return $appointment->getStudents()->count() === 0 && !$appointment->isCancelled();
+    }
+
+    /**
+     * @param ParentsDayAppointment[] $appointments
+     * @return int
+     */
+    private function countAppointmentsToBeRemoved(array $appointments): int {
+        $canDeleteCount = 0;
+
+        foreach($appointments as $appointment) {
+            if($this->canRemoveAppointment($appointment)) {
+                $canDeleteCount++;
+            }
+        }
+
+        return $canDeleteCount;
     }
 }

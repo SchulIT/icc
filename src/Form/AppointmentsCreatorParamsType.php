@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\ParentsDay;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -25,6 +26,11 @@ class AppointmentsCreatorParamsType extends AbstractType {
                 'label' => 'label.until',
                 'widget' => 'single_text',
                 'input' => 'string'
+            ])
+            ->add('removeExistingAppointments', CheckboxType::class, [
+                'required' => false,
+                'label' => 'label.remove_existing_appointments.label',
+                'help' => 'label.remove_existing_appointments.help'
             ]);
     }
 }

@@ -18,7 +18,7 @@ class InvolvedUsersResolver {
      * @param Student $student
      * @param Teacher[] $teachers
      * @param User|null $exclude
-     * @return array
+     * @return User[]
      */
     public function resolveUsers(Student $student, array $teachers, User|null $exclude = null): array {
         $users = array_merge(

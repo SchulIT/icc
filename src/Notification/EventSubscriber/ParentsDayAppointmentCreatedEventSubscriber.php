@@ -12,6 +12,7 @@ use App\Notification\NotificationService;
 use App\ParentsDay\InvolvedUsersResolver;
 use App\Repository\UserRepositoryInterface;
 use Doctrine\Common\Collections\Collection;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -29,6 +30,11 @@ class ParentsDayAppointmentCreatedEventSubscriber implements EventSubscriberInte
 
     public function onParentsDayAppointmentCreated(ParentsDayAppointmentCreatedEvent $event): void {
         foreach($this->usersResolver->resolveUsers($event->getStudent(), $event->getAppointment()->getTeachers()->toArray(), $event->getInitiator()) as $recipient) {
+            // no notifications to teachers if student/parents made an appointment
+            if($event->getInitiator()->isStudentOrParent() && $recipient->isTeacher()) {
+                continue;
+            }
+
             $notification = new Notification(
                 $recipient,
                 $this->translator->trans('parents_day.appointment.created.title', [], 'email'),

@@ -100,6 +100,11 @@ informiert, sobald die Buchung von Terminen möglich ist.
 
 ## Integration ins Benachrichtigungssystem
 
-Beim Buchen, Umbuchen oder Absagen von Terminen werden automatisch alle beteiligten Parteien (Eltern, volljährige Kinder sowie
-Lehrkräfte) informiert.
-
+| Ereignis                                                   | Ausgelöst durch | Benachrichtigung an                                                                         |
+|------------------------------------------------------------|-----------------|---------------------------------------------------------------------------------------------|
+| Terminbuchung                                              | Eltern          | Benachrichtigung an alle Elternteile sowie volljähriges Kind                                |
+| Terminbuchung                                              | Lehrkraft       | Benachrichtigung an alle Elternteile, volljähriges Kind sowie weitere beteiligte Lehrkräfte |
+| Terminabsage/-umbuchung (während des Buchungszeitfensters) | Eltern          | *keine Benachrichtigung*                                                                    |
+| Terminabsage/-umbuchung (während des Buchungszeitfensters) | Lehrkraft       | Benachrichtigung an alle Elternteile, volljähriges Kind sowie weitere beteiligte Lehrkräfte |
+| Terminabsage (nach dem Buchungsfenster)                    | Eltern          | Benachrichtigung an alle Elternteile, volljähriges Kind sowie alle beteiligten Lehrkräfte   |
+| Terminabsage (nach dem Buchungsfenster)                    | Lehrkraft       | Benachrichtigung an alle Elternteile, volljähriges Kind sowie weitere beteiligte Lehrkräfte |

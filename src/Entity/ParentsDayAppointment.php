@@ -147,14 +147,14 @@ class ParentsDayAppointment {
 
     public function getStartDateTime(): DateTime {
         $date = clone $this->getParentsDay()->getDate();
-        $date->setTime($this->getStart()->format('h'), $this->getStart()->format('i'), 0);
+        $date->setTime($this->getStart()->format('H'), $this->getStart()->format('i'), 0);
 
         return $date;
     }
 
     public function getEndDateTime(): DateTime {
         $date = clone $this->getParentsDay()->getDate();
-        $date->setTime($this->getEnd()->format('h'), $this->getEnd()->format('i'), 0);
+        $date->setTime($this->getEnd()->format('H'), $this->getEnd()->format('i'), 0);
 
         return $date;
     }

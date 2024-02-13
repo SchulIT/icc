@@ -21,6 +21,7 @@ use App\Repository\ParentsDayRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\ParentsDayAppointmentVoter;
+use App\Sorting\ParentsDayAppointmentStrategy;
 use App\Sorting\Sorter;
 use App\Sorting\TeacherTuitionsGroupStrategy;
 use App\Sorting\TuitionStrategy;
@@ -118,6 +119,8 @@ class ParentsDayController extends AbstractController {
             }
         }
 
+        $sorter->sort($appointments, ParentsDayAppointmentStrategy::class);
+
         return $this->render('parents_days/index.html.twig', [
             'parents_days' => $this->parentsDayRepository->findUpcoming($dateHelper->getToday()),
             'appointments' => $appointments,
@@ -129,7 +132,7 @@ class ParentsDayController extends AbstractController {
     }
 
     #[Route('/{uuid}/book', name: 'book_parents_day_appointment_overview')]
-    public function book(ParentsDay $parentsDay, TeacherFilter $teacherFilter, Request $request, SectionResolverInterface $sectionResolver): Response {
+    public function book(ParentsDay $parentsDay, TeacherFilter $teacherFilter, Request $request, SectionResolverInterface $sectionResolver, Sorter $sorter): Response {
         $this->denyAccessUnlessGranted(ParentsDayAppointmentVoter::BOOK_ANY, $parentsDay);
 
         /** @var User $user */
@@ -160,6 +163,8 @@ class ParentsDayController extends AbstractController {
                 }
             }
         }
+
+        $sorter->sort($appointments, ParentsDayAppointmentStrategy::class);
 
         return $this->render('parents_days/book_overview.html.twig', [
             'appointments' => $appointments,

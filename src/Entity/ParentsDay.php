@@ -15,18 +15,21 @@ class ParentsDay {
     use UuidTrait;
 
     #[ORM\Column(type: 'string')]
-    #[Assert\NotBlank()]
+    #[Assert\NotBlank]
     private ?string $title = null;
 
     #[ORM\Column(type: 'date')]
-    #[Assert\NotNull()]
+    #[Assert\NotNull]
     private DateTime $date;
 
     #[ORM\Column(type: 'date')]
-    #[Assert\NotNull()]
+    #[Assert\NotNull]
     private DateTime $bookingAllowedFrom;
 
     #[ORM\Column(type: 'date')]
+    #[Assert\NotNull]
+    #[Assert\GreaterThanOrEqual(propertyPath: 'bookingAllowedFrom')]
+    #[Assert\LessThan(propertyPath: 'date')]
     private DateTime $bookingAllowedUntil;
 
     /**

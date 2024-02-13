@@ -127,11 +127,12 @@ class ParentsDayAppointmentVoter extends Voter {
             return false;
         }
 
-        $upcoming = $this->parentsDayRepository->findUpcoming($this->dateHelper->getToday());
-
         if($user->isTeacher()) {
-            return true;
+            $parentsDays = $this->parentsDayRepository->findAll();
+            return count($parentsDays) > 0;
         }
+
+        $upcoming = $this->parentsDayRepository->findUpcoming($this->dateHelper->getToday());
 
         foreach($upcoming as $parentsDay) {
             if($parentsDay->getBookingAllowedFrom() <= $this->dateHelper->getToday()) {

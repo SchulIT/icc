@@ -8,6 +8,7 @@ use App\Entity\Teacher;
 use App\Event\ParentsDayAppointmentCancelledEvent;
 use App\Notification\Notification;
 use App\Notification\NotificationService;
+use App\ParentsDay\InvolvedUsersResolver;
 use App\Repository\UserRepositoryInterface;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -21,12 +22,12 @@ class ParentsDayAppointmentCancelledEventSubscriber implements EventSubscriberIn
                                 private readonly NotificationService $notificationService,
                                 private readonly TeacherStringConverter $teacherStringConverter,
                                 private readonly StudentStringConverter $studentStringConverter,
-                                private readonly UserRepositoryInterface $userRepository) {
+                                private readonly InvolvedUsersResolver $usersResolver) {
 
     }
 
     public function onParentsDayAppointmentCancelled(ParentsDayAppointmentCancelledEvent $event): void {
-        foreach($this->userRepository->findAllParentsByStudents([$event->getStudent()]) as $recipient) {
+        foreach($this->usersResolver->resolveUsers($event->getStudent(), $event->getAppointment()->getTeachers()->toArray(), $event->getInitiator()) as $recipient) {
             $notification = new Notification(
                 $recipient,
                 $this->translator->trans('parents_day.appointment.cancelled.title', [], 'email'),

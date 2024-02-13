@@ -420,6 +420,31 @@ class ParentsDayController extends AbstractController {
         ]);
     }
 
+    #[Route('/a/{uuid}/cancel', name: 'cancel_parents_day_appointment')]
+    public function cancelAppointment(ParentsDayAppointment $appointment, Request $request): Response {
+        $this->denyAccessUnlessGranted(ParentsDayAppointmentVoter::CANCEL, $appointment);
+
+        $form = $this->createForm(CancelParentsDayAppointmentType::class, null, [
+            'confirm_label' => 'parents_day.appointments.cancel.confirm',
+            'csrf_token_id' => 'cancel_appointment'
+        ]);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $appointment->setIsCancelled(true);
+            $appointment->setCancelReason($form->get('reason')->getData());
+            $this->appointmentRepository->persist($appointment);
+
+            $this->addFlash('success', 'parents_day.appointments.cancel.success');
+            return $this->redirectToRoute('parents_day');
+        }
+
+        return $this->render('parents_days/cancel.html.twig', [
+            'form' => $form->createView(),
+            'appointment' => $appointment
+        ]);
+    }
+
     #[Route('/{uuid}/prepare', name: 'prepare_parents_day')]
     public function prepare(ParentsDay $parentsDay, TuitionFilter $tuitionFilter, Request $request,
                             ParentsDayParentalInformationRepositoryInterface $repository,
@@ -482,10 +507,11 @@ class ParentsDayController extends AbstractController {
         if($form->isSubmitted() && $form->isValid()) {
             $appointments = $this->appointmentRepository->findForTeacher($user->getTeacher(), $parentsDay);
             foreach($appointments as $appointment) {
-                $appointment->setIsCancelled(true);
-                $appointment->setCancelReason($form->get('reason')->getData());
-
-                $this->appointmentRepository->persist($appointment);
+                if($this->isGranted(ParentsDayAppointmentVoter::CANCEL, $appointment)) {
+                    $appointment->setIsCancelled(true);
+                    $appointment->setCancelReason($form->get('reason')->getData());
+                    $this->appointmentRepository->persist($appointment);
+                }
             }
 
             $this->addFlash('success', 'parents_day.appointments.cancel_all.succes');

@@ -53,6 +53,9 @@ class ParentsDayAppointmentVoter extends Voter {
             case self::REMOVE:
                 return $this->canEdit($subject, $token);
 
+            case self::CANCEL:
+                return $this->canCancel($subject, $token);
+
             case self::DETAILS:
                 return $this->canViewDetails($subject, $token);
 
@@ -80,6 +83,41 @@ class ParentsDayAppointmentVoter extends Voter {
         }
 
         return null;
+    }
+
+    private function canCancel(ParentsDayAppointment $appointment, TokenInterface $token): bool {
+        if($this->canView($token) !== true) {
+            return false;
+        }
+
+        // Appointments can only be cancelled after booking window
+        if($appointment->getParentsDay()->getBookingAllowedUntil() >= $this->dateHelper->getToday()) {
+            return false;
+        }
+
+        if($appointment->isCancelled()) {
+            return false;
+        }
+
+        $user = $this->getUser($token);
+
+        if($user->isStudentOrParent()) {
+            foreach($user->getStudents() as $student) {
+                foreach($appointment->getStudents() as $appointmentStudent) {
+                    if($appointmentStudent->getId() === $student->getId()) {
+                        return true;
+                    }
+                }
+            }
+        } else if($user->isTeacher()) {
+            foreach($appointment->getTeachers() as $teacher) {
+                if($teacher->getId() === $user->getTeacher()->getId()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private function canView(TokenInterface $token): bool {

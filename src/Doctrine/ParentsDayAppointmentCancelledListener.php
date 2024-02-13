@@ -14,12 +14,13 @@ use Doctrine\ORM\Events;
 use Doctrine\ORM\PersistentCollection;
 use Doctrine\ORM\UnitOfWork;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 #[AsDoctrineListener(event: Events::preUpdate)]
 #[AsDoctrineListener(event: Events::preRemove)]
 class ParentsDayAppointmentCancelledListener {
 
-    public function __construct(private readonly DoctrineEventsCollector $collector) {
+    public function __construct(private readonly DoctrineEventsCollector $collector, private readonly TokenStorageInterface $tokenStorage) {
 
     }
 
@@ -30,7 +31,7 @@ class ParentsDayAppointmentCancelledListener {
         }
 
         foreach($appointment->getStudents() as $student) {
-            $this->collector->collect(new ParentsDayAppointmentCancelledEvent($appointment, $student));
+            $this->collector->collect(new ParentsDayAppointmentCancelledEvent($appointment, $student, $this->tokenStorage->getToken()->getUser()));
         }
     }
 
@@ -44,7 +45,7 @@ class ParentsDayAppointmentCancelledListener {
 
         if($args->hasChangedField('isCancelled')) {
             foreach($appointment->getStudents() as $student) {
-                $this->collector->collect(new ParentsDayAppointmentCancelledEvent($appointment, $student));
+                $this->collector->collect(new ParentsDayAppointmentCancelledEvent($appointment, $student, $this->tokenStorage->getToken()->getUser()));
             }
         }
 
@@ -88,7 +89,7 @@ class ParentsDayAppointmentCancelledListener {
         /** @var Student|Teacher $studentOrTeacher */
         foreach($deleted as $studentOrTeacher) {
             if($studentOrTeacher instanceof Student) {
-                $this->collector->collect(new ParentsDayAppointmentCancelledEvent($appointment, $studentOrTeacher));
+                $this->collector->collect(new ParentsDayAppointmentCancelledEvent($appointment, $studentOrTeacher, $this->tokenStorage->getToken()->getUser()));
             }
         }
     }

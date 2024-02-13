@@ -2231,6 +2231,12 @@ parents_day:
             label: Termin bearbeiten
             help: Zeit ändern, Lernende zuweisen oder entfernen, Lehrkräfte zuweisen oder entfernen
             success: Termin erfolgreich aktualisiert
+        cancel:
+            label: Termin absagen
+            confirm: Soll der Termin wirklich abgesagt werden?
+            success: Termin wurde abgesagt
+            caution: Diese Aktion kann nicht rückgängig gemacht werden.
+            button: Termin absagen
         cancel_all:
             label: Alle Termine absagen
             help: Hier können (bspw. aufgrund von Krankheit) alle Termine abgesagt werden.

@@ -98,6 +98,12 @@
                                     {% endif %}
                                 {% endif %}
 
+                                {% if not is_granted('edit', appointment) and is_granted('cancel', appointment) %}
+                                    <a href="{{ path('cancel_parents_day_appointment', { uuid: appointment.uuid}) }}" class="btn btn-outline-danger btn-sm ms-2" data-modal-form="#modalCancel" data-teacher="{{ appointment.teachers.first|teacher }}" data-time="{{ appointment.start|format_time('short') }}-{{ appointment.end|format_time('short') }}">
+                                        <i class="fa-regular fa-calendar-xmark"></i> {{ 'parents_day.appointments.cancel.button'|trans }}
+                                    </a>
+                                {% endif %}
+
                                 {% if is_granted('edit', appointment) %}
                                 <div class="dropdown">
                                     <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
@@ -116,6 +122,11 @@
                                         {% else %}
                                             <a href="{{ path('unblock_parents_day_appointment', { uuid: appointment.uuid}) }}" class="dropdown-item">
                                                 <i class="fas fa-lock-open"></i> {{ 'parents_day.appointments.unblock.label'|trans }}
+                                            </a>
+                                        {% endif %}
+                                        {% if is_granted('cancel', appointment) %}
+                                            <a href="{{ path('cancel_parents_day_appointment', { uuid: appointment.uuid }) }}" class="dropdown-item text-danger">
+                                                <i class="fa-regular fa-calendar-xmark"></i> {{ 'parents_day.appointments.cancel.label'|trans }}
                                             </a>
                                         {% endif %}
                                         <div class="dropdown-divider"></div>
@@ -256,30 +267,67 @@
 
     <div class="modal with-form" tabindex="-1" id="modalUnbook">
         <form method="post">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        {{ 'parents_day.appointments.unbook.label'|trans }}
-                        <span class="badge text-bg-primary teacher"></span>
-                        <span class="badge text-bg-secondary time"></span>
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-check">
-                        <input type="checkbox" id="confirm_group_general_confirm" name="confirm[group_general][confirm]" required="required" class="form-check-input" value="1">
-                        <label class="checkbox-custom form-check-label required" for="confirm_group_general_confirm">{{ 'parents_day.appointments.unbook.confirm'|trans}}</label>
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            {{ 'parents_day.appointments.unbook.label'|trans }}
+                            <span class="badge text-bg-primary teacher"></span>
+                            <span class="badge text-bg-secondary time"></span>
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+                    <div class="modal-body">
+                        <div class="form-check">
+                            <input type="checkbox" id="confirm_group_general_confirm" name="confirm[group_general][confirm]" required="required" class="form-check-input" value="1">
+                            <label class="checkbox-custom form-check-label required" for="confirm_group_general_confirm">{{ 'parents_day.appointments.unbook.confirm'|trans}}</label>
+                        </div>
 
-                    <input type="hidden" name="confirm[_token]" value="{{ csrf_token('unbook_appointment') }}">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'actions.cancel'|trans }}</button>
-                    <button type="submit" class="btn btn-primary">{{ 'actions.confirm'|trans }}</button>
+                        <input type="hidden" name="confirm[_token]" value="{{ csrf_token('unbook_appointment') }}">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'actions.cancel'|trans }}</button>
+                        <button type="submit" class="btn btn-primary">{{ 'actions.confirm'|trans }}</button>
+                    </div>
                 </div>
             </div>
-        </div>
+        </form>
+    </div>
+
+    <div class="modal with-form" tabindex="-1" id="modalCancel">
+        <form method="post">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            {{ 'parents_day.appointments.cancel.label'|trans }}
+                            <span class="badge text-bg-primary teacher"></span>
+                            <span class="badge text-bg-secondary time"></span>
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="bs-callout bs-callout-danger">
+                            <p>{{ 'parents_day.appointments.cancel.caution'|trans }}</p>
+                        </div>
+
+                        <div class="form-check">
+                            <input type="checkbox" id="cancel_parents_day_appointment_confirm" name="cancel_parents_day_appointment[confirm]" required="required" class="form-check-input" value="1">
+                            <label class="form-check-label required" for="cancel_parents_day_appointment_confirm">Soll der Termin wirklich abgesagt werden?</label>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label class="col-form-label col-sm-2 required" for="cancel_parents_day_appointment_reason">Grund</label><div class="col-sm-10"><input type="text" id="cancel_parents_day_appointment_reason" name="cancel_parents_day_appointment[reason]" required="required" class="form-control">        </div>
+                        </div>
+
+                        <input type="hidden" name="cancel_parents_day_appointment[_token]" value="{{ csrf_token('cancel_appointment') }}">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'actions.cancel'|trans }}</button>
+                        <button type="submit" class="btn btn-primary">{{ 'parents_day.appointments.cancel.button'|trans }}</button>
+                    </div>
+                </div>
+            </div>
         </form>
     </div>
 {% endblock %}

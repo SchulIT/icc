@@ -11,11 +11,12 @@ use App\EventSubscriber\DoctrineEventsCollector;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 #[AsDoctrineListener(event: Events::preUpdate)]
 class ParentsDayAppointmentCreatedListener {
 
-    public function __construct(private readonly DoctrineEventsCollector $collector) {
+    public function __construct(private readonly DoctrineEventsCollector $collector, private readonly TokenStorageInterface $tokenStorage) {
 
     }
 
@@ -36,7 +37,7 @@ class ParentsDayAppointmentCreatedListener {
             /** @var Student|Teacher $studentOrTeacher */
             foreach($collectionUpdate->getInsertDiff() as $studentOrTeacher) {
                 if($studentOrTeacher instanceof Student) {
-                    $this->collector->collect(new ParentsDayAppointmentCreatedEvent($owner, $studentOrTeacher));
+                    $this->collector->collect(new ParentsDayAppointmentCreatedEvent($owner, $studentOrTeacher, $this->tokenStorage->getToken()->getUser()));
                 }
             }
         }

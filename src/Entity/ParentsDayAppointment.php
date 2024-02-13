@@ -52,7 +52,7 @@ class ParentsDayAppointment {
     #[ORM\Column(type: 'boolean')]
     private bool $isCancelled = false;
 
-    #[ORM\COlumn(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $cancelReason = null;
 
     public function __construct() {

@@ -32,13 +32,6 @@ class ParentsDay {
     #[Assert\LessThan(propertyPath: 'date')]
     private DateTime $bookingAllowedUntil;
 
-    /**
-     * @var Collection<Grade>
-     */
-    #[ORM\ManyToMany(targetEntity: Grade::class)]
-    #[Assert\Count(min: 1)]
-    private Collection $grades;
-
     public function __construct() {
         $this->uuid = Uuid::uuid4();
         $this->grades = new ArrayCollection();
@@ -78,20 +71,5 @@ class ParentsDay {
     public function setDate(DateTime $date): ParentsDay {
         $this->date = $date;
         return $this;
-    }
-
-    public function addGrade(Grade $grade): void {
-        $this->grades->add($grade);
-    }
-
-    public function removeGrade(Grade $grade): void {
-        $this->grades->removeElement($grade);
-    }
-
-    /**
-     * @return Collection<Grade>
-     */
-    public function getGrades(): Collection {
-        return $this->grades;
     }
 }

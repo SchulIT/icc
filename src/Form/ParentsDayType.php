@@ -33,12 +33,6 @@ class ParentsDayType extends AbstractType {
                 'label' => 'label.booking_allowed_until.label',
                 'help' => 'label.booking_allowed_until.help',
                 'widget' => 'single_text'
-            ])
-            ->add('grades', SortableEntityType::class, [
-                'label' => 'label.grades',
-                'multiple' => true,
-                'sort_by' => $this->gradeNameStrategy,
-                'class' => Grade::class
             ]);
     }
 }

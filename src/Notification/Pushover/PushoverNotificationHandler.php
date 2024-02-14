@@ -54,8 +54,7 @@ class PushoverNotificationHandler implements NotificationHandlerInterface {
 
             if (!$response->isSuccessful()) {
                 $this->logger->alert('Pushover-Benachrichtung wurde nicht erfolgreich abgeschickt.', [
-                    'errors' => $response->getErrors(),
-                    'receipt' => $response->getReceipt()
+                    'errors' => $response->getErrors()
                 ]);
             }
         } catch (Exception $e) {

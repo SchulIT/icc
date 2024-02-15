@@ -311,6 +311,7 @@ label:
     remove_existing_appointments:
         label: Bestehende Termine löschen
         help: Wenn diese Option aktiv ist, werden bereits erstellte Termine gelöscht, sofern sie nicht gebucht bzw. abgesagt wurden. Ist diese Option nicht aktiv, werden keine Termine zu Zeiten erstellt, an denen es bereits Termine gibt.
+    count: Anzahl
 
 markdown:
     label: Markdown
@@ -1531,7 +1532,10 @@ tools:
         right_grades: Klassen (rechts)
         intersection: Gemeinsame Lehrkräfte
 
-
+    tuition_report:
+        label: Unterrichtsbericht
+        info: Mit diesem Tool können Statistiken über Unterrichte abgerufen werden
+        download: CSV-Datei herunterladen
 
 versions:
     label: Versionen

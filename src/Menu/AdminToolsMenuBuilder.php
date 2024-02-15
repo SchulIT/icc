@@ -13,6 +13,10 @@ class AdminToolsMenuBuilder extends AbstractMenuBuilder {
                 'route' => 'grade_tuition_teachers_intersection'
             ])
                 ->setExtra('icon', 'fas fa-random');
+
+            $root->addChild('tools.tuition_report.label', [
+                'route' => 'tuition_report_tool'
+            ]);
         }
 
         return $root;

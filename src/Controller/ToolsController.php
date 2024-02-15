@@ -3,9 +3,13 @@
 namespace App\Controller;
 
 use App\Form\GradeTuitionTeachersIntersectionType;
+use App\Form\TuitionReportInputType;
 use App\Menu\AdminToolsMenuBuilder;
 use App\Tools\GradeTuitionTeachersIntersectionInput;
 use App\Tools\GradeTuitionTeachersIntersectionTool;
+use App\Tools\TuitionReport;
+use App\Tools\TuitionReportInput;
+use App\View\Filter\SectionFilter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -38,6 +42,28 @@ class ToolsController extends AbstractController {
         return $this->render('admin/tools/teacher_intersection.html.twig', [
             'form' => $form->createView(),
             'intersections' => $intersections
+        ]);
+    }
+
+    #[Route('/tuition_report', name: 'tuition_report_tool')]
+    public function tuitionReport(Request $request, TuitionReport $tuitionReport): Response {
+        $input = new TuitionReportInput();
+        $form = $this->createForm(TuitionReportInputType::class, $input);
+        $form->handleRequest($request);
+
+        $result = null;
+
+        if($form->isSubmitted() && $form->isValid()) {
+            if($request->request->get('export') === 'csv') {
+                return $tuitionReport->generateReportAsCsvResponse($input->section, $input->types);
+            }
+
+            $result = $tuitionReport->generateReport($input->section, $input->types);
+        }
+
+        return $this->render('admin/tools/tuition_report.html.twig', [
+            'form' => $form->createView(),
+            'result' => $result
         ]);
     }
 }

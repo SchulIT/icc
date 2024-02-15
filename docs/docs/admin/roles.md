@@ -104,3 +104,7 @@ Benutzer mit dieser Rolle können Daten über die Web-GUI importieren (z.B. aus 
 ## ROLE_CRON
 
 Diese Rolle darf nicht vergeben werden. Sie wird dem einzigen Cronjob-Benutzer automatisch zugewiesen.
+
+## ROLE_TOOLS
+
+Benutzer mit dieser Rolle dürfen auf das Tools-Menü zugreifen.

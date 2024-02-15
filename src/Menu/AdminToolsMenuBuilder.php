@@ -8,7 +8,7 @@ class AdminToolsMenuBuilder extends AbstractMenuBuilder {
     public function toolsMenu(array $options = [ ]): ItemInterface {
         $root = $this->factory->createItem('root');
 
-        if($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+        if($this->authorizationChecker->isGranted('ROLE_TOOLS')) {
             $root->addChild('tools.grade_teacher_intersection.label', [
                 'route' => 'grade_tuition_teachers_intersection'
             ])

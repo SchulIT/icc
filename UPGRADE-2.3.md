@@ -1,4 +1,4 @@
-# Upgrade von 2.1 auf 2.2
+# Upgrade von 2.2 auf 2.3
 
 ## Veränderungen unter Haube
 
@@ -17,6 +17,7 @@ Es wurden folgende neuen Rollen hinzugefügt
 * ROLE_EXAM_VIEWER
 * ROLE_LISTS_VIEWER
 * ROLE_LISTS_EXPORTER
+* ROLE_TOOLS
 
 Folgende Rollen wurden gelöscht:
 * ROLE_KIOSK: Diese Rolle kann durch eine beliebige Anzahl an *_VIEWER-Rollen (siehe oben) ersetzt werden
@@ -24,6 +25,10 @@ Folgende Rollen wurden gelöscht:
 ## Neue Features / Verbesserungen
 
 Der zugrundeliegende Milestone 2.3 ist [auf GitHub](https://github.com/SchulIT/icc/milestone/14?closed=1) zu finden.
+
+### Elternsprechtagsplanung
+
+Es können nun Elternsprechtage über das ICC gebucht werden. Mehr dazu [im Handbuch](https://docs.schulit.de/icc/features/parents_day)
 
 ### Allgemeine Verbesserungen & Bugfixes
 

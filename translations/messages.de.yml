@@ -1040,6 +1040,15 @@ admin:
                 help: Anzahl der Sekunden, die ein Benutzer das Passwort nicht erneut eingeben muss, um Noten einzusehen oder zu ändern. Diese Funktion nutzt das SessionStorage des Browsers.
                 button: Mehr zur Funktionsweise des SessionStorage
 
+        chat:
+            label: Private Nachrichten
+            enabled:
+                label: Private Nachrichten aktiviert für
+                help: Legt die Benutzergruppen fest, die private Nachrichten verschicken können.
+            recipients:
+                label: 'Empfänger (%type%)'
+                help: Legt die Benutzergruppen fest, mit denen Benutzer vom Typ %type% Gespräche beginnen können. Ist ein Gespräch begonnen, sind alle Benutzer gleichberechtigt und können Nachrichten verschicken bzw. Dateien austauschen.
+
     timetable:
         label: Stundenplan
         weeks:

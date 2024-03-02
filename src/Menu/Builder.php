@@ -7,6 +7,7 @@ use App\Repository\ChatMessageRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\WikiArticleRepositoryInterface;
 use App\Section\SectionResolverInterface;
+use App\Security\Voter\ChatVoter;
 use App\Security\Voter\ListsVoter;
 use App\Security\Voter\ParentsDayAppointmentVoter;
 use App\Security\Voter\ResourceReservationVoter;
@@ -14,6 +15,7 @@ use App\Security\Voter\StudentAbsenceVoter;
 use App\Security\Voter\TeacherAbsenceVoter;
 use App\Security\Voter\WikiVoter;
 use App\Settings\BookSettings;
+use App\Settings\ChatSettings;
 use App\Settings\StudentAbsenceSettings;
 use App\Settings\TeacherAbsenceSettings;
 use Knp\Menu\FactoryInterface;
@@ -51,7 +53,7 @@ class Builder {
         ])
             ->setExtra('icon', 'fas fa-envelope-open-text');
 
-        if($user instanceof User) {
+        if($user instanceof User && $this->authorizationChecker->isGranted(ChatVoter::ChatEnabled)) {
             $menu->addChild('chat.label', [
                 'route' => 'chats'
             ])

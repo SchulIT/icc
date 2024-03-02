@@ -63,6 +63,11 @@ class AdminSettingsMenuBuilder extends AbstractMenuBuilder {
                 'route' => 'admin_settings_import'
             ])
                 ->setExtra('icon', 'fas fa-upload');
+
+            $root->addChild('admin.settings.chat.label', [
+                'route' => 'admin_settings_chat'
+            ])
+                ->setExtra('icon', 'fa-solid fa-comments');
         }
 
         return $root;

@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Converter\FancyUserStringConverter;
 use App\Entity\User;
 use App\Entity\UserType;
+use App\Settings\ChatSettings;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -13,7 +14,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class ChatUserRecipientType extends EntityType {
 
-    public function __construct(ManagerRegistry $managerRegistry, private readonly TokenStorageInterface $tokenStorage, private readonly FancyUserStringConverter $userStringConverter) {
+    public function __construct(ManagerRegistry $managerRegistry, private readonly TokenStorageInterface $tokenStorage, private readonly FancyUserStringConverter $userStringConverter, private readonly ChatSettings $chatSettings) {
         parent::__construct($managerRegistry);
     }
 
@@ -32,12 +33,10 @@ class ChatUserRecipientType extends EntityType {
             },
             'query_builder' => function(EntityRepository $repository) {
                 $user = $this->tokenStorage->getToken()?->getUser();
+                $allowedUserTypes = [ ];
 
-                $allowedUserTypes[] = UserType::Teacher;
-
-                if($user instanceof User && $user->isTeacher()) {
-                    $allowedUserTypes[] = UserType::Student;
-                    $allowedUserTypes[] = UserType::Parent;
+                if($user instanceof User) {
+                    $allowedUserTypes = $this->chatSettings->getAllowedRecipients($user->getUserType());
                 }
 
                 return $repository->createQueryBuilder('u')

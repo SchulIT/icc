@@ -18,6 +18,8 @@ interface ChatMessageRepositoryInterface {
 
     public function markAllChatMessagesSeen(Chat $chat, User $user): void;
 
+    public function countUnreadMessages(User $user, Chat|null $chat = null): int;
+
     public function persist(ChatMessage $message): void;
 
     public function remove(ChatMessage $message): void;

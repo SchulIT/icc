@@ -45,8 +45,14 @@ class ChatController extends AbstractController {
         $chats = $this->chatRepository->findAllByUser($user);
         $sorter->sort($chats, ChatStrategy::class, SortDirection::Descending);
 
+        $unreadCount = [ ];
+        foreach($chats as $chat) {
+            $unreadCount[$chat->getId()] = $this->chatMessageRepository->countUnreadMessages($user, $chat);
+        }
+
         return $this->render('chat/index.html.twig', [
-            'chats' => $chats
+            'chats' => $chats,
+            'unreadCount' => $unreadCount
         ]);
     }
 

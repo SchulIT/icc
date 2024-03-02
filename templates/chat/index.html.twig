@@ -28,6 +28,12 @@
                                         {{- chat.topic -}}
                                     </a>
 
+                                    {% if unreadCount[chat.id] is defined and unreadCount[chat.id] > 0 %}
+                                        <span class="badge text-bg-danger">
+                                            <i class="fas fa-asterisk"></i> {{ unreadCount[chat.id] }}
+                                        </span>
+                                    {% endif %}
+
                                     <span class="badge text-bg-secondary">
                                         <i class="fa-regular fa-comments"></i> {{ chat.messages|length }}
                                     </span>

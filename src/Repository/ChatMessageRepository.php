@@ -29,6 +29,44 @@ class ChatMessageRepository extends AbstractRepository  implements ChatMessageRe
         return $qb->getQuery()->getResult();
     }
 
+    public function countUnreadMessages(User $user, Chat|null $chat = null): int {
+        $qbOwnMessages = $this->em->createQueryBuilder()
+            ->select('mInner.id')
+            ->from(ChatMessage::class, 'mInner')
+            ->where('mInner.createdBy = :user');
+
+        if($chat !== null) {
+            $qbOwnMessages->andWhere('mInner.chat = :chat');
+        }
+
+        $qbSeenMessages = $this->em->createQueryBuilder()
+            ->select('mInner2.id')
+            ->from(ChatMessage::class, 'mInner2')
+            ->leftJoin('mInner2.seenBy', 'sbInner2')
+            ->where('sbInner2.id = :user');
+
+        if($chat !== null) {
+            $qbSeenMessages->andWhere('mInner2.chat = :chat');
+        }
+
+        $qb = $this->em->createQueryBuilder();
+        $qb->select('COUNT(DISTINCT m.id)')
+            ->from(ChatMessage::class, 'm')
+            ->where(
+                $qb->expr()->notIn('m.id', $qbOwnMessages->getDQL())
+            )
+            ->andWhere(
+                $qb->expr()->notIn('m.id', $qbSeenMessages->getDQL())
+            )
+            ->setParameter('user', $user->getId());
+
+        if($chat !== null) {
+            $qb->setParameter('chat', $chat->getId());
+        }
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
+
     public function markAllChatMessagesSeen(Chat $chat, User $user): void {
         $qbOwnMessages = $this->em->createQueryBuilder()
             ->select('mInner.id')
@@ -42,7 +80,6 @@ class ChatMessageRepository extends AbstractRepository  implements ChatMessageRe
             ->leftJoin('mInner2.seenBy', 'sbInner2')
             ->where('mInner2.chat = :chat')
             ->andWhere('sbInner2.id = :user');
-
 
         $qb = $this->em->createQueryBuilder();
         $qb->select('DISTINCT m.id')

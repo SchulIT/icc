@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Chat;
 use App\Entity\ChatMessage;
+use App\Entity\User;
 
 interface ChatMessageRepositoryInterface {
 
@@ -14,6 +15,8 @@ interface ChatMessageRepositoryInterface {
      * @return ChatMessage[]
      */
     public function findByChatAndRange(Chat $chat, int $numberOfMessages, ChatMessage|null $lastMessage = null): array;
+
+    public function markAllChatMessagesSeen(Chat $chat, User $user): void;
 
     public function persist(ChatMessage $message): void;
 

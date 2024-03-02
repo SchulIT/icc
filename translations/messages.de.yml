@@ -2303,7 +2303,7 @@ chat:
         attachments:
             label: Dateien
         seen_by: gesehen von
-        seen_by_nobody: niemandem
+        seen_by_nobody: von niemandem gesehen
     message:
         add: Antworten
         success: Antwort erfolgreich erstellt

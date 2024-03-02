@@ -12,6 +12,8 @@ class ChatSeenByHelper {
 
     }
 
+
+
     public function markAllChatMessagesSeen(Chat $chat): void {
         $user = $this->tokenStorage->getToken()?->getUser();
 
@@ -19,11 +21,13 @@ class ChatSeenByHelper {
             return;
         }
 
-        foreach($chat->getMessages() as $message) {
+        $this->messageRepository->markAllChatMessagesSeen($chat, $user);
+
+        /*foreach($chat->getMessages() as $message) {
             if(!$message->getSeenBy()->contains($user) && $message->getCreatedBy()->getId() !== $user->getId()) {
                 $message->addSeenBy($user);
                 $this->messageRepository->persist($message);
             }
-        }
+        }*/
     }
 }

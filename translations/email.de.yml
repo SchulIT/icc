@@ -95,3 +95,10 @@ parents_day:
       title: Elternsprechtagstermin abgesagt
       content: Der Termin für %student% um %start% bei %teacher% wurde abgesagt.
   link: Zur Elternsprechtagsübersicht
+
+chat:
+  message:
+    create:
+      title: Neue private Nachricht
+      content: Es wurde eine neue private Nachricht erstellt.
+    link: Zum Chat

@@ -3,9 +3,11 @@
 namespace App\Menu;
 
 use App\Entity\User;
+use App\Repository\ChatMessageRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\WikiArticleRepositoryInterface;
 use App\Section\SectionResolverInterface;
+use App\Security\Voter\ChatVoter;
 use App\Security\Voter\ListsVoter;
 use App\Security\Voter\ParentsDayAppointmentVoter;
 use App\Security\Voter\ResourceReservationVoter;
@@ -13,6 +15,7 @@ use App\Security\Voter\StudentAbsenceVoter;
 use App\Security\Voter\TeacherAbsenceVoter;
 use App\Security\Voter\WikiVoter;
 use App\Settings\BookSettings;
+use App\Settings\ChatSettings;
 use App\Settings\StudentAbsenceSettings;
 use App\Settings\TeacherAbsenceSettings;
 use Knp\Menu\FactoryInterface;
@@ -29,13 +32,16 @@ class Builder {
                                 private readonly TokenStorageInterface $tokenStorage,
                                 private readonly DateHelper $dateHelper,
                                 private readonly SectionResolverInterface $sectionResolver,
-                                private readonly BookSettings $bookSettings)
+                                private readonly BookSettings $bookSettings,
+                                private readonly ChatMessageRepositoryInterface $chatMessageRepository)
     {
     }
 
     public function mainMenu(array $options) {
         $menu = $this->factory->createItem('root')
             ->setChildrenAttribute('class', 'navbar-nav me-auto');
+
+        $user = $this->tokenStorage->getToken()?->getUser();
 
         $menu->addChild('dashboard.label', [
             'route' => 'dashboard'
@@ -46,6 +52,14 @@ class Builder {
             'route' => 'messages'
         ])
             ->setExtra('icon', 'fas fa-envelope-open-text');
+
+        if($user instanceof User && $this->authorizationChecker->isGranted(ChatVoter::ChatEnabled)) {
+            $menu->addChild('chat.label', [
+                'route' => 'chats'
+            ])
+                ->setExtra('icon', 'fa-solid fa-comments')
+                ->setExtra('count', $this->chatMessageRepository->countUnreadMessages($user));
+        }
 
         $this->plansMenu($menu);
         $this->listsMenu($menu);
@@ -65,8 +79,6 @@ class Builder {
             || $this->authorizationChecker->isGranted(TeacherAbsenceVoter::CanViewAny)) {
             $this->absencesMenu($menu);
         }
-
-        $user = $this->tokenStorage->getToken()?->getUser();
 
         if($user instanceof User && $user->isStudentOrParent() && $this->bookSettings->isAttendanceVisibleForStudentsAndParentsEnabled()) {
             $menu->addChild('attendance.label', [

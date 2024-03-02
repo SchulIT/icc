@@ -312,6 +312,9 @@ label:
         label: Bestehende Termine löschen
         help: Wenn diese Option aktiv ist, werden bereits erstellte Termine gelöscht, sofern sie nicht gebucht bzw. abgesagt wurden. Ist diese Option nicht aktiv, werden keine Termine zu Zeiten erstellt, an denen es bereits Termine gibt.
     count: Anzahl
+    empty_name: ohne Name
+    parent_of: 'Elternteil von %students%'
+    recipients: Empfänger
 
 markdown:
     label: Markdown
@@ -348,6 +351,8 @@ actions:
     apply: übernehmen
     submit: abschicken
     show: anzeigen
+    send: abschicken
+    download: herunterladen
 
 modal:
     close: Schließen
@@ -1034,6 +1039,15 @@ admin:
                 label: Schlüssel zwischenspeichern
                 help: Anzahl der Sekunden, die ein Benutzer das Passwort nicht erneut eingeben muss, um Noten einzusehen oder zu ändern. Diese Funktion nutzt das SessionStorage des Browsers.
                 button: Mehr zur Funktionsweise des SessionStorage
+
+        chat:
+            label: Private Nachrichten
+            enabled:
+                label: Private Nachrichten aktiviert für
+                help: Legt die Benutzergruppen fest, die private Nachrichten verschicken können.
+            recipients:
+                label: 'Empfänger (%type%)'
+                help: Legt die Benutzergruppen fest, mit denen Benutzer vom Typ %type% Gespräche beginnen können. Ist ein Gespräch begonnen, sind alle Benutzer gleichberechtigt und können Nachrichten verschicken bzw. Dateien austauschen.
 
     timetable:
         label: Stundenplan
@@ -2285,3 +2299,38 @@ parents_day:
             success: Termin erfolgreich gelöscht
         rebook:
             label: Termin umbuchen
+
+chat:
+    label: Private Nachrichten
+    empty: Aktuell gibt es keine privaten Nachrichten.
+    last_message: Letzte Nachricht von %createdBy% am %createdAt%
+    add:
+        label: Neue Nachricht
+        success: Nachricht erfolgreich erstellt
+    show:
+        label: Nachricht anzeigen
+        attachments:
+            label: Dateien
+        seen_by: gesehen von
+        seen_by_nobody: von niemandem gesehen
+    message:
+        add: Antworten
+        success: Antwort erfolgreich erstellt
+    attachment:
+        remove:
+            label: Anhang löschen
+            confirm: "Soll der Anhang %filename% wirklich gelöscht werden? Diese Aktion kann nicht rückgängig gemacht werden."
+            success: Anhang erfolgreich gelöscht
+    participants:
+        label: Teilnehmer
+        add:
+            label: Neuer Chatteilnehmer
+
+
+user_type:
+    teacher: Lehrkraft
+    student: Kind
+    parent: Elternteil
+    intern: Praktikant
+    staff: Mitarbeiter
+    user: Benutzer

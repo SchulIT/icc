@@ -1,0 +1,70 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'chat.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% if chats|length == 0 %}
+                    <div class="bs-callout bs-callout-info">
+                        <h5>{{ 'info.label'|trans }}</h5>
+
+                        <p>{{ 'chat.empty'|trans }}</p>
+                    </div>
+                {% else %}
+                    {% for chat in chats %}
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <a href="{{ path('show_chat', { uuid: chat.uuid }) }}">
+                                        {{- chat.topic -}}
+                                    </a>
+
+                                    {% if unreadCount[chat.id] is defined and unreadCount[chat.id] > 0 %}
+                                        <span class="badge text-bg-danger">
+                                            <i class="fas fa-asterisk"></i> {{ unreadCount[chat.id] }}
+                                        </span>
+                                    {% endif %}
+
+                                    <span class="badge text-bg-secondary">
+                                        <i class="fa-regular fa-comments"></i> {{ chat.messages|length }}
+                                    </span>
+                                </h5>
+
+                                {% for user in chat.participants %}
+                                    <i class="fa fa-user"></i> {{ user|fancy_user }}
+                                {% endfor %}
+
+                                <br>
+                                <i class="fas fa-comment"></i> {{ 'chat.last_message'|trans({'%createdAt%': chat.messages.last.createdAt|format_datetime, '%createdBy%': chat.messages.last.createdBy|fancy_user}) }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="col-md-3 sticky-sidebar">
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ path('new_chat') }}" class="list-group-item list-group-item-action">
+                            <i class="fa fa-plus"></i> {{ 'chat.add.label'|trans }}
+                        </a>
+                    </div>
+                </div>
+
+                <div class="w-100">
+                    <a href="#" class="btn btn-primary btn-sm float-right" data-trigger="scroll">
+                        <i class="fa fa-arrow-up"></i> {{ 'actions.top'|trans }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

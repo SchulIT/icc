@@ -122,6 +122,11 @@ services:
         arguments:
             $filesystem: '@oneup_flysystem.messages_filesystem'
 
+    App\Filesystem\ChatFilesystem:
+        public: true
+        arguments:
+            $filesystem: '@oneup_flysystem.chat_filesystem'
+
     App\Security\ImportUserAuthenticator:
         arguments:
             $presharedKey: '%env(IMPORT_PSK)%'

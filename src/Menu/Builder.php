@@ -47,6 +47,11 @@ class Builder {
         ])
             ->setExtra('icon', 'fas fa-envelope-open-text');
 
+        $menu->addChild('chat.label', [
+            'route' => 'chats'
+        ])
+            ->setExtra('icon', 'fa-solid fa-comments');
+
         $this->plansMenu($menu);
         $this->listsMenu($menu);
 

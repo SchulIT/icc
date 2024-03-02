@@ -312,6 +312,9 @@ label:
         label: Bestehende Termine löschen
         help: Wenn diese Option aktiv ist, werden bereits erstellte Termine gelöscht, sofern sie nicht gebucht bzw. abgesagt wurden. Ist diese Option nicht aktiv, werden keine Termine zu Zeiten erstellt, an denen es bereits Termine gibt.
     count: Anzahl
+    empty_name: ohne Name
+    parent_of: 'Elternteil von %students%'
+    recipients: Empfänger
 
 markdown:
     label: Markdown
@@ -348,6 +351,8 @@ actions:
     apply: übernehmen
     submit: abschicken
     show: anzeigen
+    send: abschicken
+    download: herunterladen
 
 modal:
     close: Schließen
@@ -2285,3 +2290,35 @@ parents_day:
             success: Termin erfolgreich gelöscht
         rebook:
             label: Termin umbuchen
+
+chat:
+    label: Private Nachrichten
+    empty: Aktuell gibt es keine privaten Nachrichten.
+    add:
+        label: Neue Nachricht
+        success: Nachricht erfolgreich erstellt
+    show:
+        label: Nachricht anzeigen
+        attachments:
+            label: Dateien
+    message:
+        add: Antworten
+        success: Antwort erfolgreich erstellt
+    attachment:
+        remove:
+            label: Anhang löschen
+            confirm: "Soll der Anhang %filename% wirklich gelöscht werden? Diese Aktion kann nicht rückgängig gemacht werden."
+            success: Anhang erfolgreich gelöscht
+    participants:
+        label: Teilnehmer
+        add:
+            label: Neuer Chatteilnehmer
+
+
+user_type:
+    teacher: Lehrkraft
+    student: Kind
+    parent: Elternteil
+    intern: Praktikant
+    staff: Mitarbeiter
+    user: Benutzer

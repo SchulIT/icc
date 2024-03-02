@@ -3,6 +3,7 @@
 namespace App\Twig;
 
 use App\Converter\EnumStringConverter;
+use App\Converter\FancyUserStringConverter;
 use App\Converter\FilesizeStringConverter;
 use App\Converter\GradesStringConverter;
 use App\Converter\StudentStringConverter;
@@ -27,7 +28,11 @@ use Twig\TwigTest;
 
 class AppExtension extends AbstractExtension {
 
-    public function __construct(private TeacherStringConverter $teacherConverter, private StudentStringConverter $studentConverter, private UserStringConverter $userConverter, private StudyGroupStringConverter $studyGroupConverter, private StudyGroupsGradeStringConverter $studyGroupsConverter, private FilesizeStringConverter $filesizeConverter, private TimestampDateTimeConverter $timestampConverter, private EnumStringConverter $enumStringConverter, private GradesStringConverter $gradeStringConverter)
+    public function __construct(private readonly TeacherStringConverter $teacherConverter, private readonly StudentStringConverter $studentConverter,
+                                private readonly UserStringConverter $userConverter, private readonly StudyGroupStringConverter $studyGroupConverter,
+                                private readonly StudyGroupsGradeStringConverter $studyGroupsConverter, private readonly FilesizeStringConverter $filesizeConverter,
+                                private readonly TimestampDateTimeConverter $timestampConverter, private readonly EnumStringConverter $enumStringConverter,
+                                private readonly GradesStringConverter $gradeStringConverter, private readonly FancyUserStringConverter $fancyUserStringConverter)
     {
     }
 
@@ -37,6 +42,7 @@ class AppExtension extends AbstractExtension {
             new TwigFilter('teachers', [ $this, 'teachers' ]),
             new TwigFilter('student', [ $this, 'student' ]),
             new TwigFilter('user', [ $this, 'user' ]),
+            new TwigFilter('fancy_user', [ $this, 'fancyUser']),
             new TwigFilter('studygroup', [$this, 'studyGroup']),
             new TwigFilter('studygroups', [ $this, 'studyGroups' ]),
             new TwigFilter('filesize', [ $this, 'filesize' ]),
@@ -83,6 +89,14 @@ class AppExtension extends AbstractExtension {
         }
 
         return $this->userConverter->convert($user, $includeUsername);
+    }
+
+    public function fancyUser(User|null $user): string {
+        if($user === null) {
+            return 'N/A';
+        }
+
+        return $this->fancyUserStringConverter->convert($user);
     }
 
     public function studyGroup(StudyGroup $group, bool $short = false, bool $includeGrades = false): string {

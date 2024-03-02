@@ -1,0 +1,123 @@
+{% extends "main.html.twig" %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/editor.js') }}"></script>
+    <script src="{{ asset('build/collection.js') }}"></script>
+{% endblock %}
+
+{% block title %}{{ chat.topic }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('chats') }}">{{ 'chat.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% for message in chat.messages %}
+                    <div class="card {% if message.createdBy == app.user %}ms-auto w-75{% else%}me-auto w-75{% endif %}">
+                        <div class="card-header">
+                            <i class="fas fa-user"></i> {{ message.createdBy|fancy_user }}
+                            <i class="fas fa-clock"></i> {{ message.createdAt|format_datetime }}
+                        </div>
+                        <div class="card-body">
+                            {{ message.content|markdown }}
+                        </div>
+                        {% if message.attachments|length > 0 %}
+                            <div class="card-footer">
+                                <ul class="nav nav-pills card-header-pills">
+                                    {% for attachment in message.attachments %}
+                                        <li class="nav-item">
+                                            {% if is_granted('download', attachment) %}
+                                                <a class="nav-link link-hover" href="{{ path('download_chat_attachment', { uuid: attachment.uuid }) }}"><i class="fa fa-download"></i> {{ attachment.filename }}</a>
+                                            {% else %}
+                                                <i class="fa fa-download"></i> {{ attachment.filename }}</a>
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                {{ form_start(form) }}
+                <div class="card">
+                    <div class="card-header">{{ 'chat.message.add'|trans }}</div>
+                    <div class="card-body">
+                        {{ form_widget(form.content) }}
+                    </div>
+                    <div class="card-body">
+                        <div class="attachments" data-collection="attachments" data-prototype="{{ form_widget(form.attachments.vars.prototype)|e('html_attr') }}">
+                            {% for attachment in form.attachments %}
+                                {{ form_widget(attachment) }}
+                            {% endfor %}
+                        </div>
+
+                        {% do form.attachments.setRendered(true) %}
+
+                        <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="attachments">
+                            <i class="fa fa-paperclip"></i> {{ 'actions.add'|trans }}
+                        </button>
+                    </div>
+
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fas fa-paper-plane"></i> {{ 'actions.send'|trans }}
+                        </button>
+                    </div>
+                </div>
+                {{ form_end(form) }}
+            </div>
+
+            <div class="col-md-3 sticky-sidebar">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-users"></i> {{ 'chat.participants.label'|trans }}</h5>
+
+                        <ul class="list-unstyled mb-0">
+                            {% for user in chat.participants %}
+                                <li><i class="fas fa-user"></i> {{ user|fancy_user }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
+                {% if attachments|length > 0 %}
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-paperclip"></i> {{ 'label.attachments'|trans }}</h5>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% for attachment in attachments %}
+                            <div class="list-group-item">
+                                <i class="fas fa-file"></i> {{ attachment.filename }}
+                                <div class="text-muted">
+                                    <i class="fas fa-clock"></i> {{ attachment.message.createdAt|format_datetime }}
+                                </div>
+
+                                {% if is_granted('download', attachment) %}
+                                <a href="{{ path('download_chat_attachment', { uuid: attachment.uuid }) }}" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-download"></i> {{ 'actions.download'|trans }}
+                                </a>
+                                {% endif %}
+
+                                {% if is_granted('remove', attachment) %}
+                                <a href="{{ path('remove_chat_attachment', { uuid: attachment.uuid }) }}" class="btn btn-outline-danger btn-sm">
+                                    <i class="fas fa-trash"></i> {{ 'actions.remove'|trans }}
+                                </a>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

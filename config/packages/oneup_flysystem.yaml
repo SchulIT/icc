@@ -15,6 +15,10 @@ oneup_flysystem:
             local:
                 location: '%kernel.project_dir%/files/student_absence'
 
+        chat:
+            local:
+                location: '%kernel.project_dir%/files/chat'
+
     filesystems:
         messages:
             adapter: messages
@@ -28,3 +32,6 @@ oneup_flysystem:
         student_absence:
             adapter: student_absence
             mount: student_absence
+        chat:
+            adapter: chat
+            mount: chat

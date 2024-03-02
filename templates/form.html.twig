@@ -22,7 +22,10 @@
         {% if form.vars.attr.in_collection is defined and form.vars.attr.in_collection %}
         <div class="d-flex">
             <div class="me-auto w-100 pe-2">
-                {{- form_widget(form.file) -}}
+                <div class="mb-n4">
+                    {{- form_widget(form.file) -}}
+                </div>
+                {{ form_errors(form.file) }}
             </div>
 
             <div>
@@ -41,6 +44,8 @@
         {%- if download_uri -%}
             <a href="{{ download_uri }}">{{ translation_domain is same as(false) ? download_label : download_label|trans({}, translation_domain) }}</a>
         {%- endif -%}
+
+
     </div>
 {%- endblock -%}
 

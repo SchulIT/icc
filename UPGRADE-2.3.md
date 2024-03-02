@@ -26,6 +26,11 @@ Folgende Rollen wurden gelöscht:
 
 Der zugrundeliegende Milestone 2.3 ist [auf GitHub](https://github.com/SchulIT/icc/milestone/14?closed=1) zu finden.
 
+### Private Nachrichten
+
+Es ist nun möglich, private Nachrichten über das System zu verschicken. Das Feature muss in den Einstellungen für die
+gewünschten Benutzergruppen freigeschaltet werden und ist in das Benachrichtigungssystem integriert. Mehr dazu [im Handbuch](https://docs.schulit.de/icc/features/chat)
+
 ### Elternsprechtagsplanung
 
 Es können nun Elternsprechtage über das ICC gebucht werden. Mehr dazu [im Handbuch](https://docs.schulit.de/icc/features/parents_day)

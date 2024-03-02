@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Chat\ChatSeenByHelper;
 use App\Entity\Chat;
 use App\Entity\ChatMessage;
 use App\Entity\ChatMessageAttachment;
@@ -120,8 +121,12 @@ class ChatController extends AbstractController {
     }
 
     #[Route('/{uuid}', name: 'show_chat')]
-    public function showChat(Chat $chat, Request $request): Response {
+    public function showChat(Chat $chat, Request $request, ChatSeenByHelper $chatSeenByHelper): Response {
         $this->denyAccessUnlessGranted(ChatVoter::View, $chat);
+
+        // mark messages read
+        $chatSeenByHelper->markAllChatMessagesSeen($chat);
+
         $attachments = $this->attachmentRepository->findByChat($chat);
 
         $message = new ChatMessage();

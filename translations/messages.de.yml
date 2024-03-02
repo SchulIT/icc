@@ -2302,6 +2302,8 @@ chat:
         label: Nachricht anzeigen
         attachments:
             label: Dateien
+        seen_by: gesehen von
+        seen_by_nobody: niemandem
     message:
         add: Antworten
         success: Antwort erfolgreich erstellt

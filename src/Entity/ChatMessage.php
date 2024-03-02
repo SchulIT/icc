@@ -40,10 +40,16 @@ class ChatMessage {
     #[Assert\Valid]
     private Collection $attachments;
 
+    #[ORM\ManyToMany(targetEntity: User::class)]
+    #[ORM\JoinTable(name: 'chat_message_seen_by')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    private Collection $seenBy;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
         $this->attachments = new ArrayCollection();
+        $this->seenBy = new ArrayCollection();
     }
 
     public function getChat(): Chat {
@@ -93,5 +99,16 @@ class ChatMessage {
 
     public function getAttachments(): Collection {
         return $this->attachments;
+    }
+
+    public function addSeenBy(User $user): void {
+        $this->seenBy->add($user);
+    }
+
+    /**
+     * @return Collection<User>
+     */
+    public function getSeenBy(): Collection {
+        return $this->seenBy;
     }
 }

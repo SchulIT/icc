@@ -59,6 +59,9 @@ class Chat {
         return $this->participants;
     }
 
+    /**
+     * @return Collection<ChatMessage>
+     */
     public function getMessages(): Collection {
         return $this->messages;
     }

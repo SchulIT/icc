@@ -4,6 +4,7 @@ namespace App\Tests\Untis\Html;
 
 use App\Repository\SettingRepositoryInterface;
 use App\Settings\SettingsManager;
+use App\Settings\TimetableSettings;
 use App\Settings\UntisHtmlSettings;
 use App\Untis\Html\Substitution\AbsentRoomsInfotextReader;
 use App\Untis\Html\Substitution\AbsentStudyGroupsInfotextReader;
@@ -25,13 +26,15 @@ class HtmlSubstitutionReaderTest extends TestCase {
         $repository = $this->createMock(SettingRepositoryInterface::class);
         $repository->method('findAll')->willReturn([]);
 
+        $settingsManager = new SettingsManager($repository);
+
         $reader = new SubstitutionReader([
             new AbsentRoomsInfotextReader(),
             new AbsentStudyGroupsInfotextReader(),
             new AbsentTeachersInfotextReader(),
             new FreeLessonsInfotextReader(),
             new InfotextReader()
-        ], new TableCellParser(), new UntisHtmlSettings(new SettingsManager($repository)));
+        ], new TableCellParser(new TimetableSettings($settingsManager)), new UntisHtmlSettings($settingsManager));
         libxml_use_internal_errors(true) AND libxml_clear_errors();
         $result = $reader->readHtml($html);
 

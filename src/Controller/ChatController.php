@@ -7,9 +7,11 @@ use App\Entity\Chat;
 use App\Entity\ChatMessage;
 use App\Entity\ChatMessageAttachment;
 use App\Entity\User;
+use App\Event\ChatMessageCreatedEvent;
 use App\Filesystem\ChatFilesystem;
 use App\Filesystem\FileNotFoundException;
 use App\Form\ChatMessageType;
+use App\Form\ChatUserRecipientType;
 use App\Form\Model\NewChat;
 use App\Form\NewChatType;
 use App\Repository\ChatMessageAttachmentRepositoryInterface;
@@ -27,6 +29,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 #[Route('/chat')]
 #[IsGranted(ChatVoter::ChatEnabled)]
@@ -121,7 +124,7 @@ class ChatController extends AbstractController {
     }
 
     #[Route('/{uuid}', name: 'show_chat')]
-    public function showChat(Chat $chat, Request $request, ChatSeenByHelper $chatSeenByHelper): Response {
+    public function showChat(Chat $chat, Request $request, ChatSeenByHelper $chatSeenByHelper, EventDispatcherInterface $dispatcher): Response {
         $this->denyAccessUnlessGranted(ChatVoter::View, $chat);
 
         // mark messages read
@@ -144,10 +147,33 @@ class ChatController extends AbstractController {
             ]);
         }
 
+        $participantsForm = $this->createForm(ChatUserRecipientType::class, null, ['multiple' => false, 'required' => false]);
+        $participantsForm->handleRequest($request);
+
+        if($participantsForm->isSubmitted() && $participantsForm->isValid()) {
+            $newParticipant = $participantsForm->getData();
+
+            if(!$chat->getParticipants()->contains($newParticipant)) {
+                $chat->getParticipants()->add($newParticipant);
+                $this->chatRepository->persist($chat);
+
+                $dispatcher->dispatch(new ChatMessageCreatedEvent($chat->getMessages()->first()));
+
+                $this->addFlash('success', 'chat.participants.add.success');
+            } else {
+                $this->addFlash('error', 'chat.participants.add.error');
+            }
+
+            return $this->redirectToRoute('show_chat', [
+                'uuid' => $chat->getUuid()
+            ]);
+        }
+
         return $this->render('chat/show.html.twig', [
             'chat' => $chat,
             'attachments' => $attachments,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'participantsForm' => $participantsForm
         ]);
     }
 }

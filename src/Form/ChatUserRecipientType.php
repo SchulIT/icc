@@ -11,10 +11,11 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ChatUserRecipientType extends EntityType {
 
-    public function __construct(ManagerRegistry $managerRegistry, private readonly TokenStorageInterface $tokenStorage, private readonly FancyUserStringConverter $userStringConverter, private readonly ChatSettings $chatSettings) {
+    public function __construct(ManagerRegistry $managerRegistry, private readonly TokenStorageInterface $tokenStorage, private readonly FancyUserStringConverter $userStringConverter, private readonly ChatSettings $chatSettings, private readonly TranslatorInterface $translator) {
         parent::__construct($managerRegistry);
     }
 
@@ -42,7 +43,8 @@ class ChatUserRecipientType extends EntityType {
                 return $repository->createQueryBuilder('u')
                     ->where('u.userType IN (:types)')
                     ->setParameter('types', $allowedUserTypes);
-            }
+            },
+            'placeholder' => $this->translator->trans('label.select.user')
         ]);
 
     }

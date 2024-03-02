@@ -104,6 +104,23 @@
                             {% endfor %}
                         </ul>
                     </div>
+
+                    <div class="card-footer">
+                        <div class="bs-callout bs-callout-warning">
+                            <p>{{ 'chat.participants.add.caution'|trans }}</p>
+                        </div>
+
+                        {{ form_start(participantsForm) }}
+
+                        <div class="input-group">
+                            {{ form_widget(participantsForm) }}
+                            <button class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-plus"></i> {{ 'actions.add'|trans }}
+                            </button>
+                        </div>
+
+                        {{ form_end(participantsForm) }}
+                    </div>
                 </div>
 
                 {% if attachments|length > 0 %}

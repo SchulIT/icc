@@ -52,6 +52,7 @@ label:
         tuition: Unterricht auswählen
         lms: Lernplattform auswählen
         parents_day: Elternsprechtag auswählen
+        user: Person auswählen
     search:
         student: Lernenden suchen
     scope: Bereich
@@ -2325,8 +2326,9 @@ chat:
     participants:
         label: Teilnehmer
         add:
-            label: Neuer Chatteilnehmer
-
+            caution: Nach dem Hinzufügen von Personen können diese nicht mehr aus dem Gespräch gelöscht werden.
+            success: Person erfolgreich hinzugefügt
+            error: Person ist bereits Teilnehmer
 
 user_type:
     teacher: Lehrkraft

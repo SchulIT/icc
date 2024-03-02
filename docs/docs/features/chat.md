@@ -24,8 +24,7 @@ gleichberechtigt.
 
 ### Einschränkungen
 
-Die Funktion ist noch nicht vollständig implementiert. So ist es noch nicht möglich, [Teilnehmer nach der Erstellung eines
-Gesprächs hinzuzufügen oder zu löschen](https://github.com/SchulIT/icc/issues/442) oder [Nachrichten zu bearbeiten bzw. zu löschen](https://github.com/SchulIT/icc/issues/443).
+Die Funktion ist noch nicht vollständig implementiert. So ist es noch nicht möglich, [Nachrichten zu bearbeiten bzw. zu löschen](https://github.com/SchulIT/icc/issues/443).
 
 ### Alle Chats löschen
 

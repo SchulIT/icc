@@ -63,22 +63,14 @@ class ChatController extends AbstractController {
         /** @var User $user */
         $user = $this->getUser();
 
-        $chat = new NewChat();
+        $chat = new Chat();
+        $chat->addMessage(new ChatMessage());
         $form = $this->createForm(NewChatType::class, $chat);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            $chatEntity = (new Chat())->setTopic($chat->topic);
-            $chatEntity->addParticipants($user);
-            foreach($chat->recipients as $recipient) {
-                $chatEntity->addParticipants($recipient);
-            }
-
-            $this->chatRepository->persist($chatEntity);
-            $message = (new ChatMessage())
-                ->setChat($chatEntity)
-                ->setContent($chat->message);
-            $this->chatMessageRepository->persist($message);
+            $chat->addParticipants($user);
+            $this->chatRepository->persist($chat);
 
             $this->addFlash('success', 'chat.add.success');
 

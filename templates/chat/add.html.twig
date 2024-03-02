@@ -21,32 +21,24 @@
     <div class="card">
         <div class="card-header">{{ 'label.general'|trans }}</div>
         <div class="card-body">
-            {{ form_row(form.recipients) }}
+            {{ form_row(form.participants) }}
             {{ form_row(form.topic) }}
-            {{ form_row(form.message) }}
+            {{ form_row(form.messages[0].content) }}
         </div>
-    </div>
-
-    {# <div class="card">
-        <div class="card-header">{{ 'absences.students.add.attachments.label'|trans }}</div>
         <div class="card-body">
-            <div class="bs-callout bs-callout-info">
-                {{ 'absences.students.add.attachments.info'|trans }}
+            <div class="attachments" data-collection="attachments" data-prototype="{{ form_widget(form.messages[0].attachments.vars.prototype)|e('html_attr') }}">
+                {% for attachment in form.messages[0].attachments %}
+                    {{ form_widget(attachment) }}
+                {% endfor %}
             </div>
 
-            <div class="attachments" data-collection="attachments" data-prototype="{{ form_widget(form.attachments.vars.prototype)|e('html_attr') }}">
-                {{ form_widget(form.attachments) }}
-            </div>
+            {% do form.messages[0].attachments.setRendered(true) %}
 
-            {{ form_errors(form.attachments) }}
-        </div>
-
-        <div class="card-footer">
             <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="attachments">
-                <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+                <i class="fa fa-paperclip"></i> {{ 'actions.add'|trans }}
             </button>
         </div>
-    </div>#}
+    </div>
 
     <div class="buttons">
         <button type="submit" class="btn btn-primary btn-sm">

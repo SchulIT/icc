@@ -26,6 +26,7 @@ class Chat {
     #[ORM\JoinTable]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    #[Assert\Count(min: 1)]
     private Collection $participants;
 
     /**
@@ -63,6 +64,11 @@ class Chat {
      */
     public function getParticipants(): Collection {
         return $this->participants;
+    }
+
+    public function addMessage(ChatMessage $message): void {
+        $message->setChat($this);
+        $this->messages->add($message);
     }
 
     /**

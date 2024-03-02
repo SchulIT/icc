@@ -2,6 +2,7 @@
 
 namespace App\Filesystem;
 
+use App\Entity\Chat;
 use App\Entity\ChatMessageAttachment;
 use App\Http\FlysystemFileResponse;
 use League\Flysystem\DirectoryAttributes;
@@ -71,8 +72,12 @@ class ChatFilesystem implements DirectoryNamerInterface {
         }
     }
 
-    private function getPath(ChatMessageAttachment $attachment): string {
-        return sprintf('%s/%s', $attachment->getMessage()->getChat()->getUuid(), $attachment->getPath());
+    public function getPath(ChatMessageAttachment $attachment): string {
+        return sprintf('%s/%s', $this->getChatPath($attachment->getMessage()->getChat()), $attachment->getPath());
+    }
+
+    public function getChatPath(Chat $chat): string {
+        return sprintf('/%s', $chat->getUuid());
     }
 
     /**

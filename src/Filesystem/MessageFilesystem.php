@@ -96,7 +96,7 @@ class MessageFilesystem implements DirectoryNamerInterface {
     /**
      * Returns the full path of a MessageAttachment
      */
-    private function getMessageAttachmentPath(MessageAttachment $attachment): string {
+    public function getMessageAttachmentPath(MessageAttachment $attachment): string {
         return sprintf('/%s/%s', $attachment->getMessage()->getUuid(), $attachment->getPath());
     }
 
@@ -104,7 +104,7 @@ class MessageFilesystem implements DirectoryNamerInterface {
     /**
      * Returns the messages basedir which is used for any sorts of file (attachments and user specific downloads/uploads)
      */
-    private function getMessageDirectory(Message $message): string {
+    public function getMessageDirectory(Message $message): string {
         return sprintf('/%s/', $message->getUuid());
     }
 

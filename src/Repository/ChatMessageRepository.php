@@ -7,7 +7,6 @@ use App\Entity\ChatMessage;
 use App\Entity\User;
 use Doctrine\DBAL\Exception as DbalException;
 use PHPUnit\Exception;
-use function Doctrine\ORM\QueryBuilder;
 
 class ChatMessageRepository extends AbstractRepository  implements ChatMessageRepositoryInterface {
 

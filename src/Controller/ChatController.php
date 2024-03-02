@@ -124,7 +124,7 @@ class ChatController extends AbstractController {
         try {
             return $chatFilesystem->getDownloadResponse($attachment);
         } catch (FileNotFoundException $e) {
-            throw $this->createNotFoundException(null, $e);
+            throw $this->createNotFoundException('Datei wurde nicht gefunden.', $e);
         }
     }
 

@@ -17,7 +17,7 @@ class ChatMessage {
     use UuidTrait;
 
     #[ORM\ManyToOne(targetEntity: Chat::class, inversedBy: 'messages')]
-    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Chat $chat;
 
     #[Gedmo\Timestampable(on: 'create')]
@@ -26,8 +26,8 @@ class ChatMessage {
 
     #[Gedmo\Blameable(on: 'create')]
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(onDelete: 'SET NULL')]
-    private User $createdBy;
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private User|null $createdBy;
 
     #[ORM\Column(type: 'text')]
     #[Assert\NotBlank]
@@ -40,6 +40,9 @@ class ChatMessage {
     #[Assert\Valid]
     private Collection $attachments;
 
+    /**
+     * @var Collection<User>
+     */
     #[ORM\ManyToMany(targetEntity: User::class)]
     #[ORM\JoinTable(name: 'chat_message_seen_by')]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
@@ -70,7 +73,7 @@ class ChatMessage {
         return $this;
     }
 
-    public function getCreatedBy(): User {
+    public function getCreatedBy(): ?User {
         return $this->createdBy;
     }
 

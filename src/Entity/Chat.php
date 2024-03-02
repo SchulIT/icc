@@ -19,12 +19,18 @@ class Chat {
     #[Assert\Length(max: 255)]
     private ?string $topic;
 
+    /**
+     * @var Collection<User>
+     */
     #[ORM\ManyToMany(targetEntity: User::class)]
     #[ORM\JoinTable]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
     private Collection $participants;
 
+    /**
+     * @var Collection<ChatMessage>
+     */
     #[ORM\OneToMany(mappedBy: 'chat', targetEntity: ChatMessage::class, cascade: ['persist'])]
     #[ORM\OrderBy(['createdAt' => 'ASC'])]
     private Collection $messages;

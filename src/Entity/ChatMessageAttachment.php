@@ -17,7 +17,7 @@ class ChatMessageAttachment {
     use UuidTrait;
 
     #[ORM\ManyToOne(targetEntity: ChatMessage::class, inversedBy: 'attachments')]
-    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ChatMessage $message;
 
     #[Vich\UploadableField(mapping: 'chat', fileNameProperty: 'path', size: 'size', originalName: 'filename')]

@@ -2307,6 +2307,7 @@ chat:
     add:
         label: Neue Nachricht
         success: Nachricht erfolgreich erstellt
+        caution: Nachrichten können nach dem Abschicken nicht mehr geändert oder gelöscht werden.
     show:
         label: Nachricht anzeigen
         attachments:

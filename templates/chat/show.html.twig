@@ -63,6 +63,11 @@
                 <div class="card">
                     <div class="card-header">{{ 'chat.message.add'|trans }}</div>
                     <div class="card-body">
+                        <div class="bs-callout bs-callout-danger">
+                            <h5>{{ 'caution'|trans }}</h5>
+                            <p>{{ 'chat.add.caution'|trans }}</p>
+                        </div>
+
                         {{ form_widget(form.content) }}
                     </div>
                     <div class="card-body">
@@ -91,7 +96,7 @@
             <div class="col-md-3 sticky-sidebar">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-users"></i> {{ 'chat.participants.label'|trans }}</h5>
+                        <h5 class="card-title">{{ chat.topic }}</h5>
 
                         <ul class="list-unstyled mb-0">
                             {% for user in chat.participants %}

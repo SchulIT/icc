@@ -16,6 +16,6 @@ class ChatStrategy implements SortingStrategyInterface {
      * @return int
      */
     public function compare($objectA, $objectB): int {
-        return $this->dateStrategy->compare($objectA->getMessages()->first()->getCreatedAt(), $objectB->getMessages()->first()->getCreatedAt());
+        return $this->dateStrategy->compare($objectA->getMessages()->last()->getCreatedAt(), $objectB->getMessages()->last()->getCreatedAt());
     }
 }

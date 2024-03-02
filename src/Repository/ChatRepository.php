@@ -16,8 +16,6 @@ class ChatRepository extends AbstractRepository implements ChatRepositoryInterfa
             ->leftJoin('cInner.participants', 'pInner')
             ->where('pInner = :user');
 
-        // TODO: Order by last message
-
         return $qb->select(['c', 'p'])
             ->from(Chat::class, 'c')
             ->leftJoin('c.participants', 'p')

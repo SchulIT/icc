@@ -36,6 +36,9 @@
                                 {% for user in chat.participants %}
                                     <i class="fa fa-user"></i> {{ user|fancy_user }}
                                 {% endfor %}
+
+                                <br>
+                                <i class="fas fa-comment"></i> {{ 'chat.last_message'|trans({'%createdAt%': chat.messages.last.createdAt|format_datetime, '%createdBy%': chat.messages.last.createdBy|fancy_user}) }}
                             </div>
                         </div>
                     {% endfor %}

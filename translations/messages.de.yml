@@ -2294,6 +2294,7 @@ parents_day:
 chat:
     label: Private Nachrichten
     empty: Aktuell gibt es keine privaten Nachrichten.
+    last_message: Letzte Nachricht von %createdBy% am %createdAt%
     add:
         label: Neue Nachricht
         success: Nachricht erfolgreich erstellt

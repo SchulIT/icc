@@ -26,3 +26,13 @@ gleichberechtigt.
 
 Die Funktion ist noch nicht vollständig implementiert. So ist es noch nicht möglich, [Teilnehmer nach der Erstellung eines
 Gesprächs hinzuzufügen oder zu löschen](https://github.com/SchulIT/icc/issues/442) oder [Nachrichten zu bearbeiten bzw. zu löschen](https://github.com/SchulIT/icc/issues/443).
+
+### Alle Chats löschen
+
+Zwischen den Schuljahren ist es sinnvoll, alle Chats aus dem System zu löschen. Dies ist jedoch bisher nur über die
+Konsole möglich:
+
+```bash
+$ php bin/console app:chats:purge
+```
+

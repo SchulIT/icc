@@ -4,8 +4,10 @@ namespace App\Filesystem;
 
 use App\Entity\ChatMessageAttachment;
 use App\Http\FlysystemFileResponse;
+use League\Flysystem\DirectoryAttributes;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
+use League\Flysystem\FilesystemReader;
 use Mimey\MimeTypes;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,6 +18,14 @@ class ChatFilesystem implements DirectoryNamerInterface {
 
     public function __construct(private readonly FilesystemOperator $filesystem, private readonly MimeTypes $mimeTypes, private readonly LoggerInterface $logger) {
 
+    }
+
+    public function purge() {
+        foreach($this->filesystem->listContents('/') as $item) {
+            if($item instanceof DirectoryAttributes) {
+                $this->filesystem->deleteDirectory($item->path());
+            }
+        }
     }
 
     public function getDownloadResponse(ChatMessageAttachment $attachment): Response {

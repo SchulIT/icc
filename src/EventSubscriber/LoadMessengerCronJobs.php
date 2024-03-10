@@ -20,6 +20,7 @@ class LoadMessengerCronJobs implements EventSubscriberInterface {
 
         $event->addJob(CronJobMetadata::createByCommand('*/1 * * * *', $this->command, 'async -vv --time-limit=20 --no-reset'));
         $event->addJob(CronJobMetadata::createByCommand('*/1 * * * *', $this->command, 'mail -vv --time-limit=20 --no-reset'));
+        $event->addJob(CronJobMetadata::createByCommand('*/1 * * * *', $this->command, 'users -vv --time-limit=20 --no-reset'));
     }
 
     /**

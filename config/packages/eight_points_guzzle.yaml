@@ -3,6 +3,17 @@
 # https://github.com/8p/EightPointsGuzzleBundle/blob/master/src/Resources/doc/configuration-reference.md
 eight_points_guzzle:
     clients:
+        sso:
+            base_url: "%env(SSO_URL)%"
+            options:
+                timeout: 30
+                http_errors: false
+                headers:
+                    Accept: 'application/json'
+                    User-Agent: 'ICC/%version%'
+                    X-Token: '%env(SSO_APITOKEN)%'
+                verify: '%kernel.debug%'
+
         servicecenter:
             # Write here the host where to do requests
             base_url: "%env(SERVICECENTER_URL)%"

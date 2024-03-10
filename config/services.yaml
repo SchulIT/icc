@@ -345,6 +345,11 @@ services:
         arguments:
             $isEnabled: '%env(ASYNC_CHECKS)%'
 
+    App\Command\UpdateUsersFromSsoCommand:
+        arguments:
+            $ssoUrl: '%env(SSO_URL)%'
+            $ssoToken: '%env(SSO_APITOKEN)%'
+
     App\Command\BackupCommand:
         arguments:
             $projectPath: '%kernel.project_dir%'
@@ -428,6 +433,12 @@ services:
     App\Twig\WebpackEntryCssSourceExtension:
         bind:
             $publicDir: '%kernel.project_dir%/public'
+
+    # MESSENGER
+    App\Messenger\UpdateOrRemoveUserHandler:
+        arguments:
+            $client: '@eight_points_guzzle.client.sso'
+            $isDebug: '%kernel.debug%'
 
 when@test:
     # See https://github.com/DamienHarper/auditor/issues/141#issuecomment-1397949309

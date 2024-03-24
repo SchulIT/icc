@@ -478,7 +478,7 @@
             {{ _self.absenceLesson(item.absenceLesson) }}
         {% endif %}
 
-        {{ _self.absences(item.absentStudentGroups, item.absentStudentsCount, substitution.uuid ~ lesson, item.students|length ) }}
+        {{ _self.absences(item.absentStudentGroups, item.absentStudentsCount, substitution.uuid ~ lesson|replace({'.': '', '/': ''}), item.students|length ) }}
         {{ _self.studentInfo(item.studentInfo, substitution.uuid) }}
     </div>
 {% endmacro %}

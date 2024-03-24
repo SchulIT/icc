@@ -28,6 +28,7 @@ class BookStudentInformation {
     private DateTime $from;
 
     #[ORM\Column(type: 'date')]
+    #[Assert\GreaterThan(propertyPath: 'from')]
     private DateTime $until;
 
     #[ORM\Column(type: 'boolean')]

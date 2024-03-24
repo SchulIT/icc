@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Converter\StudentStringConverter;
 use App\Entity\BookStudentInformation;
 use App\Entity\User;
 use App\Form\BookStudentInformationType;
@@ -12,10 +13,12 @@ use App\Sorting\Sorter;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\SectionFilter;
 use App\View\Filter\StudentFilter;
+use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/book/extra/students')]
 class BookStudentInformationController extends AbstractController {
@@ -90,7 +93,29 @@ class BookStudentInformationController extends AbstractController {
     }
 
     #[Route('/{uuid}/remove', name: 'remove_student_book_information')]
-    public function remove(BookStudentInformation $information, Request $request): Response {
-        
+    public function remove(BookStudentInformation $information, Request $request, StudentStringConverter $stringConverter, TranslatorInterface $translator): Response {
+        $form = $this->createForm(ConfirmType::class, null, [
+            'message' => 'book.extra.student_info.remove.confirm',
+            'message_parameters' => [
+                '%student%' => $stringConverter->convert($information->getStudent()),
+                '%from%' => $information->getFrom()->format($translator->trans('date.format')),
+                '%until%' => $information->getUntil()->format($translator->trans('date.format'))
+            ]
+        ]);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $this->repository->remove($information);
+            $this->addFlash('success', 'book.extra.student_info.remove.success');
+
+            return $this->redirectToRoute('book_student_information_index', [
+                'student' => $information->getStudent()->getUuid()
+            ]);
+        }
+
+        return $this->render('books/extra/student_information/remove.html.twig', [
+            'form' => $form->createView(),
+            'info' => $information
+        ]);
     }
 }

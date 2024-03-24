@@ -92,6 +92,10 @@
         </div>
       </div>
 
+      <div class="card-footer">
+        <input type="text" placeholder="Lernenden suchen..." class="form-control" @input="applySearchResults($event.target.value)">
+      </div>
+
       <div class="card-footer d-flex align-items-center" v-if="selectedAttendances.length > 0">
         <div class="flex-fill">
           <span class="badge text-bg-primary">
@@ -143,7 +147,7 @@
       <div class="list-group list-group-flush">
         <div class="list-group-item align-items-center p-0"
              v-for="attendance in attendances"
-             :class="{ 'bg-selected': selectedAttendances.indexOf(attendance) >= 0 }">
+             :class="{ 'bg-selected': selectedAttendances.indexOf(attendance) >= 0, 'd-none': attendance.isHidden || false }">
 
           <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][type]'" :value="attendance.type">
           <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][excuseStatus]'" :value="attendance.excuse_status">
@@ -666,6 +670,17 @@ export default {
           }).catch(function(error) {
             console.error(error);
           });
+    },
+    applySearchResults(searchText) {
+      searchText = searchText.trim();
+
+      for(let attendance of this.attendances) {
+        if(searchText === null || searchText === '') {
+          attendance.isHidden = false;
+        } else {
+          attendance.isHidden = attendance.student.lastname.includes(searchText) !== true && attendance.student.firstname.includes(searchText) !== true;
+        }
+      }
     }
   }
 }

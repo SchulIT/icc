@@ -25,6 +25,7 @@ use App\Entity\StudyGroupMembership;
 use App\Entity\Teacher as TeacherEntity;
 use App\Entity\TimetableLesson;
 use App\Entity\Tuition as TuitionEntity;
+use App\Repository\BookStudentInformationRepositoryInterface;
 use App\Repository\GradeLimitedMembershipRepositoryInterface;
 use App\Repository\GradeResponsibilityRepositoryInterface;
 use App\Repository\LessonAttendanceFlagRepositoryInterface;
@@ -42,7 +43,8 @@ class BookExporter {
                                 private readonly GradeOverviewHelper $gradeOverviewHelper, private readonly TuitionRepositoryInterface $tuitionRepository,
                                 private readonly LessonAttendanceFlagRepositoryInterface $flagRepository,
                                 private readonly GradeResponsibilityRepositoryInterface $responsibilityRepository,
-                                private readonly GradeLimitedMembershipRepositoryInterface $limitedMembershipRepository)
+                                private readonly GradeLimitedMembershipRepositoryInterface $limitedMembershipRepository,
+                                private readonly BookStudentInformationRepositoryInterface $bookStudentInformationRepository)
     {
     }
 
@@ -174,6 +176,20 @@ class BookExporter {
                     ->setNotExcusedAbsentLessonCount($info->getNotExcusedAbsentLessonsCount())
                     ->setFlagCounts($counts)
             );
+
+            foreach($this->bookStudentInformationRepository->findByStudents([$student], $section->getStart(), $section->getEnd()) as $info) {
+                if($info->isIncludeInGradeBookExport() !== true) {
+                    continue;
+                }
+
+                $book->addAdditionalStudentInformation(
+                    (new AdditionalStudentInformation())
+                        ->setStudent($this->castStudent($student, $section, $tuition))
+                        ->setFrom($info->getFrom())
+                        ->setUntil($info->getUntil())
+                        ->setContent($info->getContent())
+                );
+            }
         }
 
         foreach($this->flagRepository->findAll() as $flag) { // only add (to overview) flag if necessary

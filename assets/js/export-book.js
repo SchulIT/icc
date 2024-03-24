@@ -238,6 +238,8 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
         pdf.text('Unterschrift der Fachlehrkraft', 0, 0);
 
+        addAdditionalStudentInformation(pdf, response);
+
         // Stundenübersicht
         pdf.addPage('a4', 'landscape');
 
@@ -251,6 +253,36 @@ document.addEventListener('DOMContentLoaded', function(event) {
         addFooter(pdf);
 
         return pdf;
+    }
+
+    function addAdditionalStudentInformation(pdf, response) {
+        // Zusatzeinträge
+        if(response.additional_student_information !== null && response.additional_student_information.length > 0) {
+            pdf.addPage('a4', 'landscape');
+            pdf.text('Zusätzliche Einträge für Lernende', 15, 25);
+
+            let header = [ 'Nachname', 'Vorname', 'von', 'bis', 'Kommentar' ];
+            let rows = [ ];
+
+            for(let info of response.additional_student_information) {
+                rows.push([info.student.lastname, info.student.firstname, formatDate(info.from, false), formatDate(info.until, false), info.content ]);
+            }
+
+            pdf.autoTable({
+                startY: 30,
+                theme: 'grid',
+                margin: {
+                    top: 25,
+                    bottom: 25
+                },
+                head: [header],
+                body: rows,
+                styles: {
+                    font: getFontName(),
+                    fontSize: 8
+                }
+            });
+        }
     }
 
     function formatLessons(start, end) {

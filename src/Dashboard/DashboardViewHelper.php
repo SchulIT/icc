@@ -50,6 +50,7 @@ use App\Repository\TuitionRepositoryInterface;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\AbsenceVoter;
 use App\Security\Voter\AppointmentVoter;
+use App\Security\Voter\BookStudentInformationVoter;
 use App\Security\Voter\ExamVoter;
 use App\Security\Voter\MessageVoter;
 use App\Security\Voter\ResourceReservationVoter;
@@ -297,7 +298,11 @@ class DashboardViewHelper {
             $studentInfo = [ ];
 
             if($lesson->getTuition() !== null && $lesson->getTuition()->getStudyGroup() !== null) {
-                $studentInfo = $this->bookStudentInformationRepository->findByStudyGroup($lesson->getTuition()->getStudyGroup(), $lesson->getDate(), $lesson->getDate());
+                foreach($this->bookStudentInformationRepository->findByStudyGroup($lesson->getTuition()->getStudyGroup(), $lesson->getDate(), $lesson->getDate()) as $info) {
+                    if($this->authorizationChecker->isGranted(BookStudentInformationVoter::Show, $info)) {
+                        $studentInfo[] = $info;
+                    }
+                }
             }
 
             if($lesson->getTuition() !== null) {

@@ -60,23 +60,7 @@ class BookStudentInformationVoter extends Voter {
     }
 
     private function canShow(BookStudentInformation $information, TokenInterface $token): bool {
-        if($this->accessDecisionManager->decide($token, ['ROLE_BOOK_ENTRY_CREATOR'])) {
-            return true;
-        }
-
-        $user = $token->getUser();
-
-        if(!$user instanceof User) {
-            return false;
-        }
-
-        foreach($user->getStudents() as $student) {
-            if($information->getStudent()?->getId() === $student->getId()) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->accessDecisionManager->decide($token, ['ROLE_BOOK_ENTRY_CREATOR']);
     }
 
 }

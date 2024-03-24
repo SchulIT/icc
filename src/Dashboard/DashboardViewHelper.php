@@ -294,7 +294,11 @@ class DashboardViewHelper {
     private function addTimetableLessons(iterable $lessons, DateTime $dateTime, DashboardView $dashboardView, bool $computeAbsences): void {
         foreach($lessons as $lesson) {
             $lessonStudents = [ ];
-            $studentInfo = $this->bookStudentInformationRepository->findByStudyGroup($lesson->getTuition()->getStudyGroup(), $lesson->getDate(), $lesson->getDate());
+            $studentInfo = [ ];
+
+            if($lesson->getTuition() !== null && $lesson->getTuition()->getStudyGroup() !== null) {
+                $studentInfo = $this->bookStudentInformationRepository->findByStudyGroup($lesson->getTuition()->getStudyGroup(), $lesson->getDate(), $lesson->getDate());
+            }
 
             if($lesson->getTuition() !== null) {
                 $lessonStudents = $lesson

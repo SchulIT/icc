@@ -2,14 +2,16 @@
 
 namespace App\Dashboard;
 
+use App\Entity\BookStudentInformation;
 use App\Grouping\AbsentStudentGroup;
 
-abstract class AbsenceAwareViewItem extends AbstractViewItem {
+abstract class AdditionalExtraAwareViewItem extends AbstractViewItem {
 
     /**
      * @param AbsentStudentGroup[] $absentStudentGroups
+     * @param BookStudentInformation[] $studentInfo
      */
-    public function __construct(private array $absentStudentGroups)
+    public function __construct(private readonly array $absentStudentGroups, private readonly array $studentInfo)
     {
     }
 
@@ -18,6 +20,13 @@ abstract class AbsenceAwareViewItem extends AbstractViewItem {
      */
     public function getAbsentStudentGroups(): array {
         return $this->absentStudentGroups;
+    }
+
+    /**
+     * @return BookStudentInformation[]
+     */
+    public function getStudentInfo(): array {
+        return $this->studentInfo;
     }
 
     public function getAbsentStudentsCount(): int {

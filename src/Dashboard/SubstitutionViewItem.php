@@ -7,10 +7,10 @@ use App\Entity\Substitution;
 use App\Entity\TeacherAbsenceLesson;
 use App\Entity\TimetableLesson;
 
-class SubstitutionViewItem extends AbsenceAwareViewItem {
+class SubstitutionViewItem extends AdditionalExtraAwareViewItem {
 
-    public function __construct(private Substitution $substitution, private bool $isFreeLessonType, private array $students, array $absentStudentGroups, private readonly ?TimetableLesson $lesson, private readonly ?TeacherAbsenceLesson $absenceLesson) {
-        parent::__construct($absentStudentGroups);
+    public function __construct(private Substitution $substitution, private bool $isFreeLessonType, private array $students, array $absentStudentGroups, array $studentInfo, private readonly ?TimetableLesson $lesson, private readonly ?TeacherAbsenceLesson $absenceLesson) {
+        parent::__construct($absentStudentGroups, $studentInfo);
     }
 
     public function isFreeLesson(): bool {

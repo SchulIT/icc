@@ -1,0 +1,113 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'book.extra.student_info.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('book') }}">{{ 'book.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover card-table">
+                            <colgroup>
+                                <col>
+                                <col class="column-md">
+                                <col class="column-md">
+                                <col class="column-lg">
+                                <col class="column-sm">
+                            </colgroup>
+
+                            <thead>
+                            <tr>
+                                <th>{{ 'label.student'|trans }}</th>
+                                <th>{{ 'label.start'|trans }}</th>
+                                <th>{{ 'label.end'|trans }}</th>
+                                <th>{{ 'label.comment'|trans }}</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            {% for item in info %}
+                                <tr>
+                                    <td class="align-middle">
+                                        {{ item.student|student }}
+
+                                        {% include "_includes/_id.html.twig" with { id: item.id } %}
+                                    </td>
+                                    <td class="align-middle">
+                                        {{ item.from|format_date }}
+                                    </td>
+                                    <td class="align-middle">
+                                        {{ item.until|format_date }}
+                                    </td>
+                                    <td class="align-middle">{{ item.content|slice(0, 100) }}...</td>
+                                    <td class="align-middle">
+                                        {% set canEdit = is_granted('edit', item) %}
+                                        {% set canRemove = is_granted('remove', item) %}
+
+                                        {% if canEdit or canRemove %}
+                                            <div class="dropdown">
+                                                <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                                    <i class="fas fa-ellipsis-v"></i>
+                                                </button>
+
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    {% if canEdit %}
+                                                        <a href="{{ path('edit_student_book_information', { uuid: item.uuid }) }}" class="dropdown-item">
+                                                            <i class="fas fa-edit"></i> {{ 'actions.edit'|trans }}
+                                                        </a>
+                                                    {% endif %}
+                                                    {% if canRemove %}
+                                                        <a href="{{ path('remove_student_book_information', { uuid: item.uuid }) }}" class="dropdown-item text-danger">
+                                                            <i class="fas fa-trash"></i> {{ 'actions.remove'|trans }}
+                                                        </a>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                {% if is_granted('new-book-student-info') %}
+                    <div class="card">
+                        <div class="list-group list-group-flush">
+                            <a href="{{ path('add_student_book_information') }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-plus"></i> {{ 'book.extra.student_info.add.label'|trans }}
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="card">
+                    <div class="card-body">
+                        {% include "_filter/section.html.twig" %}
+
+                        {% include "_filter/grade.html.twig" with { params: { section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null} } %}
+                        {% include "_filter/student.html.twig" with { params: { section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null} } %}
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ path('book_student_information_index') }}" class="btn btn-primary btn-sm">
+                            {{ 'filter.reset'|trans }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

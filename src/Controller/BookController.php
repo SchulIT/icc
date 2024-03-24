@@ -39,6 +39,7 @@ use App\Grouping\TuitionGradeStrategy;
 use App\Messenger\RunIntegrityCheckMessage;
 use App\Repository\BookCommentRepositoryInterface;
 use App\Repository\BookIntegrityCheckViolationRepositoryInterface;
+use App\Repository\BookStudentInformationRepositoryInterface;
 use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\GradeResponsibilityRepositoryInterface;
 use App\Repository\LessonAttendanceFlagRepositoryInterface;
@@ -193,7 +194,7 @@ class BookController extends AbstractController {
     public function index(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TuitionFilter $tuitionFilter, TeacherFilter $teacherFilter,
                           TuitionRepositoryInterface $tuitionRepository, ExcuseNoteRepositoryInterface $excuseNoteRepository, DateHelper $dateHelper, Request $request,
                           EntryOverviewHelper $entryOverviewHelper, AbsenceExcuseResolver $absenceExcuseResolver, BookSettings $settings,
-                          GradeResponsibilityRepositoryInterface $responsibilityRepository, LessonEntryRepositoryInterface $lessonEntryRepository): Response {
+                          GradeResponsibilityRepositoryInterface $responsibilityRepository, LessonEntryRepositoryInterface $lessonEntryRepository, BookStudentInformationRepositoryInterface $studentInformationRepository): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -218,6 +219,7 @@ class BookController extends AbstractController {
         $info = [ ];
         $responsibilities = [ ];
         $entriesWithExercises = [ ];
+        $studentExtraInfo = [ ];
 
         if($selectedDate !== null) {
             if ($gradeFilterView->getCurrentGrade() !== null) {
@@ -231,6 +233,7 @@ class BookController extends AbstractController {
                     $responsibilities = $responsibilityRepository->findAllByGrade($gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection());
                 }
 
+                $studentExtraInfo = $studentInformationRepository->findByGrade($gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection(), $selectedDate, (clone $selectedDate)->modify('+6 days'));
                 $entriesWithExercises = $lessonEntryRepository->findAllByGradeWithExercises($gradeFilterView->getCurrentGrade(), $dateHelper->getToday()->modify(sprintf('-%d days', $settings->getExercisesDays())), $dateHelper->getToday());
             } else if ($tuitionFilterView->getCurrentTuition() !== null) {
                 $overview = $entryOverviewHelper->computeOverviewForTuition($tuitionFilterView->getCurrentTuition(), $selectedDate, (clone $selectedDate)->modify('+1 month')->modify('-1 day'));
@@ -241,6 +244,8 @@ class BookController extends AbstractController {
                 if($sectionFilterView->getCurrentSection() !== null && $tuitionFilterView->getCurrentTuition()->getStudyGroup()->getGrades()->count() === 1) {
                     $responsibilities = $responsibilityRepository->findAllByGrade($tuitionFilterView->getCurrentTuition()->getStudyGroup()->getGrades()->first(), $sectionFilterView->getCurrentSection());
                 }
+
+                $studentExtraInfo = $studentInformationRepository->findByStudyGroup($tuitionFilterView->getCurrentTuition()->getStudyGroup(), $selectedDate, (clone $selectedDate)->modify('+6 days'));
             } else if($teacherFilterView->getCurrentTeacher() !== null) {
                 $overview = $entryOverviewHelper->computeOverviewForTeacher($teacherFilterView->getCurrentTeacher(), $selectedDate, (clone $selectedDate)->modify('+6 days'));
                 $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
@@ -264,6 +269,7 @@ class BookController extends AbstractController {
                 }
 
                 $info = $absenceExcuseResolver->resolveBulk($students, $tuitions);
+                $studentExtraInfo = $studentInformationRepository->findByStudents($students, $selectedDate, (clone $selectedDate)->modify('+6 days'));
             }
         }
 
@@ -379,7 +385,8 @@ class BookController extends AbstractController {
             'lateStudentsByLesson' => $lateStudentsByLesson,
             'responsibilities' => $responsibilities,
             'entriesWithExercises' => $entriesWithExercises,
-            'exercisesDays' => $settings->getExercisesDays()
+            'exercisesDays' => $settings->getExercisesDays(),
+            'studentExtraInfo' => $studentExtraInfo
         ]);
     }
 

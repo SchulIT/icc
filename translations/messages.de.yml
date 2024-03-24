@@ -316,6 +316,9 @@ label:
     empty_name: ohne Name
     parent_of: 'Elternteil von %students%'
     recipients: Empfänger
+    include_in_gradebook_export:
+        label: Im Unterrichtsbuch-Export anzeigen
+        help: Wenn diese Option aktiv ist, taucht diese Information beim Export des Unterrichtsbuch der zum Kind gehörenden Klasse auf.
 
 markdown:
     label: Markdown
@@ -2065,6 +2068,22 @@ book:
                 label: mehr als eine Anwesenheit pro Stunde
                 help: Dieser Check prüft nur, es es für das Kind zu einer Stunde zwei Anwesenheiten gibt (die Art der Anwesenheit, also anwesend, abwesend etc., wird dabei nicht geprüft).
                 violation: Kind hat zwei Anwesenheiten
+
+    extra:
+        student_info:
+            label: Lernendeninfos
+            help: Hier können zeitlich begrenzte Informationen zu Lernenden (bspw. Maßnahmen, Krankheitsinfos, ...) hinterlegt werden. Es gilt den Datenschutz zu beachten.
+            empty: Bisher wurden keine Informationen hinterlegt
+            add:
+                label: Neue Information
+                success: Information erfolgreich erstellt
+            edit:
+                label: Information bearbeiten
+                success: Information erfolgreich aktualisiert
+            remove:
+                label: Information löschen
+                confirm: 'Soll die Information über %student% wirklich gelöscht werden?'
+                success: Information erfolgreich gelöscht
 
 export:
     caution: Ich bestätige, dass ich die Datei nur auf zugelassenen Endgeräten verarbeite. Die Datei darf nur lokal verarbeitet werden und nicht via E-Mail versendet oder auf Clouddiensten gespeichert werden.

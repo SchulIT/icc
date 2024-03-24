@@ -7,6 +7,8 @@ use App\Entity\User;
 use App\Form\BookStudentInformationType;
 use App\Repository\BookStudentInformationRepositoryInterface;
 use App\Section\SectionResolverInterface;
+use App\Sorting\BookStudentInformationStrategy;
+use App\Sorting\Sorter;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\SectionFilter;
 use App\View\Filter\StudentFilter;
@@ -22,16 +24,23 @@ class BookStudentInformationController extends AbstractController {
     }
 
     #[Route('', name: 'book_student_information_index')]
-    public function index(GradeFilter $gradeFilter, StudentFilter $studentFilter, SectionFilter $sectionFilter, Request $request): Response {
+    public function index(GradeFilter $gradeFilter, StudentFilter $studentFilter, SectionFilter $sectionFilter, Sorter $sorter, Request $request): Response {
         /** @var User $user */
         $user = $this->getUser();
 
         $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
         $studentFilterView = $studentFilter->handle($request->query->get('student'), $sectionFilterView->getCurrentSection(), $user);
-        $gradeFilterView = $gradeFilter->handle($request->query->get('grade'), $sectionFilterView->getCurrentSection(), $user, true);
+        $gradeFilterView = $gradeFilter->handle($request->query->get('grade'), $sectionFilterView->getCurrentSection(), $user, $studentFilterView->getCurrentStudent() === null);
 
-        $info = $this->repository->findByGrade($gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection());
-        // TODO: Sorting?!
+        $info = [ ];
+
+        if($gradeFilterView->getCurrentGrade() !== null) {
+            $info = $this->repository->findByGrade($gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection(), $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd());
+        } else if($studentFilterView->getCurrentStudent() !== null) {
+            $info = $this->repository->findByStudents([$studentFilterView->getCurrentStudent()], $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd());
+        }
+
+        $sorter->sort($info, BookStudentInformationStrategy::class);
 
         return $this->render('books/extra/student_information/index.html.twig', [
             'info' => $info,

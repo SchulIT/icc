@@ -429,6 +429,10 @@ services:
             $useCronjobForMessenger: "%env(bool:MESSENGER_CRONJOB)%"
             $command: '@console.command.messenger_consume_messages'
 
+    App\EventSubscriber\WorkerRunningSubscriber:
+        arguments:
+            $useCronjobForMessenger: "%env(bool:MESSENGER_CRONJOB)%"
+
     # TWIG
     App\Twig\WebpackEntryCssSourceExtension:
         bind:

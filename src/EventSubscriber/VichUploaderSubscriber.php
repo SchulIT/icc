@@ -16,10 +16,10 @@ class VichUploaderSubscriber implements EventSubscriberInterface {
     {
     }
 
-    public function postRemoveFile(Event $event) {
+    public function postRemoveFile(Event $event): void {
         $entity = $event->getObject();
 
-        if($this->em->contains($event)) { // only remove from database if not already removed
+        if($this->em->contains($entity)) { // only remove from database if not already removed
             $this->em->remove($entity);
             $this->em->flush();
         }

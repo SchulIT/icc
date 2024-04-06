@@ -52,6 +52,10 @@ class Book {
     #[Serializer\SerializedName('flags')]
     private array $flags = [ ];
 
+    #[Serializer\Type('array<App\Book\Export\AdditionalStudentInformation>')]
+    #[Serializer\SerializedName('additional_student_information')]
+    private array $additionalStudentInformation = [ ];
+
     /**
      * @var Week[]
      */
@@ -148,6 +152,15 @@ class Book {
 
     public function addFlag(AttendanceFlag $flag): void {
         $this->flags[] = $flag;
+    }
+
+    public function getAdditionalStudentInformation(): array {
+        return $this->additionalStudentInformation;
+    }
+
+    public function addAdditionalStudentInformation(AdditionalStudentInformation $information): Book {
+        $this->additionalStudentInformation[] = $information;
+        return $this;
     }
 
     public function addWeek(Week $week): void {

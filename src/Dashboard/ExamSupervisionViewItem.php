@@ -2,11 +2,12 @@
 
 namespace App\Dashboard;
 
+use App\Entity\BookStudentInformation;
 use App\Entity\Exam;
 use App\Entity\Room;
 use App\Grouping\AbsentStudentGroup;
 
-class ExamSupervisionViewItem extends AbsenceAwareViewItem {
+class ExamSupervisionViewItem extends AdditionalExtraAwareViewItem {
 
     /** @var Exam[] */
     private array $exams = [ ];
@@ -14,9 +15,10 @@ class ExamSupervisionViewItem extends AbsenceAwareViewItem {
     /**
      * @param Exam|Exam[] $examOrExams
      * @param AbsentStudentGroup[] $absentStudentGroups
+     * @param BookStudentInformation[] $studentInfo
      */
-    public function __construct($examOrExams, array $absentStudentGroups) {
-        parent::__construct($absentStudentGroups);
+    public function __construct($examOrExams, array $absentStudentGroups, array $studentInfo) {
+        parent::__construct($absentStudentGroups, $studentInfo);
 
         if(is_array($examOrExams)) {
             $this->exams = $examOrExams;

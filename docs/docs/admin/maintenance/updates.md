@@ -24,6 +24,16 @@ $ git log --pretty=format:'%H' -n 1
 ```
 :::
 
+## Hintergrunddienste stoppen (optional)
+
+Sofern die Hintergrunddienste z.B. mittels systemd realisiert werden, sollten diese zunächst gestoppt werden:
+
+```bash
+$ systemctl --user stop icc-background.service
+$ systemctl --user stop icc-mail.service
+$ systemctl --user stop icc-checks.service
+```
+
 ## Quelltext aktualisieren
 
 Der Quelltext wird mittels Git aktualisiert:
@@ -66,6 +76,16 @@ $ php bin/console shapecode:cron:scan
 :::success Erfolg
 Die Anwendung ist nun aktualisiert.
 :::
+
+## Hintergrunddienste starten (optional)
+
+Sofern die Hintergrunddienste z.B. mittels systemd realisiert werden, sollten diese wieder gestartet werden:
+
+```bash
+$ systemctl --user start icc-background.service
+$ systemctl --user start icc-mail.service
+$ systemctl --user start icc-checks.service
+```
 
 ## Wiederherstellen einer vorherigen Version
 

@@ -400,7 +400,7 @@ class DashboardViewHelper {
                     $absenceLesson = $this->absenceLessonRepository->findOneForLesson($timetableLesson);
                 }
 
-                $dashboardView->addItem($lesson, new SubstitutionViewItem($substitution, $isFreeLesson, $students, $absentStudents, $this->bookStudentInformationRepository->findByStudents($students, $timetableLesson->getDate(), $timetableLesson->getDate()), $timetableLesson, $absenceLesson));
+                $dashboardView->addItem($lesson, new SubstitutionViewItem($substitution, $isFreeLesson, $students, $absentStudents, $this->bookStudentInformationRepository->findByStudents($students, $substitution->getDate(), $substitution->getDate()), $timetableLesson, $absenceLesson));
             }
         }
     }

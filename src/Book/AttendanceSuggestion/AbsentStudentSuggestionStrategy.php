@@ -37,6 +37,10 @@ class AbsentStudentSuggestionStrategy implements SuggestionStrategyInterface {
                 continue;
             }
 
+            if($type->isMustApprove() && !$absence->isApproved() === true) {
+                continue;
+            }
+
             $suggestion = new AttendanceSuggestion(
                 $this->getStudent($absence->getStudent()),
                 $type->getBookLabel(),

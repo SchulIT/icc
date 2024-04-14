@@ -60,7 +60,18 @@ class ChatMessageRepository extends AbstractRepository  implements ChatMessageRe
             ->setParameter('user', $user->getId());
 
         if($chat !== null) {
+            $qb->andWhere('m.chat = :chat');
             $qb->setParameter('chat', $chat->getId());
+        } else {
+            $qbChats = $this->em->createQueryBuilder()
+                ->select('cInner3.id')
+                ->from(Chat::class, 'cInner3')
+                ->leftJoin('cInner3.participants', 'pInner3')
+                ->where('pInner3.id = :user');
+
+            $qb->andWhere(
+                $qb->expr()->in('m.chat', $qbChats->getDQL())
+            );
         }
 
         return $qb->getQuery()->getSingleScalarResult();

@@ -11,6 +11,10 @@ class TeacherAbsenceTypeType extends AbstractType {
         $builder
             ->add('name', TextType::class, [
                 'label' => 'label.name'
+            ])
+            ->add('details', TextType::class, [
+                'required' => false,
+                'label' => 'label.details'
             ]);
     }
 }

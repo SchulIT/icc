@@ -16,6 +16,11 @@ class TeacherAbsenceType {
     #[ORM\Column(type: 'string')]
     private ?string $name = null;
 
+    #[Assert\NotBlank(allowNull: true)]
+    #[Assert\Length(max: 255)]
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $details = null;
+
     public function __construct() {
         $this->uuid = Uuid::uuid4();
     }
@@ -33,6 +38,15 @@ class TeacherAbsenceType {
      */
     public function setName(?string $name): TeacherAbsenceType {
         $this->name = $name;
+        return $this;
+    }
+
+    public function getDetails(): ?string {
+        return $this->details;
+    }
+
+    public function setDetails(?string $details): TeacherAbsenceType {
+        $this->details = $details;
         return $this;
     }
 }

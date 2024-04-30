@@ -244,6 +244,24 @@
     </div>
 {% endblock %}
 
+{% block exam_split_widget %}
+    <div class="card">
+        <div class="card-header">
+            <button type="button" class="btn btn-danger btn-sm btn-delete float-right" data-selector=".card">
+                <i class="fa fa-trash"></i>
+            </button>
+        </div>
+
+        <div class="card-body">
+            {{ form_row(form.firstStudent) }}
+            {{ form_row(form.lastStudent) }}
+            {{ form_row(form.room) }}
+            {{ form_row(form.description) }}
+        </div>
+
+    </div>
+{% endblock %}
+
 {% block redirect_uri_widget  %}
     <div class="input-group mb-2">
         {{ form_widget(form) }}

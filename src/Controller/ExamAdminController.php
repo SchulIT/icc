@@ -3,12 +3,18 @@
 namespace App\Controller;
 
 use App\Entity\ExamStudent;
+use App\Exam\ExamSplitConfiguration;
+use App\Exam\ExamSplitter;
 use App\Exam\ExamStudentsResolver;
 use App\Exam\ReassignmentsHelper;
+use App\Form\ExamSplitConfigurationType;
+use App\Repository\ResourceReservationRepositoryInterface;
+use App\Rooms\Reservation\ResourceAvailabilityHelper;
 use App\Section\SectionResolverInterface;
 use DateTime;
 use Exception;
 use SchulIT\CommonBundle\Helper\DateHelper;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Exam;
 use App\Entity\Student;
@@ -43,7 +49,7 @@ class ExamAdminController extends AbstractController {
     private const NumberOfExams = 25;
     private const ReassignCsrfId = 'reassign_exams';
 
-    public function __construct(RefererHelper $redirectHelper, private ExamRepositoryInterface $repository, private readonly ExamStudentsResolver $examStudentsResolver) {
+    public function __construct(RefererHelper $redirectHelper, private ExamRepositoryInterface $repository, private readonly ExamStudentsResolver $examStudentsResolver, private readonly TranslatorInterface $translator) {
         parent::__construct($redirectHelper);
     }
 
@@ -304,6 +310,57 @@ class ExamAdminController extends AbstractController {
         }
 
         return $this->render('admin/exams/students.html.twig', [
+            'form' => $form->createView(),
+            'exam' => $exam
+        ]);
+    }
+
+    #[Route('/{uuid}/split', name: 'split_exam')]
+    public function split(Exam $exam, Request $request, ExamSplitter $examSplitter, ResourceReservationRepositoryInterface $reservationRepository): Response {
+        $this->denyAccessUnlessGranted('ROLE_EXAMS_ADMIN');
+
+        $configuration = new ExamSplitConfiguration();
+        $form = $this->createForm(ExamSplitConfigurationType::class, $configuration, ['exam_id' => $exam->getId()]);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $result = $examSplitter->split($exam, $configuration);
+
+            foreach($result->exams as $resultingExam) {
+                if($exam->getRoom() === null) {
+                    continue;
+                }
+
+                $reservations = $reservationRepository->findAllByResourceAndDate($resultingExam->getRoom(), $resultingExam->getDate());
+
+                for($lessonNumber = $resultingExam->getLessonStart(); $lessonNumber <= $resultingExam->getLessonEnd(); $lessonNumber++) {
+                    foreach($reservations as $reservation) {
+                        if($reservation->getLessonStart() <= $lessonNumber && $lessonNumber <= $reservation->getLessonEnd()) {
+                            $form->addError(new FormError($this->translator->trans('admin.exams.split.error.room_unavailable', [
+                                '%room%' => $exam->getRoom()->getName(),
+                                '%teacher%' => $reservation->getTeacher()->getAcronym(),
+                                '%lesson%' => $lessonNumber
+                            ])));
+                        }
+                    }
+                }
+            }
+
+            if(count($result->studentsNotMatched) > 0) {
+                $form->addError(new FormError($this->translator->trans('admin.exams.split.error.students_left')));
+            } else if(count($form->getErrors()) === 0) {
+                $this->repository->remove($exam);
+
+                foreach($result->exams as $exam) {
+                    $this->repository->persist($exam);
+                }
+
+                $this->addFlash('success', 'admin.exams.split.success');
+                return $this->redirectToRoute('admin_exams');
+            }
+        }
+
+        return $this->render('admin/exams/split.html.twig', [
             'form' => $form->createView(),
             'exam' => $exam
         ]);

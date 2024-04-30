@@ -1304,6 +1304,14 @@ admin:
                 label: Nicht neu zugeordnete Klausuren
                 help: Diese Klausuren bleiben %firstname% zugeordnet
             no_reassignments: '%firstname% ist bereits allen Klausuren zugeordnet'
+        split:
+            label: Klausur aufteilen
+            splits: Aufteilungen
+            help: Hiermit können bereits erstellte Klausuren auf verschiedene Räume aufgeteilt werden.
+            success: Klausuren erfolgreich aufgeteilt
+            error:
+                students_left: Mit der eingegebenen Einteilung würden einige Lernende nicht aufgeteilt.
+                room_unavailable: 'Raum %room% ist in der %lesson%. Stunde von %teacher% reserviert.'
 
     subjects:
         label: Fächer

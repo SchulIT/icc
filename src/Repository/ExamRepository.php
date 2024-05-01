@@ -55,6 +55,12 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
         return $this->getDefaultQueryBuilder()
             ->andWhere('e.id = :id')
             ->setParameter('id', $id)
+            ->leftJoin('e.students', 'students')
+            ->leftJoin('students.student', 'student')
+            ->orderBy('student.lastname', 'asc')
+            ->addOrderBy('student.firstname', 'asc')
+            ->addSelect('students')
+            ->addSelect('student')
             ->getQuery()
             ->getOneOrNullResult();
     }

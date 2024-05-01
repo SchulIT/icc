@@ -11,6 +11,7 @@ use App\Form\ExamSplitConfigurationType;
 use App\Repository\ResourceReservationRepositoryInterface;
 use App\Rooms\Reservation\ResourceAvailabilityHelper;
 use App\Section\SectionResolverInterface;
+use App\Sorting\ExamStudentStrategy;
 use DateTime;
 use Exception;
 use SchulIT\CommonBundle\Helper\DateHelper;
@@ -299,6 +300,8 @@ class ExamAdminController extends AbstractController {
 
     #[Route(path: '/{uuid}/students', name: 'edit_exam_students')]
     public function students(Exam $exam, Request $request): Response {
+        $exam = $this->repository->findOneById($exam->getId()); // Hack to get a sorted list of exam students
+
         $form = $this->createForm(ExamStudentsType::class, $exam);
         $form->handleRequest($request);
 

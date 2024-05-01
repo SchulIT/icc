@@ -3,11 +3,13 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Exam;
+use App\Form\ExamStudentType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
@@ -46,7 +48,11 @@ class ExamCrudController extends AbstractCrudController
             IntegerField::new('lessonEnd')->setLabel('Ende'),
             TextareaField::new('description')->setLabel('Beschreibung'),
             AssociationField::new('tuitions')->setLabel('Unterrichte'),
-            AssociationField::new('students')->setLabel('Lernende'),
+            CollectionField::new('students')
+                ->setEntryType(ExamStudentType::class)
+                ->allowAdd(true)
+                ->allowDelete(true)
+                ->setFormTypeOption('by_reference', false),
             AssociationField::new('room')->setLabel('Raum'),
             BooleanField::new('tuitionTeachersCanEditExam')->setLabel('Lehrkräfte können Klausur bearbeiten')
         ];

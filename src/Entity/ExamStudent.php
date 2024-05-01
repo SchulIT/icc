@@ -48,4 +48,8 @@ class ExamStudent {
         $this->tuition = $tuition;
         return $this;
     }
+
+    public function __toString(): string {
+        return $this->getStudent();
+    }
 }

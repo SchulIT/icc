@@ -319,6 +319,7 @@ label:
     include_in_gradebook_export:
         label: Im Unterrichtsbuch-Export anzeigen
         help: Wenn diese Option aktiv ist, taucht diese Information beim Export des Unterrichtsbuch der zum Kind gehörenden Klasse auf.
+    value: Wert
 
 markdown:
     label: Markdown
@@ -1495,7 +1496,7 @@ admin:
             confirm: 'Soll die Notenkategorie %name% wirklich gelöscht werden? Die Kategorie ist aktuell keiner Note zugeordnet, daher kommt es nicht zu Datenverlust.'
             error: Die Notenkategorie kann nicht gelöscht werden, weil Noten mit ihr verknüpft sind.
 
-    tuition_grade_types:
+    tuition_grade_catalogs:
         label: Notenkataloge
         empty: Keine Notenkataloge vorhanden
         presets:

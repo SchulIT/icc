@@ -1,13 +1,13 @@
 {% extends "main.html.twig" %}
 
-{% block title %}{{ 'admin.tuition_grade_types.remove.label'|trans }}{% endblock %}
+{% block title %}{{ 'admin.tuition_grade_catalogs.remove.label'|trans }}{% endblock %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
         <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
         <li class="breadcrumb-item"><a href="{{ path('admin_tuition_grades') }}">{{ 'admin.tuition_grades.label'|trans }}</a></li>
-        <li class="breadcrumb-item"><a href="{{ path('admin_tuition_grade_types') }}">{{ 'admin.tuition_grade_types.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_tuition_grade_catalogs') }}">{{ 'admin.tuition_grade_catalogs.label'|trans }}</a></li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
 {% endblock %}
@@ -30,7 +30,7 @@
             <i class="fa fa-trash"></i> {{ 'remove.confirm'|trans }}
         </button>
 
-        <a href="{{ path('admin_tuition_grade_types')}}" class="btn btn-secondary btn-sm">
+        <a href="{{ path('admin_tuition_grade_catalogs')}}" class="btn btn-secondary btn-sm">
             <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
         </a>
     </div>

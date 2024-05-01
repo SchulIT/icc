@@ -129,6 +129,12 @@
                                             {% endif %}
                                             {% for category in overview.categories %}
                                                 {% if category.category.uuid.toString not in hiddenCategories %}
+                                                    {% set colorMap = [ ] %}
+                                                    {% for grade in category.category.gradeType.grades %}
+                                                        {% set value = grade.value %}
+                                                        {% set colorMap = colorMap|merge({ ('' ~ value): grade.color }) %}
+                                                    {% endfor %}
+
                                                 <td class="align-middle text-center" data-xlsx="encrypted">
                                                     {% if isStudentsView %}
                                                         {% set grade = row.grade(row.tuitionOrStudent, category.category) %}
@@ -140,15 +146,15 @@
                                                     {% set id = name|replace({'[': '_', ']': '_'}) %}
                                                     {% set isReadonly = isStudentsView or isForeignTuition %}
 
-                                                    <input type="hidden" data-encrypted="{{ grade != null ? grade.encryptedGrade|e('html_attr') : '' }}" value="{{ grade != null ? grade.encryptedGrade|e('html_attr') : '' }}" data-select="#{{ id }}" name="{{ name }}">
+                                                    <input type="hidden" data-encrypted="{{ grade != null ? grade.encryptedGrade|e('html_attr') : '' }}" value="{{ grade != null ? grade.encryptedGrade|e('html_attr') : '' }}" data-select="#{{ id }}" name="{{ name }}" data-colormap="{{ colorMap|json_encode|e('html_attr') }}">
 
                                                     {% if isReadonly %}
                                                         <span id="{{ id }}"><i class="fas fa-lock"></i></span>
                                                     {% else %}
                                                         <select class="form-select" tabindex="{{ tabindex + (rowCount*loop.index0) + rowIdx }}" disabled="disabled" id="{{ id }}">
                                                             <option value=""></option>
-                                                            {% for value in category.category.gradeType.values %}
-                                                                <option value="{{ value }}">{{ value }}</option>
+                                                            {% for value in category.category.gradeType.grades %}
+                                                                <option value="{{ value.value }}">{{ value.value }}</option>
                                                             {% endfor %}
                                                         </select>
                                                     {% endif %}

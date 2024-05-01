@@ -1,6 +1,6 @@
 {% extends "main.html.twig" %}
 
-{% block title %}{{ 'admin.tuition_grade_types.label'|trans }}{% endblock %}
+{% block title %}{{ 'admin.tuition_grade_catalogs.label'|trans }}{% endblock %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
@@ -21,7 +21,7 @@
                     <div class="bs-callout bs-callout-info">
                         <h5>{{ 'info.label'|trans }}</h5>
 
-                        <p>{{ 'admin.tuition_grade_types.empty'|trans }}</p>
+                        <p>{{ 'admin.tuition_grade_catalogs.empty'|trans }}</p>
                     </div>
                 {% else %}
                     <div class="card">
@@ -53,11 +53,11 @@
                                                 </button>
 
                                                 <div class="dropdown-menu dropdown-menu-end">
-                                                    <a href="{{ path('edit_tuition_grade_type', { uuid: type.uuid })}}" class="dropdown-item">
+                                                    <a href="{{ path('edit_tuition_grade_catalog', { uuid: type.uuid })}}" class="dropdown-item">
                                                         <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
                                                     </a>
 
-                                                    <a href="{{ path('remove_tuition_grade_type', { uuid: type.uuid })}}" class="dropdown-item text-danger">
+                                                    <a href="{{ path('remove_tuition_grade_catalog', { uuid: type.uuid })}}" class="dropdown-item text-danger">
                                                         <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
                                                     </a>
                                                 </div>
@@ -75,8 +75,8 @@
             <div class="col-md-3">
                 <div class="card">
                     <div class="list-group list-group-flush">
-                        <a href="{{ path('add_tuition_grade_type') }}" class="list-group-item list-group-item-action">
-                            <i class="fa fa-plus"></i> {{ 'admin.tuition_grade_types.add.label'|trans }}
+                        <a href="{{ path('add_tuition_grade_catalog') }}" class="list-group-item list-group-item-action">
+                            <i class="fa fa-plus"></i> {{ 'admin.tuition_grade_catalogs.add.label'|trans }}
                         </a>
                         <a href="{{ path('admin_tuition_grades') }}" class="list-group-item list-group-item-action">
                             <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
@@ -86,13 +86,13 @@
 
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">{{ 'admin.tuition_grade_types.presets.label'|trans }}</h5>
+                        <h5 class="card-title">{{ 'admin.tuition_grade_catalogs.presets.label'|trans }}</h5>
                     </div>
 
                     <div class="list-group list-group-flush">
                         {% for preset in ['onetosix_notrend', 'onetosix_trend', 'zerotofiveteen'] %}
-                            <a href="{{ path('add_tuition_grade_type', { preset: preset}) }}" class="list-group-item list-group-item-action">
-                                <i class="fa fa-plus"></i> {{ ('admin.tuition_grade_types.presets.'~preset)|trans }}
+                            <a href="{{ path('add_tuition_grade_catalog', { preset: preset}) }}" class="list-group-item list-group-item-action">
+                                <i class="fa fa-plus"></i> {{ ('admin.tuition_grade_catalogs.presets.'~preset)|trans }}
                             </a>
                         {% endfor %}
                     </div>

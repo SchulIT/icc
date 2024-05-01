@@ -3,7 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\TuitionGradeCategory;
-use App\Entity\TuitionGradeType;
+use App\Entity\TuitionGradeCatalog;
 
 class TuitionGradeCategoryRepository extends AbstractRepository implements TuitionGradeCategoryRepositoryInterface {
 
@@ -12,7 +12,7 @@ class TuitionGradeCategoryRepository extends AbstractRepository implements Tuiti
             ->findBy([], ['position' => 'asc']);
     }
 
-    public function findAllByGradeType(TuitionGradeType $type): array {
+    public function findAllByGradeType(TuitionGradeCatalog $type): array {
         return $this->em->createQueryBuilder()
             ->select('c')
             ->from(TuitionGradeCategory::class, 'c')

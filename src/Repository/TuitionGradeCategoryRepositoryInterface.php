@@ -3,7 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\TuitionGradeCategory;
-use App\Entity\TuitionGradeType;
+use App\Entity\TuitionGradeCatalog;
 
 interface TuitionGradeCategoryRepositoryInterface {
 
@@ -13,10 +13,10 @@ interface TuitionGradeCategoryRepositoryInterface {
     public function findAll(): array;
 
     /**
-     * @param TuitionGradeType $type
+     * @param TuitionGradeCatalog $type
      * @return TuitionGradeCategory[]
      */
-    public function findAllByGradeType(TuitionGradeType $type): array;
+    public function findAllByGradeType(TuitionGradeCatalog $type): array;
 
     public function persist(TuitionGradeCategory $category): void;
 

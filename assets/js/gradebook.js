@@ -116,7 +116,19 @@ async function decryptAll() {
                 continue;
             }
 
-            select.innerHTML = await crypto.decrypt(decryptedKey, JSON.parse(encryptedValue));
+            let colorMapAttr = [ ];
+
+            if(input.hasAttribute('data-colormap')) {
+                colorMapAttr = JSON.parse(input.getAttribute('data-colormap'));
+            }
+
+            let decryptedValue = await crypto.decrypt(decryptedKey, JSON.parse(encryptedValue));
+
+            select.innerHTML = decryptedValue;
+
+            if(decryptedValue in colorMapAttr && colorMapAttr[decryptedValue] !== null) {
+                select.closest('td').style.backgroundColor = colorMapAttr[decryptedValue];
+            }
         }
     }
 }

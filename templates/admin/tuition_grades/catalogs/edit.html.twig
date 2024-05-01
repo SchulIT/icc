@@ -1,19 +1,20 @@
 {% extends "main.html.twig" %}
 
-{% block title %}{{ 'admin.tuition_grade_types.edit.label'|trans }}{% endblock %}
+{% block title %}{{ 'admin.tuition_grade_catalogs.edit.label'|trans }}{% endblock %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
         <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
         <li class="breadcrumb-item"><a href="{{ path('admin_tuition_grades') }}">{{ 'admin.tuition_grades.label'|trans }}</a></li>
-        <li class="breadcrumb-item"><a href="{{ path('admin_tuition_grade_types') }}">{{ 'admin.tuition_grade_types.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_tuition_grade_catalogs') }}">{{ 'admin.tuition_grade_catalogs.label'|trans }}</a></li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
 {% endblock %}
 
 {% block post_javascript %}
     <script src="{{ asset('build/collection.js') }}"></script>
+    <script src="{{ asset('build/picker.js') }}"></script>
 {% endblock %}
 
 {% block content %}
@@ -28,22 +29,22 @@
             {{ form_row(form.displayName) }}
 
             <div class="mt-2 row">
-                {{ form_label(form.values) }}
+                {{ form_label(form.grades) }}
                 <div class="col-md-10">
-                    <div class="values" data-collection="values" data-prototype="{{ form_widget(form.values.vars.prototype)|e('html_attr') }}">
-                        {% for value in form.values %}
-                            {{ form_widget(value) }}
+                    <div class="values" data-collection="grades" data-prototype="{{ form_widget(form.grades.vars.prototype)|e('html_attr') }}">
+                        {% for grade in form.grades %}
+                            {{ form_widget(grade) }}
                         {% endfor %}
                     </div>
 
-                    <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="values">
+                    <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="grades">
                         <i class="fas fa-plus"></i> {{ 'actions.add'|trans }}
                     </button>
 
-                    {{ form_errors(form.values) }}
-                    {{ form_help(form.values) }}
+                    {{ form_errors(form.grades) }}
+                    {{ form_help(form.grades) }}
 
-                    {% do form.values.setRendered %}
+                    {% do form.grades.setRendered %}
                 </div>
             </div>
         </div>
@@ -54,7 +55,7 @@
             <i class="fa fa-save"></i> {{ 'actions.save'|trans }}
         </button>
 
-        <a href="{{ path('admin_tuition_grade_types') }}" class="btn btn-secondary btn-sm">
+        <a href="{{ path('admin_tuition_grade_catalogs') }}" class="btn btn-secondary btn-sm">
             <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
         </a>
     </div>

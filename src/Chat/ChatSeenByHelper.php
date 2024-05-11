@@ -21,13 +21,11 @@ class ChatSeenByHelper {
             return;
         }
 
-        $this->messageRepository->markAllChatMessagesSeen($chat, $user);
-
-        /*foreach($chat->getMessages() as $message) {
+        foreach($chat->getMessages() as $message) {
             if(!$message->getSeenBy()->contains($user) && $message->getCreatedBy()->getId() !== $user->getId()) {
                 $message->addSeenBy($user);
                 $this->messageRepository->persist($message);
             }
-        }*/
+        }
     }
 }

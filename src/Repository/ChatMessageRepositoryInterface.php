@@ -16,8 +16,6 @@ interface ChatMessageRepositoryInterface {
      */
     public function findByChatAndRange(Chat $chat, int $numberOfMessages, ChatMessage|null $lastMessage = null): array;
 
-    public function markAllChatMessagesSeen(Chat $chat, User $user): void;
-
     public function countUnreadMessages(User $user, Chat|null $chat = null): int;
 
     public function persist(ChatMessage $message): void;

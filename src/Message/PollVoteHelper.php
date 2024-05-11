@@ -6,9 +6,11 @@ use App\Entity\Message;
 use App\Entity\MessagePollChoice;
 use App\Entity\MessagePollVote;
 use App\Entity\MessagePollVoteRankedChoice;
+use App\Entity\Student;
 use App\Entity\User;
 use App\Repository\MessagePollVoteRepositoryInterface;
 use App\Utils\ArrayUtils;
+use InvalidArgumentException;
 
 class PollVoteHelper {
 
@@ -16,10 +18,16 @@ class PollVoteHelper {
     {
     }
 
-    public function getPollVote(Message $message, User $user): ?MessagePollVote {
+    public function getPollVote(Message $message, User $user, Student|null $student = null): ?MessagePollVote {
+        if($user->isParent() && $student === null) {
+            throw new InvalidArgumentException('You must provide a student');
+        }
+
         /** @var MessagePollVote $vote */
         foreach($message->getPollVotes() as $vote) {
-            if($vote->getUser() === $user) {
+            if($user->isParent() && $vote->getStudent()?->getId() === $student->getId()) {
+                return $vote;
+            } else if(!$user->isParent() && $vote->getUser() === $user) {
                 return $vote;
             }
         }
@@ -45,8 +53,8 @@ class PollVoteHelper {
     /**
      * @param MessagePollChoice[] $choices Choices in the correct order
      */
-    public function persistVote(Message $message, User $user, array $choices) {
-        $vote = $this->getPollVote($message, $user);
+    public function persistVote(Message $message, User $user, array $choices, Student|null $student = null): void {
+        $vote = $this->getPollVote($message, $user, $student);
 
         if($vote !== null) {
             $this->repository->remove($vote);
@@ -54,7 +62,8 @@ class PollVoteHelper {
 
         $vote = (new MessagePollVote())
             ->setMessage($message)
-            ->setUser($user);
+            ->setUser($user)
+            ->setStudent($student);
 
         $count = 0;
         foreach($choices as $rank => $choice) {

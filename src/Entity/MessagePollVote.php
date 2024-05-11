@@ -18,6 +18,10 @@ class MessagePollVote {
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?User $user = null;
 
+    #[ORM\ManyToOne(targetEntity: Student::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    private ?Student $student = null;
+
     #[ORM\ManyToOne(targetEntity: Message::class, inversedBy: 'pollVotes')]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Message $message = null;
@@ -46,6 +50,15 @@ class MessagePollVote {
 
     public function setUser(User $user): MessagePollVote {
         $this->user = $user;
+        return $this;
+    }
+
+    public function getStudent(): ?Student {
+        return $this->student;
+    }
+
+    public function setStudent(?Student $student): MessagePollVote {
+        $this->student = $student;
         return $this;
     }
 

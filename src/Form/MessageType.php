@@ -254,10 +254,7 @@ class MessageType extends AbstractType {
                             'required' => false,
                             'label_attr' => [
                                 'class' => 'checkbox-custom'
-                            ],
-                            'query_builder' => fn(EntityRepository $repository) => $repository->createQueryBuilder('v')
-                                ->where("v.userType IN ('student', 'teacher')")
-                                ->orderBy('v.userType', 'asc')
+                            ]
                         ])
                         ->add('pollStudyGroups', StudyGroupType::class, [
                             'label' => 'label.study_groups_simple',

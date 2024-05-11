@@ -2,7 +2,6 @@
 
 namespace App\Message;
 
-use App\Entity\Message;
 use App\Entity\MessagePollVote;
 use App\Entity\Student;
 use App\Entity\Teacher;
@@ -11,26 +10,29 @@ use App\Entity\User;
 class PollResultView {
 
     /**
+     * @param Student[] $students
      * @param MessagePollVote[] $studentVotes
+     * @param MessagePollVote[] $parentVotes
      * @param Teacher[] $teachers
      * @param MessagePollVote[] $teacherVotes
-     * @param Student[]|mixed[] $students
+     * @param User[] $users
+     * @param MessagePollVote[] $userVotes
      */
-    public function __construct(private array $students, private array $studentVotes, private array $teachers, private array $teacherVotes)
+    public function __construct(private readonly array $students, private readonly array $studentVotes, private readonly array $parentVotes, private readonly array $teachers, private readonly array $teacherVotes, private readonly array $users, private readonly array $userVotes)
     {
     }
 
     /**
      * @return Student[]
      */
-    public function getStudents() {
+    public function getStudents(): array {
         return $this->students;
     }
 
     /**
      * @return Teacher[]
      */
-    public function getTeachers() {
+    public function getTeachers(): array {
         return $this->teachers;
     }
 
@@ -50,4 +52,18 @@ class PollResultView {
         return $this->teacherVotes[$teacher->getId()] ?? null;
     }
 
+    public function getParentVote(Student $student): ?MessagePollVote {
+        return $this->parentVotes[$student->getId()] ?? null;
+    }
+
+    /**
+     * @return User[]
+     */
+    public function getUsers(): array {
+        return $this->users;
+    }
+
+    public function getUserVote(User $user): ?MessagePollVote {
+        return $this->userVotes[$user->getId()] ?? null;
+    }
 }

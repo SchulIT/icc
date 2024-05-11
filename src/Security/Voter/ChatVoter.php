@@ -4,7 +4,6 @@ namespace App\Security\Voter;
 
 use App\Entity\Chat;
 use App\Entity\ChatMessage;
-use App\Entity\ChatMessageAttachment;
 use App\Entity\User;
 use App\Settings\ChatSettings;
 use LogicException;
@@ -17,7 +16,7 @@ class ChatVoter extends Voter {
 
     public const View = 'view';
 
-    public const Download = 'download';
+    public const Remove = 'remove';
 
     public function __construct(private readonly ChatSettings $chatSettings) {
 
@@ -28,13 +27,7 @@ class ChatVoter extends Voter {
             return true;
         }
 
-        if($attribute === self::View && ($subject instanceof Chat || $subject instanceof ChatMessage)) {
-            return true;
-        } else if($attribute === self::Download && $subject instanceof ChatMessageAttachment) {
-            return true;
-        }
-
-        return false;
+        return $subject instanceof Chat && in_array($attribute, [self::View, self::Remove], true);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool {
@@ -45,8 +38,8 @@ class ChatVoter extends Voter {
             case self::View:
                 return $this->canView($subject, $token);
 
-            case self::Download:
-                return $this->canDownload($subject, $token);
+            case self::Remove:
+                return $this->canRemove($subject, $token);
         }
 
         throw new LogicException('This code should not be executed.');
@@ -86,9 +79,5 @@ class ChatVoter extends Voter {
         }
 
         return false;
-    }
-
-    private function canDownload(ChatMessageAttachment $attachment, TokenInterface $token): bool {
-        return $this->canView($attachment->getMessage(), $token);
     }
 }

@@ -18,6 +18,7 @@ use App\Repository\ChatMessageAttachmentRepositoryInterface;
 use App\Repository\ChatMessageRepositoryInterface;
 use App\Repository\ChatRepositoryInterface;
 use App\Security\Voter\ChatMessageAttachmentVoter;
+use App\Security\Voter\ChatMessageVoter;
 use App\Security\Voter\ChatVoter;
 use App\Sorting\ChatStrategy;
 use App\Sorting\SortDirection;
@@ -30,14 +31,15 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/chat')]
 #[IsGranted(ChatVoter::ChatEnabled)]
 class ChatController extends AbstractController {
 
-    public function __construct(RefererHelper $redirectHelper,
-                                private readonly ChatRepositoryInterface $chatRepository,
-                                private readonly ChatMessageRepositoryInterface $chatMessageRepository,
+    public function __construct(RefererHelper                                             $redirectHelper,
+                                private readonly ChatRepositoryInterface                  $chatRepository,
+                                private readonly ChatMessageRepositoryInterface           $chatMessageRepository,
                                 private readonly ChatMessageAttachmentRepositoryInterface $attachmentRepository) {
         parent::__construct($redirectHelper);
     }
@@ -124,7 +126,7 @@ class ChatController extends AbstractController {
     }
 
     #[Route('/{uuid}', name: 'show_chat')]
-    public function showChat(Chat $chat, Request $request, ChatSeenByHelper $chatSeenByHelper, EventDispatcherInterface $dispatcher): Response {
+    public function showChat(Chat $chat, Request $request, ChatSeenByHelper $chatSeenByHelper, EventDispatcherInterface $dispatcher, TranslatorInterface $translator): Response {
         $this->denyAccessUnlessGranted(ChatVoter::View, $chat);
 
         // mark messages read
@@ -169,11 +171,49 @@ class ChatController extends AbstractController {
             ]);
         }
 
+        $editForms = [ ];
+        $removeForms = [ ];
+
+        foreach($chat->getMessages() as $message) {
+            if($this->isGranted(ChatMessageVoter::Edit, $message)) {
+                $editForm = $this->container->get('form.factory')->createNamed('edit_' . $message->getId(), ChatMessageType::class, $message);
+                $editForm->handleRequest($request);
+
+                if($editForm->isSubmitted() && $editForm->isValid()) {
+                    $this->chatMessageRepository->persist($message);
+                    return $this->redirectToRoute('show_chat', [
+                        'uuid' => $message->getChat()->getUuid()
+                    ]);
+                }
+
+                $editForms[$message->getId()] = $editForm->createView();
+            }
+
+            if($this->isGranted(ChatMessageVoter::Remove, $message)) {
+                $removeForm = $this->container->get('form.factory')->createNamed('remove_' . $message->getId(), ConfirmType::class, null, [
+                    'message' => 'chat.message.remove.confirm'
+                ]);
+                $removeForm->handleRequest($request);
+
+                if($removeForm->isSubmitted() && $removeForm->isValid()) {
+                    $message->setContent($translator->trans('chat.message.remove.message_content'));
+                    $this->chatMessageRepository->persist($message);
+                    return $this->redirectToRoute('show_chat', [
+                        'uuid' => $message->getChat()->getUuid()
+                    ]);
+                }
+
+                $removeForms[$message->getId()] = $removeForm->createView();
+            }
+        }
+
         return $this->render('chat/show.html.twig', [
             'chat' => $chat,
             'attachments' => $attachments,
             'form' => $form->createView(),
-            'participantsForm' => $participantsForm
+            'participantsForm' => $participantsForm,
+            'editForms' => $editForms,
+            'removeForms' => $removeForms
         ]);
     }
 }

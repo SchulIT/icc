@@ -24,7 +24,11 @@ class ChatMessage {
     #[ORM\Column(type: 'datetime')]
     private DateTime $createdAt;
 
-    #[Gedmo\Blameable(on: 'create')]
+    #[Gedmo\Timestampable(on: 'update')]
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?DateTime $updatedAt = null;
+
+    #[Gedmo\Blameable(on: 'create', field: ['content'])]
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private User|null $createdBy;
@@ -71,6 +75,10 @@ class ChatMessage {
     public function setCreatedAt(DateTime $createdAt): ChatMessage {
         $this->createdAt = $createdAt;
         return $this;
+    }
+
+    public function getUpdatedAt(): ?DateTime {
+        return $this->updatedAt;
     }
 
     public function getCreatedBy(): ?User {

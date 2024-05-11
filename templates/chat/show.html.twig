@@ -1,6 +1,7 @@
 {% extends "main.html.twig" %}
 
 {% block post_javascript %}
+    <script src="{{ asset('build/chat.js') }}"></script>
     <script src="{{ asset('build/editor.js') }}"></script>
     <script src="{{ asset('build/collection.js') }}"></script>
 {% endblock %}
@@ -21,26 +22,72 @@
             <div class="col-md-9">
                 {% for message in chat.messages %}
                     <div class="card {% if message.createdBy == app.user %}ms-auto w-75{% else%}me-auto w-75{% endif %}">
-                        <div class="card-header d-flex">
+                        {% set canEdit = is_granted('edit', message) %}
+                        {% set canRemove = is_granted('remove', message) %}
+                        <div class="card-header d-flex align-items-baseline">
                             <div class="flex-fill">
                                 <i class="fas fa-user"></i> {{ message.createdBy|fancy_user }}
                                 <i class="fas fa-clock"></i> {{ message.createdAt|format_datetime }}
                             </div>
+                            {% if canEdit %}
+                                <button class="btn btn-outline-primary btn-sm ms-1" title="{{ 'actions.edit'|trans }}" data-edit="{{ message.id }}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            {% endif %}
+                            {% if canRemove %}
+                                <button class="btn btn-outline-danger btn-sm ms-1" title="{{ 'actions.remove'|trans }}" data-remove="{{ message.id }}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            {% endif %}
                             {% if message.createdBy == app.user %}
                                 {% if message.seenBy|length == 0 %}
-                                    <div class="text-muted" title="{{ 'chat.show.seen_by_nobody'|trans }}">
+                                    <div class="text-muted ms-1" title="{{ 'chat.show.seen_by_nobody'|trans }}">
                                         <i class="fas fa-user-times"></i>
                                     </div>
                                 {% else %}
-                                    <div class="text-muted" title="{{ 'chat.show.seen_by'|trans }}: {% for user in message.seenBy %}{{ user|fancy_user }}{% if not loop.last %}, {% endif %}{% endfor %}">
+                                    <div class="text-muted ms-1" title="{{ 'chat.show.seen_by'|trans }}: {% for user in message.seenBy %}{{ user|fancy_user }}{% if not loop.last %}, {% endif %}{% endfor %}">
                                         <i class="fas fa-user-check"></i>
                                     </div>
                                 {% endif %}
                             {% endif %}
                         </div>
-                        <div class="card-body">
+                        <div class="card-body content-{{ message.id }}">
                             {{ message.content|markdown }}
                         </div>
+                        {% if editForms[message.id] is defined %}
+                            <div class="card-body edit-{{ message.id }} hide">
+                                {% set editForm = editForms[message.id] %}
+                                {{ form_start(editForm) }}
+                                {{ form_widget(editForm.content) }}
+
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-paper-plane"></i> {{ 'actions.send'|trans }}
+                                </button>
+
+                                <button type="button" class="btn btn-secondary btn-sm" data-cancel="{{ message.id }}">
+                                    {{ 'actions.cancel'|trans }}
+                                </button>
+
+                                {{ form_end(editForm)}}
+                            </div>
+                        {% endif %}
+                        {% if removeForms[message.id] is defined %}
+                            <div class="card-body remove-{{ message.id }} hide">
+                                {% set removeForm = removeForms[message.id] %}
+                                {{ form_start(removeForm) }}
+                                {{ form_widget(removeForm.group_general.confirm) }}
+
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> {{ 'actions.remove'|trans }}
+                                </button>
+
+                                <button type="button" class="btn btn-secondary btn-sm" data-cancel="{{ message.id }}">
+                                    {{ 'actions.cancel'|trans }}
+                                </button>
+
+                                {{ form_end(removeForm)}}
+                            </div>
+                        {% endif %}
                         {% if message.attachments|length > 0 %}
                             <div class="card-footer">
                                 <ul class="nav nav-pills card-header-pills">
@@ -61,13 +108,8 @@
 
                 {{ form_start(form) }}
                 <div class="card">
-                    <div class="card-header">{{ 'chat.message.add'|trans }}</div>
+                    <div class="card-header">{{ 'chat.message.add.label'|trans }}</div>
                     <div class="card-body">
-                        <div class="bs-callout bs-callout-danger">
-                            <h5>{{ 'caution'|trans }}</h5>
-                            <p>{{ 'chat.add.caution'|trans }}</p>
-                        </div>
-
                         {{ form_widget(form.content) }}
                     </div>
                     <div class="card-body">

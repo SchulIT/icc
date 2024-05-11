@@ -2336,7 +2336,6 @@ chat:
     add:
         label: Neue Nachricht
         success: Nachricht erfolgreich erstellt
-        caution: Nachrichten können nach dem Abschicken nicht mehr geändert oder gelöscht werden.
     show:
         label: Nachricht anzeigen
         attachments:
@@ -2344,8 +2343,13 @@ chat:
         seen_by: gesehen von
         seen_by_nobody: von niemandem gesehen
     message:
-        add: Antworten
-        success: Antwort erfolgreich erstellt
+        add:
+            label: Antworten
+            success: Antwort erfolgreich erstellt
+        remove:
+            label: Nachricht löschen
+            confirm: Nachricht wirklich löschen?
+            message_content: Nachricht gelöscht
     attachment:
         remove:
             label: Anhang löschen

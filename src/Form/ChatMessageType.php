@@ -29,6 +29,13 @@ class ChatMessageType extends AbstractType {
                     $data['attachments'] = array_values($data['attachments']);
                     $event->setData($data);
                 }
+            })
+            ->addEventListener(FormEvents::POST_SET_DATA, function(FormEvent $event) {
+                $data = $event->getData();
+
+                if($data->getId() !== null) {
+                    $event->getForm()->remove('attachments');
+                }
             });
     }
 

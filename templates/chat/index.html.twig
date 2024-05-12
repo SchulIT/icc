@@ -20,34 +20,43 @@
                         <p>{{ 'chat.empty'|trans }}</p>
                     </div>
                 {% else %}
-                    {% for chat in chats %}
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">
-                                    <a href="{{ path('show_chat', { uuid: chat.uuid }) }}">
-                                        {{- chat.topic -}}
-                                    </a>
-
-                                    {% if unreadCount[chat.id] is defined and unreadCount[chat.id] > 0 %}
-                                        <span class="badge text-bg-danger">
+                    <div class="card">
+                        <div class="list-group list-group-flush">
+                            {% for chat in chats %}
+                                <a href="{{ path('show_chat', { uuid: chat.uuid }) }}" class="list-group-item list-group-item-action">
+                                    <div class="d-flex align-items-baseline">
+                                        <span class="flex-fill">
+                                            {% if unreadCount[chat.id] is defined and unreadCount[chat.id] > 0 %}
+                                                <span class="badge text-bg-danger">
                                             <i class="fas fa-asterisk"></i> {{ unreadCount[chat.id] }}
                                         </span>
-                                    {% endif %}
+                                            {% endif %}
 
-                                    <span class="badge text-bg-secondary">
-                                        <i class="fa-regular fa-comments"></i> {{ chat.messages|length }}
-                                    </span>
-                                </h5>
+                                            {{- chat.topic -}}
+                                        </span>
 
-                                {% for user in chat.participants %}
-                                    <i class="fa fa-user"></i> {{ user|fancy_user }}
-                                {% endfor %}
+                                        <span class="badge text-bg-secondary ms-2">
+                                            <i class="fa-regular fa-comments"></i> {{ chat.messages|length }}
+                                        </span>
 
-                                <br>
-                                <i class="fas fa-comment"></i> {{ 'chat.last_message'|trans({'%createdAt%': chat.messages.last.createdAt|format_datetime, '%createdBy%': chat.messages.last.createdBy|fancy_user}) }}
-                            </div>
+                                        {% set attachmentsCount = chat.countAttachments %}
+                                        {% if attachmentsCount > 0 %}
+                                            <span class="badge text-bg-secondary ms-2">
+                                            <i class="fa-solid fa-paperclip"></i> {{ attachmentsCount }}
+                                        </span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="text-muted">
+                                        {% for user in chat.participants %}
+                                            {% if app.user != user %}
+                                                <i class="fa fa-user"></i> {{ user|fancy_user }}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </a>
+                            {% endfor %}
                         </div>
-                    {% endfor %}
+                    </div>
                 {% endif %}
             </div>
             <div class="col-md-3 sticky-sidebar">

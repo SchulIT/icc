@@ -92,4 +92,14 @@ class Chat {
         $this->createdBy = $createdBy;
         return $this;
     }
+
+    public function countAttachments(): int {
+        $result = 0;
+
+        foreach($this->messages as $message) {
+            $result += count($message->getAttachments());
+        }
+
+        return $result;
+    }
 }

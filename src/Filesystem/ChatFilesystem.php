@@ -88,4 +88,9 @@ class ChatFilesystem implements DirectoryNamerInterface {
     public function directoryName(object|array $object, PropertyMapping $mapping): string {
         return sprintf('/%s/', $object->getMessage()->getChat()->getUuid());
     }
+
+    public function removeChatDirectory(Chat $chat): void {
+        $directory = $this->getChatPath($chat);
+        $this->filesystem->deleteDirectory($directory);
+    }
 }

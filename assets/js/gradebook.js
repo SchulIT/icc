@@ -128,9 +128,40 @@ async function decryptAll() {
 
             if(decryptedValue in colorMapAttr && colorMapAttr[decryptedValue] !== null) {
                 select.closest('td').style.backgroundColor = colorMapAttr[decryptedValue];
+
+                let foreground = computeForegroundColor(colorMapAttr[decryptedValue]);
+                if(foreground !== null) {
+                    select.closest('td').style.color = foreground;
+                }
             }
         }
     }
+}
+
+function computeForegroundColor(background) {
+    if(background === null) {
+        return null;
+    }
+
+    if(background.startsWith('#')) {
+        background = background.substring(1);
+    }
+
+    if(background.length !== 6) {
+        return null;
+    }
+
+    let r = parseInt(background.substring(0, 2), 16);
+    let g = parseInt(background.substring(2, 4), 16);
+    let b = parseInt(background.substring(4, 6), 16);
+
+    let luminance = 0.2126*r + 0.7152*g + 0.0722*b;
+
+    if(luminance < 150) {
+        return 'white';
+    }
+
+    return 'black';
 }
 
 function enterEditMode(keepAliveUrl) {

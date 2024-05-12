@@ -144,7 +144,7 @@ class ChatController extends AbstractController {
 
         if($form->isSubmitted() && $form->isValid()) {
             $this->chatMessageRepository->persist($message);
-            $this->addFlash('success', 'chat.message.success');
+            $this->addFlash('success', 'chat.message.add.success');
 
             return $this->redirectToRoute('show_chat', [
                 'uuid' => $chat->getUuid()

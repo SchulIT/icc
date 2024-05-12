@@ -177,7 +177,9 @@ class StudentAbsenceController extends AbstractController {
             $repository->persist($absence);
 
             $this->addFlash('success', 'absences.students.edit.success');
-            return $this->redirectToRoute('student_absences');
+            return $this->redirectToRoute('show_student_absence', [
+                'uuid' => $absence->getUuid()
+            ]);
         }
 
         return $this->render('absences/students/edit.html.twig', [

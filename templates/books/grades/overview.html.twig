@@ -129,12 +129,7 @@
                                             {% endif %}
                                             {% for category in overview.categories %}
                                                 {% if category.category.uuid.toString not in hiddenCategories %}
-                                                    {% set colorMap = [ ] %}
-                                                    {% for grade in category.category.gradeType.grades %}
-                                                        {% set value = grade.value %}
-                                                        {% set colorMap = colorMap|merge({ ('' ~ value): grade.color }) %}
-                                                    {% endfor %}
-
+                                                    {% set colorMap = category.category.gradeType|gradeCatalogColorMap %}
                                                 <td class="align-middle text-center" data-xlsx="encrypted">
                                                     {% if isStudentsView %}
                                                         {% set grade = row.grade(row.tuitionOrStudent, category.category) %}

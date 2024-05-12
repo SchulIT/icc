@@ -37,7 +37,7 @@ class TuitionGradeCategory {
     #[ORM\ManyToOne(targetEntity: TuitionGradeCatalog::class)]
     #[ORM\JoinColumn]
     #[Assert\NotNull]
-    private ?TuitionGradeCatalog $gradeType;
+    private ?TuitionGradeCatalog $catalog;
 
     /**
      * @var Collection<Tuition>
@@ -120,16 +120,16 @@ class TuitionGradeCategory {
     /**
      * @return TuitionGradeCatalog|null
      */
-    public function getGradeType(): ?TuitionGradeCatalog {
-        return $this->gradeType;
+    public function getCatalog(): ?TuitionGradeCatalog {
+        return $this->catalog;
     }
 
     /**
-     * @param TuitionGradeCatalog|null $gradeType
+     * @param TuitionGradeCatalog|null $catalog
      * @return TuitionGradeCategory
      */
-    public function setGradeType(?TuitionGradeCatalog $gradeType): TuitionGradeCategory {
-        $this->gradeType = $gradeType;
+    public function setCatalog(?TuitionGradeCatalog $catalog): TuitionGradeCategory {
+        $this->catalog = $catalog;
         return $this;
     }
 

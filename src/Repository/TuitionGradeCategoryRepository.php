@@ -12,13 +12,13 @@ class TuitionGradeCategoryRepository extends AbstractRepository implements Tuiti
             ->findBy([], ['position' => 'asc']);
     }
 
-    public function findAllByGradeType(TuitionGradeCatalog $type): array {
+    public function findAllByGradeType(TuitionGradeCatalog $catalog): array {
         return $this->em->createQueryBuilder()
             ->select('c')
             ->from(TuitionGradeCategory::class, 'c')
-            ->leftJoin('c.gradeType', 't')
+            ->leftJoin('c.catalog', 't')
             ->where('t.id = :type')
-            ->setParameter('type', $type->getId())
+            ->setParameter('type', $catalog->getId())
             ->getQuery()
             ->getResult();
     }

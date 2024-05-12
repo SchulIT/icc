@@ -26,7 +26,7 @@ class TuitionGradeCategoryType extends AbstractType {
                 'label' => 'label.position.label',
                 'help' => 'label.position.help'
             ])
-            ->add('gradeType', EntityType::class, [
+            ->add('catalog', EntityType::class, [
                 'label' => 'label.tuition_grade_type',
                 'class' => TuitionGradeCatalog::class,
                 'query_builder' => function(EntityRepository $repository) {

@@ -129,7 +129,7 @@
                                             {% endif %}
                                             {% for category in overview.categories %}
                                                 {% if category.category.uuid.toString not in hiddenCategories %}
-                                                    {% set colorMap = category.category.gradeType|gradeCatalogColorMap %}
+                                                    {% set colorMap = category.category.catalog|gradeCatalogColorMap %}
                                                 <td class="align-middle text-center" data-xlsx="encrypted">
                                                     {% if isStudentsView %}
                                                         {% set grade = row.grade(row.tuitionOrStudent, category.category) %}

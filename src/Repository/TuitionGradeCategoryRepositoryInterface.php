@@ -13,10 +13,10 @@ interface TuitionGradeCategoryRepositoryInterface {
     public function findAll(): array;
 
     /**
-     * @param TuitionGradeCatalog $type
+     * @param TuitionGradeCatalog $catalog
      * @return TuitionGradeCategory[]
      */
-    public function findAllByGradeType(TuitionGradeCatalog $type): array;
+    public function findAllByGradeType(TuitionGradeCatalog $catalog): array;
 
     public function persist(TuitionGradeCategory $category): void;
 

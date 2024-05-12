@@ -126,6 +126,9 @@ security:
         # Role which enables users to export lists
         ROLE_LISTS_EXPORTER: ROLE_LISTS_VIEWER
 
+        # Users with this role can edit chats
+        ROLE_CHAT_MOD: ROLE_USER
+
         # Role which enables users to import data
         ROLE_IMPORTER: ROLE_USER
 

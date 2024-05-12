@@ -41,11 +41,11 @@
                             {% endif %}
                             {% if message.createdBy == app.user %}
                                 {% if message.seenBy|length == 0 %}
-                                    <div class="text-muted ms-1" title="{{ 'chat.show.seen_by_nobody'|trans }}">
+                                    <div class="text-muted ms-2" title="{{ 'chat.show.seen_by_nobody'|trans }}">
                                         <i class="fas fa-user-times"></i>
                                     </div>
                                 {% else %}
-                                    <div class="text-muted ms-1" title="{{ 'chat.show.seen_by'|trans }}: {% for user in message.seenBy %}{{ user|fancy_user }}{% if not loop.last %}, {% endif %}{% endfor %}">
+                                    <div class="text-muted ms-2" title="{{ 'chat.show.seen_by'|trans }}: {% for user in message.seenBy %}{{ user|fancy_user }}{% if not loop.last %}, {% endif %}{% endfor %}">
                                         <i class="fas fa-user-check"></i>
                                     </div>
                                 {% endif %}
@@ -137,16 +137,58 @@
 
             <div class="col-md-3 sticky-sidebar">
                 <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ chat.topic }}</h5>
+                    <div class="card-body pb-0">
+                        <h5 class="card-title chat-topic">
+                            {{ chat.topic }}
 
-                        <ul class="list-unstyled mb-0">
-                            {% for user in chat.participants %}
-                                <li><i class="fas fa-user"></i> {{ user|fancy_user }}</li>
-                            {% endfor %}
-                        </ul>
+                            {% if is_granted('edit', chat) %}
+                                <button type="button" class="btn btn-outline-primary btn-sm" data-rename="" title="{{ 'actions.rename'|trans }}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            {% endif %}
+
+                            {% if is_granted('remove', chat) %}
+                                <a href="{{ path('remove_chat', { uuid: chat.uuid }) }}" class="btn btn-outline-danger btn-sm" title="{{ 'actions.remove'|trans }}">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            {% endif %}
+                        </h5>
+
+                        {% if is_granted('edit', chat) %}
+                        <div class="rename-chat hide">
+                            {{ form_start(renameForm) }}
+                            <div class="input-group">
+                                {{ form_widget(renameForm.topic) }}
+                                <button type="submit" class="btn btn-outline-primary">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-primary" data-cancel-rename="">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            {{ form_end(renameForm) }}
+                        </div>
+                        {% endif %}
                     </div>
+                    <form method="post">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('remove_participant') }}">
+                        <div class="list-group list-group-flush">
+                            {% for user in chat.participants %}
+                                <div class="list-group-item d-flex align-items-baseline">
+                                    <span class="flex-fill">
+                                        <i class="fas fa-user"></i> {{ user|fancy_user }}
+                                    </span>
+                                    {% if is_granted('edit', chat) and app.user != user and user != chat.createdBy %}
+                                        <button type="submit" class="btn btn-outline-danger btn-sm" name="remove" value="{{ user.uuid }}" title="{{ 'actions.remove'|trans }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </form>
 
+                    {% if is_granted('edit', chat) %}
                     <div class="card-footer">
                         <div class="bs-callout bs-callout-warning">
                             <p>{{ 'chat.participants.add.caution'|trans }}</p>
@@ -163,6 +205,13 @@
 
                         {{ form_end(participantsForm) }}
                     </div>
+                    {% else %}
+                        <div class="card-footer">
+                            <div class="bs-callout bs-callout-warning">
+                                <p>{{ 'chat.participants.missing_rights'|trans }}</p>
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
 
                 {% if attachments|length > 0 %}

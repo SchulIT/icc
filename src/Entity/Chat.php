@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -18,6 +19,11 @@ class Chat {
     #[Assert\NotBlank]
     #[Assert\Length(max: 255)]
     private ?string $topic;
+
+    #[Gedmo\Blameable(on: 'create')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private User|null $createdBy;
 
     /**
      * @var Collection<User>
@@ -76,5 +82,14 @@ class Chat {
      */
     public function getMessages(): Collection {
         return $this->messages;
+    }
+
+    public function getCreatedBy(): ?User {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(?User $createdBy): Chat {
+        $this->createdBy = $createdBy;
+        return $this;
     }
 }

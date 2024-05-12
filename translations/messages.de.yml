@@ -358,6 +358,7 @@ actions:
     show: anzeigen
     send: abschicken
     download: herunterladen
+    rename: umbenennen
 
 modal:
     close: Schließen
@@ -2336,6 +2337,12 @@ chat:
     add:
         label: Neue Nachricht
         success: Nachricht erfolgreich erstellt
+    rename:
+        success: Gesprächsthema erfolgreich aktualisiert
+    remove:
+        label: Gespräch löschen
+        confirm: 'Soll das Gespräch "%topic%" wirklich gelöscht werden?'
+        success: Gespräch erfolgreich gelöscht
     show:
         label: Nachricht anzeigen
         attachments:
@@ -2358,9 +2365,12 @@ chat:
     participants:
         label: Teilnehmer
         add:
-            caution: Nach dem Hinzufügen von Personen können diese nicht mehr aus dem Gespräch gelöscht werden.
+            caution: Nach dem Hinzufügen von Personen haben diese Einsicht in den gesamten bisherigen Gesprächsverlauf.
             success: Person erfolgreich hinzugefügt
             error: Person ist bereits Teilnehmer
+        remove:
+            success: Person erfolgreich aus dem Gespräch entfernt
+        missing_rights: Teilnehmer können nur vom Ersteller des Gesprächs und Benutzern mit der Rolle ROLE_CHAT_MOD hinzugefügt werden.
 
 user_type:
     teacher: Lehrkraft

@@ -13,7 +13,7 @@ use App\Filesystem\FileNotFoundException;
 use App\Form\ChatMessageType;
 use App\Form\ChatUserRecipientType;
 use App\Form\Model\NewChat;
-use App\Form\NewChatType;
+use App\Form\ChatType;
 use App\Repository\ChatMessageAttachmentRepositoryInterface;
 use App\Repository\ChatMessageRepositoryInterface;
 use App\Repository\ChatRepositoryInterface;
@@ -70,7 +70,7 @@ class ChatController extends AbstractController {
 
         $chat = new Chat();
         $chat->addMessage(new ChatMessage());
-        $form = $this->createForm(NewChatType::class, $chat);
+        $form = $this->createForm(ChatType::class, $chat);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
@@ -149,10 +149,51 @@ class ChatController extends AbstractController {
             ]);
         }
 
+        if($this->isGranted(ChatVoter::Edit, $chat) && $request->getMethod() === Request::METHOD_POST
+            && $request->request->has('remove')
+            && $this->isCsrfTokenValid('remove_participant', $request->request->get('_csrf_token'))) {
+
+            /** @var User $user */
+            $user = $this->getUser();
+            $participants = $chat->getParticipants()->toArray();
+            foreach($participants as $participant) {
+                if($participant->getId() === $chat->getCreatedBy()->getId()) { // chat creator cannot remove himself
+                    continue;
+                }
+
+                if($participant->getId() === $user->getId()) { // users cannot remove themselves
+                    continue;
+                }
+
+                if($participant->getUuid()->toString() === $request->request->get('remove')) {
+                    $chat->removeParticipants($participant);
+                    $this->chatRepository->persist($chat);
+                    $this->addFlash('success', 'chat.participants.remove.success');
+
+                    return $this->redirectToRoute('show_chat', [
+                        'uuid' => $chat->getUuid()
+                    ]);
+                }
+            }
+        }
+
+        $renameForm = $this->createForm(ChatType::class, $chat);
+        $renameForm->remove('participants')->remove('messages');
+        $renameForm->handleRequest($request);
+
+        if($this->isGranted(ChatVoter::Edit, $chat) && $renameForm->isSubmitted() && $renameForm->isValid()) {
+            $this->chatRepository->persist($chat);
+            $this->addFlash('success', 'chat.rename.success');
+
+            return $this->redirectToRoute('show_chat', [
+                'uuid' => $chat->getUuid()
+            ]);
+        }
+
         $participantsForm = $this->createForm(ChatUserRecipientType::class, null, ['multiple' => false, 'required' => false]);
         $participantsForm->handleRequest($request);
 
-        if($participantsForm->isSubmitted() && $participantsForm->isValid()) {
+        if($this->isGranted(ChatVoter::Edit, $chat) && $participantsForm->isSubmitted() && $participantsForm->isValid()) {
             $newParticipant = $participantsForm->getData();
 
             if(!$chat->getParticipants()->contains($newParticipant)) {
@@ -211,9 +252,35 @@ class ChatController extends AbstractController {
             'chat' => $chat,
             'attachments' => $attachments,
             'form' => $form->createView(),
-            'participantsForm' => $participantsForm,
+            'participantsForm' => $participantsForm->createView(),
             'editForms' => $editForms,
-            'removeForms' => $removeForms
+            'removeForms' => $removeForms,
+            'renameForm' => $renameForm->createView()
+        ]);
+    }
+
+    #[Route('/{uuid}/remove', name: 'remove_chat')]
+    public function remove(Chat $chat, Request $request): Response {
+        $this->denyAccessUnlessGranted(ChatVoter::Remove, $chat);
+
+        $form = $this->createForm(ConfirmType::class, null, [
+            'message' => 'chat.remove.confirm',
+            'message_parameters' => [
+                '%topic%' => $chat->getTopic()
+            ]
+        ]);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $this->chatRepository->remove($chat);
+            $this->addFlash('success', 'chat.remove.success');
+
+            return $this->redirectToRoute('chats');
+        }
+
+        return $this->render('chat/remove.html.twig', [
+            'form' => $form->createView(),
+            'chat' => $chat
         ]);
     }
 }

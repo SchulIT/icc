@@ -24,7 +24,7 @@ class ChatMessage {
     #[ORM\Column(type: 'datetime')]
     private DateTime $createdAt;
 
-    #[Gedmo\Timestampable(on: 'update')]
+    #[Gedmo\Timestampable(on: 'change', field: ['content'])]
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?DateTime $updatedAt = null;
 

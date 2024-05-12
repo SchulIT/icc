@@ -28,11 +28,13 @@
                                         <span class="flex-fill">
                                             {% if unreadCount[chat.id] is defined and unreadCount[chat.id] > 0 %}
                                                 <span class="badge text-bg-danger">
-                                            <i class="fas fa-asterisk"></i> {{ unreadCount[chat.id] }}
-                                        </span>
-                                            {% endif %}
+                                                    <i class="fas fa-asterisk"></i> {{ unreadCount[chat.id] }}
+                                                </span>
 
-                                            {{- chat.topic -}}
+                                                <span class="fw-semibold">{{- chat.topic -}}</span>
+                                            {% else %}
+                                                {{- chat.topic -}}
+                                            {% endif %}
                                         </span>
 
                                         <span class="badge text-bg-secondary ms-2">

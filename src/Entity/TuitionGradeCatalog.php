@@ -21,6 +21,9 @@ class TuitionGradeCatalog {
     #[Assert\Length(max: 255)]
     private ?string $displayName = null;
 
+    /**
+     * @var Collection<TuitionGradeCatalogGrade>
+     */
     #[ORM\OneToMany(mappedBy: 'catalog', targetEntity: TuitionGradeCatalogGrade::class, cascade: ['persist'])]
     #[Assert\Count(min: 1)]
     private Collection $grades;

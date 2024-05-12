@@ -12,7 +12,7 @@ class TuitionGradeCatalogGrade {
     use IdTrait;
 
     #[ORM\ManyToOne(targetEntity: TuitionGradeCatalog::class, inversedBy: 'grades')]
-    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private TuitionGradeCatalog $catalog;
 
     #[ORM\Column(type: 'string')]

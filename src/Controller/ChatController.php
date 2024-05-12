@@ -79,7 +79,9 @@ class ChatController extends AbstractController {
 
             $this->addFlash('success', 'chat.add.success');
 
-            return $this->redirectToRoute('chats');
+            return $this->redirectToRoute('show_chat', [
+                'uuid' => $chat->getUuid()
+            ]);
         }
 
         return $this->render('chat/add.html.twig', [

@@ -2349,6 +2349,7 @@ chat:
             label: Dateien
         seen_by: gesehen von
         seen_by_nobody: von niemandem gesehen
+        edited_at: bearbeitet am %date%
     message:
         add:
             label: Antworten

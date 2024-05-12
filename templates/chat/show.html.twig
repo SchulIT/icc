@@ -28,6 +28,9 @@
                             <div class="flex-fill">
                                 <i class="fas fa-user"></i> {{ message.createdBy|fancy_user }}
                                 <i class="fas fa-clock"></i> {{ message.createdAt|format_datetime }}
+                                {% if message.updatedAt is not null %}
+                                    <i class="fa-solid fa-clock-rotate-left" title="{{ 'chat.show.edited_at'|trans({'%date%': message.updatedAt|format_datetime }) }}"></i>
+                                {% endif %}
                             </div>
                             {% if canEdit %}
                                 <button class="btn btn-outline-primary btn-sm ms-1" title="{{ 'actions.edit'|trans }}" data-edit="{{ message.id }}">
@@ -221,22 +224,21 @@
                     </div>
                     <div class="list-group list-group-flush">
                         {% for attachment in attachments %}
-                            <div class="list-group-item">
-                                <i class="fas fa-file"></i> {{ attachment.filename }}
-                                <div class="text-muted">
-                                    <i class="fas fa-clock"></i> {{ attachment.message.createdAt|format_datetime }}
-                                </div>
+                            <div class="list-group-item d-flex align-items-baseline">
+                                <span class="flex-fill">
+                                    <i class="fas fa-file"></i> {{ attachment.filename }}
+                                </span>
 
                                 {% if is_granted('download', attachment) %}
-                                <a href="{{ path('download_chat_attachment', { uuid: attachment.uuid }) }}" class="btn btn-outline-primary btn-sm">
-                                    <i class="fas fa-download"></i> {{ 'actions.download'|trans }}
-                                </a>
+                                    <a href="{{ path('download_chat_attachment', { uuid: attachment.uuid }) }}" class="btn btn-outline-primary btn-sm ms-1" title="{{ 'actions.download'|trans }}">
+                                        <i class="fas fa-download"></i>
+                                    </a>
                                 {% endif %}
 
                                 {% if is_granted('remove', attachment) %}
-                                <a href="{{ path('remove_chat_attachment', { uuid: attachment.uuid }) }}" class="btn btn-outline-danger btn-sm">
-                                    <i class="fas fa-trash"></i> {{ 'actions.remove'|trans }}
-                                </a>
+                                    <a href="{{ path('remove_chat_attachment', { uuid: attachment.uuid }) }}" class="btn btn-outline-danger btn-sm ms-1" title="{{ 'actions.remove'|trans }}">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
                                 {% endif %}
                             </div>
                         {% endfor %}

@@ -53,7 +53,15 @@ class TuitionGradeCategoryType extends AbstractType {
                 ],
                 'label' => 'label.tuitions',
                 'multiple' => true,
-                'required' => false
+                'required' => false,
+                'query_builder' => function(EntityRepository $repository) {
+                    return $repository
+                        ->createQueryBuilder('t')
+                        ->select(['t', 's', 'sg', 'g'])
+                        ->leftJoin('t.section', 's')
+                        ->leftJoin('t.studyGroup', 'sg')
+                        ->leftJoin('sg.grades', 'g');
+                }
             ]);
     }
 }

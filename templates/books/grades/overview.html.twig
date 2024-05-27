@@ -148,7 +148,7 @@
                                                     {% else %}
                                                         <select class="form-select" tabindex="{{ tabindex + (rowCount*loop.index0) + rowIdx }}" disabled="disabled" id="{{ id }}">
                                                             <option value=""></option>
-                                                            {% for value in category.category.gradeType.grades %}
+                                                            {% for value in category.category.catalog.grades %}
                                                                 <option value="{{ value.value }}">{{ value.value }}</option>
                                                             {% endfor %}
                                                         </select>

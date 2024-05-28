@@ -400,7 +400,15 @@ class DashboardViewHelper {
                     $absenceLesson = $this->absenceLessonRepository->findOneForLesson($timetableLesson);
                 }
 
-                $dashboardView->addItem($lesson, new SubstitutionViewItem($substitution, $isFreeLesson, $students, $absentStudents, $this->bookStudentInformationRepository->findByStudents($students, $substitution->getDate(), $substitution->getDate()), $timetableLesson, $absenceLesson));
+                $studentInfo = [ ];
+
+                foreach($this->bookStudentInformationRepository->findByStudents($students, $substitution->getDate(), $substitution->getDate()) as $info) {
+                    if($this->authorizationChecker->isGranted(BookStudentInformationVoter::Show, $info)) {
+                        $studentInfo[] = $info;
+                    }
+                }
+
+                $dashboardView->addItem($lesson, new SubstitutionViewItem($substitution, $isFreeLesson, $students, $absentStudents, $studentInfo, $timetableLesson, $absenceLesson));
             }
         }
     }

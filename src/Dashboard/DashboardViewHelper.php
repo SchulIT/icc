@@ -475,7 +475,13 @@ class DashboardViewHelper {
             for($lesson = $exam->getLessonStart(); $lesson <= $exam->getLessonEnd(); $lesson++) {
                 $examStudents = $exam->getStudents()->map(fn(ExamStudent $student) => $student->getStudent())->toArray();
                 $absentStudents = $computeAbsences ? $this->computeAbsentStudents($examStudents, $lesson, $exam->getDate(), [ ExamStudentsResolver::class ]) : [ ];
-                $studentInfo = $this->bookStudentInformationRepository->findByStudents($examStudents, $exam->getDate(), $exam->getDate());
+                $studentInfo = [];
+
+                foreach($this->bookStudentInformationRepository->findByStudents($examStudents, $exam->getDate(), $exam->getDate()) as $info) {
+                    if($this->authorizationChecker->isGranted(BookStudentInformationVoter::Show, $info)) {
+                        $studentInfo[] = $info;
+                    }
+                }
 
                 if($teacher !== null) {
                     if(in_array($teacher->getId(), $tuitionTeacherIds)) {

@@ -2,8 +2,6 @@
 
 namespace App\Book\Grade;
 
-use App\Entity\TuitionGradeCategory;
-
 class GradeOverview {
     public function __construct(
         /** @var Category[] */

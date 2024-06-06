@@ -8,6 +8,49 @@ let keyPassword = null;
 let isEditModeEntered = false;
 let callbackRegistered = false; // Flag whether the onbeforeunload callback is already registered (to prevent registering twice)
 
+async function exportXNM() {
+    if(decryptedKey === null) {
+        return;
+    }
+
+    let separator = '\t';
+    let $table = document.querySelector('[data-xnm]');
+
+    let data = '';
+
+    for(const $tr of $table.querySelectorAll('tbody > tr')) {
+        let row = '';
+        for(const $td of $tr.querySelectorAll('td')) {
+            if($td.getAttribute('data-type') === 'raw') {
+                data += $td.innerText.trim() + separator;
+                continue;
+            }
+
+            if($td.getAttribute('data-type') !== 'encrypted') {
+                continue;
+            }
+
+            let $encryptedInput = $td.querySelector('input[data-encrypted]');
+
+            if($encryptedInput === null) {
+                row.push('');
+                continue;
+            }
+
+            let encrypted = $encryptedInput.getAttribute('data-encrypted');
+            if(encrypted === null || encrypted === '') {
+                row.push('');
+                continue;
+            }
+
+            row += await crypto.decrypt(decryptedKey, JSON.parse(encrypted)) + separator;
+        }
+        data += row.trim() + '\n';
+    }
+
+    await navigator.clipboard.writeText(data);
+}
+
 async function exportXlsx() {
     if(decryptedKey === null) {
         return;
@@ -260,6 +303,24 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     }
+
+    document.querySelector('[data-clipboard=xnm]')?.addEventListener('click', async function(event) {
+        event.preventDefault();
+
+        if(decryptedKey === null) {
+            alert('Bitte zuerst das Passwort eingeben');
+            return;
+        }
+
+        await exportXNM();
+
+        let $icon = this.querySelector('i');
+        $icon.classList.remove('fa-spinner');
+        $icon.classList.remove('fa-spin');
+        $icon.classList.remove('far');
+        $icon.classList.add('fas');
+        $icon.classList.add('fa-check');
+    });
 
     document.querySelector('#download_btn')?.addEventListener('click', async function(event) {
         event.preventDefault();

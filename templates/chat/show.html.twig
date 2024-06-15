@@ -1,0 +1,251 @@
+{% extends "main.html.twig" %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/chat.js') }}"></script>
+    <script src="{{ asset('build/editor.js') }}"></script>
+    <script src="{{ asset('build/collection.js') }}"></script>
+{% endblock %}
+
+{% block title %}{{ chat.topic }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('chats') }}">{{ 'chat.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% for message in chat.messages %}
+                    <div class="card {% if message.createdBy == app.user %}ms-auto w-75{% else%}me-auto w-75{% endif %}">
+                        {% set canEdit = is_granted('edit', message) %}
+                        {% set canRemove = is_granted('remove', message) %}
+                        <div class="card-header d-flex align-items-baseline">
+                            <div class="flex-fill">
+                                <i class="fas fa-user"></i> {{ message.createdBy|fancy_user }}
+                                <i class="fas fa-clock"></i> {{ message.createdAt|format_datetime }}
+                                {% if message.updatedAt is not null %}
+                                    <i class="fa-solid fa-clock-rotate-left" title="{{ 'chat.show.edited_at'|trans({'%date%': message.updatedAt|format_datetime }) }}"></i>
+                                {% endif %}
+                            </div>
+                            {% if canEdit %}
+                                <button class="btn btn-outline-primary btn-sm ms-1" title="{{ 'actions.edit'|trans }}" data-edit="{{ message.id }}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            {% endif %}
+                            {% if canRemove %}
+                                <button class="btn btn-outline-danger btn-sm ms-1" title="{{ 'actions.remove'|trans }}" data-remove="{{ message.id }}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            {% endif %}
+                            {% if message.createdBy == app.user %}
+                                {% if message.seenBy|length == 0 %}
+                                    <div class="text-muted ms-2" title="{{ 'chat.show.seen_by_nobody'|trans }}">
+                                        <i class="fas fa-user-times"></i>
+                                    </div>
+                                {% else %}
+                                    <div class="text-muted ms-2" title="{{ 'chat.show.seen_by'|trans }}: {% for user in message.seenBy %}{{ user|fancy_user }}{% if not loop.last %}, {% endif %}{% endfor %}">
+                                        <i class="fas fa-user-check"></i>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                        <div class="card-body content-{{ message.id }}">
+                            {{ message.content|markdown }}
+                        </div>
+                        {% if editForms[message.id] is defined %}
+                            <div class="card-body edit-{{ message.id }} hide">
+                                {% set editForm = editForms[message.id] %}
+                                {{ form_start(editForm) }}
+                                {{ form_widget(editForm.content) }}
+
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-paper-plane"></i> {{ 'actions.send'|trans }}
+                                </button>
+
+                                <button type="button" class="btn btn-secondary btn-sm" data-cancel="{{ message.id }}">
+                                    {{ 'actions.cancel'|trans }}
+                                </button>
+
+                                {{ form_end(editForm)}}
+                            </div>
+                        {% endif %}
+                        {% if removeForms[message.id] is defined %}
+                            <div class="card-body remove-{{ message.id }} hide">
+                                {% set removeForm = removeForms[message.id] %}
+                                {{ form_start(removeForm) }}
+                                {{ form_widget(removeForm.group_general.confirm) }}
+
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> {{ 'actions.remove'|trans }}
+                                </button>
+
+                                <button type="button" class="btn btn-secondary btn-sm" data-cancel="{{ message.id }}">
+                                    {{ 'actions.cancel'|trans }}
+                                </button>
+
+                                {{ form_end(removeForm)}}
+                            </div>
+                        {% endif %}
+                        {% if message.attachments|length > 0 %}
+                            <div class="card-footer">
+                                <ul class="nav nav-pills card-header-pills">
+                                    {% for attachment in message.attachments %}
+                                        <li class="nav-item">
+                                            {% if is_granted('download', attachment) %}
+                                                <a class="nav-link link-hover" href="{{ path('download_chat_attachment', { uuid: attachment.uuid }) }}"><i class="fa fa-download"></i> {{ attachment.filename }}</a>
+                                            {% else %}
+                                                <i class="fa fa-download"></i> {{ attachment.filename }}</a>
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                {{ form_start(form) }}
+                <div class="card">
+                    <div class="card-header">{{ 'chat.message.add.label'|trans }}</div>
+                    <div class="card-body">
+                        {{ form_widget(form.content) }}
+                    </div>
+                    <div class="card-body">
+                        <div class="attachments" data-collection="attachments" data-prototype="{{ form_widget(form.attachments.vars.prototype)|e('html_attr') }}">
+                            {% for attachment in form.attachments %}
+                                {{ form_widget(attachment) }}
+                            {% endfor %}
+                        </div>
+
+                        {% do form.attachments.setRendered(true) %}
+
+                        <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="attachments">
+                            <i class="fa fa-paperclip"></i> {{ 'actions.add'|trans }}
+                        </button>
+                    </div>
+
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fas fa-paper-plane"></i> {{ 'actions.send'|trans }}
+                        </button>
+                    </div>
+                </div>
+                {{ form_end(form) }}
+            </div>
+
+            <div class="col-md-3 sticky-sidebar">
+                <div class="card">
+                    <div class="card-body pb-0">
+                        <h5 class="card-title chat-topic">
+                            {{ chat.topic }}
+
+                            {% if is_granted('edit', chat) %}
+                                <button type="button" class="btn btn-outline-primary btn-sm" data-rename="" title="{{ 'actions.rename'|trans }}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            {% endif %}
+
+                            {% if is_granted('remove', chat) %}
+                                <a href="{{ path('remove_chat', { uuid: chat.uuid }) }}" class="btn btn-outline-danger btn-sm" title="{{ 'actions.remove'|trans }}">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            {% endif %}
+                        </h5>
+
+                        {% if is_granted('edit', chat) %}
+                        <div class="rename-chat hide">
+                            {{ form_start(renameForm) }}
+                            <div class="input-group">
+                                {{ form_widget(renameForm.topic) }}
+                                <button type="submit" class="btn btn-outline-primary">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-primary" data-cancel-rename="">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            {{ form_end(renameForm) }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <form method="post">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('remove_participant') }}">
+                        <div class="list-group list-group-flush">
+                            {% for user in chat.participants %}
+                                <div class="list-group-item d-flex align-items-baseline">
+                                    <span class="flex-fill">
+                                        <i class="fas fa-user"></i> {{ user|fancy_user }}
+                                    </span>
+                                    {% if is_granted('edit', chat) and app.user != user and user != chat.createdBy %}
+                                        <button type="submit" class="btn btn-outline-danger btn-sm" name="remove" value="{{ user.uuid }}" title="{{ 'actions.remove'|trans }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </form>
+
+                    {% if is_granted('edit', chat) %}
+                    <div class="card-footer">
+                        <div class="bs-callout bs-callout-warning">
+                            <p>{{ 'chat.participants.add.caution'|trans }}</p>
+                        </div>
+
+                        {{ form_start(participantsForm) }}
+
+                        <div class="input-group">
+                            {{ form_widget(participantsForm) }}
+                            <button class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-plus"></i> {{ 'actions.add'|trans }}
+                            </button>
+                        </div>
+
+                        {{ form_end(participantsForm) }}
+                    </div>
+                    {% else %}
+                        <div class="card-footer">
+                            <div class="bs-callout bs-callout-warning">
+                                <p>{{ 'chat.participants.missing_rights'|trans }}</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                {% if attachments|length > 0 %}
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-paperclip"></i> {{ 'label.attachments'|trans }}</h5>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% for attachment in attachments %}
+                            <div class="list-group-item d-flex align-items-baseline">
+                                <span class="flex-fill">
+                                    <i class="fas fa-file"></i> {{ attachment.filename }}
+                                </span>
+
+                                {% if is_granted('download', attachment) %}
+                                    <a href="{{ path('download_chat_attachment', { uuid: attachment.uuid }) }}" class="btn btn-outline-primary btn-sm ms-1" title="{{ 'actions.download'|trans }}">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                {% endif %}
+
+                                {% if is_granted('remove', attachment) %}
+                                    <a href="{{ path('remove_chat_attachment', { uuid: attachment.uuid }) }}" class="btn btn-outline-danger btn-sm ms-1" title="{{ 'actions.remove'|trans }}">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -82,8 +82,7 @@ class StudentAbsenceController extends AbstractController {
 
         $note = new StudentAbsence();
         $note->setFrom($timeHelper->getLessonDateForDateTime($this->getTodayOrNextDay($dateHelper, $settings->getNextDayThresholdTime())));
-        $note->setUntil(new DateLesson());
-        $note->getUntil()->setLesson($timetableSettings->getMaxLessons());
+        $note->setUntil((new DateLesson())->setDate(clone $note->getFrom()->getDate())->setLesson($timetableSettings->getMaxLessons()));
 
         $form = $this->createForm(StudentAbsenceType::class, $note);
         $form->handleRequest($request);
@@ -178,7 +177,9 @@ class StudentAbsenceController extends AbstractController {
             $repository->persist($absence);
 
             $this->addFlash('success', 'absences.students.edit.success');
-            return $this->redirectToRoute('student_absences');
+            return $this->redirectToRoute('show_student_absence', [
+                'uuid' => $absence->getUuid()
+            ]);
         }
 
         return $this->render('absences/students/edit.html.twig', [

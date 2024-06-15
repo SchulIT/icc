@@ -99,7 +99,7 @@ class Importer {
 
             return $result;
         } catch (Throwable $e) {
-            $this->logger->error('Import fehlgeschagen.', [
+            $this->logger->error('Import fehlgeschlagen.', [
                 'exception' => $e
             ]);
             throw new ImportException($e->getMessage(), $e->getCode(), $e);
@@ -141,7 +141,13 @@ class Importer {
 
             $repository->commit();
 
-            return new ImportResult($addedEntities, [], [], $ignoredEntities, $data);
+            $result = new ImportResult($addedEntities, [], [], $ignoredEntities, $data);
+
+            if($strategy instanceof PostActionStrategyInterface) {
+                $strategy->onFinished($result);
+            }
+
+            return $result;
         } catch (Throwable $e) {
             throw new ImportException($e->getMessage(), $e->getCode(), $e);
         } finally {

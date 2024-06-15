@@ -1,0 +1,59 @@
+{% extends "main.html.twig" %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/editor.js') }}"></script>
+    <script src="{{ asset('build/collection.js') }}"></script>
+{% endblock %}
+
+{% block title %}{{ 'chat.add.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('chats') }}">{{ 'chat.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+
+    <div class="card">
+        <div class="card-header">{{ 'label.general'|trans }}</div>
+        <div class="card-body">
+            <div class="bs-callout bs-callout-danger">
+                <h5>{{ 'caution'|trans }}</h5>
+                <p>{{ 'chat.add.caution'|trans }}</p>
+            </div>
+
+            {{ form_row(form.participants) }}
+            {{ form_row(form.topic) }}
+            {{ form_row(form.messages[0].content) }}
+        </div>
+        <div class="card-body">
+            <div class="attachments" data-collection="attachments" data-prototype="{{ form_widget(form.messages[0].attachments.vars.prototype)|e('html_attr') }}">
+                {% for attachment in form.messages[0].attachments %}
+                    {{ form_widget(attachment) }}
+                {% endfor %}
+            </div>
+
+            {% do form.messages[0].attachments.setRendered(true) %}
+
+            <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="attachments">
+                <i class="fa fa-paperclip"></i> {{ 'actions.add'|trans }}
+            </button>
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa-regular fa-paper-plane"></i> {{ 'actions.send'|trans }}
+        </button>
+
+        <a href="{{ path('chats') }}" class="btn btn-secondary btn-sm">
+            {{ 'actions.cancel'|trans }}
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}

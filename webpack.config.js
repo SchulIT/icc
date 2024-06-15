@@ -26,6 +26,8 @@ Encore
     .addStyleEntry('email', './assets/css/email.scss')
     .addStyleEntry('simple', './assets/css/simple.scss')
     .addEntry('export-student-absences', './assets/js/export-student-absences.js')
+    .addEntry('parents_day', './assets/js/parents_day.js')
+    .addEntry('chat', './assets/js/chat.js')
 
     .configureBabel(() => {}, {
         useBuiltIns: 'usage',

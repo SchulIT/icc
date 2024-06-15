@@ -2,6 +2,7 @@
 
 namespace App\Untis\Html\Substitution;
 
+use App\Settings\TimetableSettings;
 use Exception;
 use Symfony\Component\String\AbstractString;
 use function Symfony\Component\String\u;
@@ -9,6 +10,10 @@ use function Symfony\Component\String\u;
 class TableCellParser {
 
     public const EmptyCellValues = [ '???', '---', '+' ];
+
+    public function __construct(private readonly TimetableSettings $timetableSettings) {
+
+    }
 
     public function parseIntegerColumn(string $value): int {
         return intval($value);
@@ -62,6 +67,11 @@ class TableCellParser {
         $value = trim($value);
         $isBefore = false;
 
+        // Hack: if no lessons are provided, set all lessons
+        if(empty($value)) {
+            return new ParsedLesson(1, $this->timetableSettings->getMaxLessons(), false);
+        }
+
         // Case 1: single lesson
         if(is_numeric($value)) {
             $lesson = intval($value);
@@ -78,7 +88,7 @@ class TableCellParser {
             return new ParsedLesson(intval($lessons[0]), intval($lessons[1]), true);
         }
 
-        throw new Exception(sprintf('Error parsing lesson data: "%s" given', $value));
+        throw new Exception(sprintf('Spalte "Stunde" konnte aufgrund eines ungültiges Formates nicht eingelesen werden: "%s" eingelesen.', $value));
     }
 
     public function getCellIndexOrNull(array $idxes, ?string $columnName): ?int {

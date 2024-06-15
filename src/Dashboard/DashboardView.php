@@ -9,6 +9,7 @@ use App\Entity\Infotext;
 use App\Entity\LessonEntry;
 use App\Entity\Message;
 use App\Entity\MessagePriority;
+use App\Entity\ParentsDayAppointment;
 use App\Entity\Student;
 use App\Entity\Substitution;
 use App\Entity\Teacher;
@@ -52,6 +53,8 @@ class DashboardView {
     private array $teacherBirthdays = [ ];
 
     private array $studentBirthdays = [ ];
+
+    private array $parentsDayAppointments = [ ];
 
     private ?ExercisesView $exercises = null;
 
@@ -293,6 +296,17 @@ class DashboardView {
         return $this->teacherBirthdays;
     }
 
+    public function addParentsDayAppointment(ParentsDayAppointment $appointment): void {
+        $this->parentsDayAppointments[] = $appointment;
+    }
+
+    /**
+     * @return ParentsDayAppointment[]
+     */
+    public function getParentsDayAppointments(): array {
+        return $this->parentsDayAppointments;
+    }
+
     public function isEmpty(): bool {
         return count($this->messages) === 0
             && count($this->infotexts) === 0
@@ -305,6 +319,7 @@ class DashboardView {
             && count($this->exams) === 0
             && count($this->appointments) === 0
             && count($this->teacherBirthdays) === 0
-            && count($this->studentBirthdays) === 0;
+            && count($this->studentBirthdays) === 0
+            && count($this->parentsDayAppointments) === 0;
     }
 }

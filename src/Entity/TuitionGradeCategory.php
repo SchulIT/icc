@@ -34,10 +34,10 @@ class TuitionGradeCategory {
     #[ORM\Column(type: 'boolean')]
     private bool $isExportable = true;
 
-    #[ORM\ManyToOne(targetEntity: TuitionGradeType::class)]
+    #[ORM\ManyToOne(targetEntity: TuitionGradeCatalog::class)]
     #[ORM\JoinColumn]
     #[Assert\NotNull]
-    private ?TuitionGradeType $gradeType;
+    private ?TuitionGradeCatalog $catalog;
 
     /**
      * @var Collection<Tuition>
@@ -118,18 +118,18 @@ class TuitionGradeCategory {
     }
 
     /**
-     * @return TuitionGradeType|null
+     * @return TuitionGradeCatalog|null
      */
-    public function getGradeType(): ?TuitionGradeType {
-        return $this->gradeType;
+    public function getCatalog(): ?TuitionGradeCatalog {
+        return $this->catalog;
     }
 
     /**
-     * @param TuitionGradeType|null $gradeType
+     * @param TuitionGradeCatalog|null $catalog
      * @return TuitionGradeCategory
      */
-    public function setGradeType(?TuitionGradeType $gradeType): TuitionGradeCategory {
-        $this->gradeType = $gradeType;
+    public function setCatalog(?TuitionGradeCatalog $catalog): TuitionGradeCategory {
+        $this->catalog = $catalog;
         return $this;
     }
 

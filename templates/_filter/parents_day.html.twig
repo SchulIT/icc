@@ -1,0 +1,17 @@
+{% if isChoice is not defined %}
+    {% set isChoice = true %}
+{% endif %}
+<form role="form" method="get" class="form hidden-print">
+    {% include "_filter/_params.html.twig" %}
+
+    <label class="form-label">{{ 'label.parents_day'|trans }}:</label>
+
+    <div class="btn-group-vertical w-100" role="group">
+        {% for day in parentsDayFilter.parentsDays %}
+            <button type="submit" name="day" value="{{ day.uuid }}" class="btn {% if parentsDayFilter.currentParentsDay != null and parentsDayFilter.currentParentsDay.id == day.id %} active {% endif %}btn-outline-secondary text-start">
+                {{ day.title }}
+                <span class="badge text-bg-primary">{{ day.date|format_date }}</span>
+            </button>
+        {% endfor %}
+    </div>
+</form>

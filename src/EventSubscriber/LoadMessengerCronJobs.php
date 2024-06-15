@@ -14,14 +14,13 @@ class LoadMessengerCronJobs implements EventSubscriberInterface {
     }
 
     public function onLoadJobs(LoadJobsEvent $event): void {
-        dump($this->useCronjobForMessenger);
-
         if(!$this->useCronjobForMessenger) {
             return;
         }
 
         $event->addJob(CronJobMetadata::createByCommand('*/1 * * * *', $this->command, 'async -vv --time-limit=20 --no-reset'));
         $event->addJob(CronJobMetadata::createByCommand('*/1 * * * *', $this->command, 'mail -vv --time-limit=20 --no-reset'));
+        $event->addJob(CronJobMetadata::createByCommand('*/1 * * * *', $this->command, 'users -vv --time-limit=20 --no-reset'));
     }
 
     /**

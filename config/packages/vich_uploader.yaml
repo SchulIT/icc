@@ -18,3 +18,7 @@ vich_uploader:
         student_absence:
             upload_destination: oneup_flysystem.student_absence_filesystem
             namer: Vich\UploaderBundle\Naming\UniqidNamer
+        chat:
+            upload_destination: oneup_flysystem.chat_filesystem
+            directory_namer: App\Filesystem\ChatFilesystem
+            namer: Vich\UploaderBundle\Naming\UniqidNamer

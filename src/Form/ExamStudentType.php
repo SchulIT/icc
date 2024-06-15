@@ -12,6 +12,9 @@ class ExamStudentType extends AbstractType {
         $builder
             ->add('student', StudentsType::class, [
                 'multiple' => false,
+                'attr' => [
+                    'data-choice' => 'true'
+                ],
                 'placeholder' => 'label.select.student'
             ])
             ->add('tuition', TuitionChoiceType::class, [

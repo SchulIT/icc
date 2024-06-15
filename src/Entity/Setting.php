@@ -21,8 +21,8 @@ class Setting {
     /**
      * @var mixed
      */
-    #[ORM\Column(type: 'object')]
-    private $value = null;
+    #[ORM\Column(type: 'text', nullable: true)]
+    private mixed $value = null;
 
     public function getKey(): string {
         return $this->key;
@@ -36,14 +36,15 @@ class Setting {
     /**
      * @return mixed
      */
-    public function getValue() {
+    public function getValue(): mixed {
         return $this->value;
     }
 
     /**
+     * @param mixed $value
      * @return Setting
      */
-    public function setValue(mixed $value) {
+    public function setValue(mixed $value): self {
         $this->value = $value;
         return $this;
     }

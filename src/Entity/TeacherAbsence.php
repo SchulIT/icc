@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Validator\DateLessonGreaterThan;
+use App\Validator\DateLessonInSection;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -22,9 +24,12 @@ class TeacherAbsence {
     private ?Teacher $teacher;
 
     #[ORM\Embedded(class: DateLesson::class)]
+    #[DateLessonInSection]
     private DateLesson $from;
 
     #[ORM\Embedded(class: DateLesson::class)]
+    #[DateLessonGreaterThan(propertyPath: 'from')]
+    #[DateLessonInSection]
     private DateLesson $until;
 
     #[ORM\ManyToOne(targetEntity: TeacherAbsenceType::class)]

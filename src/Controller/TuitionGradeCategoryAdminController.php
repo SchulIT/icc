@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Tuition;
 use App\Entity\TuitionGradeCategory;
-use App\Entity\TuitionGradeType;
+use App\Entity\TuitionGradeCatalog;
 use App\Form\AssignTuitionGradeCategoryType;
 use App\Form\TuitionGradeCategoryType;
 use App\Repository\TuitionGradeCategoryRepositoryInterface;

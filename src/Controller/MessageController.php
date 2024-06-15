@@ -156,21 +156,53 @@ class MessageController extends AbstractController {
 
         $missing = array_filter($uploads, fn(MessageFileUpload $upload) => $upload->isUploaded() === false);
 
-        $vote = $voteHelper->getPollVote($message, $user);
-        $rankedChoices = $voteHelper->getRankedChoices($vote);
+        $votes = [ ];
+        $voteForms = [ ];
+        $students = [ ];
         $allowVote = $dateHelper->getToday() <= $message->getExpireDate();
-        $voteForm = $this->createForm(MessagePollVoteType::class, $rankedChoices, [
-            'choices' => $message->getPollChoices(),
-            'num_choices' => $message->getPollNumChoices(),
-            'allow_vote' => $allowVote
-        ]);
-        $voteForm->handleRequest($request);
 
-        if($voteForm->isSubmitted() && $voteForm->isValid() && $allowVote) {
-            $voteHelper->persistVote($message, $user, $voteForm->getData());
-            return $this->redirectToRoute('show_message', [
-                'uuid' => $message->getUuid()
+        if($user->isStudentOrParent()) {
+            foreach ($user->getStudents() as $student) {
+                $vote = $voteHelper->getPollVote($message, $user, $student);
+                $rankedChoices = $voteHelper->getRankedChoices($vote);
+                $voteForm = $this->container->get('form.factory')->createNamedBuilder('poll_' . $student->getId(), MessagePollVoteType::class, $rankedChoices, [
+                    'choices' => $message->getPollChoices(),
+                    'num_choices' => $message->getPollNumChoices(),
+                    'allow_vote' => $allowVote
+                ])->getForm();
+                $voteForm->handleRequest($request);
+
+                if ($voteForm->isSubmitted() && $voteForm->isValid() && $allowVote) {
+                    $voteHelper->persistVote($message, $user, $voteForm->getData(), $student);
+                    return $this->redirectToRoute('show_message', [
+                        'uuid' => $message->getUuid()
+                    ]);
+                }
+
+                $votes[$student->getId()] = $vote;
+                $voteForms[$student->getId()] = $voteForm->createView();
+                $students[$student->getId()] = $student;
+            }
+        } else {
+            $vote = $voteHelper->getPollVote($message, $user);
+            $rankedChoices = $voteHelper->getRankedChoices($vote);
+
+            $voteForm = $this->createForm(MessagePollVoteType::class, $rankedChoices, [
+                'choices' => $message->getPollChoices(),
+                'num_choices' => $message->getPollNumChoices(),
+                'allow_vote' => $allowVote
             ]);
+            $voteForm->handleRequest($request);
+
+            if ($voteForm->isSubmitted() && $voteForm->isValid() && $allowVote) {
+                $voteHelper->persistVote($message, $user, $voteForm->getData());
+                return $this->redirectToRoute('show_message', [
+                    'uuid' => $message->getUuid()
+                ]);
+            }
+
+            $votes[] = $vote;
+            $voteForms[] = $voteForm->createView();
         }
 
         return $this->render('messages/show.html.twig', [
@@ -179,8 +211,9 @@ class MessageController extends AbstractController {
             'uploads' => $uploads,
             'missing' => $missing,
             'form' => $form->createView(),
-            'voteForm' => $voteForm->createView(),
-            'vote' => $vote,
+            'voteForms' => $voteForms,
+            'votes' => $votes,
+            'students' => $students,
             'allow_vote' => $allowVote
         ]);
     }

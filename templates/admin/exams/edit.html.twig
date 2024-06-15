@@ -27,7 +27,9 @@
             {{ form_row(form.lessonStart) }}
             {{ form_row(form.lessonEnd) }}
             {{ form_row(form.description) }}
-            {{ form_row(form.tuitionTeachersCanEditExam) }}
+            {% if form.tuitionTeachersCanEditExam is defined %}
+                {{ form_row(form.tuitionTeachersCanEditExam) }}
+            {% endif %}
         </div>
     </div>
 

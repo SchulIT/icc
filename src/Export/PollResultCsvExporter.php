@@ -5,10 +5,13 @@ namespace App\Export;
 use App\Csv\CsvHelper;
 use App\Entity\Message;
 use App\Entity\Tuition;
+use App\Entity\UserType;
+use App\Entity\UserTypeEntity;
 use App\Message\PollResultView;
 use App\Message\PollResultViewHelper;
 use App\Section\SectionResolverInterface;
 use App\Sorting\Sorter;
+use App\Utils\ArrayUtils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -21,6 +24,10 @@ class PollResultCsvExporter {
         $rows = [];
         $view = $this->viewHelper->createView($message);
 
+        /** @var UserType[] $visibilities */
+        $visibilities = $message->getPollUserTypes()->map(fn(UserTypeEntity $visibility) => $visibility->getUserType());
+        $isParentsPollEnabled = ArrayUtils::inArray(UserType::Parent, $visibilities);
+
         $header = [
             $this->translator->trans('label.external_id'),
             $this->translator->trans('label.firstname'),
@@ -31,6 +38,12 @@ class PollResultCsvExporter {
 
         for($i = 1; $i <= $message->getPollNumChoices(); $i++) {
             $header[] = $this->translator->trans('messages.poll.choice', ['%rank%' => $i ]);
+        }
+
+        if($isParentsPollEnabled) {
+            for($i = 1; $i <= $message->getPollNumChoices(); $i++) {
+                $header[] = $this->translator->trans('messages.poll.choice', ['%rank%' => $i ]) . ' [' . $this->translator->trans('user_type.parent', [], 'enums') . ']';
+            }
         }
 
         $rows[] = $header;
@@ -58,6 +71,23 @@ class PollResultCsvExporter {
                 } else {
                     for($i = 1; $i <= $message->getPollNumChoices(); $i++) {
                         $row[] = null;
+                    }
+                }
+            }
+
+            if($isParentsPollEnabled) {
+                for($i = 1; $i <= $message->getPollNumChoices(); $i++) {
+                    $vote = $view->getParentVote($student);
+
+                    if($vote !== null) {
+                        for($i = 1; $i <= $message->getPollNumChoices(); $i++) {
+                            $choice = $vote->getChoice($i - 1);
+                            $row[] = $choice !== null ? $choice->getChoice()->getLabel() : null;
+                        }
+                    } else {
+                        for($i = 1; $i <= $message->getPollNumChoices(); $i++) {
+                            $row[] = null;
+                        }
                     }
                 }
             }

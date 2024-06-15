@@ -12,11 +12,13 @@ use App\Entity\UserType;
 use App\Repository\BookIntegrityCheckViolationRepositoryInterface;
 use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Repository\NotificationRepositoryInterface;
+use App\Repository\ParentsDayRepositoryInterface;
 use App\Repository\SectionRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use App\Section\SectionResolverInterface;
+use App\Security\Voter\ParentsDayAppointmentVoter;
 use App\Settings\DashboardSettings;
 use App\Settings\TimetableSettings;
 use App\Utils\EnumArrayUtils;
@@ -49,7 +51,7 @@ class DashboardController extends AbstractController {
                               UserRepositoryInterface $userRepository, ImportDateTypeRepositoryInterface $importDateTypeRepository,
                               NotificationRepositoryInterface $notificationRepository, TimetableLessonRepositoryInterface $lessonEntryRepository,
                               BookIntegrityCheckViolationRepositoryInterface $bookIntegrityCheckViolationRepository,
-                              SectionResolverInterface $sectionResolver, StudyGroupRepositoryInterface $studyGroupRepository,
+                              SectionResolverInterface $sectionResolver, StudyGroupRepositoryInterface $studyGroupRepository, ParentsDayRepositoryInterface $parentsDayRepository,
                               Request $request): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -100,7 +102,7 @@ class DashboardController extends AbstractController {
             if($userTypeFilterView->getCurrentType() === null) {
                 $userTypeFilterView->setCurrentType(UserType::Student);
             }
-            $view = $dashboardViewHelper->createViewForStudentOrParent($studentFilterView->getCurrentStudent(), $selectedDate, $userTypeFilterView->getCurrentType());
+            $view = $dashboardViewHelper->createViewForStudentOrParent($studentFilterView->getCurrentStudent(), $selectedDate, $userTypeFilterView->getCurrentType(), $user->isStudentOrParent() ? $user : null);
         } else if($teacherFilterView->getCurrentTeacher() !== null) {
             if($user->getTeacher() === null || $user->getTeacher()->getId() !== $teacherFilterView->getCurrentTeacher()->getId()) {
                 // Only include grade messages if the current user is the selected user in the teacher filter.
@@ -167,7 +169,8 @@ class DashboardController extends AbstractController {
             'section' => $section,
             'dateHasSection' => $dateHasSection,
             'unreadNotificationsCount' => $notificationRepository->countUnreadForUser($user),
-            'missingBookEntriesCount' => $missingBookEntries
+            'missingBookEntriesCount' => $missingBookEntries,
+            'upcomingParentsDays' => $parentsDayRepository->findUpcoming($dateHelper->getToday())
         ]);
     }
 

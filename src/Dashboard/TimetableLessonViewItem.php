@@ -2,11 +2,12 @@
 
 namespace App\Dashboard;
 
+use App\Entity\BookStudentInformation;
 use App\Entity\TeacherAbsenceLesson;
 use App\Entity\TimetableLesson;
 use App\Grouping\AbsentStudentGroup;
 
-class TimetableLessonViewItem extends AbsenceAwareViewItem {
+class TimetableLessonViewItem extends AdditionalExtraAwareViewItem {
 
     /** @var TimetableLesson[] */
     private array $additionalLessons = [ ];
@@ -14,9 +15,10 @@ class TimetableLessonViewItem extends AbsenceAwareViewItem {
     /**
      * @param TimetableLesson|null $lesson
      * @param AbsentStudentGroup[] $absentStudentGroups
+     * @param BookStudentInformation[] $studentInfo
      */
-    public function __construct(private ?TimetableLesson $lesson, array $absentStudentGroups, private readonly ?TeacherAbsenceLesson $absenceLesson) {
-        parent::__construct($absentStudentGroups);
+    public function __construct(private readonly ?TimetableLesson $lesson, array $absentStudentGroups, array $studentInfo, private readonly ?TeacherAbsenceLesson $absenceLesson) {
+        parent::__construct($absentStudentGroups, $studentInfo);
     }
 
     public function getLesson(): ?TimetableLesson {

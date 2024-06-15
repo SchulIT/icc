@@ -1,0 +1,38 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'parents_day.appointments.add_single.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('parents_day') }}">{{ 'parents_day.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ parentsDay.title }} <span class="badge text-bg-primary">{{ parentsDay.date|format_date }}</span></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+
+    <div class="card">
+        <div class="card-header">
+            {{ 'label.general'|trans }}
+        </div>
+
+        <div class="card-body">
+            {{ form_widget(form) }}
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+        </button>
+
+        <a href="{{ path('parents_day') }}" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}

@@ -25,7 +25,7 @@ class PreviousAbsenceSuggestionStrategy implements SuggestionStrategyInterface {
         $suggestions = [ ];
 
         foreach($this->attendanceRepository->findAbsentByStudentsAndDate($students, $date) as $attendance) {
-            if($attendance->getEntry()->getLessonEnd() === $lesson - 1) {
+            if($attendance->getEntry()->getLessonEnd() === $lesson - 1 && $attendance->getAbsentLessons() > 0) {
                 $suggestion = new AttendanceSuggestion(
                     $this->getStudent($attendance->getStudent()),
                     $this->translator->trans('book.attendance.absence_reason.absent_before'),

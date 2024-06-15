@@ -32,13 +32,13 @@
                         <table class="table table-hover table-striped card-table">
                             <colgroup>
                                 <col>
+                                <col class="column-sm">
                                 <col class="column-md">
                                 <col class="column-md">
-                                <col class="column-md">
-                                <col class="column-md">
-                                <col class="column-md">
+                                <col class="column-sm">
+                                <col class="column-sm">
                                 {% for flag in flags %}
-                                <col class="column-md">
+                                <col class="column-sm">
                                 {% endfor %}
                                 <col class="column-100">
                             </colgroup>
@@ -46,14 +46,14 @@
                             <thead>
                             <tr>
                                 <th>{{ 'label.student'|trans }}</th>
-                                <th>{{ 'book.students.comments'|trans }}</th>
-                                <th>{{ 'book.students.late'|trans }}</th>
-                                <th>{{ 'book.students.absent'|trans }}</th>
-                                <th>{{ 'book.students.not_excused'|trans }}</th>
-                                <th>{{ 'book.students.not_set'|trans }}</th>
+                                <th class="rotate-90"><div>{{ 'book.students.comments'|trans }}</div></th>
+                                <th class="rotate-90"><div>{{ 'book.students.late'|trans }}</div></th>
+                                <th class="rotate-90"><div>{{ 'book.students.absent'|trans }}</div></th>
+                                <th class="rotate-90"><div>{{ 'book.students.not_excused'|trans }}</div></th>
+                                <th class="rotate-90"><div>{{ 'book.students.not_set'|trans }}</div></th>
                                 {% for flag in flags %}
-                                    <th>
-                                        {{ flag.description }}
+                                    <th class="rotate-90">
+                                        <div>{{ flag.description }}</div>
                                     </th>
                                 {% endfor %}
                                 <th></th>
@@ -77,25 +77,37 @@
                                         {% endif %}
                                     </td>
                                     {% set comments = studentInfo.comments|length %}
-                                    <td class="align-middle {% if comments > 0 %}bg-warning{% endif %}">
-                                        <i class="fas fa-comments"></i> {{ comments }}
+                                    <td class="align-middle {% if comments > 0 %}bg-warning{% endif %} nowrap">
+                                        <i class="fas fa-comments"></i>
+
+                                        <a href="{{ path('book_student_comments', { student: student.uuid}|merge(currentFilter)) }}">
+                                             {{ comments }}
+                                        </a>
                                     </td>
                                     {% set lateMinutes = studentInfo.lateMinutesCount %}
                                     <td class="align-middle {% if lateMinutes > 0 %}bg-warning{% endif %}">
-                                        <i class="far fa-clock"></i> {{ 'book.attendance.late_minutes'|trans({'%count%': lateMinutes }) }}
+                                        <i class="far fa-clock"></i>
+
+                                        <a href="{{ path('book_student_attendance', { student: student.uuid }|merge(currentFilter)) }}">
+                                            {{ 'book.attendance.late_minutes'|trans({'%count%': lateMinutes }) }}
+                                        </a>
                                     </td>
 
-                                    <td class="align-middle {% if studentInfo.absentLessonsCount > 0 %}bg-warning{% endif %}">
-                                        <i class="fas fa-user-times"></i> {{ studentInfo.absentLessonsCount }} / {{ studentInfo.totalLessonsCount }}
+                                    <td class="align-middle {% if studentInfo.absentLessonsCount > 0 %}bg-warning{% endif %} nowrap">
+                                        <i class="fas fa-user-times"></i>
+
+                                        <a href="{{ path('book_student_attendance', { student: student.uuid }|merge(currentFilter)) }}">
+                                            {{ studentInfo.absentLessonsCount }} / {{ studentInfo.totalLessonsCount }}
+                                        </a>
                                     </td>
 
                                     {% set nonExcusedCount = studentInfo.notExcusedAbsentLessonsCount %}
-                                    <td class="align-middle {% if nonExcusedCount > 0 %}bg-danger text-white{% endif%}">
+                                    <td class="align-middle {% if nonExcusedCount > 0 %}bg-danger text-white{% endif%} nowrap">
                                         <i class="fas fa-exclamation-circle"></i> {{ nonExcusedCount }}
                                     </td>
 
                                     {% set nonSetCount = studentInfo.notExcusedOrNotSetLessonsCount %}
-                                    <td class="align-middle {% if nonSetCount > 0 %}bg-danger text-white{% endif%}">
+                                    <td class="align-middle {% if nonSetCount > 0 %}bg-danger text-white{% endif%} nowrap">
                                         <i class="fas fa-exclamation-circle"></i> {{ nonSetCount }}
                                     </td>
 

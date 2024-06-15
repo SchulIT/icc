@@ -24,6 +24,25 @@
     {% endif %}
 {% endmacro %}
 
+{% macro studentInfo(items, uuid) %}
+    {% if items|length > 0 %}
+        {% for item in items %}
+            <div class="card-footer pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#info-{{ uuid }}-{{ item.uuid }}">
+                <span class="me-auto align-self-center">
+                    <i class="fas fa-info-circle"></i> {{ item.student|student }}
+                </span>
+                <i class="fa indicator align-self-center fa-chevron-down"></i>
+            </div>
+            <div class="card-footer collapse border-top-0" id="info-{{ uuid }}-{{ item.uuid }}">
+                <div>
+                    <i class="fas fa-calendar-alt"></i> {{ item.from|format_date }} - {{ item.until|format_date }}
+                </div>
+                {{ item.content|markdown }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endmacro %}
+
 {% macro absences(groups, count, id, totalStudents) %}
     {% if groups|length > 0 %}
         <div class="card-footer pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#absences-{{ id }}">
@@ -109,6 +128,7 @@
         {% endif %}
 
         {{ _self.absences(item.absentStudentGroups, item.absentStudentsCount, exam.uuid, exam.students|length) }}
+        {{ _self.studentInfo(item.studentInfo, exam.uuid) }}
     </div>
 {% endmacro %}
 
@@ -164,6 +184,7 @@
         {% set count = item.exams|map(e => e.students|length)|reduce((c, v) => c+v) %}
 
         {{ _self.absences(item.absentStudentGroups, item.absentStudentsCount, id, count) }}
+        {{ _self.studentInfo(item.studentInfo, id ~ lesson) }}
     </div>
 {% endmacro %}
 
@@ -315,6 +336,7 @@
 
         {% if item.lesson is not null and item.lesson.tuition is not null and item.lesson.tuition.studyGroup is not null %}
             {{ _self.absences(item.absentStudentGroups, item.absentStudentsCount, item.lesson.uuid ~ lesson, item.lesson.tuition.studyGroup.memberships|length) }}
+            {{ _self.studentInfo(item.studentInfo, item.lesson.uuid ~ lesson) }}
         {% endif %}
     </div>
 {% endmacro %}
@@ -456,7 +478,8 @@
             {{ _self.absenceLesson(item.absenceLesson) }}
         {% endif %}
 
-        {{ _self.absences(item.absentStudentGroups, item.absentStudentsCount, substitution.uuid ~ lesson, item.students|length ) }}
+        {{ _self.absences(item.absentStudentGroups, item.absentStudentsCount, substitution.uuid ~ lesson|replace({'.': '', '/': ''}), item.students|length ) }}
+        {{ _self.studentInfo(item.studentInfo, substitution.uuid) }}
     </div>
 {% endmacro %}
 

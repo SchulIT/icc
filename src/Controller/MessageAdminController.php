@@ -6,6 +6,7 @@ use App\Entity\Message;
 use App\Entity\MessageFile;
 use App\Entity\User;
 use App\Entity\UserType;
+use App\Entity\UserTypeEntity;
 use App\Event\MessageUpdatedEvent;
 use App\Export\PollResultCsvExporter;
 use App\Filesystem\FileNotFoundException;
@@ -467,11 +468,16 @@ class MessageAdminController extends AbstractController {
         $this->sorter->sort($gradeGroups, StudentGradeGroupStrategy::class);
         $this->sorter->sortGroupItems($gradeGroups, StudentStrategy::class);
 
+        $isPollEnabledForStudents = $message->getPollUserTypes()->filter(fn(UserTypeEntity $entity) => $entity->getUserType() === UserType::Student)->count() === 1;
+        $isPollEnabledForParents = $message->getPollUserTypes()->filter(fn(UserTypeEntity $entity) => $entity->getUserType() === UserType::Student)->count() === 1;
+
         return $this->render('admin/messages/poll_result.html.twig', [
             'view' => $view,
             'grades' => $gradeGroups,
             'teachers' => $teachers,
-            'message' => $message
+            'message' => $message,
+            'isPollEnabledForStudents' => $isPollEnabledForStudents,
+            'isPollEnabledForParents' => $isPollEnabledForParents
         ]);
     }
 

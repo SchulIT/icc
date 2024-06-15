@@ -114,6 +114,12 @@
                                                     </a>
                                                 {% endif %}
 
+                                                {% if is_granted('ROLE_EXAMS_ADMIN') %}
+                                                    <a href="{{ path('split_exam', { uuid: exam.uuid }) }}" class="dropdown-item">
+                                                        <i class="fa-solid fa-arrows-split-up-and-left"></i> {{ 'admin.exams.split.label'|trans }}
+                                                    </a>
+                                                {% endif %}
+
                                                 {% if is_granted('remove', exam) %}
                                                     <a href="{{ path('remove_exam', { uuid: exam.uuid }) }}" class="dropdown-item text-danger">
                                                         <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}

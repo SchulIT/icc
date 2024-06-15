@@ -201,5 +201,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
                 inlineAttachment.editors.codemirror4.attach(editor.codemirror, inlineAttachmentConfig);
             }
         }
+
+        el.editor = editor;
     });
 });

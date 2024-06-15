@@ -1,0 +1,94 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'admin.exams.split.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_exams') }}">{{ 'admin.exams.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
+
+    {{ form_start(form) }}
+
+    <div class="card">
+        <div class="card-header">{{ 'label.general'|trans }}</div>
+
+        <div class="card-body">
+            <div class="bs-callout bs-callout-info">
+                <h5>{{ 'info.label'|trans }}</h5>
+                <p>{{ 'admin.exams.split.help'|trans }}</p>
+            </div>
+
+            <div class="mb-3 row">
+                <label class="col-form-label col-sm-2">{{ 'label.exam'|trans }}</label>
+                <div class="col-sm-10">
+                    <span class="form-control-plaintext">
+                    {% for tuition in exam.tuitions %}
+                        {{ tuition.name }} ({{ tuition.subject.name }})
+
+                        <i class="fa fa-graduation-cap"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
+                        <i class="fa fa-users"></i> {% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+                    {% endfor %}
+                    </span>
+                </div>
+            </div>
+
+            <div class="mb-3 row">
+                <label class="col-form-label col-sm-2">{{ 'label.date'|trans }}</label>
+                <div class="col-sm-10">
+                    <span class="form-control-plaintext">
+                        {% if exam.date is not null %}
+                            {{ exam.date|format_date }}
+
+                            {{ 'label.exam_lessons'|trans({'%start%': exam.lessonStart, '%end%': exam.lessonEnd, '%count%': (exam.lessonEnd - exam.lessonStart)}) }}
+                        {% else %}
+                            {{ 'plans.exams.not_planned'|trans }}
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'admin.exams.split.splits'|trans }}</div>
+        <div class="card-body">
+            {{ form_errors(form)}}
+
+            <div data-collection="splits" data-prototype="{{ form_widget(form.splits.vars.prototype)|e('html_attr') }}">
+                {% for split in form.splits %}
+                    {{ form_widget(split) }}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="card-footer">
+            <button type="button" class="btn btn-outline-primary btn-sm btn-add" data-collection="splits">
+                <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+            </button>
+        </div>
+    </div>
+
+    {% do form.splits.setRendered %}
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa fa-save"></i> {{ 'actions.save'|trans }}
+        </button>
+
+        <a href="{{ path('admin_exams') }}" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/collection.js') }}"></script>
+{% endblock %}

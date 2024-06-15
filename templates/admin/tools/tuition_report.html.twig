@@ -1,0 +1,64 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'tools.tuition_report.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('tools') }}">{{ 'tools.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {{ knp_menu_render('toolsMenu', {'currentClass': 'active', 'template': 'admin/tools/_menu.html.twig' }) }}
+
+    {{ form_start(form) }}
+
+    <div class="card">
+        <div class="card-body">
+            {{ form_widget(form) }}
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa fa-play"></i> {{ 'actions.submit'|trans }}
+        </button>
+
+        <button type="submit" class="btn btn-primary btn-sm" name="export" value="csv">
+            <i class="fa fa-file-csv"></i> {{ 'tools.tuition_report.download'|trans }}
+        </button>
+    </div>
+
+    {{ form_end(form) }}
+
+    {% if result is not null and result|length > 0 %}
+        <div class="card mt-3">
+            <table class="table table-striped table-bordered table-hover card-table sticky-header" data-table="true">
+                <colgroup>
+                    {% for header in result[0] %}
+                        <col>
+                    {% endfor %}
+                </colgroup>
+
+                <thead>
+                <tr>
+                    {% for header in result[0] %}
+                        <th>{{ header }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for row in result[1:] %}
+                    <tr>
+                        {% for column in row %}
+                            <td>{{ column }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+{% endblock %}

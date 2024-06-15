@@ -661,6 +661,23 @@
             </div>
         </div>
     {% endif %}
+
+    {% if app.user.isStudentOrParent and is_granted('parentsdayappointments') and upcomingParentsDays|length > 0 %}
+        {% for parentsDay in upcomingParentsDays %}
+            <div class="bs-callout bs-callout-warning">
+                <div class="d-flex align-items-center">
+                    <p class="me-auto mb-0">
+                        <i class="fa-solid fa-people-arrows"></i> {{ 'dashboard.parents_day.header'|trans({'%date%': parentsDay.date|format_date }) }}
+                    </p>
+                    <div>
+                        <a href="{{ path('parents_day') }}" class="btn btn-outline-primary btn-sm">
+                            {{ 'dashboard.parents_day.link'|trans }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
 {% endblock %}
 
 {% block missingEntries %}
@@ -674,6 +691,68 @@
                     </a>
                 </div>
             </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block parentsDayAppointments %}
+    {% if view.parentsDayAppointments|length > 0 %}
+        <div class="spacer mb-2">
+            <span>
+                <a id="parentsdayappointments"></a>
+                <i class="fa-solid fa-people-arrows"></i> {{ 'parents_day.label'|trans }}
+            </span>
+        </div>
+
+        <div class="card">
+        <div class="list-group list-group-flush">
+            {% for appointment in view.parentsDayAppointments %}
+                <div class="list-group-item d-flex">
+                    <div class="flex-fill align-self-center">
+                        {{ appointment.start|format_time('short') }}-{{ appointment.end|format_time('short') }}
+
+                        {% if appointment.cancelled %}
+                            {% if is_granted('details', appointment) %}
+                                <span class="badge text-bg-danger" title="{{ 'parents_day.appointments.cancelled_by'|trans({'%user%': appointment.cancelledBy|user }) }}">
+                                    <i class="fa-regular fa-calendar-xmark"></i> {{ 'parents_day.appointments.cancelled'|trans }}
+                                </span>
+
+                                {{ appointment.cancelReason }}
+                            {% else %}
+                                <span class="badge text-bg-secondary">{{ 'parents_day.appointments.not_available'|trans }}</span>
+                            {% endif %}
+                        {% endif %}
+                        {% if appointment.blocked and not appointment.cancelled %}
+                            <span class="badge text-bg-secondary">{{ 'parents_day.appointments.blocked'|trans }}</span>
+                        {% else %}
+                            {% if appointment.students is empty and not appointment.cancelled %}
+                                <span class="badge text-bg-success">{{ 'parents_day.appointments.available'|trans }}</span>
+                            {% endif %}
+
+                            {% if is_granted('details', appointment) %}
+                                {% for student in appointment.students %}
+                                    <i class="fas fa-user-graduate"></i> {{ student|student(true) }}
+                                {% endfor %}
+
+                                {% if appointment.students|length > 0 %}
+                                    {% for teacher in appointment.teachers %}
+                                        <i class="fas fa-chalkboard-teacher"></i> {{ teacher|teacher }}
+                                    {% endfor %}
+                                {% endif %}
+                            {% else %}
+                                <span class="badge text-bg-secondary">{{ 'parents_day.appointments.not_available'|trans }}</span>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+
+                    {% if is_granted('cancel', appointment) %}
+                        <a href="{{ path('cancel_parents_day_appointment', { uuid: appointment.uuid}) }}" class="btn btn-outline-danger btn-sm ms-2" data-modal-form="#modalCancel" data-teacher="{{ appointment.teachers.first|teacher }}" data-time="{{ appointment.start|format_time('short') }}-{{ appointment.end|format_time('short') }}">
+                            <i class="fa-regular fa-calendar-xmark"></i> {{ 'parents_day.appointments.cancel.button'|trans }}
+                        </a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
         </div>
     {% endif %}
 {% endblock %}

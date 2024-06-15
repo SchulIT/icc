@@ -51,6 +51,8 @@ label:
         section: Abschnitt auswählen
         tuition: Unterricht auswählen
         lms: Lernplattform auswählen
+        parents_day: Elternsprechtag auswählen
+        user: Person auswählen
     search:
         student: Lernenden suchen
     scope: Bereich
@@ -294,6 +296,30 @@ label:
     columns:
         label: Spalten
         help: Anzahl der Spalten, auf die die Inhalte aufgeteilt werden.
+    parents_day: Elternsprechtag
+    blocked:
+        label: Termin blockieren
+        help: Wenn diese Option aktiv ist, wird der Termin freigehalten und ist nicht buchbar.
+    duration:
+        label: Dauer
+        help_minutes: in Minuten
+    booking_allowed_from:
+        label: Start Terminbuchung
+        help: Ab diesem Datum können Eltern Termine für den Elternsprechtag buchen. Bereits vorab können Lehrkräfte Termine ins System eintragen.
+    booking_allowed_until:
+        label: Ende Terminbuchung
+        help: Bis zu diesem Datum (einschließlich) können Eltern Termine für den Elternsprechtag buchen. Danach ist eine Buchung nur über die Fachlehrkraft möglich.
+    remove_existing_appointments:
+        label: Bestehende Termine löschen
+        help: Wenn diese Option aktiv ist, werden bereits erstellte Termine gelöscht, sofern sie nicht gebucht bzw. abgesagt wurden. Ist diese Option nicht aktiv, werden keine Termine zu Zeiten erstellt, an denen es bereits Termine gibt.
+    count: Anzahl
+    empty_name: ohne Name
+    parent_of: 'Elternteil von %students%'
+    recipients: Empfänger
+    include_in_gradebook_export:
+        label: Im Unterrichtsbuch-Export anzeigen
+        help: Wenn diese Option aktiv ist, taucht diese Information beim Export des Unterrichtsbuch der zum Kind gehörenden Klasse auf.
+    value: Wert
 
 markdown:
     label: Markdown
@@ -330,6 +356,9 @@ actions:
     apply: übernehmen
     submit: abschicken
     show: anzeigen
+    send: abschicken
+    download: herunterladen
+    rename: umbenennen
 
 modal:
     close: Schließen
@@ -399,6 +428,9 @@ dashboard:
         tuition: Zur Lernendenübersicht
         book: Zum Unterrichtsbuch
         gradebook: Zur Notenübersicht
+    parents_day:
+        header: Es können Termine für den Elternsprechtag am %date% gebucht werden.
+        link: jetzt buchen
 
 plans:
     label: Pläne
@@ -1014,6 +1046,15 @@ admin:
                 help: Anzahl der Sekunden, die ein Benutzer das Passwort nicht erneut eingeben muss, um Noten einzusehen oder zu ändern. Diese Funktion nutzt das SessionStorage des Browsers.
                 button: Mehr zur Funktionsweise des SessionStorage
 
+        chat:
+            label: Private Nachrichten
+            enabled:
+                label: Private Nachrichten aktiviert für
+                help: Legt die Benutzergruppen fest, die private Nachrichten verschicken können.
+            recipients:
+                label: 'Empfänger (%type%)'
+                help: Legt die Benutzergruppen fest, mit denen Benutzer vom Typ %type% Gespräche beginnen können. Ist ein Gespräch begonnen, sind alle Benutzer gleichberechtigt und können Nachrichten verschicken bzw. Dateien austauschen.
+
     timetable:
         label: Stundenplan
         weeks:
@@ -1265,6 +1306,14 @@ admin:
                 label: Nicht neu zugeordnete Klausuren
                 help: Diese Klausuren bleiben %firstname% zugeordnet
             no_reassignments: '%firstname% ist bereits allen Klausuren zugeordnet'
+        split:
+            label: Klausur aufteilen
+            splits: Aufteilungen
+            help: Hiermit können bereits erstellte Klausuren auf verschiedene Räume aufgeteilt werden.
+            success: Klausuren erfolgreich aufgeteilt
+            error:
+                students_left: Mit der eingegebenen Einteilung würden einige Lernende nicht aufgeteilt.
+                room_unavailable: 'Raum %room% ist in der %lesson%. Stunde von %teacher% reserviert.'
 
     subjects:
         label: Fächer
@@ -1409,6 +1458,7 @@ admin:
                 notifications: Alle Benachrichtigungen im Zeitraum des Abschnittes
                 substitutions: Alle Vertretungen in diesem Abschnitt (inkl. Absenzen, unterrichtsfreie Zeiten und Tagestexte)
                 appointments: Alle Termine in diesem Abschnitt - es werden alle Termine gelöscht, deren Startdatum im Abschnitt liegt
+                parents_day: Alle Elternsprechtage in diesem Abschnitt (inkl. vergebener Termine)
 
             success: Abschnitt erfolgreich gelöscht
 
@@ -1447,7 +1497,7 @@ admin:
             confirm: 'Soll die Notenkategorie %name% wirklich gelöscht werden? Die Kategorie ist aktuell keiner Note zugeordnet, daher kommt es nicht zu Datenverlust.'
             error: Die Notenkategorie kann nicht gelöscht werden, weil Noten mit ihr verknüpft sind.
 
-    tuition_grade_types:
+    tuition_grade_catalogs:
         label: Notenkataloge
         empty: Keine Notenkataloge vorhanden
         presets:
@@ -1484,6 +1534,22 @@ admin:
             success: Merkmal erfolgreich gelöscht
             confirm: 'Soll das Merkmal %flag% wirklich gelöscht werden? Dokumentierte Anwesenheiten mit diesem Merkmal verlieren das Merkmal. Die Anwesenheiten werden dabei nicht gelöscht.'
 
+    parents_day:
+        label: Elternsprechtag
+        empty: Keine Elternsprechtage geplant.
+        add:
+            label: Neuer Elternsprechtag
+            success: Elternsprechtag erfolgreich angelegt
+        edit:
+            label: Elternspechtag bearbeiten
+            success: Elternsprechtag erfolgreich aktualisiert
+        remove:
+            label: Elternsprechtag löschen
+            success: Elternsprechtag erfolgreich gelöscht
+            confirm: 'Soll der Elternsprechtag %title% wirklich gelöscht werden? Alle bereits erstellten Termine werden gelöscht.'
+        appointments:
+
+
 tools:
     label: Tools
 
@@ -1494,7 +1560,10 @@ tools:
         right_grades: Klassen (rechts)
         intersection: Gemeinsame Lehrkräfte
 
-
+    tuition_report:
+        label: Unterrichtsbericht
+        info: Mit diesem Tool können Statistiken über Unterrichte abgerufen werden
+        download: CSV-Datei herunterladen
 
 versions:
     label: Versionen
@@ -2010,6 +2079,22 @@ book:
                 help: Dieser Check prüft nur, es es für das Kind zu einer Stunde zwei Anwesenheiten gibt (die Art der Anwesenheit, also anwesend, abwesend etc., wird dabei nicht geprüft).
                 violation: Kind hat zwei Anwesenheiten
 
+    extra:
+        student_info:
+            label: Lernendeninfos
+            help: Hier können zeitlich begrenzte Informationen zu Lernenden (bspw. Maßnahmen, Krankheitsinfos, ...) hinterlegt werden. Es gilt den Datenschutz zu beachten.
+            empty: Bisher wurden keine Informationen hinterlegt
+            add:
+                label: Neue Information
+                success: Information erfolgreich erstellt
+            edit:
+                label: Information bearbeiten
+                success: Information erfolgreich aktualisiert
+            remove:
+                label: Information löschen
+                confirm: 'Soll die Information über %student% wirklich gelöscht werden?'
+                success: Information erfolgreich gelöscht
+
 export:
     caution: Ich bestätige, dass ich die Datei nur auf zugelassenen Endgeräten verarbeite. Die Datei darf nur lokal verarbeitet werden und nicht via E-Mail versendet oder auf Clouddiensten gespeichert werden.
 
@@ -2153,3 +2238,145 @@ attendance:
     info: Bitte beachten, dass Lehrkräfte Anwesenheiten ggf. zeitverzögert eintragen. Bei Rückfragen bitte an die Fachlehrkraft oder die Klassen-/Stufenleitung wenden.
     delay: Anwesenheiten sind erst am Folgetag einsehbar.
     legend: Die einzelnen Farben spiegeln die Anwesenheit wieder. Ist eine Zelle weiß, so fand hier kein Unterricht statt (z.B. Freistunde in der Oberstufe) oder die Lehrkraft hat noch keine Eintragung vorgenommen.
+
+parents_day:
+    label: Elternsprechtag
+    empty: In nächster Zeit ist kein Elternsprechtag.
+    prepare:
+        label: Elternsprechtag vorbereiten
+        introduction: Bitte zunächst über den Filter einen Unterricht auswählen.
+        help: Hier können Informationen zu Lernenden hinterlegt werden, bspw. ob Termine erwünscht oder nicht notwendig sind.
+        cancelled:
+            label: Termin abgesagt
+        not_necessary:
+            label: Kein Termin benötigt
+        requested:
+            label: Termin erwünscht
+    appointments:
+        empty:
+            not_available: Aktuell werden für diesen Elternsprechtag keine Termine angeboten.
+            nothing_booked: Bisher wurden keine Termine gebucht
+        title:
+            students: Gebuchte Termine
+            teachers: Terminübersicht
+        blocked: geblockt
+        available: verfügbar
+        not_available: nicht verfügbar
+        cancelled: abgesagt
+        cancelled_by: abgesagt von %user%
+        already_booked: Termin gebucht
+        another_appointment_booked: Kollidiert mit anderem Termin
+        booked: Termin gebucht
+        booking_unavailable: Buchen nicht möglich
+        add:
+            label: Mehrere Termine erstellen
+            help: Hier können für einen bestimmten Zeitbereich Termine mit derselben Dauer erstellt werden, die von Eltern gebucht werden können.
+            success: Termine erfolgreich erstellt
+        add_single:
+            label: Einzelnen Termin erstellen
+            help: Hier kann ein einzelner Termin erstellt werden.
+            success: Termin erfolgreich erstellt
+        edit:
+            label: Termin bearbeiten
+            help: Zeit ändern, Lernende zuweisen oder entfernen, Lehrkräfte zuweisen oder entfernen
+            success: Termin erfolgreich aktualisiert
+        cancel:
+            label: Termin absagen
+            confirm: Soll der Termin wirklich abgesagt werden?
+            success: Termin wurde abgesagt
+            caution: Diese Aktion kann nicht rückgängig gemacht werden.
+            button: Termin absagen
+        cancel_all:
+            label: Alle Termine absagen
+            help: Hier können (bspw. aufgrund von Krankheit) alle Termine abgesagt werden.
+            confirm: Sollen alle Termine wirklich abgesagt werden?
+            success: Alle Termine wurden abgesagt
+            caution: Diese Aktion kann nicht rückgängig gemacht werden.
+            button: Alle Termine absagen
+        assign:
+            label: Termin zuweisen
+            info: Der Termin wird den ausgewählten Kindern zugewiesen.
+            success: Der Termin ist nun zugewiesen.
+        block:
+            label: Termin blockieren
+            info: Durch das Blocken von Terminen werden diese nicht gelöscht, sodass sie zu einem späteren Zeitpunkt belegt werden können. In der Zwischenzeit ist das Buchen des Termins nicht möglich.
+            caution: Da der Termin bereits belegt ist, wird der Termin für die Eltern gelöscht.
+            confirm: Der Zeitraum von %start% bis %end% soll blockiert werden.
+            success: Der Zeitraum wird nun blockiert.
+        unblock:
+            label: Termin nicht blockieren
+            info: Durch das Aufheben der Blockierung wird der Termin wieder für alle Eltern freigegeben und kann gebucht werden.
+            confirm: Der Zeitraum wird nicht blockiert, sodass Termine gebucht werden können.
+            success: Der Zeitraum steht nun zur Verfügung.
+        remove:
+            label: Termin löschen
+            confirm: 'Soll der Termin von %start% bis %end% wirklich gelöscht werden?'
+            info: Nach dem Löschen kann zu diesem Zeitpunkt kein Termin gebucht werden.
+            success: Termin erfolgreich gelöscht
+        book:
+            label: Termin buchen
+            title: Terminübersicht für %teacher%
+            click: Klicken, um Termin zu buchen
+            introduction: Bitte zunächst eine Lehrkraft auswählen und anschließend auf den gewünschten Termin klicken. Zum Umbuchen einfach einen neuen Termin auswählen.
+            success: Termin wurde erfolgreich gebucht
+            already_booked:
+                info: Es wurde bereits ein Termin bei der Lehrkraft erstellt
+                confirm: Bisherigen Termin löschen.
+                help: "Wenn diese Option nicht aktiv ist, wird ein weiterer Termin gebucht. Anderenfalls wird der bisherige Termin gelöscht. Wichtig: es werden nur Termine gelöscht, bei denen keine weitere Lehrkraft teilnimmt."
+        unbook:
+            label: Termin löschen
+            confirm: Soll der Termin wirklich gelöscht werden?
+            success: Termin erfolgreich gelöscht
+        rebook:
+            label: Termin umbuchen
+
+chat:
+    label: Private Nachrichten
+    empty: Aktuell gibt es keine privaten Nachrichten.
+    last_message: Letzte Nachricht von %createdBy% am %createdAt%
+    add:
+        label: Neue Nachricht
+        success: Nachricht erfolgreich erstellt
+    rename:
+        success: Gesprächsthema erfolgreich aktualisiert
+    remove:
+        label: Gespräch löschen
+        confirm: 'Soll das Gespräch "%topic%" wirklich gelöscht werden?'
+        success: Gespräch erfolgreich gelöscht
+    show:
+        label: Nachricht anzeigen
+        attachments:
+            label: Dateien
+        seen_by: gesehen von
+        seen_by_nobody: von niemandem gesehen
+        edited_at: bearbeitet am %date%
+    message:
+        add:
+            label: Antworten
+            success: Antwort erfolgreich erstellt
+        remove:
+            label: Nachricht löschen
+            confirm: Nachricht wirklich löschen?
+            message_content: Nachricht gelöscht
+    attachment:
+        remove:
+            label: Anhang löschen
+            confirm: "Soll der Anhang %filename% wirklich gelöscht werden? Diese Aktion kann nicht rückgängig gemacht werden."
+            success: Anhang erfolgreich gelöscht
+    participants:
+        label: Teilnehmer
+        add:
+            caution: Nach dem Hinzufügen von Personen haben diese Einsicht in den gesamten bisherigen Gesprächsverlauf.
+            success: Person erfolgreich hinzugefügt
+            error: Person ist bereits Teilnehmer
+        remove:
+            success: Person erfolgreich aus dem Gespräch entfernt
+        missing_rights: Teilnehmer können nur vom Ersteller des Gesprächs und Benutzern mit der Rolle ROLE_CHAT_MOD hinzugefügt werden.
+
+user_type:
+    teacher: Lehrkraft
+    student: Kind
+    parent: Elternteil
+    intern: Praktikant
+    staff: Mitarbeiter
+    user: Benutzer

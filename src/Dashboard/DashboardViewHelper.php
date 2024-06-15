@@ -30,11 +30,14 @@ use App\Grouping\AbsentStudentStrategy as AbstentStudentGroupStrategy;
 use App\Grouping\Grouper;
 use App\Repository\AbsenceRepositoryInterface;
 use App\Repository\AppointmentRepositoryInterface;
+use App\Repository\BookStudentInformationRepositoryInterface;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\FreeTimespanRepositoryInterface;
 use App\Repository\InfotextRepositoryInterface;
 use App\Repository\LessonEntryRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
+use App\Repository\ParentsDayAppointmentRepositoryInterface;
+use App\Repository\ParentsDayRepositoryInterface;
 use App\Repository\ResourceReservationRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
@@ -47,6 +50,7 @@ use App\Repository\TuitionRepositoryInterface;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\AbsenceVoter;
 use App\Security\Voter\AppointmentVoter;
+use App\Security\Voter\BookStudentInformationVoter;
 use App\Security\Voter\ExamVoter;
 use App\Security\Voter\MessageVoter;
 use App\Security\Voter\ResourceReservationVoter;
@@ -59,6 +63,7 @@ use App\Sorting\AbsentStudentStrategy;
 use App\Sorting\AbsentStudyGroupStrategy;
 use App\Sorting\AbsentTeacherStrategy;
 use App\Sorting\MessageStrategy;
+use App\Sorting\ParentsDayAppointmentStrategy;
 use App\Sorting\Sorter;
 use App\Timetable\TimetableTimeHelper;
 use App\Utils\ArrayUtils;
@@ -79,7 +84,9 @@ class DashboardViewHelper {
                                 private AuthorizationCheckerInterface $authorizationChecker, private ValidatorInterface $validator, private DateHelper $dateHelper, private AbsenceResolver $absenceResolver,
                                 private SectionResolverInterface $sectionResolver, private readonly TuitionRepositoryInterface $tuitionRepository, private readonly TeacherAbsenceLessonRepositoryInterface $absenceLessonRepository,
                                 private readonly BookSettings $bookSettings, private readonly LessonEntryRepositoryInterface $lessonEntryRepository, private readonly TeacherRepositoryInterface $teacherRepository,
-                                private readonly StudentRepositoryInterface $studentRepository, private readonly TokenStorageInterface $tokenStorage)
+                                private readonly StudentRepositoryInterface $studentRepository, private readonly TokenStorageInterface $tokenStorage,
+                                private readonly ParentsDayRepositoryInterface $parentsDayRepository, private readonly ParentsDayAppointmentRepositoryInterface $parentsDayAppointmentRepository,
+                                private readonly BookStudentInformationRepositoryInterface $bookStudentInformationRepository)
     {
     }
 
@@ -165,10 +172,17 @@ class DashboardViewHelper {
         $this->setCurrentLesson($view);
         $this->addBirthdays($view, $dateTime);
 
+        $appointments = [ ];
+        foreach($this->parentsDayRepository->findByDate($dateTime) as $parentsDay) {
+            $appointments = array_merge($appointments, $this->parentsDayAppointmentRepository->findForTeacher($teacher, $parentsDay));
+        }
+
+        $this->addParentsDayAppointments($view, $appointments);
+
         return $view;
     }
 
-    public function createViewForStudentOrParent(Student $student, DateTime $dateTime, UserType $userType): DashboardView {
+    public function createViewForStudentOrParent(Student $student, DateTime $dateTime, UserType $userType, User|null $user = null): DashboardView {
         $view = new DashboardView($dateTime);
 
         $studyGroups = $this->studyGroupHelper->getStudyGroups([$student])->toArray();
@@ -194,6 +208,19 @@ class DashboardViewHelper {
         $this->setCurrentLesson($view);
 
         $this->addExercises($view, $student, $dateTime);
+
+        $appointments = [ ];
+        foreach($this->parentsDayRepository->findByDate($dateTime) as $parentsDay) {
+            $appointments = array_merge(
+                $appointments,
+                $this->parentsDayAppointmentRepository->findForStudents(
+                    $user !== null ? $user->getStudents()->toArray() : [$student ],
+                    $parentsDay
+                )
+            );
+        }
+
+        $this->addParentsDayAppointments($view, $appointments);
 
         return $view;
     }
@@ -236,6 +263,17 @@ class DashboardViewHelper {
         }
     }
 
+    private function addParentsDayAppointments(DashboardView $view, array $appointments): void {
+        if(count($appointments) === 0) {
+            return;
+        }
+
+        $this->sorter->sort($appointments, ParentsDayAppointmentStrategy::class);
+        foreach($appointments as $appointment) {
+            $view->addParentsDayAppointment($appointment);
+        }
+    }
+
     private function addExercises(DashboardView $view, Student $student, DateTime $date) {
         $start = (clone $date)->modify(sprintf('-%d days', $this->bookSettings->getExercisesDays()));
         $end = clone $date;
@@ -257,6 +295,15 @@ class DashboardViewHelper {
     private function addTimetableLessons(iterable $lessons, DateTime $dateTime, DashboardView $dashboardView, bool $computeAbsences): void {
         foreach($lessons as $lesson) {
             $lessonStudents = [ ];
+            $studentInfo = [ ];
+
+            if($lesson->getTuition() !== null && $lesson->getTuition()->getStudyGroup() !== null) {
+                foreach($this->bookStudentInformationRepository->findByStudyGroup($lesson->getTuition()->getStudyGroup(), $lesson->getDate(), $lesson->getDate()) as $info) {
+                    if($this->authorizationChecker->isGranted(BookStudentInformationVoter::Show, $info)) {
+                        $studentInfo[] = $info;
+                    }
+                }
+            }
 
             if($lesson->getTuition() !== null) {
                 $lessonStudents = $lesson
@@ -270,7 +317,7 @@ class DashboardViewHelper {
             for($lessonNumber = $lesson->getLessonStart(); $lessonNumber <= $lesson->getLessonEnd(); $lessonNumber++) {
                 $absentStudents = $computeAbsences ? $this->computeAbsentStudents($lessonStudents, $lessonNumber, $dateTime, [], $lesson->getTuition()) : [ ];
                 $absenceLesson = $this->absenceLessonRepository->findOneForLesson($lesson);
-                $dashboardView->addItem($lessonNumber, new TimetableLessonViewItem($lesson, $absentStudents, $absenceLesson));
+                $dashboardView->addItem($lessonNumber, new TimetableLessonViewItem($lesson, $absentStudents, $studentInfo, $absenceLesson));
             }
         }
     }
@@ -280,7 +327,7 @@ class DashboardViewHelper {
 
         for($i = 1; $i <= $numberOfLessons; $i++) {
             if(!in_array($i, $lessons)) {
-                $view->addItem($i, new TimetableLessonViewItem(null, [], null));
+                $view->addItem($i, new TimetableLessonViewItem(null, [], [],  null));
             }
         }
 
@@ -300,7 +347,7 @@ class DashboardViewHelper {
             }
 
             if($hasLessonEntry === false) {
-                $view->addItem($lessonNumber, new TimetableLessonViewItem(null, [], null));
+                $view->addItem($lessonNumber, new TimetableLessonViewItem(null, [], [], null));
             }
         }
     }
@@ -332,7 +379,7 @@ class DashboardViewHelper {
             $isFreeLesson = in_array($substitution->getType(), $freeTypes);
 
             if($substitution->startsBefore()) {
-                $dashboardView->addItemBefore($substitution->getLessonStart(), new SubstitutionViewItem($substitution, $isFreeLesson, [ ], [ ], null, null));
+                $dashboardView->addItemBefore($substitution->getLessonStart(), new SubstitutionViewItem($substitution, $isFreeLesson, [ ], [ ], [ ], null, null));
 
                 if($substitution->getLessonEnd() - $substitution->getLessonStart() === 0) {
                     // Do not expand more lessons when the end is the same lesson as the beginning
@@ -353,7 +400,15 @@ class DashboardViewHelper {
                     $absenceLesson = $this->absenceLessonRepository->findOneForLesson($timetableLesson);
                 }
 
-                $dashboardView->addItem($lesson, new SubstitutionViewItem($substitution, $isFreeLesson, $students, $absentStudents, $timetableLesson, $absenceLesson));
+                $studentInfo = [ ];
+
+                foreach($this->bookStudentInformationRepository->findByStudents($students, $substitution->getDate(), $substitution->getDate()) as $info) {
+                    if($this->authorizationChecker->isGranted(BookStudentInformationVoter::Show, $info)) {
+                        $studentInfo[] = $info;
+                    }
+                }
+
+                $dashboardView->addItem($lesson, new SubstitutionViewItem($substitution, $isFreeLesson, $students, $absentStudents, $studentInfo, $timetableLesson, $absenceLesson));
             }
         }
     }
@@ -418,18 +473,26 @@ class DashboardViewHelper {
             }
 
             for($lesson = $exam->getLessonStart(); $lesson <= $exam->getLessonEnd(); $lesson++) {
-                $absentStudents = $computeAbsences ? $this->computeAbsentStudents($exam->getStudents()->map(fn(ExamStudent $student) => $student->getStudent())->toArray(), $lesson, $exam->getDate(), [ ExamStudentsResolver::class ]) : [ ];
+                $examStudents = $exam->getStudents()->map(fn(ExamStudent $student) => $student->getStudent())->toArray();
+                $absentStudents = $computeAbsences ? $this->computeAbsentStudents($examStudents, $lesson, $exam->getDate(), [ ExamStudentsResolver::class ]) : [ ];
+                $studentInfo = [];
+
+                foreach($this->bookStudentInformationRepository->findByStudents($examStudents, $exam->getDate(), $exam->getDate()) as $info) {
+                    if($this->authorizationChecker->isGranted(BookStudentInformationVoter::Show, $info)) {
+                        $studentInfo[] = $info;
+                    }
+                }
 
                 if($teacher !== null) {
                     if(in_array($teacher->getId(), $tuitionTeacherIds)) {
-                        $dashboardView->addItem($lesson, new ExamViewItem($exam, $absentStudents));
+                        $dashboardView->addItem($lesson, new ExamViewItem($exam, $absentStudents, $studentInfo));
                     }
 
                     if(isset($supervisions[$lesson]) && $supervisions[$lesson] === $teacher->getId()) {
-                        $dashboardView->addItem($lesson, new ExamSupervisionViewItem($exam, $absentStudents));
+                        $dashboardView->addItem($lesson, new ExamSupervisionViewItem($exam, $absentStudents, $studentInfo));
                     }
                 } else {
-                    $dashboardView->addItem($lesson, new ExamViewItem($exam, $absentStudents));
+                    $dashboardView->addItem($lesson, new ExamViewItem($exam, $absentStudents, $studentInfo));
                 }
             }
         }

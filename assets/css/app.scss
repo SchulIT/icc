@@ -521,3 +521,16 @@ table {
 .nowrap {
   white-space: nowrap;
 }
+
+.modal {
+  &.with-form {
+    .col-sm-2, .col-sm-10 {
+      width: 100%;
+    }
+  }
+}
+
+table.sticky-header thead th {
+  position: sticky;
+  top: 0;
+}

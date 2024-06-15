@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\TuitionGradeType;
+use App\Entity\TuitionGradeCatalog;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -26,14 +26,14 @@ class TuitionGradeCategoryType extends AbstractType {
                 'label' => 'label.position.label',
                 'help' => 'label.position.help'
             ])
-            ->add('gradeType', EntityType::class, [
+            ->add('catalog', EntityType::class, [
                 'label' => 'label.tuition_grade_type',
-                'class' => TuitionGradeType::class,
+                'class' => TuitionGradeCatalog::class,
                 'query_builder' => function(EntityRepository $repository) {
                     return $repository->createQueryBuilder('t')
                         ->addOrderBy('t.displayName', 'asc');
                 },
-                'choice_label' => fn(TuitionGradeType $type) => $type->getDisplayName(),
+                'choice_label' => fn(TuitionGradeCatalog $type) => $type->getDisplayName(),
                 'expanded' => true,
                 'label_attr' => [
                     'class' => 'radio-custom'
@@ -53,7 +53,15 @@ class TuitionGradeCategoryType extends AbstractType {
                 ],
                 'label' => 'label.tuitions',
                 'multiple' => true,
-                'required' => false
+                'required' => false,
+                'query_builder' => function(EntityRepository $repository) {
+                    return $repository
+                        ->createQueryBuilder('t')
+                        ->select(['t', 's', 'sg', 'g'])
+                        ->leftJoin('t.section', 's')
+                        ->leftJoin('t.studyGroup', 'sg')
+                        ->leftJoin('sg.grades', 'g');
+                }
             ]);
     }
 }

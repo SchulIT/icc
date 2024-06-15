@@ -98,6 +98,11 @@ class AdminDataMenuBuilder extends AbstractMenuBuilder {
                 'route' => 'admin_attendance_flags'
             ])
                 ->setExtra('icon', 'fas fa-list-check');
+
+            $root->addChild('admin.parents_day.label', [
+                'route' => 'admin_parents_days'
+            ])
+                ->setExtra('icon', 'fa-solid fa-people-arrows');
         }
 
         if($this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN')) {

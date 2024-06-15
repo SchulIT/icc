@@ -250,70 +250,130 @@
                         </div>
                     {% endif %}
 
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title">
-                                <i class="far fa-comments"></i> {{ 'book.comment.label'|trans }}
-                            </h4>
-                            <p class="mb-0">
-                                <i class="fas fa-info-circle"></i> {{ 'book.comment.info'|trans }}
-                            </p>
-                        </div>
 
-                        <div class="list-group list-group-flush">
-                        {% for comment in overview.comments %}
-                            <div class="list-group-item d-flex align-items-center">
-                                <div class="book-lesson m-0 p-0">
-                                    <i class="far fa-comment-alt"></i>
-                                </div>
-
-                                <div class="flex-fill">
-                                    <div class="d-flex align-items-center mb-1 flex-wrap">
-                                        <div class="me-2">
-                                            <i class="fas fa-calendar-alt"></i> {{ comment.date|format_date }}
-                                        </div>
-
-                                        <div class="me-2">
-                                            <i class="fas fa-chalkboard-teacher"></i> {{ comment.teacher|teacher }}
-                                        </div>
-
-                                        {% for student in comment.students %}
-                                            <div class="me-2">
-                                                <i class="fas fa-user-graduate"></i> {{ student|student }}
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-
-                                    <div>
-                                        {{ comment.text }}
-                                    </div>
-                                </div>
-
-                                {% if is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
-                                    <div class="dropdown">
-                                        <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
-                                            <i class="fas fa-ellipsis-v"></i>
-                                        </button>
-
-                                        <div class="dropdown-menu dropdown-menu-end">
-                                            <a href="{{ path('edit_book_comment', { uuid: comment.uuid }) }}" class="dropdown-item">
-                                                <i class="fas fa-edit"></i> {{ 'actions.edit'|trans }}
-                                            </a>
-
-                                            <a href="{{ path('remove_book_comment', { uuid: comment.uuid }) }}" class="dropdown-item text-danger">
-                                                <i class="fas fa-trash"></i> {{ 'actions.remove'|trans }}
-                                            </a>
-                                        </div>
-                                    </div>
-                                {% endif %}
+                    <div class="row row-cols-1 row-cols-md-2 mb-3">
+                        <div class="col">
+                            <div class="card h-100">
+                            <div class="card-body">
+                                <h4 class="card-title">
+                                    <i class="far fa-comments"></i> {{ 'book.comment.label'|trans }}
+                                </h4>
+                                <p class="mb-0">
+                                    <i class="fas fa-info-circle"></i> {{ 'book.comment.info'|trans }}
+                                </p>
                             </div>
-                        {% endfor %}
+
+                            <div class="list-group list-group-flush">
+                            {% for comment in overview.comments %}
+                                <div class="list-group-item d-flex align-items-center">
+                                    <div class="book-lesson m-0 p-0">
+                                        <i class="far fa-comment-alt"></i>
+                                    </div>
+
+                                    <div class="flex-fill">
+                                        <div class="d-flex align-items-center mb-1 flex-wrap">
+                                            <div class="me-2">
+                                                <i class="fas fa-calendar-alt"></i> {{ comment.date|format_date }}
+                                            </div>
+
+                                            <div class="me-2">
+                                                <i class="fas fa-chalkboard-teacher"></i> {{ comment.teacher|teacher }}
+                                            </div>
+
+                                            {% for student in comment.students %}
+                                                <div class="me-2">
+                                                    <i class="fas fa-user-graduate"></i> {{ student|student }}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div>
+                                            {{ comment.text }}
+                                        </div>
+                                    </div>
+
+                                    {% if is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
+                                        <div class="dropdown">
+                                            <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <a href="{{ path('edit_book_comment', { uuid: comment.uuid }) }}" class="dropdown-item">
+                                                    <i class="fas fa-edit"></i> {{ 'actions.edit'|trans }}
+                                                </a>
+
+                                                <a href="{{ path('remove_book_comment', { uuid: comment.uuid }) }}" class="dropdown-item text-danger">
+                                                    <i class="fas fa-trash"></i> {{ 'actions.remove'|trans }}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                            </div>
+
+                            <div class="card-footer">
+                                <a href="{{ path('add_book_comment') }}" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-plus"></i> {{ 'book.comment.add.label'|trans }}
+                                </a>
+                            </div>
+                        </div>
                         </div>
 
-                        <div class="card-footer">
-                            <a href="{{ path('add_book_comment') }}" class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-plus"></i> {{ 'book.comment.add.label'|trans }}
-                            </a>
+                        <div class="col">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h4 class="card-title"><i class="fas fa-info-circle"></i> {{ 'book.extra.student_info.label'|trans }}</h4>
+                                    <p>{{ 'book.extra.student_info.help'|trans }}</p>
+                                </div>
+
+                                <div class="list-group list-group-flush">
+                                    {% for info in studentExtraInfo %}
+                                        <div class="list-group-item d-flex align-items-center">
+                                            <div class="flex-fill">
+                                                <div class="d-flex align-items-center mb-1 flex-wrap">
+                                                    <div class="me-2">
+                                                        <i class="fas fa-calendar-alt"></i> {{ info.from|format_date }} - {{ info.until|format_date }}
+                                                    </div>
+
+                                                    <div class="me-2">
+                                                        <i class="fas fa-user-graduate"></i> {{ info.student|student }}
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    {{ info.content }}
+                                                </div>
+                                            </div>
+
+                                            {% if is_granted('edit', info) %}
+                                                <div class="dropdown">
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                                        <i class="fas fa-ellipsis-v"></i>
+                                                    </button>
+
+                                                    <div class="dropdown-menu dropdown-menu-end">
+                                                        <a href="{{ path('edit_student_book_information', { uuid: info.uuid }) }}" class="dropdown-item">
+                                                            <i class="fas fa-edit"></i> {{ 'actions.edit'|trans }}
+                                                        </a>
+
+                                                        <a href="{{ path('remove_student_book_information', { uuid: info.uuid }) }}" class="dropdown-item text-danger">
+                                                            <i class="fas fa-trash"></i> {{ 'actions.remove'|trans }}
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="card-footer">
+                                    <a href="{{ path('add_student_book_information') }}" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-plus"></i> {{ 'book.extra.student_info.add.label'|trans }}
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
 

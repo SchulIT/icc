@@ -6,12 +6,11 @@ use App\Entity\TuitionGrade;
 use App\Entity\TuitionGradeCategory;
 use App\Repository\TuitionGradeRepositoryInterface;
 use App\Utils\ArrayUtils;
-use App\Utils\ColorUtils;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class Exporter {
 
-    public function __construct(private readonly TuitionGradeRepositoryInterface $repository, private readonly ColorUtils $colorUtils) {
+    public function __construct(private readonly TuitionGradeRepositoryInterface $repository) {
 
     }
 

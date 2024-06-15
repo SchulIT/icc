@@ -6,6 +6,7 @@ use App\Entity\Setting;
 use App\Repository\SettingRepositoryInterface;
 use DateTime;
 use DateTimeInterface;
+use Exception;
 use UnitEnum;
 
 /**
@@ -29,7 +30,7 @@ class SettingsManager {
      * @param mixed $default Default value which is returned if the setting with key $key is non-existent
      * @return mixed|null
      */
-    public function getValue($key, mixed $default = null): mixed {
+    public function getValue(string $key, mixed $default = null): mixed {
         $this->initializeIfNecessary();
 
         if(!isset($this->settings[$key])) {
@@ -37,16 +38,20 @@ class SettingsManager {
         }
 
         $value = $this->settings[$key]->getValue();
-        return unserialize($value);
+        try {
+            return unserialize($value);
+        } catch(Exception) {
+            return $default;
+        }
     }
 
     /**
      * Sets the value of a setting
      *
      * @param string $key
-     * @param class-string|null $valueType
+     * @param mixed $value
      */
-    public function setValue($key, mixed $value, string $valueType = null) {
+    public function setValue(string $key, mixed $value): void {
         $this->initializeIfNecessary();
 
         if(!isset($this->settings[$key])) {

@@ -7,7 +7,6 @@ use App\Entity\Grade;
 use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
-use App\Entity\Tuition;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
 
@@ -29,7 +28,7 @@ class BookStudentInformationRepository extends AbstractRepository implements Boo
                     ->setParameter('from', $from);
             }
             if ($until !== null) {
-                $qb->andWhere('i.until <= :until')
+                $qb->andWhere('i.until >= :until')
                     ->setParameter('until', $until);
             }
         }

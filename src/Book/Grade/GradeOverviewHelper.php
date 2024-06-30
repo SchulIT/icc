@@ -59,7 +59,7 @@ class GradeOverviewHelper {
             $rows[] = new GradeRow($tuition, $data);
         }
 
-        return new GradeOverview($categories, $rows);
+        return new GradeOverview($student, $categories, $rows);
     }
 
     public function computeOverviewForTuition(Tuition $tuition): ?GradeOverview {
@@ -93,7 +93,7 @@ class GradeOverviewHelper {
         $this->sorter->sort($categories, TuitionGradeCategoryStrategy::class);
         $categories = array_map(fn(TuitionGradeCategory $category) => new Category($tuition, $category), $categories);
 
-        return new GradeOverview($categories, $rows);
+        return new GradeOverview($tuition, $categories, $rows);
     }
 
     public function computeForGrade(Grade $grade, Section $section): GradeOverview {
@@ -139,6 +139,6 @@ class GradeOverviewHelper {
             $rows[] = new GradeRow($student, $data);
         }
 
-        return new GradeOverview($categories, $rows);
+        return new GradeOverview($grade, $categories, $rows);
     }
 }

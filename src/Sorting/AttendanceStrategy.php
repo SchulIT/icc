@@ -4,9 +4,9 @@ namespace App\Sorting;
 
 use App\Entity\Attendance;
 
-class LessonAttendenceStrategy implements SortingStrategyInterface {
+class AttendanceStrategy implements SortingStrategyInterface {
 
-    public function __construct(private DateStrategy $dateStrategy)
+    public function __construct(private readonly DateStrategy $dateStrategy)
     {
     }
 
@@ -18,7 +18,7 @@ class LessonAttendenceStrategy implements SortingStrategyInterface {
         $dateCmp = $this->dateStrategy->compare($objectA->getEntry()->getLesson()->getDate(), $objectB->getEntry()->getLesson()->getDate());
 
         if($dateCmp === 0) {
-            return $objectA->getEntry()->getLessonStart() - $objectB->getEntry()->getLessonStart();
+            return $objectA->getLesson() - $objectB->getLesson();
         }
 
         return $dateCmp;

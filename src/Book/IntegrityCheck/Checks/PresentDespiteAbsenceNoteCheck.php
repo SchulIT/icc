@@ -37,15 +37,7 @@ class PresentDespiteAbsenceNoteCheck implements IntegrityCheckInterface {
                 $attendances,
                 fn(Attendance $attendance) => $attendance->getType() === AttendanceType::Present
             ),
-            function(Attendance $attendance) {
-                $keys = [];
-
-                for($lesson = $attendance->getEntry()->getLessonStart(); $lesson <= $attendance->getEntry()->getLessonEnd(); $lesson++) {
-                    $keys[] = sprintf('%s-%s', $attendance->getEntry()->getLesson()->getDate()->format('Y-m-d'), $lesson);
-                }
-
-                return $keys;
-            }
+            fn(Attendance $attendance) => sprintf('%s-%s', $attendance->getEntry()->getLesson()->getDate()->format('Y-m-d'), $attendance->getLesson())
         );
 
         $absences = $this->absenceRepository->findByStudents([ $student ]);

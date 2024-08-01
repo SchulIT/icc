@@ -22,12 +22,10 @@ class MoreThanOneAttendancesAtTheSameTimeCheck implements IntegrityCheckInterfac
         $lessonKeys = [ ];
 
         foreach($attendances as $attendance) {
-            for($lessonNumber = $attendance->getEntry()->getLessonStart(); $lessonNumber <= $attendance->getEntry()->getLessonEnd(); $lessonNumber++) {
-                $lessonKey = sprintf('%s-%d', $attendance->getEntry()->getLesson()->getDate()->format('Y-m-d'), $lessonNumber);
+            $lessonKey = sprintf('%s-%d', $attendance->getEntry()->getLesson()->getDate()->format('Y-m-d'), $attendance->getLesson());
 
-                if(in_array($lessonKey, $lessonKeys)) {
-                    $violations[] = new IntegrityCheckViolation(clone $attendance->getEntry()->getLesson()->getDate(), $lessonNumber, $attendance->getEntry()->getLesson(), $this->translator->trans('book.integrity_check.checks.more_than_one_attendances_at_the_same_time.violation'));
-                }
+            if(in_array($lessonKey, $lessonKeys)) {
+                $violations[] = new IntegrityCheckViolation(clone $attendance->getEntry()->getLesson()->getDate(), $attendance->getLesson(), $attendance->getEntry()->getLesson(), $this->translator->trans('book.integrity_check.checks.more_than_one_attendances_at_the_same_time.violation'));
             }
         }
 

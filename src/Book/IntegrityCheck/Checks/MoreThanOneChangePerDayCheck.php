@@ -9,7 +9,7 @@ use App\Entity\AttendanceType;
 use App\Entity\Student;
 use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Settings\TimetableSettings;
-use App\Sorting\LessonAttendenceStrategy;
+use App\Sorting\AttendanceStrategy;
 use App\Sorting\Sorter;
 use App\Utils\ArrayUtils;
 use DateTime;
@@ -40,7 +40,7 @@ class MoreThanOneChangePerDayCheck implements IntegrityCheckInterface {
         $current = clone $start;
         while($current <= $end) {
             $attendancesForToday = $this->lessonAttendanceRepository->findByStudentAndDateRange($student, $current, $current);
-            $this->sorter->sort($attendancesForToday, LessonAttendenceStrategy::class);
+            $this->sorter->sort($attendancesForToday, AttendanceStrategy::class);
 
             $changes = 0;
             $types = array_map(
@@ -67,15 +67,7 @@ class MoreThanOneChangePerDayCheck implements IntegrityCheckInterface {
                 /** @var Attendance[] $attendanceByLesson */
                 $attendanceByLesson = ArrayUtils::createArrayWithKeys(
                     $attendancesForToday,
-                    function(Attendance $attendance) {
-                        $lessons = [ ];
-
-                        for($lessonNumber = $attendance->getEntry()->getLesson()->getLessonStart(); $lessonNumber <= $attendance->getEntry()->getLesson()->getLessonEnd(); $lessonNumber++) {
-                            $lessons[] = $lessonNumber;
-                        }
-
-                        return $lessons;
-                    }
+                    fn(Attendance $attendance) => $attendance->getLesson()
                 );
 
                 // As we do not know who's right or wrong, just blame them all :)
@@ -94,14 +86,14 @@ class MoreThanOneChangePerDayCheck implements IntegrityCheckInterface {
         return $violations;
     }
 
-    private function getCorrectedAttendanceType(Attendance $attendance): int {
+    private function getCorrectedAttendanceType(Attendance $attendance): AttendanceType {
         $type = $attendance->getType();
 
         if($attendance->getType() === AttendanceType::Late) {
             $type = AttendanceType::Present;
         }
 
-        if($attendance->getType() === AttendanceType::Absent && $attendance->getAbsentLessons() === 0) {
+        if($attendance->getType() === AttendanceType::Absent && $attendance->isZeroAbsentLesson()) {
             $type = AttendanceType::Present;
         }
 

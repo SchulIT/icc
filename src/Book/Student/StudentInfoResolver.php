@@ -10,7 +10,7 @@ use App\Repository\BookCommentRepositoryInterface;
 use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
-use App\Sorting\LessonAttendenceStrategy;
+use App\Sorting\AttendanceStrategy;
 use App\Sorting\Sorter;
 
 class StudentInfoResolver extends AbstractResolver {
@@ -29,8 +29,8 @@ class StudentInfoResolver extends AbstractResolver {
         $present = array_filter($attendances, fn(Attendance $a) => $a->getType() === AttendanceType::Present);
         $excuseNotes = $this->getExcuseNoteRepository()->findByStudent($student);
 
-        $this->sorter->sort($late, LessonAttendenceStrategy::class);
-        $this->sorter->sort($absent, LessonAttendenceStrategy::class);
+        $this->sorter->sort($late, AttendanceStrategy::class);
+        $this->sorter->sort($absent, AttendanceStrategy::class);
 
         $excuseCollections = $this->computeExcuseCollections($excuseNotes);
         $lateAttendanceCollection = $this->computeAttendanceCollectionWithoutExcuses($late);

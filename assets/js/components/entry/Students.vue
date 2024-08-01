@@ -6,12 +6,6 @@
         </div>
 
         <div>
-          <button class="btn btn-success btn-sm ms-1"
-                  @click.prevent="present(attendances)"
-                  :title="$trans('book.attendance.all')">
-            <i class="fas fa-check-double"></i>
-          </button>
-
           <button class="btn btn-primary btn-sm ms-1"
                   :class="{ 'btn-danger': isDirty }"
                   v-if="showSaveButton"
@@ -24,9 +18,12 @@
       </div>
 
       <div class="card-body">
-        <i class="fa fa-check"></i> {{ $trans('book.attendance.overview.present', { 'number': numPresent })}}
-        <i class="fa fa-clock"></i> {{ $trans('book.attendance.overview.late', { 'number': numLate })}}
-        <i class="fa fa-times"></i> {{ $trans('book.attendance.overview.absent', { 'number': numAbsent })}}
+        <div v-for="lessonNumber in range(start, end)">
+          <span class="badge text-bg-secondary me-2">{{ $transChoice('label.exam_lessons', 0, { start: lessonNumber }) }}</span>
+          <i class="fa fa-check"></i> {{ $trans('book.attendance.overview.present', { 'number': numPresent(lessonNumber) })}}
+          <i class="fa fa-clock"></i> {{ $trans('book.attendance.overview.late', { 'number': numLate(lessonNumber) })}}
+          <i class="fa fa-times"></i> {{ $trans('book.attendance.overview.absent', { 'number': numAbsent(lessonNumber) })}}
+        </div>
       </div>
 
       <div class="card-body border-top" v-if="removals.length > 0">
@@ -154,8 +151,9 @@
           <div class="d-flex flex-wrap">
             <div class="flex-fill p-3 pointer"
                  @click="select(attendance)">
-              <i class="fa fa-user"></i> {{ attendance.student.lastname }}, {{ attendance.student.firstname }}
-              <span class="badge text-bg-secondary">{{ attendance.lesson }}</span>
+              <span class="badge text-bg-secondary me-1">{{ $transChoice('label.substitution_lessons', 0, { 'start': attendance.lesson }) }}</span>
+              <i class="fa fa-user"></i>
+              {{ attendance.student.lastname }}, {{ attendance.student.firstname }}
             </div>
             <div class="d-flex align-self-center text-right my-2 me-3 flex-fill justify-content-end">
               <div class="btn-group" v-if="flags.length > 0">
@@ -283,8 +281,6 @@ export default {
   data() {
     return {
       isDirty: false,
-      //originalAttendances: this.attendancedata.slice(0, this.attendancedata.length),
-      //attendances: this.attendancedata,
       selectedAttendances: [ ],
       absences: [ ],
       removals: [ ],
@@ -322,39 +318,42 @@ export default {
   computed: {
     allPresent() {
       return this.numPresent === this.attendances.length;
-    },
-    numPresent() {
-      let count = 0;
-      this.attendances.forEach(function(attendance) {
-        if(attendance.type === 1) {
-          count++;
-        }
-      });
-
-      return count;
-    },
-    numLate() {
-      let count = 0;
-      this.attendances.forEach(function(attendance) {
-        if(attendance.type === 2) {
-          count++;
-        }
-      });
-
-      return count;
-    },
-    numAbsent() {
-      let count = 0;
-      this.attendances.forEach(function(attendance) {
-        if(attendance.type === 0) {
-          count++;
-        }
-      });
-
-      return count;
     }
   },
   methods: {
+    numPresent(lesson) {
+      let count = 0;
+      for(let attendance of this.attendances) {
+        if(attendance.lesson === lesson && attendance.type === 1) {
+          count++;
+        }
+      }
+
+      return count;
+    },
+    numLate(lesson) {
+      let count = 0;
+      for(let attendance of this.attendances) {
+        if(attendance.lesson === lesson && attendance.type === 2) {
+          count++;
+        }
+      }
+
+      return count;
+    },
+    numAbsent(lesson) {
+      let count = 0;
+      for(let attendance of this.attendances) {
+        if(attendance.lesson === lesson && attendance.type === 0) {
+          count++;
+        }
+      }
+
+      return count;
+    },
+    range(start, end) {
+      return Array.from({ length: end - start + 1 }, (v,i) => i + start)
+    },
     select(attendance) {
       let idx = this.selectedAttendances.indexOf(attendance);
       if(idx === -1) {
@@ -476,14 +475,20 @@ export default {
       }
     },
     addStudent(uuid, firstname, lastname) {
-      // only add if not already present!
-      for(let attendance of this.attendances) {
-        if(attendance.student.uuid === uuid) {
-          return;
-        }
-      }
-
       for(let lessonNumber = this.start; lessonNumber <= this.end; lessonNumber++) {
+        let found = false;
+        // only add if not already present!
+        for(let attendance of this.attendances) {
+          if(attendance.student.uuid === uuid && attendance.lesson === lessonNumber) {
+            found = true;
+            break;
+          }
+        }
+
+        if(found === true) {
+          continue;
+        }
+
         let attendance = {
           uuid: '',
           comment: null,
@@ -499,8 +504,6 @@ export default {
           },
           flags: []
         };
-
-        console.log(attendance);
 
         this.attendances.push(attendance);
       }

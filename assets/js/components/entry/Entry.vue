@@ -17,8 +17,8 @@
         <button class="dropdown-item"
                 @click="create(lesson.lessonStart, lesson.lessonEnd)"
                 v-if="lesson.lessonStart !== lesson.lessonEnd">
-          <span class="badge text-bg-primary">{{ lesson.lessonStart }}./{{ lesson.lessonEnd }}.</span>
-          {{ $trans('book.entry.add.double') }}
+          <span class="badge text-bg-primary">{{ $transChoice('label.substitution_lessons', lesson.lessonEnd - lesson.lessonStart, { 'start': lesson.lessonStart, 'end': lesson.lessonEnd})}}</span>
+          {{ $trans('book.entry.add.full') }}
         </button>
 
         <div class="dropdown-header">{{ $trans('book.entry.cancel.label')}}</div>
@@ -31,8 +31,8 @@
         <button class="dropdown-item"
                 @click="cancel(lesson.lessonStart, lesson.lessonEnd)"
                 v-if="lesson.lessonStart !== lesson.lessonEnd">
-          <span class="badge text-bg-primary">{{ lesson.lessonStart }}./{{ lesson.lessonEnd }}.</span>
-          {{ $trans('book.entry.cancel.double') }}
+          <span class="badge text-bg-primary">{{ $transChoice('label.substitution_lessons', lesson.lessonEnd - lesson.lessonStart, { 'start': lesson.lessonStart, 'end': lesson.lessonEnd})}}</span>
+          {{ $trans('book.entry.cancel.full') }}
         </button>
       </div>
     </div>
@@ -75,23 +75,14 @@
                           <div class="ms-2" v-if="lesson.date !== null">
                             <i class="fas fa-calendar-alt"></i> {{ lesson.date.toLocaleDateString() }}
                           </div>
+
+                          <div class="ms-2">
+                            <i class="fas fa-clock"></i> {{ $transChoice('label.exam_lessons', entry.end - entry.start, { 'start': entry.start, 'end': entry.end})}}
+                          </div>
                         </div>
                       </div>
 
                       <div class="card-body">
-                        <div class="mb-3 row">
-                          <div class="col-6">
-                            <label for="start" class="control-label">{{ $trans('label.start')}}</label>
-                            <number-input v-model="entry.start" name="lesson_entry[lessonStart]" :min="lesson.lessonStart" :max="lesson.lessonEnd" id="start" :class="validation.start !== null ? 'is-invalid' : ''"></number-input>
-                            <div class="invalid-feedback" v-show="validation.start !== null">{{ validation.start }}</div>
-                          </div>
-                          <div class="col-6">
-                            <label for="end" class="control-label">{{ $trans('label.end')}}</label>
-                            <number-input v-model="entry.end" name="lesson_entry[lessonEnd]" :min="lesson.lessonStart" :max="lesson.lessonEnd" id="end" :class="validation.end !== null ? 'is-invalid' : ''"></number-input>
-                            <div class="invalid-feedback" v-show="validation.end !== null">{{ validation.end }}</div>
-                          </div>
-                        </div>
-
                         <div class="mb-3">
                           <label for="topic" class="control-label">{{ $trans('label.topic') }}</label>
                           <input v-model="entry.topic" name="lesson_entry[topic]" :class="'topic form-control ' + (validation.topic !== null ? 'is-invalid' : '')" id="topic">
@@ -186,19 +177,6 @@
                 </div>
               </div>
 
-              <div class="mb-3 row">
-                <div class="col-6">
-                  <label for="start" class="control-label">{{ $trans('label.start')}}</label>
-                  <number-input v-model="entry.start" name="lesson_entry_cancel[lessonStart]" :min="lesson.lessonStart" :max="lesson.lessonEnd" id="start" :class="validation.start !== null ? 'is-invalid' : ''"></number-input>
-                  <div class="invalid-feedback" v-show="validation.start !== null">{{ validation.start }}</div>
-                </div>
-                <div class="col-6">
-                  <label for="end" class="control-label">{{ $trans('label.end')}}</label>
-                  <number-input v-model="entry.end" name="lesson_entry_cancel[lessonEnd]" :min="lesson.lessonStart" :max="lesson.lessonEnd" id="end" :class="validation.end !== null ? 'is-invalid' : ''"></number-input>
-                  <div class="invalid-feedback" v-show="validation.end !== null">{{ validation.end }}</div>
-                </div>
-              </div>
-
               <div class="mb-3">
                 <label for="topic" class="control-label">{{ $trans('book.entry.cancel.reason') }}</label>
                 <input v-model="entry.topic" name="lesson_entry_cancel[cancelReason]" :class="'cancel_reason form-control ' + (validation.topic !== null ? 'is-invalid' : '')" id="topic">
@@ -230,13 +208,12 @@
 
 <script>
 import Modal from 'bootstrap/js/dist/modal';
-import NumberInput from "../NumberInput";
 import Students from "../entry/Students";
 import Choices from "choices.js";
 
 export default {
   name: 'entry',
-  components: { NumberInput, Students },
+  components: { Students },
   props: {
     url: String,
     studentsUrl: String,
@@ -476,20 +453,20 @@ export default {
 
       let $this = this;
 
-      if(this.entry.attendances.length === 0) {
-        for(let student of this.students) {
-          for(let lessonNumber = start; lessonNumber <= end; lessonNumber++) {
-            $this.entry.attendances.push({
-              type: 1,
-              student: student,
-              minutes: 0,
-              lesson: lessonNumber,
-              zero_absent_lesson: false,
-              excuse_status: 0,
-              comment: null,
-              flags: [ ]
-            });
-          }
+      this.entry.attendances = [ ];
+
+      for(let student of this.students) {
+        for(let lessonNumber = start; lessonNumber <= end; lessonNumber++) {
+          $this.entry.attendances.push({
+            type: 1,
+            student: student,
+            minutes: 0,
+            lesson: lessonNumber,
+            zero_absent_lesson: false,
+            excuse_status: 0,
+            comment: null,
+            flags: [ ]
+          });
         }
       }
 

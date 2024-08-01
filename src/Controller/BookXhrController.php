@@ -125,7 +125,7 @@ class BookXhrController extends AbstractController {
 
         /** @var Attendance $attendance */
         foreach($entry->getAttendances() as $attendance) {
-            if($filter === null || intval($filter) === $attendance->getType()) {
+            if($filter === null || intval($filter) === $attendance->getType()->value) {
                 $data[] = [
                     'student' => $this->getStudent($attendance->getStudent(), $sectionResolver->getSectionForDate($entry->getLesson()->getDate())),
                     'type' => $attendance->getType()

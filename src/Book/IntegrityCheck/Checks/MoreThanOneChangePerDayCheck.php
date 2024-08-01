@@ -47,8 +47,8 @@ class MoreThanOneChangePerDayCheck implements IntegrityCheckInterface {
                 fn(Attendance $attendance) => $this->getCorrectedAttendanceType($attendance),
                 $attendancesForToday
             );
-            $presentCount = count(array_filter($types, fn(int $attendance) => $attendance === AttendanceType::Present));
-            $absentCount = count(array_filter($types, fn(int $attendance) => $attendance === AttendanceType::Absent));
+            $presentCount = count(array_filter($types, fn(AttendanceType $attendance) => $attendance === AttendanceType::Present));
+            $absentCount = count(array_filter($types, fn(AttendanceType $attendance) => $attendance === AttendanceType::Absent));
             $loserType = $presentCount < $absentCount ? AttendanceType::Present : AttendanceType::Absent;
 
             for($idx = 1; $idx < count($attendancesForToday); $idx++) {

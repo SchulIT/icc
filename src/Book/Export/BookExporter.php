@@ -383,8 +383,7 @@ class BookExporter {
         return match ($type) {
             AttendanceType::Absent => 'absent',
             AttendanceType::Present => 'present',
-            AttendanceType::Late => 'late',
-            default => throw new InvalidArgumentException(sprintf('$type must be either 0, 1 or 2, %d given', $type)),
+            AttendanceType::Late => 'late'
         };
     }
 

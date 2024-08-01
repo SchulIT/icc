@@ -81,7 +81,7 @@ class ExcuseStatusItem {
             return true;
         }
 
-        if($this->attendance !== null && $this->attendance->getAbsentLessons() === 0) {
+        if($this->attendance !== null && $this->attendance->isZeroAbsentLesson()) {
             return true;
         }
 

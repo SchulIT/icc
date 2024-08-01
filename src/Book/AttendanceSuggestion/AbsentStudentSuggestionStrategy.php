@@ -23,9 +23,9 @@ class AbsentStudentSuggestionStrategy implements SuggestionStrategyInterface {
     use StudentTransformerTrait;
 
     public function __construct(private readonly StudentAbsenceRepositoryInterface $absenceRepository,
-                                private readonly StudentsResolver                  $studentsResolver,
-                                private readonly UrlGeneratorInterface             $urlGenerator,
-                                private readonly BookSettings                      $bookSettings, private readonly DateHelper $dateHelper) { }
+                                private readonly StudentsResolver $studentsResolver,
+                                private readonly UrlGeneratorInterface $urlGenerator,
+                                private readonly BookSettings  $bookSettings) { }
 
     public function resolve(Tuition $tuition, DateTime $date, int $lessonStart, int $lessonEnd): array {
         $students = $this->studentsResolver->resolve($tuition);

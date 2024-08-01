@@ -39,7 +39,7 @@ abstract class AbstractResolver {
 
         foreach($attendances as $attendance) {
             $excuses = new ExcuseCollection($attendance->getEntry()->getLesson()->getDate(), $attendance->getEntry()->getLessonStart());
-            $lessonAttendance[] = new LessonAttendance($attendance->getEntry()->getLesson()->getDate(), $attendance->getEntry()->getLessonStart(), $attendance, $excuses);
+            $lessonAttendance[] = new LessonAttendance($attendance->getEntry()->getLesson()->getDate(), $attendance->getLesson(), $attendance, $excuses);
         }
 
         return $lessonAttendance;

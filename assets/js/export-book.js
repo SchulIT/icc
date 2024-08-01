@@ -318,7 +318,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
         attendances.filter(x => x.type === 'absent').forEach(function(attendance) {
             comments.push(
-                attendance.student.firstname + ' ' + attendance.student.lastname + ' absent (' + attendance.absent_lesson_count + ' FS, ' + (attendance.is_excused ? 'E' : 'UE') + (attendance.comment !== null ? ', ' + attendance.comment.trim() : '') + ')'
+                attendance.student.firstname + ' ' + attendance.student.lastname + ' absent (' + attendance.lesson + '. Std, ' + (attendance.zero_absent_lesson ? '0 FS, ' : '') + (attendance.is_excused ? 'E' : 'UE') + (attendance.comment !== null ? ', ' + attendance.comment.trim() : '') + ')'
             )
         });
 

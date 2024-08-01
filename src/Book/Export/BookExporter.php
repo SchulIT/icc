@@ -341,7 +341,8 @@ class BookExporter {
                 ->setComment($attendance->getComment())
                 ->setLateMinutesCount($attendance->getLateMinutes())
                 ->setStudent($this->castStudent($attendance->getStudent(), $section, null))
-                ->setType($this->castAttendanceType($attendance->getType()));
+                ->setType($this->castAttendanceType($attendance->getType()))
+                ->setLesson($attendance->getLesson());
 
             $flags = [ ];
 
@@ -355,9 +356,7 @@ class BookExporter {
 
             // check if lesson is excused
             if($attendance->getType() === AttendanceType::Absent) {
-                $exportAttendance->setAbsentLessonCount(
-                    ($entry->getLessonEnd() - $attendance->getAbsentLessons()) < $entry->getLessonStart() ? 1 : 0
-                );
+                $exportAttendance->setIsZeroAbsentLesson($attendance->isZeroAbsentLesson());
 
                 // check info
                 $info = $studentInfo[$attendance->getStudent()->getId()] ?? null;
@@ -379,7 +378,7 @@ class BookExporter {
         return $lesson;
     }
 
-    private function castAttendanceType(int $type): string
+    private function castAttendanceType(AttendanceType $type): string
     {
         return match ($type) {
             AttendanceType::Absent => 'absent',

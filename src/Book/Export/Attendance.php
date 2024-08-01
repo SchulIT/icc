@@ -15,8 +15,12 @@ class Attendance {
     private ?string $type = null;
 
     #[Serializer\Type('integer')]
-    #[Serializer\SerializedName('absent_lesson_count')]
-    private int $absentLessonCount = 0;
+    #[Serializer\SerializedName('lesson')]
+    private int $lesson = 0;
+
+    #[Serializer\Type('bool')]
+    #[Serializer\SerializedName('zero_absent_lesson')]
+    private bool $isZeroAbsentLesson = false;
 
     #[Serializer\Type('integer')]
     #[Serializer\SerializedName('late_minutes_count')]
@@ -52,12 +56,21 @@ class Attendance {
         return $this;
     }
 
-    public function getAbsentLessonCount(): int {
-        return $this->absentLessonCount;
+    public function getLesson(): int {
+        return $this->lesson;
     }
 
-    public function setAbsentLessonCount(int $absentLessonCount): Attendance {
-        $this->absentLessonCount = $absentLessonCount;
+    public function setLesson(int $lesson): Attendance {
+        $this->lesson = $lesson;
+        return $this;
+    }
+
+    public function isZeroAbsentLesson(): bool {
+        return $this->isZeroAbsentLesson;
+    }
+
+    public function setIsZeroAbsentLesson(bool $isZeroAbsentLesson): Attendance {
+        $this->isZeroAbsentLesson = $isZeroAbsentLesson;
         return $this;
     }
 

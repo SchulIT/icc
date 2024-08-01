@@ -138,30 +138,30 @@ class StudentAbsenceType implements Stringable {
     }
 
     /**
-     * @param int $bookAttendanceType
+     * @param AttendanceType $bookAttendanceType
      */
-    public function setBookAttendanceType(int $bookAttendanceType): void {
+    public function setBookAttendanceType(AttendanceType $bookAttendanceType): void {
         $this->bookAttendanceType = $bookAttendanceType;
     }
 
     /**
-     * @return int
+     * @return AttendanceType
      */
-    public function getBookAttendanceType(): int {
+    public function getBookAttendanceType(): AttendanceType {
         return $this->bookAttendanceType;
     }
 
     /**
-     * @param int $bookExcuseStatus
+     * @param AttendanceExcuseStatus $bookExcuseStatus
      */
-    public function setBookExcuseStatus(int $bookExcuseStatus): void {
+    public function setBookExcuseStatus(AttendanceExcuseStatus $bookExcuseStatus): void {
         $this->bookExcuseStatus = $bookExcuseStatus;
     }
 
     /**
-     * @return int
+     * @return AttendanceExcuseStatus
      */
-    public function getBookExcuseStatus(): int {
+    public function getBookExcuseStatus(): AttendanceExcuseStatus {
         return $this->bookExcuseStatus;
     }
 

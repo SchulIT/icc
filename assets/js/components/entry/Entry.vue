@@ -139,6 +139,8 @@
               </button>
             </div>
 
+            <input type="hidden" name="lesson_entry[lessonStart]" :value="entry.start">
+            <input type="hidden" name="lesson_entry[lessonEnd]" :value="entry.end">
             <input type="hidden" name="date" v-if="lesson.date !== null" :value="lesson.date.toJSON()">
             <input type="hidden" :name="'lesson_entry[' + csrfname + ']'" :value="csrftoken">
             <input type="hidden" name="_ref" :value="ref">

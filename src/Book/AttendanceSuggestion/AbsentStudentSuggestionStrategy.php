@@ -65,9 +65,9 @@ class AbsentStudentSuggestionStrategy implements SuggestionStrategyInterface {
                 $this->getStudent($absence->getStudent()),
                 $type->getBookLabel(),
                 $lessons,
-                $type->getBookAttendanceType(),
+                $type->getBookAttendanceType()->value,
                 $type->isTypeWithZeroAbsenceLessons(),
-                $type->getBookExcuseStatus(),
+                $type->getBookExcuseStatus()->value,
                 $this->urlGenerator->generate('show_student_absence', [ 'uuid' => $absence->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL),
                 $absence->getType()->getBookAttendanceType() === AttendanceType::Present ? $absence->getType()->getFlags()->map(fn(AttendanceFlag $flag) => $flag->getId())->toArray() : [ ]
             );

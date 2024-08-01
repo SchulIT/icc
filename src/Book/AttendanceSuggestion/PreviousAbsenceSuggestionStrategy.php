@@ -30,7 +30,7 @@ class PreviousAbsenceSuggestionStrategy implements SuggestionStrategyInterface {
                     $this->getStudent($attendance->getStudent()),
                     $this->translator->trans('book.attendance.absence_reason.absent_before'),
                     range($lessonStart, $lessonEnd),
-                    AttendanceType::Absent
+                    AttendanceType::Absent->value
                 );
 
                 $suggestions[] = new PrioritizedSuggestion($this->bookSettings->getSuggestionPriorityForPreviouslyAbsent(), $attendance->getStudent(), $suggestion);

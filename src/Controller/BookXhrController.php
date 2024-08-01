@@ -106,13 +106,14 @@ class BookXhrController extends AbstractController {
     /**
      * @param Tuition $tuition
      * @param DateTime $date
-     * @param int $lesson
+     * @param int $lessonStart
+     * @param int $lessonEnd
      * @param RemoveSuggestionResolver $removeSuggestionResolver
      * @return RemoveSuggestion[]
      */
-    private function removeSuggestions(Tuition $tuition, DateTime $date, int $lesson, RemoveSuggestionResolver $removeSuggestionResolver): array {
+    private function removeSuggestions(Tuition $tuition, DateTime $date, int $lessonStart, int $lessonEnd, RemoveSuggestionResolver $removeSuggestionResolver): array {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
-        return $removeSuggestionResolver->resolve($tuition, $date, $lesson);
+        return $removeSuggestionResolver->resolve($tuition, $date, $lessonStart, $lessonEnd);
     }
 
     #[Route(path: '/attendances/{uuid}', name: 'xhr_entry_attendances')]
@@ -297,7 +298,7 @@ class BookXhrController extends AbstractController {
                 'tuition' => $this->getTuition($lesson->getTuition())
             ],
             'absences' => $this->possiblyAbsentStudents($lesson->getTuition(), $lesson->getDate(), $start, $lesson->getLessonEnd(), $suggestionResolver),
-            'removals' => $this->removeSuggestions($lesson->getTuition(), $lesson->getDate(), $start, $removeSuggestionResolver),
+            'removals' => $this->removeSuggestions($lesson->getTuition(), $lesson->getDate(), $start, $lesson->getLessonEnd(), $removeSuggestionResolver),
             'entry' => $entryJson,
             'students' => $students,
             'has_other_entries' => count($lesson->getEntries()) > 0,

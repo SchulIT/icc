@@ -34,6 +34,9 @@
                 {{ removal.student.lastname }}, {{ removal.student.firstname }}
               </div>
               <span class="badge text-bg-primary">{{ removal.reason }}</span>
+              <span class="badge text-bg-secondary ms-1" v-for="lessonNumber in removal.lessons">
+                {{ $transChoice('label.substitution_lessons', 0, { start: lessonNumber }) }}
+              </span>
             </div>
             <button type="button"
                     @click="removeBySuggestion(removal)"
@@ -52,6 +55,10 @@
               <span class="badge text-bg-primary">{{ absence.label }}</span>
 
               <span v-if="absence.zero_absent_lessons" class="badge text-bg-info ms-1">0 FS</span>
+
+              <span class="badge text-bg-secondary ms-1" v-for="lessonNumber in absence.lessons">
+                {{ $transChoice('label.substitution_lessons', 0, { start: lessonNumber }) }}
+              </span>
             </div>
             <a :href="absence.url"
                v-if="absence.url !== null"
@@ -376,6 +383,18 @@ export default {
           continue;
         }
 
+        let lessonFound = false;
+
+        for(let lessonNumber of absence.lessons) {
+          if(lessonNumber === attendance.lesson) {
+            lessonFound = true;
+          }
+        }
+
+        if(lessonFound !== true) {
+          continue;
+        }
+
         if(absence.attendance_type === 0) {
           this.absent(attendance);
         } else if(absence.attendance_type === 1) {
@@ -385,7 +404,7 @@ export default {
         }
 
         if(absence.zero_absent_lessons === true) {
-          attendance.lessons = 0;
+          attendance.zero_absent_lesson = true;
         }
         attendance.excuse_status = absence.excuse_status;
 
@@ -460,19 +479,19 @@ export default {
       }
     },
     removeBySuggestion(suggestion) {
-      let attendanceToRemove = null;
+      let attendancesToRemove = [];
 
       for(let attendance of this.attendances) {
-        if(attendance.student.uuid === suggestion.student.uuid) {
-          attendanceToRemove = attendance;
-          break;
+        if(attendance.student.uuid === suggestion.student.uuid && suggestion.lessons.includes(attendance.lesson)) {
+          attendancesToRemove.push(attendance);
         }
       }
 
-      if(attendanceToRemove !== null) {
+      for(let attendanceToRemove of attendancesToRemove) {
         this.remove(attendanceToRemove);
-        this.removals.splice(this.removals.indexOf(suggestion), 1);
       }
+
+      this.removals.splice(this.removals.indexOf(suggestion), 1);
     },
     addStudent(uuid, firstname, lastname) {
       for(let lessonNumber = this.start; lessonNumber <= this.end; lessonNumber++) {

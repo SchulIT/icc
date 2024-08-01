@@ -41,9 +41,9 @@ class ExcuseSuggestionStrategy implements SuggestionStrategyInterface {
                     $this->getStudent($note->getStudent()),
                     $this->translator->trans('book.attendance.absence_reason.excuse'),
                     $lessons,
-                    AttendanceType::Absent,
+                    AttendanceType::Absent->value,
                     false,
-                    AttendanceExcuseStatus::Excused,
+                    AttendanceExcuseStatus::Excused->value,
                     $this->urlGenerator->generate('edit_excuse', ['uuid' => $note->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL)
                 );
 

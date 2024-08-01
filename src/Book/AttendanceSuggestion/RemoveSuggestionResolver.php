@@ -21,7 +21,7 @@ class RemoveSuggestionResolver {
 
     }
 
-    public function resolve(Tuition $tuition, DateTime $date, int $lesson): array {
+    public function resolve(Tuition $tuition, DateTime $date, int $lessonStart, int $lessonEnd): array {
         $students = $this->studentsResolver->resolve($tuition);
 
         $suggestions = [ ];
@@ -31,7 +31,12 @@ class RemoveSuggestionResolver {
             $lessons = $this->timetableLessonRepository->findAllByStudent($date, $date, $student);
 
             foreach($lessons as $timetableLesson) {
-                if($timetableLesson->getLessonStart() > $lesson || $timetableLesson->getLessonEnd() < $lesson) {
+                $intersection = array_intersect(
+                    range($lessonStart, $lessonEnd),
+                    range($timetableLesson->getLessonStart(), $timetableLesson->getLessonEnd()),
+                );
+
+                if(count($intersection) === 0) {
                     continue;
                 }
 
@@ -47,7 +52,8 @@ class RemoveSuggestionResolver {
                             '%student%' => $student->getFirstname(),
                             '%tuition%' => $timetableLesson->getTuition()->getName(),
                             '%teacher%' => $teachers
-                        ])
+                        ]),
+                        $intersection
                     );
                 }
             }

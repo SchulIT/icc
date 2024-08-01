@@ -19,7 +19,7 @@ class AttendanceSuggestion {
     private readonly string $label;
 
     #[Serializer\Type('array<int>')]
-    #[Serializer\SerializedName('lesson')]
+    #[Serializer\SerializedName('lessons')]
     #[Serializer\ReadOnlyProperty]
     private readonly array $lessons;
 
@@ -48,7 +48,7 @@ class AttendanceSuggestion {
     #[Serializer\ReadOnlyProperty]
     private readonly array $flags;
 
-    public function __construct(Student $student, string $label, array $lessons, int $attendanceType, bool $isZeroAbsentLessons = false, int $excuseStatus = AttendanceExcuseStatus::NotSet, ?string $url = null, array $flags = [ ]) {
+    public function __construct(Student $student, string $label, array $lessons, int $attendanceType, bool $isZeroAbsentLessons = false, int $excuseStatus = AttendanceExcuseStatus::NotSet->value, ?string $url = null, array $flags = [ ]) {
         $this->student = $student;
         $this->attendanceType = $attendanceType;
         $this->label = $label;

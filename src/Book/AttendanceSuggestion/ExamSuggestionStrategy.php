@@ -60,9 +60,9 @@ class ExamSuggestionStrategy implements SuggestionStrategyInterface {
                 $this->getStudent($examStudent->getStudent()),
                 $this->translator->trans('book.attendance.absence_reason.exam', ['%tuition%' => $examStudent->getTuition()?->getName()]),
                 $lessons,
-                AttendanceType::Absent,
+                AttendanceType::Absent->value,
                 true,
-                AttendanceExcuseStatus::Excused,
+                AttendanceExcuseStatus::Excused->value,
                 $this->urlGenerator->generate('show_exam', ['uuid' => $examStudent->getExam()->getUuid() ])
             );
 

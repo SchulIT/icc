@@ -15,9 +15,15 @@ class RemoveSuggestion {
     #[Serializer\ReadOnlyProperty]
     private readonly string $reason;
 
-    public function __construct(Student $student, string $reason) {
+    #[Serializer\Type('array<int>')]
+    #[Serializer\SerializedName('lessons')]
+    #[Serializer\ReadOnlyProperty]
+    private readonly array $lessons;
+
+    public function __construct(Student $student, string $reason, array $lessons) {
         $this->student = $student;
         $this->reason = $reason;
+        $this->lessons = $lessons;
     }
 
     /**
@@ -32,5 +38,12 @@ class RemoveSuggestion {
      */
     public function getReason(): string {
         return $this->reason;
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getLessons(): array {
+        return $this->lessons;
     }
 }

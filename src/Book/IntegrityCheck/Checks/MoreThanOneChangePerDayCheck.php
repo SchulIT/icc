@@ -4,8 +4,8 @@ namespace App\Book\IntegrityCheck\Checks;
 
 use App\Book\IntegrityCheck\IntegrityCheckInterface;
 use App\Book\IntegrityCheck\IntegrityCheckViolation;
-use App\Entity\LessonAttendance;
-use App\Entity\LessonAttendanceType;
+use App\Entity\Attendance;
+use App\Entity\AttendanceType;
 use App\Entity\Student;
 use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Settings\TimetableSettings;
@@ -44,12 +44,12 @@ class MoreThanOneChangePerDayCheck implements IntegrityCheckInterface {
 
             $changes = 0;
             $types = array_map(
-                fn(LessonAttendance $attendance) => $this->getCorrectedAttendanceType($attendance),
+                fn(Attendance $attendance) => $this->getCorrectedAttendanceType($attendance),
                 $attendancesForToday
             );
-            $presentCount = count(array_filter($types, fn(int $attendance) => $attendance === LessonAttendanceType::Present));
-            $absentCount = count(array_filter($types, fn(int $attendance) => $attendance === LessonAttendanceType::Absent));
-            $loserType = $presentCount < $absentCount ? LessonAttendanceType::Present : LessonAttendanceType::Absent;
+            $presentCount = count(array_filter($types, fn(int $attendance) => $attendance === AttendanceType::Present));
+            $absentCount = count(array_filter($types, fn(int $attendance) => $attendance === AttendanceType::Absent));
+            $loserType = $presentCount < $absentCount ? AttendanceType::Present : AttendanceType::Absent;
 
             for($idx = 1; $idx < count($attendancesForToday); $idx++) {
                 $lastAttendance = $attendancesForToday[$idx - 1];
@@ -64,10 +64,10 @@ class MoreThanOneChangePerDayCheck implements IntegrityCheckInterface {
             }
 
             if($changes > 1) {
-                /** @var LessonAttendance[] $attendanceByLesson */
+                /** @var Attendance[] $attendanceByLesson */
                 $attendanceByLesson = ArrayUtils::createArrayWithKeys(
                     $attendancesForToday,
-                    function(LessonAttendance $attendance) {
+                    function(Attendance $attendance) {
                         $lessons = [ ];
 
                         for($lessonNumber = $attendance->getEntry()->getLesson()->getLessonStart(); $lessonNumber <= $attendance->getEntry()->getLesson()->getLessonEnd(); $lessonNumber++) {
@@ -94,15 +94,15 @@ class MoreThanOneChangePerDayCheck implements IntegrityCheckInterface {
         return $violations;
     }
 
-    private function getCorrectedAttendanceType(LessonAttendance $attendance): int {
+    private function getCorrectedAttendanceType(Attendance $attendance): int {
         $type = $attendance->getType();
 
-        if($attendance->getType() === LessonAttendanceType::Late) {
-            $type = LessonAttendanceType::Present;
+        if($attendance->getType() === AttendanceType::Late) {
+            $type = AttendanceType::Present;
         }
 
-        if($attendance->getType() === LessonAttendanceType::Absent && $attendance->getAbsentLessons() === 0) {
-            $type = LessonAttendanceType::Present;
+        if($attendance->getType() === AttendanceType::Absent && $attendance->getAbsentLessons() === 0) {
+            $type = AttendanceType::Present;
         }
 
         return $type;

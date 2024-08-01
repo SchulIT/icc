@@ -18,10 +18,12 @@ class LessonEntryCancelType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
             ->add('lessonStart', IntegerType::class, [
-                'label' => 'label.start'
+                'label' => 'label.start',
+                'disabled' => true
             ])
             ->add('lessonEnd', IntegerType::class, [
-                'label' => 'label.end'
+                'label' => 'label.end',
+                'disabled' => true
             ])
             ->add('cancelReason', TextType::class, [
                 'label' => 'book.entry.cancel.reason',

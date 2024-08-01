@@ -5,8 +5,8 @@ namespace App\Book\IntegrityCheck\Checks;
 use App\Book\IntegrityCheck\IntegrityCheckInterface;
 use App\Book\IntegrityCheck\IntegrityCheckViolation;
 use App\Date\DateLessonExpander;
-use App\Entity\LessonAttendance;
-use App\Entity\LessonAttendanceType;
+use App\Entity\Attendance;
+use App\Entity\AttendanceType;
 use App\Entity\Student;
 use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Repository\StudentAbsenceRepositoryInterface;
@@ -31,13 +31,13 @@ class PresentDespiteAbsenceNoteCheck implements IntegrityCheckInterface {
 
         $attendances = $this->attendanceRepository->findByStudentAndDateRange($student, $start, $end);
 
-        /** @var array<string, LessonAttendance> $presentAttendances */
+        /** @var array<string, Attendance> $presentAttendances */
         $presentAttendances = ArrayUtils::createArrayWithKeys(
             array_filter(
                 $attendances,
-                fn(LessonAttendance $attendance) => $attendance->getType() === LessonAttendanceType::Present
+                fn(Attendance $attendance) => $attendance->getType() === AttendanceType::Present
             ),
-            function(LessonAttendance $attendance) {
+            function(Attendance $attendance) {
                 $keys = [];
 
                 for($lesson = $attendance->getEntry()->getLessonStart(); $lesson <= $attendance->getEntry()->getLessonEnd(); $lesson++) {
@@ -59,7 +59,7 @@ class PresentDespiteAbsenceNoteCheck implements IntegrityCheckInterface {
                 continue;
             }
 
-            if($absence->getType()->getBookAttendanceType() === LessonAttendanceType::Present) {
+            if($absence->getType()->getBookAttendanceType() === AttendanceType::Present) {
                 /**
                  * Ignore absences which are basically just information and no real absence (e.g. those with present attendance type)
                  */

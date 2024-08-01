@@ -1864,7 +1864,7 @@ book:
         add:
             label: Neuer Eintrag
             single: Eintrag für Einzelstunde erstellen
-            double: Eintrag für Doppelstunde erstellen
+            full: Eintrag für alle Stunden erstellen
             success: Eintrag erfolgreich erstellt
         edit:
             label: Eintrag bearbeiten
@@ -1876,7 +1876,7 @@ book:
         cancel:
             label: Stunde entfällt
             single: Einzelstunde entfällt
-            double: Doppelstunde entfällt
+            full: Alle Stunden entfallen
             reason: Grund des Entfalls
             all: Alle Stunden als Entfall markieren
             lessons: "%lessons% als Entfall markieren"
@@ -1960,7 +1960,7 @@ book:
         absence_reason:
             sick: krank gemeldet
             appointment: Veranstaltung
-            exam: Klausur
+            exam: Klausur (%tuition%)
             absent_before: Abwesenheit in vorheriger Stunde
             excuse: Entschuldigung liegt vor
         remove_reason:

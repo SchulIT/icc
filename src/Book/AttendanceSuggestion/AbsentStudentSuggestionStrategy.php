@@ -3,16 +3,19 @@
 namespace App\Book\AttendanceSuggestion;
 
 use App\Book\StudentsResolver;
-use App\Entity\LessonAttendanceExcuseStatus;
-use App\Entity\LessonAttendanceFlag;
-use App\Entity\LessonAttendanceType;
+use App\Entity\DateLesson;
+use App\Entity\AttendanceExcuseStatus;
+use App\Entity\AttendanceFlag;
+use App\Entity\AttendanceType;
 use App\Entity\StudentAbsence;
 use App\Entity\Subject;
 use App\Entity\Tuition;
 use App\Repository\StudentAbsenceRepositoryInterface;
 use App\Response\Book\AttendanceSuggestion;
 use App\Settings\BookSettings;
+use App\Utils\ArrayUtils;
 use DateTime;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class AbsentStudentSuggestionStrategy implements SuggestionStrategyInterface {
@@ -20,15 +23,23 @@ class AbsentStudentSuggestionStrategy implements SuggestionStrategyInterface {
     use StudentTransformerTrait;
 
     public function __construct(private readonly StudentAbsenceRepositoryInterface $absenceRepository,
-                                private readonly StudentsResolver $studentsResolver,
-                                private readonly UrlGeneratorInterface $urlGenerator,
-                                private readonly BookSettings $bookSettings) { }
+                                private readonly StudentsResolver                  $studentsResolver,
+                                private readonly UrlGeneratorInterface             $urlGenerator,
+                                private readonly BookSettings                      $bookSettings, private readonly DateHelper $dateHelper) { }
 
-    public function resolve(Tuition $tuition, DateTime $date, int $lesson): array {
+    public function resolve(Tuition $tuition, DateTime $date, int $lessonStart, int $lessonEnd): array {
         $students = $this->studentsResolver->resolve($tuition);
         $suggestions = [ ];
 
-        foreach($this->absenceRepository->findByStudents($students, null, $date, $lesson) as $absence) {
+        $absences = [ ];
+        for($lessonNumber = $lessonStart; $lessonNumber <= $lessonEnd; $lessonNumber++) {
+            $absences = array_merge($absences, $this->absenceRepository->findByStudents($students, null, $date, $lessonNumber));
+        }
+
+        /** @var StudentAbsence[] $absences */
+        $absences = ArrayUtils::unique($absences);
+
+        foreach($absences as $absence) {
             $type = $absence->getType();
             $subjectIds = array_map(fn(Subject $subject) => $subject->getId(), $type->getSubjects()->toArray());
 
@@ -41,14 +52,24 @@ class AbsentStudentSuggestionStrategy implements SuggestionStrategyInterface {
                 continue;
             }
 
+            $lessons = [ ];
+            for($lessonNumber = $lessonStart; $lessonNumber <= $lessonEnd; $lessonNumber++) {
+                $dateLesson = (new DateLesson())->setDate($date)->setLesson($lessonNumber);
+
+                if($dateLesson->isBetween($absence->getFrom(), $absence->getUntil())) {
+                    $lessons[] = $lessonNumber;
+                }
+            }
+
             $suggestion = new AttendanceSuggestion(
                 $this->getStudent($absence->getStudent()),
                 $type->getBookLabel(),
+                $lessons,
                 $type->getBookAttendanceType(),
                 $type->isTypeWithZeroAbsenceLessons(),
                 $type->getBookExcuseStatus(),
                 $this->urlGenerator->generate('show_student_absence', [ 'uuid' => $absence->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL),
-                $absence->getType()->getBookAttendanceType() === LessonAttendanceType::Present ? $absence->getType()->getFlags()->map(fn(LessonAttendanceFlag $flag) => $flag->getId())->toArray() : [ ]
+                $absence->getType()->getBookAttendanceType() === AttendanceType::Present ? $absence->getType()->getFlags()->map(fn(AttendanceFlag $flag) => $flag->getId())->toArray() : [ ]
             );
 
             $suggestions[] = new PrioritizedSuggestion(

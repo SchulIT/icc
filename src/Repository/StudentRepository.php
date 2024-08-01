@@ -3,7 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Grade;
-use App\Entity\LessonAttendance;
+use App\Entity\Attendance;
 use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
@@ -294,7 +294,7 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
         if($includeStudentsWithAttendance) {
             $attendanceStudents = $this->em->createQueryBuilder()
                 ->select('sAttendance.id')
-                ->from(LessonAttendance::class, 'attendanceInner')
+                ->from(Attendance::class, 'attendanceInner')
                 ->leftJoin('attendanceInner.student', 'sAttendance')
                 ->leftJoin('attendanceInner.entry', 'entryInner')
                 ->leftJoin('entryInner.tuition', 'tuitionInner')

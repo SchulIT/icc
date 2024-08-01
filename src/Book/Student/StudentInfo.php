@@ -3,11 +3,11 @@
 namespace App\Book\Student;
 
 use App\Entity\BookComment;
-use App\Entity\LessonAttendanceExcuseStatus;
-use App\Entity\LessonAttendanceFlag;
-use App\Entity\LessonAttendanceType;
+use App\Entity\AttendanceExcuseStatus;
+use App\Entity\AttendanceFlag;
+use App\Entity\AttendanceType;
 use App\Entity\Student;
-use App\Entity\LessonAttendance as LessonAttendanceEntity;
+use App\Entity\Attendance as LessonAttendanceEntity;
 use DateTime;
 
 class StudentInfo {
@@ -70,9 +70,8 @@ class StudentInfo {
     public function getAbsentLessonsCount(): int {
         return array_sum(
             array_map(
-                fn(LessonAttendance $attendance) => $attendance->getAttendance()->getType() === LessonAttendanceType::Absent
-                    && $attendance->getAttendance()->getAbsentLessons() > 0
-                    && ($attendance->getAttendance()->getEntry()->getLessonEnd() - $attendance->getAttendance()->getAbsentLessons()) < $attendance->getLesson() ? 1 : 0,
+                fn(LessonAttendance $attendance) => $attendance->getAttendance()->getType() === AttendanceType::Absent
+                    && $attendance->getAttendance()->isZeroAbsentLesson() === false ? 1 : 0,
                 $this->getAbsentLessonAttendances()
             )
         );
@@ -81,10 +80,9 @@ class StudentInfo {
     public function getNotExcusedOrNotSetLessonsCount(): int {
         return array_sum(
             array_map(
-                fn(LessonAttendance $attendance) => $attendance->getAttendance()->getExcuseStatus() === LessonAttendanceExcuseStatus::NotSet
+                fn(LessonAttendance $attendance) => $attendance->getAttendance()->getExcuseStatus() === AttendanceExcuseStatus::NotSet
                     && $attendance->getExcuses()->count() === 0
-                    && $attendance->getAttendance()->getAbsentLessons() > 0
-                    && ($attendance->getAttendance()->getEntry()->getLessonEnd() - $attendance->getAttendance()->getAbsentLessons()) < $attendance->getLesson() ? 1 : 0,
+                    && $attendance->getAttendance()->isZeroAbsentLesson() === false ? 1 : 0,
                 $this->getAbsentLessonAttendances()
             )
         );
@@ -93,7 +91,7 @@ class StudentInfo {
     public function getNotExcusedAbsentLessonsCount(): int {
         return array_sum(
             array_map(
-                fn(LessonAttendance $attendance) => $attendance->getAttendance()->getExcuseStatus() === LessonAttendanceExcuseStatus::NotExcused
+                fn(LessonAttendance $attendance) => $attendance->getAttendance()->getExcuseStatus() === AttendanceExcuseStatus::NotExcused
                     && $attendance->getExcuses()->count() === 0,
                 $this->getAbsentLessonAttendances()
             )
@@ -144,7 +142,7 @@ class StudentInfo {
         return $this->attendanceFlagCounts;
     }
 
-    public function getAttendanceFlagCount(LessonAttendanceFlag $flag): ?AttendanceFlagCount {
+    public function getAttendanceFlagCount(AttendanceFlag $flag): ?AttendanceFlagCount {
         foreach($this->attendanceFlagCounts as $attendanceFlagCount) {
             if($attendanceFlagCount->getFlag()->getId() === $flag->getId()) {
                 return $attendanceFlagCount;

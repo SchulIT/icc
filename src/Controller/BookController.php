@@ -20,9 +20,9 @@ use App\Entity\ExcuseNote;
 use App\Entity\Grade;
 use App\Entity\GradeMembership;
 use App\Entity\GradeTeacher;
-use App\Entity\LessonAttendance;
-use App\Entity\LessonAttendanceExcuseStatus;
-use App\Entity\LessonAttendanceType;
+use App\Entity\Attendance;
+use App\Entity\AttendanceExcuseStatus;
+use App\Entity\AttendanceType;
 use App\Entity\LessonEntry;
 use App\Entity\Section;
 use App\Entity\Student;
@@ -337,16 +337,16 @@ class BookController extends AbstractController {
                         continue;
                     }
 
-                    /** @var LessonAttendance $attendance */
+                    /** @var Attendance $attendance */
                     foreach ($lesson->getEntry()->getAttendances() as $attendance) {
                         if($gradeFilterView->getCurrentGrade() !== null && $attendance->getStudent()->getGrade($sectionFilterView->getCurrentSection())?->getId() !== $gradeFilterView->getCurrentGrade()->getId()) {
                             continue;
                         }
 
-                        if ($attendance->getType() === LessonAttendanceType::Late) {
+                        if ($attendance->getType() === AttendanceType::Late) {
                             $lateStudentsByLesson[$uuid][] = $attendance;
                         } else {
-                            if ($attendance->getType() === LessonAttendanceType::Absent) {
+                            if ($attendance->getType() === AttendanceType::Absent) {
                                 $studentUuid = $attendance->getStudent()->getUuid()->toString();
 
                                 if (!isset($excusesByStudent[$studentUuid])) {
@@ -356,7 +356,7 @@ class BookController extends AbstractController {
                                 /** @var ExcuseNote $excuseNote */
                                 foreach ($excusesByStudent[$studentUuid] as $excuseNote) {
                                     if ((new DateLesson())->setDate($day->getDate())->setLesson($lesson->getLessonNumber())->isBetween($excuseNote->getFrom(), $excuseNote->getUntil())) {
-                                        $attendance->setExcuseStatus(LessonAttendanceExcuseStatus::Excused);
+                                        $attendance->setExcuseStatus(AttendanceExcuseStatus::Excused);
                                     }
                                 }
 

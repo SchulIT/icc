@@ -130,16 +130,11 @@
                   @click.prevent="absent(selectedAttendances)">
             <i class="fas fa-user-times"></i>
           </button>
-          <div class="btn-group d-inline-flex align-items-center ms-1">
-            <button class="btn btn-outline-danger btn-sm"
-                    @click.prevent="plusLesson(selectedAttendances)">
-              <i class="fa fa-plus"></i>
-            </button>
-            <button class="btn btn-outline-danger btn-sm"
-                    @click.prevent="minusLesson(selectedAttendances)">
-              <i class="fa fa-minus"></i>
-            </button>
-          </div>
+          <button class="btn btn-outline-danger btn-sm ms-1 d-inline-block"
+                  :title="$trans('book.attendance.is_zero_absent_lesson')"
+                  @click.prevent="zeroAbsentLesson(selectedAttendances, true)">
+            0 FS
+          </button>
         </div>
 
       </div>
@@ -149,16 +144,18 @@
              v-for="attendance in attendances"
              :class="{ 'bg-selected': selectedAttendances.indexOf(attendance) >= 0, 'd-none': attendance.isHidden || false }">
 
+          <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][lesson]'" :value="attendance.lesson">
+          <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][isZeroAbsentLesson]'" :value="attendance.zero_absent_lesson ? 1 : 0">
           <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][type]'" :value="attendance.type">
           <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][excuseStatus]'" :value="attendance.excuse_status">
           <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][lateMinutes]'" :value="attendance.minutes">
-          <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][absentLessons]'" :value="attendance.lessons">
           <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][student]'" :value="attendance.student.uuid">
 
           <div class="d-flex flex-wrap">
             <div class="flex-fill p-3 pointer"
                  @click="select(attendance)">
               <i class="fa fa-user"></i> {{ attendance.student.lastname }}, {{ attendance.student.firstname }}
+              <span class="badge text-bg-secondary">{{ attendance.lesson }}</span>
             </div>
             <div class="d-flex align-self-center text-right my-2 me-3 flex-fill justify-content-end">
               <div class="btn-group" v-if="flags.length > 0">
@@ -206,30 +203,22 @@
                 </button>
               </div>
               <button class="btn btn-outline-danger btn-sm ms-1 d-inline-block"
-                     :class="{ active: attendance.type === 0}"
-                     :title="$trans('book.attendance.type.absent')"
-                     @click.prevent="absent(attendance)">
+                      :class="{ active: attendance.type === 0}"
+                      :title="$trans('book.attendance.type.absent')"
+                      @click.prevent="absent(attendance)">
                 <i class="fas fa-user-times"></i>
               </button>
 
-              <div class="btn-group d-inline-flex align-items-center ms-1"
-                   :title="$trans('book.attendance.absent_lessons')"
-                   v-if="attendance.type === 0">
-                <button class="btn btn-outline-danger btn-sm"
-                        @click.prevent="minusLesson(attendance)">
-                  <i class="fa fa-minus"></i>
-                </button>
-                <span class="border-top border-bottom border-danger align-self-stretch align-items-center d-flex px-2">
-                  <span>{{ $transChoice('book.attendance.absence_lesson', attendance.lessons, {'%count%': attendances.lessons })}}</span>
-                </span>
-                <button class="btn btn-outline-danger btn-sm"
-                        @click.prevent="plusLesson(attendance)">
-                  <i class="fa fa-plus"></i>
-                </button>
-              </div>
+              <button class="btn btn-outline-danger btn-sm ms-1 d-inline-block"
+                      :class="{ active: attendance.zero_absent_lesson === true}"
+                      :title="$trans('book.attendance.is_zero_absent_lesson')"
+                      @click.prevent="zeroAbsentLesson(attendance, !attendance.zero_absent_lesson)"
+                      v-if="attendance.type === 0">
+                0 FS
+              </button>
 
               <div class="btn-group d-inline-flex align-items-center ms-1"
-                   v-if="attendance.type === 0">
+                   v-if="attendance.type === 0 && attendance.zero_absent_lesson !== true">
                 <button class="btn btn-outline-danger btn-sm"
                         :title="$trans('book.students.not_set')"
                         :class="{ active: attendance.excuse_status === 0 && !attendance.has_excuses}"
@@ -275,7 +264,6 @@
 
 <script>
 import Choices from "choices.js";
-import attendanceOverview from "../student/AttendanceOverview.vue";
 
 export default {
   name: 'attendances',
@@ -456,20 +444,11 @@ export default {
       });
       this.setType(attendanceOrAttendances, 2);
     },
-    plusLesson(attendanceOrAttendances) {
-      let $this = this;
+    zeroAbsentLesson(attendanceOrAttendances, value) {
+      let $this = $this;
       this.apply(attendanceOrAttendances, function(attendance) {
-        if(attendance.lessons <= ($this.end - $this.start)) {
-          attendance.lessons++;
-        }
-      });
-    },
-    minusLesson(attendanceOrAttendances) {
-      this.apply(attendanceOrAttendances, function(attendance) {
-        if(attendance.lessons > 0) {
-          attendance.lessons--;
-        }
-      });
+        attendance.zero_absent_lesson = value;
+      })
     },
     setExcuseStatus(attendanceOrAttendances, status) {
       this.apply(attendanceOrAttendances, function(attendance) {
@@ -504,22 +483,27 @@ export default {
         }
       }
 
-      let attendance = {
-        uuid: '',
-        comment: null,
-        excuse_status: 0,
-        lessons: 0,
-        minutes: 0,
-        type: 1,
-        student: {
-          uuid: uuid,
-          firstname: firstname,
-          lastname: lastname
-        },
-        flags: [ ]
-      };
+      for(let lessonNumber = this.start; lessonNumber <= this.end; lessonNumber++) {
+        let attendance = {
+          uuid: '',
+          comment: null,
+          excuse_status: 0,
+          lesson: lessonNumber,
+          zero_absent_lesson: false,
+          minutes: 0,
+          type: 1,
+          student: {
+            uuid: uuid,
+            firstname: firstname,
+            lastname: lastname
+          },
+          flags: []
+        };
 
-      this.attendances.push(attendance);
+        console.log(attendance);
+
+        this.attendances.push(attendance);
+      }
     },
     onAddStudent() {
       let student = this.studentChoice.getValue();

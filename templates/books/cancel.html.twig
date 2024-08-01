@@ -15,7 +15,24 @@
 
     <div class="card">
         <div class="card-header">
-            {{ 'label.general'|trans }}
+            <i class="fas fa-calendar-alt"></i>
+            {{ lesson.date|format_date }}
+
+            <i class="fas fa-chalkboard"></i>
+            {{ lesson.tuition.subject }}
+
+            {% for grade in lesson.tuition.studyGroup.grades %}
+                <span class="badge text-bg-primary me-1">
+                    {{ grade.name }}
+                </span>
+            {% endfor %}
+
+
+            {% for teacher in lesson.tuition.teachers %}
+                <span class="ms-1">
+                    <i class="fa fa-chalkboard-teacher"></i> {{ teacher|teacher }}
+                </span>
+            {% endfor %}
         </div>
 
         <div class="card-body">

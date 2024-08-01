@@ -2,7 +2,7 @@
 
 namespace App\Doctrine;
 
-use App\Entity\LessonAttendance;
+use App\Entity\Attendance;
 use App\Messenger\RunIntegrityCheckMessage;
 use App\Section\SectionResolverInterface;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
@@ -21,7 +21,7 @@ class LessonAttendanceUpdateSubscriber {
 
         $entity = $eventArgs->getObject();
 
-        if($entity instanceof LessonAttendance) {
+        if($entity instanceof Attendance) {
             $section = $this->sectionResolver->getSectionForDate($entity->getEntry()->getLesson()->getDate());
             $this->messageBus->dispatch(new RunIntegrityCheckMessage($entity->getStudent()->getId(), $section->getStart(), $section->getEnd()));
         }

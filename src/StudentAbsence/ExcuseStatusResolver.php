@@ -5,8 +5,8 @@ namespace App\StudentAbsence;
 use App\Book\Student\ExcuseCollectionResolver;
 use App\Date\DateLessonExpander;
 use App\Entity\DateLesson;
-use App\Entity\LessonAttendance;
-use App\Entity\LessonAttendanceType;
+use App\Entity\Attendance;
+use App\Entity\AttendanceType;
 use App\Entity\LessonEntry;
 use App\Entity\StudentAbsence;
 use App\Entity\TimetableLesson;
@@ -26,7 +26,7 @@ class ExcuseStatusResolver {
     }
 
     public function getStatus(StudentAbsence $absence): ExcuseStatus {
-        if($absence->getType()->getBookAttendanceType() === LessonAttendanceType::Present) {
+        if($absence->getType()->getBookAttendanceType() === AttendanceType::Present) {
             return new ExcuseStatus([]);
         }
 
@@ -35,10 +35,10 @@ class ExcuseStatusResolver {
 
         $items = [ ];
 
-        /** @var LessonAttendance[] $attendances */
+        /** @var Attendance[] $attendances */
         $attendances = ArrayUtils::createArrayWithKeys(
             $this->lessonAttendanceRepository->findByStudentAndDateRange($absence->getStudent(), $absence->getFrom()->getDate(), $absence->getUntil()->getDate()),
-            function(LessonAttendance $attendance) {
+            function(Attendance $attendance) {
                 $keys = [];
                 for($lesson = $attendance->getEntry()->getLessonStart(); $lesson <= $attendance->getEntry()->getLessonEnd(); $lesson++) {
                     $keys[] = sprintf('%s-%d', $attendance->getEntry()->getLesson()->getDate()->format('Y-m-d'), $lesson);

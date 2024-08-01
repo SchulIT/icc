@@ -3,7 +3,7 @@
 namespace App\Book\Student;
 
 use App\Entity\ExcuseNote;
-use App\Entity\LessonAttendance as LessonAttendanceEntity;
+use App\Entity\Attendance as LessonAttendanceEntity;
 use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Settings\TimetableSettings;
@@ -54,17 +54,14 @@ abstract class AbstractResolver {
         $lessonAttendance = [ ];
 
         foreach($attendances as $attendance) {
-            for($lesson = $attendance->getEntry()->getLessonStart(); $lesson <= $attendance->getEntry()->getLessonEnd(); $lesson++) {
-                $key = sprintf('%s-%d', $attendance->getEntry()->getLesson()->getDate()->format('Y-m-d'), $lesson);
+            $key = sprintf('%s-%d', $attendance->getEntry()->getLesson()->getDate()->format('Y-m-d'), $attendance->getLesson());
+            $excuses = new ExcuseCollection($attendance->getEntry()->getLesson()->getDate(), $attendance->getLesson());
 
-                $excuses = new ExcuseCollection($attendance->getEntry()->getLesson()->getDate(), $lesson);
-
-                if(isset($excuseCollection[$key])) {
-                    $excuses = $excuseCollection[$key];
-                }
-
-                $lessonAttendance[] = new LessonAttendance($attendance->getEntry()->getLesson()->getDate(), $lesson, $attendance, $excuses);
+            if(isset($excuseCollection[$key])) {
+                $excuses = $excuseCollection[$key];
             }
+
+            $lessonAttendance[] = new LessonAttendance($attendance->getEntry()->getLesson()->getDate(), $attendance->getLesson(), $attendance, $excuses);
         }
 
         return $lessonAttendance;

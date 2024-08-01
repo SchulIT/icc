@@ -3,8 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\DateLesson;
-use App\Entity\LessonAttendance;
-use App\Entity\LessonAttendanceType;
+use App\Entity\Attendance;
+use App\Entity\AttendanceType;
 use App\Entity\LessonEntry;
 use App\Entity\Student;
 use App\Entity\Tuition;
@@ -19,7 +19,7 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
         $qb = $this->em->createQueryBuilder();
 
         $qb->select(['a', 's', 'e', 'l'])
-            ->from(LessonAttendance::class, 'a')
+            ->from(Attendance::class, 'a')
             ->leftJoin('a.student', 's')
             ->leftJoin('a.entry', 'e')
             ->leftJoin('e.lesson', 'l')
@@ -28,27 +28,27 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
             ->andWhere('a.type = :type')
             ->setParameter('students', $studentIds)
             ->setParameter('date', $dateTime)
-            ->setParameter('type', LessonAttendanceType::Absent);
+            ->setParameter('type', AttendanceType::Absent);
 
         return $qb->getQuery()->getResult();
     }
 
-    public function persist(LessonAttendance $attendance): void {
+    public function persist(Attendance $attendance): void {
         $this->em->persist($attendance);
         $this->em->flush();
     }
 
-    public function remove(LessonAttendance $attendance): void {
+    public function remove(Attendance $attendance): void {
         $this->em->remove($attendance);
         $this->em->flush();
     }
 
 
-    private function countAttendance(LessonEntry $entry, int $type): int {
+    private function countAttendance(LessonEntry $entry, AttendanceType $type): int {
         return $this->em
             ->createQueryBuilder()
             ->select('COUNT(a.id)')
-            ->from(LessonAttendance::class, 'a')
+            ->from(Attendance::class, 'a')
             ->leftJoin('a.entry', 'e')
             ->where('e.id = :entry')
             ->andWhere('a.type = :type')
@@ -59,21 +59,21 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
     }
 
     public function countAbsent(LessonEntry $entry): int {
-        return $this->countAttendance($entry, LessonAttendanceType::Absent);
+        return $this->countAttendance($entry, AttendanceType::Absent);
     }
 
     public function countPresent(LessonEntry $entry): int {
-        return $this->countAttendance($entry, LessonAttendanceType::Present);
+        return $this->countAttendance($entry, AttendanceType::Present);
     }
 
     public function countLate(LessonEntry $entry): int {
-        return $this->countAttendance($entry, LessonAttendanceType::Late);
+        return $this->countAttendance($entry, AttendanceType::Late);
     }
 
     private function getDefaultQueryBuilder(): QueryBuilder {
         return $this->em->createQueryBuilder()
             ->select(['a', 'e', 'l'])
-            ->from(LessonAttendance::class, 'a')
+            ->from(Attendance::class, 'a')
             ->leftJoin('a.entry', 'e')
             ->leftJoin('a.student', 's')
             ->leftJoin('e.lesson', 'l');
@@ -86,7 +86,7 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
 
         $qbInner = $this->em->createQueryBuilder()
             ->select(['aInner.id'])
-            ->from(LessonAttendance::class, 'aInner')
+            ->from(Attendance::class, 'aInner')
             ->leftJoin('aInner.entry', 'eInner')
             ->leftJoin('eInner.tuition', 'tInner')
             ->where('tInner.id IN(:tuitions)');
@@ -118,7 +118,7 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
             ->where('s.id = :student')
             ->andWhere('a.type = :type')
             ->setParameter('student', $student->getId())
-            ->setParameter('type', LessonAttendanceType::Late);
+            ->setParameter('type', AttendanceType::Late);
         $this->applyTuition($qb, $tuitions);
 
         return $qb->getQuery()->getResult();
@@ -129,7 +129,7 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
             ->where('s.id = :student')
             ->andWhere('a.type = :type')
             ->setParameter('student', $student)
-            ->setParameter('type', LessonAttendanceType::Absent);
+            ->setParameter('type', AttendanceType::Absent);
         $this->applyTuition($qb, $tuitions);
 
         return $qb->getQuery()->getResult();
@@ -144,7 +144,7 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
             ->where($qb->expr()->in('s.id', ':students'))
             ->andWhere('a.type = :type')
             ->setParameter('students', $studentIds)
-            ->setParameter('type', LessonAttendanceType::Absent);
+            ->setParameter('type', AttendanceType::Absent);
         $this->applyTuition($qb, $tuitions);
 
         return $qb->getQuery()->getResult();

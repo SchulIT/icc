@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\LessonAttendance;
-use App\Entity\LessonAttendanceType;
+use App\Entity\Attendance;
+use App\Entity\AttendanceType;
 use App\Entity\LessonEntry;
 use App\Entity\Student;
 use App\Entity\StudyGroupMembership;
@@ -134,7 +134,7 @@ class BookEntryController extends AbstractController {
     }
 
     #[Route(path: '/attendance/{uuid}/excuse_status', name: 'change_lesson_attendance_excuse_status')]
-    public function attendance(LessonAttendance $attendance, Request $request, LessonAttendanceRepositoryInterface $attendanceRepository): Response {
+    public function attendance(Attendance $attendance, Request $request, LessonAttendanceRepositoryInterface $attendanceRepository): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::Edit, $attendance->getEntry());
 
         $form = $this->createForm(LessonAttendanceExcuseType::class, $attendance);
@@ -188,9 +188,9 @@ class BookEntryController extends AbstractController {
             $student = $form->get('student')->getData();
 
             $entry->addAttendance(
-                (new LessonAttendance())
+                (new Attendance())
                     ->setStudent($student)
-                    ->setType(LessonAttendanceType::Present)
+                    ->setType(AttendanceType::Present)
                     ->setEntry($entry)
             );
 

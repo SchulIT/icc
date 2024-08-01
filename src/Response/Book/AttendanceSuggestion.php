@@ -2,8 +2,8 @@
 
 namespace App\Response\Book;
 
-use App\Entity\LessonAttendanceExcuseStatus;
-use App\Entity\LessonAttendanceType;
+use App\Entity\AttendanceExcuseStatus;
+use App\Entity\AttendanceType;
 use JMS\Serializer\Annotation as Serializer;
 
 class AttendanceSuggestion {
@@ -17,6 +17,11 @@ class AttendanceSuggestion {
     #[Serializer\SerializedName('label')]
     #[Serializer\ReadOnlyProperty]
     private readonly string $label;
+
+    #[Serializer\Type('array<int>')]
+    #[Serializer\SerializedName('lesson')]
+    #[Serializer\ReadOnlyProperty]
+    private readonly array $lessons;
 
     #[Serializer\Type('int')]
     #[Serializer\SerializedName('attendance_type')]
@@ -43,10 +48,11 @@ class AttendanceSuggestion {
     #[Serializer\ReadOnlyProperty]
     private readonly array $flags;
 
-    public function __construct(Student $student, string $label, int $attendanceType, bool $isZeroAbsentLessons = false, int $excuseStatus = LessonAttendanceExcuseStatus::NotSet, ?string $url = null, array $flags = [ ]) {
+    public function __construct(Student $student, string $label, array $lessons, int $attendanceType, bool $isZeroAbsentLessons = false, int $excuseStatus = AttendanceExcuseStatus::NotSet, ?string $url = null, array $flags = [ ]) {
         $this->student = $student;
         $this->attendanceType = $attendanceType;
         $this->label = $label;
+        $this->lessons = $lessons;
         $this->isZeroAbsentLessons = $isZeroAbsentLessons;
         $this->excuseStatus = $excuseStatus;
         $this->url = $url;
@@ -72,6 +78,13 @@ class AttendanceSuggestion {
      */
     public function getLabel(): ?string {
         return $this->label;
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getLessons(): array {
+        return $this->lessons;
     }
 
     /**

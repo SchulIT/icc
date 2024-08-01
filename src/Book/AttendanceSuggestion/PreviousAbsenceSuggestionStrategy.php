@@ -3,7 +3,7 @@
 namespace App\Book\AttendanceSuggestion;
 
 use App\Book\StudentsResolver;
-use App\Entity\LessonAttendanceType;
+use App\Entity\AttendanceType;
 use App\Entity\Tuition;
 use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Response\Book\AttendanceSuggestion;
@@ -20,16 +20,17 @@ class PreviousAbsenceSuggestionStrategy implements SuggestionStrategyInterface {
                                 private readonly TranslatorInterface $translator,
                                 private readonly BookSettings $bookSettings) { }
 
-    public function resolve(Tuition $tuition, DateTime $date, int $lesson): array {
+    public function resolve(Tuition $tuition, DateTime $date, int $lessonStart, int $lessonEnd): array {
         $students = $this->studentsResolver->resolve($tuition);
         $suggestions = [ ];
 
         foreach($this->attendanceRepository->findAbsentByStudentsAndDate($students, $date) as $attendance) {
-            if($attendance->getEntry()->getLessonEnd() === $lesson - 1 && $attendance->getAbsentLessons() > 0) {
+            if($attendance->getEntry()->getLessonEnd() === $lessonStart - 1 && $attendance->isZeroAbsentLesson() === false) {
                 $suggestion = new AttendanceSuggestion(
                     $this->getStudent($attendance->getStudent()),
                     $this->translator->trans('book.attendance.absence_reason.absent_before'),
-                    LessonAttendanceType::Absent
+                    range($lessonStart, $lessonEnd),
+                    AttendanceType::Absent
                 );
 
                 $suggestions[] = new PrioritizedSuggestion($this->bookSettings->getSuggestionPriorityForPreviouslyAbsent(), $attendance->getStudent(), $suggestion);

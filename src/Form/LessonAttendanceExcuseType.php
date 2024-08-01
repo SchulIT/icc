@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\LessonAttendanceExcuseStatus;
+use App\Entity\AttendanceExcuseStatus;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -20,9 +20,9 @@ class LessonAttendanceExcuseType extends AbstractType {
         $builder
             ->add('excuseStatus', ChoiceType::class, [
                 'choices' => [
-                    'book.student.not_set' => LessonAttendanceExcuseStatus::NotSet,
-                    'book.student.excused' => LessonAttendanceExcuseStatus::Excused,
-                    'book.student.not_excused' => LessonAttendanceExcuseStatus::NotExcused
+                    'book.student.not_set' => AttendanceExcuseStatus::NotSet,
+                    'book.student.excused' => AttendanceExcuseStatus::Excused,
+                    'book.student.not_excused' => AttendanceExcuseStatus::NotExcused
                 ],
                 'label' => 'label.status'
             ]);

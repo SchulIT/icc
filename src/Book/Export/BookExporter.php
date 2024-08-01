@@ -15,8 +15,8 @@ use App\Entity\Grade as GradeEntity;
 use App\Entity\GradeLimitedMembership;
 use App\Entity\GradeMembership;
 use App\Entity\GradeTeacher;
-use App\Entity\LessonAttendance as LessonAttendanceEntity;
-use App\Entity\LessonAttendanceType;
+use App\Entity\Attendance as LessonAttendanceEntity;
+use App\Entity\AttendanceType;
 use App\Entity\LessonEntry;
 use App\Entity\LessonEntry as LessonEntryEntity;
 use App\Entity\Section as SectionEntity;
@@ -354,7 +354,7 @@ class BookExporter {
             $exportAttendance->setFlags($flags);
 
             // check if lesson is excused
-            if($attendance->getType() === LessonAttendanceType::Absent) {
+            if($attendance->getType() === AttendanceType::Absent) {
                 $exportAttendance->setAbsentLessonCount(
                     ($entry->getLessonEnd() - $attendance->getAbsentLessons()) < $entry->getLessonStart() ? 1 : 0
                 );
@@ -382,9 +382,9 @@ class BookExporter {
     private function castAttendanceType(int $type): string
     {
         return match ($type) {
-            LessonAttendanceType::Absent => 'absent',
-            LessonAttendanceType::Present => 'present',
-            LessonAttendanceType::Late => 'late',
+            AttendanceType::Absent => 'absent',
+            AttendanceType::Present => 'present',
+            AttendanceType::Late => 'late',
             default => throw new InvalidArgumentException(sprintf('$type must be either 0, 1 or 2, %d given', $type)),
         };
     }

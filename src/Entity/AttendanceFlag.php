@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[Auditable]
 #[ORM\Entity]
-class LessonAttendanceFlag implements JsonSerializable {
+class AttendanceFlag implements JsonSerializable {
 
     use IdTrait;
     use UuidTrait;
@@ -50,7 +50,7 @@ class LessonAttendanceFlag implements JsonSerializable {
         return $this->icon;
     }
 
-    public function setIcon(?string $icon): LessonAttendanceFlag {
+    public function setIcon(?string $icon): AttendanceFlag {
         $this->icon = $icon;
         return $this;
     }
@@ -59,7 +59,7 @@ class LessonAttendanceFlag implements JsonSerializable {
         return $this->stackIcon;
     }
 
-    public function setStackIcon(?string $stackIcon): LessonAttendanceFlag {
+    public function setStackIcon(?string $stackIcon): AttendanceFlag {
         $this->stackIcon = $stackIcon;
         return $this;
     }
@@ -68,7 +68,7 @@ class LessonAttendanceFlag implements JsonSerializable {
         return $this->description;
     }
 
-    public function setDescription(?string $description): LessonAttendanceFlag {
+    public function setDescription(?string $description): AttendanceFlag {
         $this->description = $description;
         return $this;
     }

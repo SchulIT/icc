@@ -4,16 +4,16 @@ namespace App\StudentAbsence;
 
 use App\Book\Student\ExcuseCollection;
 use App\Entity\DateLesson;
-use App\Entity\LessonAttendance;
-use App\Entity\LessonAttendanceExcuseStatus;
-use App\Entity\LessonAttendanceType;
+use App\Entity\Attendance;
+use App\Entity\AttendanceExcuseStatus;
+use App\Entity\AttendanceType;
 use App\Entity\LessonEntry;
 use App\Entity\StudentAbsence;
 use App\Entity\TimetableLesson;
 
 class ExcuseStatusItem {
 
-    public function __construct(private readonly DateLesson $dateLesson, private readonly ?ExcuseCollection $excuseCollection, private readonly ?LessonAttendance $attendance, private readonly ?StudentAbsence $absence, private readonly ?TimetableLesson $timetableLesson, private readonly ?LessonEntry $entry) {
+    public function __construct(private readonly DateLesson $dateLesson, private readonly ?ExcuseCollection $excuseCollection, private readonly ?Attendance $attendance, private readonly ?StudentAbsence $absence, private readonly ?TimetableLesson $timetableLesson, private readonly ?LessonEntry $entry) {
 
     }
 
@@ -32,9 +32,9 @@ class ExcuseStatusItem {
     }
 
     /**
-     * @return LessonAttendance|null
+     * @return Attendance|null
      */
-    public function getAttendance(): ?LessonAttendance {
+    public function getAttendance(): ?Attendance {
         return $this->attendance;
     }
 
@@ -69,7 +69,7 @@ class ExcuseStatusItem {
             return $this->absence->isApproved();
         }
 
-        if($this->absence->getType()->getBookExcuseStatus() === LessonAttendanceExcuseStatus::Excused) {
+        if($this->absence->getType()->getBookExcuseStatus() === AttendanceExcuseStatus::Excused) {
             return true;
         }
 
@@ -77,7 +77,7 @@ class ExcuseStatusItem {
             return true;
         }
 
-        if($this->attendance !== null && $this->attendance->getType() !== LessonAttendanceType::Absent) {
+        if($this->attendance !== null && $this->attendance->getType() !== AttendanceType::Absent) {
             return true;
         }
 
@@ -85,7 +85,7 @@ class ExcuseStatusItem {
             return true;
         }
 
-        if($this->attendance !== null && $this->attendance->getExcuseStatus() === LessonAttendanceExcuseStatus::Excused) {
+        if($this->attendance !== null && $this->attendance->getExcuseStatus() === AttendanceExcuseStatus::Excused) {
             return true;
         }
 

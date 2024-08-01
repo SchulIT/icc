@@ -2,14 +2,14 @@
 
 namespace App\Book\Student;
 
-use App\Entity\LessonAttendanceType;
+use App\Entity\Attendance;
+use App\Entity\AttendanceType;
 use App\Entity\Section;
 use App\Entity\Student;
 use App\Repository\BookCommentRepositoryInterface;
 use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
-use App\Settings\TimetableSettings;
 use App\Sorting\LessonAttendenceStrategy;
 use App\Sorting\Sorter;
 
@@ -24,9 +24,9 @@ class StudentInfoResolver extends AbstractResolver {
     public function resolveStudentInfo(Student $student, ?Section $section, array $tuitions = []): StudentInfo {
         $attendances = $this->getAttendanceRepository()->findByStudent($student, $tuitions);
 
-        $late = array_filter($attendances, fn(\App\Entity\LessonAttendance $a) => $a->getType() === LessonAttendanceType::Late);
-        $absent = array_filter($attendances, fn(\App\Entity\LessonAttendance $a) => $a->getType() === LessonAttendanceType::Absent);
-        $present = array_filter($attendances, fn(\App\Entity\LessonAttendance $a) => $a->getType() === LessonAttendanceType::Present);
+        $late = array_filter($attendances, fn(Attendance $a) => $a->getType() === AttendanceType::Late);
+        $absent = array_filter($attendances, fn(Attendance $a) => $a->getType() === AttendanceType::Absent);
+        $present = array_filter($attendances, fn(Attendance $a) => $a->getType() === AttendanceType::Present);
         $excuseNotes = $this->getExcuseNoteRepository()->findByStudent($student);
 
         $this->sorter->sort($late, LessonAttendenceStrategy::class);

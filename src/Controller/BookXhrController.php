@@ -8,9 +8,11 @@ use App\Book\AttendanceSuggestion\SuggestionResolver;
 use App\Book\Lesson\LessonCancelHelper;
 use App\Book\Student\AbsenceExcuseResolver;
 use App\Book\StudentsResolver;
+use App\Entity\AttendanceExcuseStatus;
+use App\Entity\AttendanceType;
 use App\Entity\Grade;
-use App\Entity\LessonAttendance;
-use App\Entity\LessonAttendanceFlag;
+use App\Entity\Attendance;
+use App\Entity\AttendanceFlag;
 use App\Entity\LessonEntry;
 use App\Entity\Section;
 use App\Entity\Student;
@@ -90,14 +92,15 @@ class BookXhrController extends AbstractController {
     /**
      * @param Tuition $tuition
      * @param DateTime $date
-     * @param int $lesson
+     * @param int $lessonStart
+     * @param int $lessonEnd
      * @param SuggestionResolver $suggestionResolver
      * @return AttendanceSuggestion[]
      */
-    private function possiblyAbsentStudents(Tuition $tuition, DateTime $date, int $lesson, SuggestionResolver $suggestionResolver): array {
+    private function possiblyAbsentStudents(Tuition $tuition, DateTime $date, int $lessonStart, int $lessonEnd, SuggestionResolver $suggestionResolver): array {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
-        return $suggestionResolver->resolve($tuition, $date, $lesson);
+        return $suggestionResolver->resolve($tuition, $date, $lessonStart, $lessonEnd);
     }
 
     /**
@@ -119,7 +122,7 @@ class BookXhrController extends AbstractController {
         $filter = $request->query->get('filter', null);
         $data = [ ];
 
-        /** @var LessonAttendance $attendance */
+        /** @var Attendance $attendance */
         foreach($entry->getAttendances() as $attendance) {
             if($filter === null || intval($filter) === $attendance->getType()) {
                 $data[] = [
@@ -217,7 +220,7 @@ class BookXhrController extends AbstractController {
 
         $start = $request->query->getInt('start');
         if(!is_numeric($start)) {
-            throw new BadRequestHttpException('Start and end must be numeric values.');
+            throw new BadRequestHttpException('Start must be numeric values.');
         }
 
         if($start < $lesson->getLessonStart() || $start > $lesson->getLessonEnd()) {
@@ -238,7 +241,7 @@ class BookXhrController extends AbstractController {
 
         if($entry !== null) {
             $attendances = [ ];
-            /** @var LessonAttendance $attendance */
+            /** @var Attendance $attendance */
             foreach($entry->getAttendances() as $attendance) {
                 $excuseInfo = $excuseResolver->resolve($attendance->getStudent(), [ $entry->getTuition() ]);
                 $excuses = $excuseInfo->getExcuseCollectionForLesson($attendance);
@@ -246,12 +249,13 @@ class BookXhrController extends AbstractController {
                 $attendances[] = [
                     'student' => $this->getStudent($attendance->getStudent()),
                     'minutes' => $attendance->getLateMinutes(),
-                    'lessons' => $attendance->getAbsentLessons(),
+                    'lesson' => $attendance->getLesson(),
                     'comment' => $attendance->getComment(),
-                    'excuse_status' => $attendance->getExcuseStatus(),
+                    'excuse_status' => $attendance->getExcuseStatus()->value,
+                    'zero_absent_lesson' => $attendance->isZeroAbsentLesson(),
                     'has_excuses' => $excuses->count() > 0,
-                    'type' => $attendance->getType(),
-                    'flags' => $attendance->getFlags()->map(fn(LessonAttendanceFlag $flag) => $flag->getId())->toArray()
+                    'type' => $attendance->getType()->value,
+                    'flags' => $attendance->getFlags()->map(fn(AttendanceFlag $flag) => $flag->getId())->toArray()
                 ];
             }
 
@@ -292,12 +296,12 @@ class BookXhrController extends AbstractController {
                 'lesson_end' => $lesson->getLessonEnd(),
                 'tuition' => $this->getTuition($lesson->getTuition())
             ],
-            'absences' => $this->possiblyAbsentStudents($lesson->getTuition(), $lesson->getDate(), $start, $suggestionResolver),
+            'absences' => $this->possiblyAbsentStudents($lesson->getTuition(), $lesson->getDate(), $start, $lesson->getLessonEnd(), $suggestionResolver),
             'removals' => $this->removeSuggestions($lesson->getTuition(), $lesson->getDate(), $start, $removeSuggestionResolver),
             'entry' => $entryJson,
             'students' => $students,
             'has_other_entries' => count($lesson->getEntries()) > 0,
-            'flags' => array_map(fn(LessonAttendanceFlag $flag) => $flag->jsonSerialize(), $attendanceFlagRepository->findAllBySubject($lesson->getTuition()->getSubject())),
+            'flags' => array_map(fn(AttendanceFlag $flag) => $flag->jsonSerialize(), $attendanceFlagRepository->findAllBySubject($lesson->getTuition()->getSubject())),
         ];
 
         return $this->returnJson($response, $serializer);
@@ -324,13 +328,13 @@ class BookXhrController extends AbstractController {
     #[OA\Response(response: '200', description: 'Anwesenheit erfolgreich aktualisiert.')]
     #[OA\Response(response: '400', description: 'Fehlerhafte Anfrage.', content: new Model(type: ViolationList::class))]
     #[Route(path: '/attendance/{uuid}', name: 'xhr_update_attendance', methods: ['PUT'])]
-    public function updateAttendance(LessonAttendance $attendance, UpdateAttendanceRequest $request, LessonAttendanceRepositoryInterface $repository): Response {
+    public function updateAttendance(Attendance $attendance, UpdateAttendanceRequest $request, LessonAttendanceRepositoryInterface $repository): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::Edit, $attendance->getEntry());
 
-        $attendance->setAbsentLessons($request->getAbsentLessons());
+        $attendance->setIsZeroAbsentLesson($request->isZeroAbsentLesson());
         $attendance->setLateMinutes($request->getLateMinutes());
-        $attendance->setExcuseStatus($request->getExcuseStatus());
-        $attendance->setType($request->getType());
+        $attendance->setExcuseStatus(AttendanceExcuseStatus::from($request->getExcuseStatus()));
+        $attendance->setType(AttendanceType::from($request->getType()));
         $attendance->setComment($request->getComment());
 
         $repository->persist($attendance);

@@ -2,8 +2,8 @@
 
 namespace App\Form;
 
-use App\Entity\LessonAttendanceExcuseStatus;
-use App\Entity\LessonAttendanceFlag;
+use App\Entity\AttendanceExcuseStatus;
+use App\Entity\AttendanceFlag;
 use App\Entity\Subject;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -46,8 +46,8 @@ class StudentAbsenceTypeType extends AbstractType {
             ])
             ->add('bookAttendanceType', ChoiceType::class, [
                 'choices' => [
-                    'book.attendance.type.present' => \App\Entity\LessonAttendanceType::Present,
-                    'book.attendance.type.absent' => \App\Entity\LessonAttendanceType::Absent
+                    'book.attendance.type.present' => \App\Entity\AttendanceType::Present,
+                    'book.attendance.type.absent' => \App\Entity\AttendanceType::Absent
                 ],
                 'label' => 'label.book_attendance_type.label',
                 'help' => 'label.book_attendance_type.help',
@@ -55,9 +55,9 @@ class StudentAbsenceTypeType extends AbstractType {
             ])
             ->add('bookExcuseStatus', ChoiceType::class, [
                 'choices' => [
-                    'book.students.excused' => LessonAttendanceExcuseStatus::Excused,
-                    'book.students.not_excused' => LessonAttendanceExcuseStatus::NotExcused,
-                    'book.students.not_set' => LessonAttendanceExcuseStatus::NotSet
+                    'book.students.excused' => AttendanceExcuseStatus::Excused,
+                    'book.students.not_excused' => AttendanceExcuseStatus::NotExcused,
+                    'book.students.not_set' => AttendanceExcuseStatus::NotSet
                 ],
                 'label' => 'label.book_excuse_status.label',
                 'help' => 'label.book_excuse_status.help',
@@ -84,9 +84,9 @@ class StudentAbsenceTypeType extends AbstractType {
                 'label' => 'label.book_flags.label',
                 'help' => 'label.book_flags.help',
                 'required' => false,
-                'class' => LessonAttendanceFlag::class,
+                'class' => AttendanceFlag::class,
                 'multiple' => true,
-                'choice_label' => fn(LessonAttendanceFlag $flag) => $flag->getDescription(),
+                'choice_label' => fn(AttendanceFlag $flag) => $flag->getDescription(),
                 'attr' => [
                     'data-choice' => 'true'
                 ]

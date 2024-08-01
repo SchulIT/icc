@@ -2,23 +2,23 @@
 
 namespace App\Repository;
 
-use App\Entity\LessonAttendanceFlag;
+use App\Entity\AttendanceFlag;
 use App\Entity\Subject;
 
 interface LessonAttendanceFlagRepositoryInterface {
 
     /**
-     * @return LessonAttendanceFlag[]
+     * @return AttendanceFlag[]
      */
     public function findAll(): array;
 
     /**
      * @param Subject $subject
-     * @return LessonAttendanceFlag[]
+     * @return AttendanceFlag[]
      */
     public function findAllBySubject(Subject $subject): array;
 
-    public function persist(LessonAttendanceFlag $flag): void;
+    public function persist(AttendanceFlag $flag): void;
 
-    public function remove(LessonAttendanceFlag $flag): void;
+    public function remove(AttendanceFlag $flag): void;
 }

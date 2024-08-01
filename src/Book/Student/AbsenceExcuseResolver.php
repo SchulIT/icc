@@ -3,7 +3,7 @@
 namespace App\Book\Student;
 
 use App\Entity\ExcuseNote;
-use App\Entity\LessonAttendance as LessonAttendanceEntity;
+use App\Entity\Attendance as LessonAttendanceEntity;
 use App\Entity\Student;
 use App\Entity\Tuition;
 use App\Utils\ArrayUtils;

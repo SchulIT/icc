@@ -52,13 +52,13 @@
                           <i class="fas fa-check"></i>
                         </span>
                         <span v-if="entry.attendance.has_excuses === false">
-                          <i class="fas fa-question" v-if="entry.attendance.attendance.excuse_status === 0 && entry.attendance.attendance.absent_lessons > 0"></i>
-                          <i class="fas fa-check" v-if="entry.attendance.attendance.excuse_status === 1 || entry.attendance.attendance.absent_lessons === 0"></i>
+                          <i class="fas fa-question" v-if="entry.attendance.attendance.excuse_status === 0 && entry.attendance.attendance.zero_absent_lesson !== true"></i>
+                          <i class="fas fa-check" v-if="entry.attendance.attendance.excuse_status === 1 || entry.attendance.attendance.zero_absent_lesson === true"></i>
                           <i class="fas fa-times" v-if="entry.attendance.attendance.excuse_status === 2"></i>
                         </span>
 
-                        <span class="badge text-bg-info ms-2" v-if="entry.attendance.attendance.absent_lessons !== (entry.entry.end - entry.entry.start + 1)">
-                          {{ entry.attendance.attendance.absent_lessons }} FS
+                        <span class="badge text-bg-info ms-2" v-if="entry.attendance.attendance.zero_absent_lesson">
+                          0 FS
                         </span>
                       </div>
                       <div class="d-inline ms-2" v-if="entry.attendance !== null && entry.attendance.attendance.flags !== null && entry.attendance.attendance.flags.length > 0">
@@ -108,7 +108,7 @@
               <div class="ms-2">
                 <i class="fas fa-clock"></i>
 
-                {{ $transChoice('label.exam_lessons', editLesson.entry.end - editLesson.entry.start, { 'start': editLesson.entry.start, 'end': editLesson.entry.end}) }}
+                {{ $transChoice('label.exam_lessons', 0, { 'start': editAttendance.lesson}) }}
               </div>
             </div>
 
@@ -146,21 +146,13 @@
                 <i class="fas fa-user-times"></i>
               </button>
 
-              <div class="btn-group d-inline-flex align-items-center ms-1"
-                   :title="$trans('book.attendance.absent_lessons')"
-                   v-if="editAttendance.attendance.type === 0">
-                <button class="btn btn-outline-danger btn-sm"
-                        @click.prevent="minusLesson()">
-                  <i class="fa fa-minus"></i>
-                </button>
-                <span class="border-top border-bottom border-danger align-self-stretch align-items-center d-flex px-2">
-                  <span>{{ $transChoice('book.attendance.absence_lesson', editAttendance.attendance.absent_lessons, {'%count%': editAttendance.attendance.absent_lessons })}}</span>
-                </span>
-                <button class="btn btn-outline-danger btn-sm"
-                        @click.prevent="plusLesson()">
-                  <i class="fa fa-plus"></i>
-                </button>
-              </div>
+              <button class="btn btn-outline-danger btn-sm ms-1 d-inline-block"
+                      :class="{ active: editAttendance.attendance.zero_absent_lesson === true}"
+                      :title="$trans('book.attendance.is_zero_absent_lesson')"
+                      @click.prevent="zeroAbsentLesson()"
+                      v-if="editAttendance.attendance.type === 0">
+                0 FS
+              </button>
 
               <div class="btn-group d-inline-flex align-items-center ms-1"
                    v-if="editAttendance.attendance.type === 0">
@@ -276,6 +268,7 @@ export default {
     // Create data structures
     let $this = this;
     let lessonRange = [...Array(this.maxLessons).keys()].map(i => i + 1);
+    console.log($this.attendances);
 
     for(let group of this.dayGroups) {
       for(let day of group.days) {
@@ -289,7 +282,7 @@ export default {
           let entries = $this.entries.filter(a => a.lesson.date === day && a.start <= lessonNumber && lessonNumber <= a.end);
 
           for (let entry of entries) {
-            let attendance = $this.attendances.filter(a => a.date === day && a.entry === entry.uuid)[0] ?? null;
+            let attendance = $this.attendances.filter(a => a.date === day && a.lesson === lessonNumber && a.entry === entry.uuid)[0] ?? null;
 
             if(attendance !== null || entry.is_cancelled) {
               lessonEntries.entries.push({
@@ -389,23 +382,12 @@ export default {
     late() {
       this.setType(2);
     },
-    plusLesson() {
+    zeroAbsentLesson() {
       if(this.editAttendance.attendance === null) {
         return;
       }
 
-      if(this.editAttendance.attendance.absent_lessons <= (this.editLesson.entry.end - this.editLesson.entry.start)) {
-        this.editAttendance.attendance.absent_lessons++;
-      }
-    },
-    minusLesson() {
-      if(this.editAttendance.attendance === null) {
-        return;
-      }
-
-      if(this.editAttendance.attendance.absent_lessons > 0) {
-        this.editAttendance.attendance.absent_lessons--;
-      }
+      this.editAttendance.attendance.zero_absent_lesson = !this.editAttendance.attendance.zero_absent_lesson;
     },
     setExcuseStatus(status) {
       if(this.editAttendance.attendance === null) {
@@ -422,7 +404,7 @@ export default {
       // write data back to original attendance
       this.editLesson.attendance.attendance.type = this.editAttendance.attendance.type;
       this.editLesson.attendance.attendance.late_minutes = this.editAttendance.attendance.late_minutes;
-      this.editLesson.attendance.attendance.absent_lessons = this.editAttendance.attendance.absent_lessons;
+      this.editLesson.attendance.attendance.zero_absent_lesson = this.editAttendance.attendance.zero_absent_lesson;
       this.editLesson.attendance.attendance.comment = this.editAttendance.attendance.comment;
       this.editLesson.attendance.attendance.excuse_status = this.editAttendance.attendance.excuse_status;
 
@@ -453,7 +435,7 @@ export default {
       let request = {
         '_token': this.csrftoken,
         'type': lesson.attendance.attendance.type,
-        'absent_lessons': lesson.attendance.attendance.absent_lessons,
+        'zero_absent_lesson': lesson.attendance.attendance.zero_absent_lesson,
         'late_minutes': lesson.attendance.attendance.late_minutes,
         'comment': comment,
         'excuse_status': lesson.attendance.attendance.excuse_status

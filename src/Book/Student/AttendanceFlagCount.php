@@ -2,11 +2,11 @@
 
 namespace App\Book\Student;
 
-use App\Entity\LessonAttendanceFlag;
+use App\Entity\AttendanceFlag;
 use JsonSerializable;
 
 class AttendanceFlagCount implements JsonSerializable {
-    public function __construct(private readonly LessonAttendanceFlag $flag, private readonly int $count) {
+    public function __construct(private readonly AttendanceFlag $flag, private readonly int $count) {
 
     }
 
@@ -18,9 +18,9 @@ class AttendanceFlagCount implements JsonSerializable {
     }
 
     /**
-     * @return LessonAttendanceFlag
+     * @return AttendanceFlag
      */
-    public function getFlag(): LessonAttendanceFlag {
+    public function getFlag(): AttendanceFlag {
         return $this->flag;
     }
 

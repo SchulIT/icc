@@ -5,11 +5,12 @@ namespace App\Book\AttendanceSuggestion;
 use App\Book\StudentsResolver;
 use App\Dashboard\Absence\ExamStudentsResolver;
 use App\Dashboard\AbsentExamStudent;
-use App\Entity\LessonAttendanceExcuseStatus;
-use App\Entity\LessonAttendanceType;
+use App\Entity\AttendanceExcuseStatus;
+use App\Entity\AttendanceType;
 use App\Entity\Tuition;
 use App\Response\Book\AttendanceSuggestion;
 use App\Settings\BookSettings;
+use App\Utils\ArrayUtils;
 use DateTime;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -24,11 +25,19 @@ class ExamSuggestionStrategy implements SuggestionStrategyInterface {
                                 private readonly TranslatorInterface $translator,
                                 private readonly BookSettings $bookSettings) { }
 
-    public function resolve(Tuition $tuition, DateTime $date, int $lesson): array {
+    public function resolve(Tuition $tuition, DateTime $date, int $lessonStart, int $lessonEnd): array {
         $students = $this->studentsResolver->resolve($tuition);
-        /** @var AbsentExamStudent[] $examStudents */
-        $examStudents = $this->examStudentsResolver->resolveAbsentStudents($date, $lesson, $students);
 
+        /** @var AbsentExamStudent[] $examStudents */
+        $examStudents = [ ];
+
+        for($lessonNumber = $lessonStart; $lessonNumber <= $lessonEnd; $lessonNumber++) {
+            $examStudents = array_merge($examStudents, $this->examStudentsResolver->resolveAbsentStudents($date, $lessonNumber, $students));
+        }
+
+        // kill duplicates
+        /** @var AbsentExamStudent[] $examStudents */
+        $examStudents = ArrayUtils::unique($examStudents);
         $suggestions = [ ];
 
         foreach($examStudents as $examStudent) {
@@ -40,12 +49,20 @@ class ExamSuggestionStrategy implements SuggestionStrategyInterface {
                 continue; 
             }
 
+            $lessons = [ ];
+            for($lessonNumber = $lessonStart; $lessonNumber <= $lessonEnd; $lessonNumber++) {
+                if($examStudent->getExam()->getLessonStart() <= $lessonNumber && $examStudent->getExam()->getLessonEnd() >= $lessonNumber) {
+                    $lessons[] = $lessonNumber;
+                }
+            }
+
             $suggestion = new AttendanceSuggestion(
                 $this->getStudent($examStudent->getStudent()),
-                $this->translator->trans('book.attendance.absence_reason.exam'),
-                LessonAttendanceType::Absent,
+                $this->translator->trans('book.attendance.absence_reason.exam', ['%tuition%' => $examStudent->getTuition()?->getName()]),
+                $lessons,
+                AttendanceType::Absent,
                 true,
-                LessonAttendanceExcuseStatus::Excused,
+                AttendanceExcuseStatus::Excused,
                 $this->urlGenerator->generate('show_exam', ['uuid' => $examStudent->getExam()->getUuid() ])
             );
 

@@ -57,24 +57,8 @@
                     </div>
 
                     <div class="card-body no-columns">
-                        <div class="d-flex mb-3">
-                            <div class="me-1 mt-n2 flex-fill">
-                                <div class="row">
-                                    {{ form_label(form.lessonStart) }}
-                                </div>
-                                {{ form_widget(form.lessonStart)}}
-                            </div>
-                            <div class="ms-1 mt-n2 flex-fill">
-                                <div class="row">
-                                    {{ form_label(form.lessonEnd) }}
-                                </div>
-                                {{ form_widget(form.lessonEnd) }}
-                            </div>
-                        </div>
-
-                        {{ form_errors(form.lessonStart) }}
-                        {{ form_errors(form.lessonEnd) }}
-
+                        {{ form_row(form.lessonStart) }}
+                        {{ form_row(form.lessonEnd) }}
                         {{ form_row(form.subject) }}
 
                         {% if form.replacementSubject is defined %}
@@ -104,8 +88,12 @@
 
                     <div class="card-footer">
                         <button type="submit" class="btn btn-primary btn-sm">
-                            <i class="fa fa-save"></i> {{ 'action.save'|trans }}
+                            <i class="fa fa-save"></i> {{ 'actions.save'|trans }}
                         </button>
+
+                        <a href="{{ path('remove_entry', { uuid: entry.uuid }) }}" class="btn btn-danger btn-sm ms-1">
+                            <i class="fas fa-trash"></i> {{ 'actions.remove'|trans }}
+                        </a>
                     </div>
                 </div>
 

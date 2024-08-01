@@ -3,7 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\DateLesson;
-use App\Entity\LessonAttendance;
+use App\Entity\Attendance;
 use App\Entity\LessonEntry;
 use App\Entity\Student;
 use App\Entity\Tuition;
@@ -20,35 +20,35 @@ interface LessonAttendanceRepositoryInterface {
     /**
      * @param Student $student
      * @param Tuition[] $tuitions
-     * @return LessonAttendance[]
+     * @return Attendance[]
      */
     public function findByStudent(Student $student, array $tuitions): array;
 
     /**
      * @param Student $student
      * @param Tuition[] $tuitions
-     * @return LessonAttendance[]
+     * @return Attendance[]
      */
     public function findLateByStudent(Student $student, array $tuitions): array;
 
     /**
      * @param Student $student
      * @param Tuition[] $tuitions
-     * @return LessonAttendance[]
+     * @return Attendance[]
      */
     public function findAbsentByStudent(Student $student, array $tuitions): array;
 
     /**
      * @param Student[] $students
      * @param Tuition[] $tuitions
-     * @return LessonAttendance[]
+     * @return Attendance[]
      */
     public function findAbsentByStudents(array $students, array $tuitions): array;
 
     /**
      * @param Student[] $students
      * @param DateTime $dateTime
-     * @return LessonAttendance[]
+     * @return Attendance[]
      */
     public function findAbsentByStudentsAndDate(array $students, DateTime $dateTime): array;
 
@@ -56,11 +56,11 @@ interface LessonAttendanceRepositoryInterface {
      * @param Student $student
      * @param DateTime $start
      * @param DateTime $end
-     * @return LessonAttendance[]
+     * @return Attendance[]
      */
     public function findByStudentAndDateRange(Student $student, DateTime $start, DateTime $end): array;
 
-    public function persist(LessonAttendance $attendance): void;
+    public function persist(Attendance $attendance): void;
 
-    public function remove(LessonAttendance $attendance): void;
+    public function remove(Attendance $attendance): void;
 }

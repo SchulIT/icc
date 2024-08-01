@@ -25,11 +25,11 @@ class UpdateAttendanceRequest {
     private int $type;
 
     /**
-     * @var int
+     * @var bool
      */
-    #[Serializer\SerializedName('absent_lessons')]
-    #[Serializer\Type('int')]
-    private int $absentLessons;
+    #[Serializer\SerializedName('zero_absent_lesson')]
+    #[Serializer\Type('bool')]
+    private bool $isZeroAbsentLesson;
 
     /**
      * @var int
@@ -72,12 +72,12 @@ class UpdateAttendanceRequest {
         return $this;
     }
 
-    public function getAbsentLessons(): int {
-        return $this->absentLessons;
+    public function isZeroAbsentLesson(): bool {
+        return $this->isZeroAbsentLesson;
     }
 
-    public function setAbsentLessons(int $absentLessons): UpdateAttendanceRequest {
-        $this->absentLessons = $absentLessons;
+    public function setIsZeroAbsentLesson(bool $isZeroAbsentLesson): UpdateAttendanceRequest {
+        $this->isZeroAbsentLesson = $isZeroAbsentLesson;
         return $this;
     }
 

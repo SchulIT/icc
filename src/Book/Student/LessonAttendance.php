@@ -2,9 +2,9 @@
 
 namespace App\Book\Student;
 
-use App\Entity\LessonAttendance as LessonAttendanceEntity;
-use App\Entity\LessonAttendanceExcuseStatus;
-use App\Entity\LessonAttendanceFlag;
+use App\Entity\Attendance as LessonAttendanceEntity;
+use App\Entity\AttendanceExcuseStatus;
+use App\Entity\AttendanceFlag;
 use DateTime;
 use JsonSerializable;
 
@@ -31,11 +31,11 @@ class LessonAttendance implements JsonSerializable {
             return true;
         }
 
-        if($this->getAttendance()->getExcuseStatus() === LessonAttendanceExcuseStatus::NotExcused) {
+        if($this->getAttendance()->getExcuseStatus() === AttendanceExcuseStatus::NotExcused) {
             return false;
         }
 
-        if($this->getAttendance()->getExcuseStatus() === LessonAttendanceExcuseStatus::Excused) {
+        if($this->getAttendance()->getExcuseStatus() === AttendanceExcuseStatus::Excused) {
             return true;
         }
 
@@ -56,10 +56,10 @@ class LessonAttendance implements JsonSerializable {
                 'uuid' => $this->attendance->getUuid()->toString(),
                 'type' => $this->attendance->getType(),
                 'late_minutes' => $this->attendance->getLateMinutes(),
-                'absent_lessons' => $this->attendance->getAbsentLessons(),
+                'zero_absent_lesson' => $this->attendance->isZeroAbsentLesson(),
                 'comment' => $this->attendance->getComment(),
                 'excuse_status' => $this->attendance->getExcuseStatus(),
-                'flags' => $this->attendance->getFlags()->map(fn(LessonAttendanceFlag $flag) => $flag->jsonSerialize())->toArray()
+                'flags' => $this->attendance->getFlags()->map(fn(AttendanceFlag $flag) => $flag->jsonSerialize())->toArray()
             ]
         ];
     }

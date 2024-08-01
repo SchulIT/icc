@@ -577,24 +577,31 @@
                                                 <div class="ms-2" style="min-width: 20%">
                                                     <ul class="list-unstyled mb-0">
                                                         {% for attendance in lateStudentsByLesson[lesson.entry.uuid.toString] %}
-                                                            <li><i class="fa fa-user-clock"></i> {{ attendance.student|student }} <span class="badge text-bg-primary">{{ 'book.attendance.late_minutes'|trans({'%count%': attendance.lateMinutes}) }}</span> </li>
+                                                            <li><i class="fa fa-user-clock"></i> {{ attendance.student|student }}
+                                                                <span class="badge text-bg-warning">{{ 'book.attendance.late_minutes'|trans({'%count%': attendance.lateMinutes}) }}</span>
+
+                                                                <span class="badge text-bg-secondary ms-1">
+                                                                    {{ 'label.substitution_lessons'|trans({'%start%' : attendance.lesson, '%count%': 0}) }}
+                                                                </span>
+                                                            </li>
                                                         {% endfor %}
 
                                                         {% for attendance in absentStudentsByLesson[lesson.entry.uuid.toString] %}
                                                             <li><i class="fa fa-user-times"></i> {{ attendance.student|student }}
-                                                                {% if attendance.absentLessons == 0 %}
+
+                                                                {% if attendance.isZeroAbsentLesson %}
                                                                     <span class="badge text-bg-info">0 FS</span>
+                                                                {% elseif attendance.excuseStatus.value == 2 %}
+                                                                    <span class="badge text-bg-danger">{{ 'book.excuse_status_short.not_excused'|trans }}</span>
+                                                                {% elseif attendance.excuseStatus.value == 1 %}
+                                                                    <span class="badge text-bg-success">{{ 'book.excuse_status_short.excused'|trans }}</span>
+                                                                {% else %}
+                                                                    <span class="badge text-bg-warning">{{ 'book.excuse_status_short.not_set'|trans }}</span>
                                                                 {% endif %}
 
-                                                                {% if attendance.absentLessons > 0 %}
-                                                                    {% if attendance.excuseStatus == 2 %}
-                                                                        <span class="badge text-bg-danger">{{ 'book.excuse_status_short.not_excused'|trans }}</span>
-                                                                    {% elseif attendance.excuseStatus == 1 %}
-                                                                        <span class="badge text-bg-success">{{ 'book.excuse_status_short.excused'|trans }}</span>
-                                                                    {% else %}
-                                                                        <span class="badge text-bg-warning">{{ 'book.excuse_status_short.not_set'|trans }}</span>
-                                                                    {% endif %}
-                                                                {% endif %}
+                                                                <span class="badge text-bg-secondary ms-1">
+                                                                    {{ 'label.substitution_lessons'|trans({'%start%' : attendance.lesson, '%count%': 0}) }}
+                                                                </span>
                                                             </li>
                                                         {% endfor %}
                                                     </ul>

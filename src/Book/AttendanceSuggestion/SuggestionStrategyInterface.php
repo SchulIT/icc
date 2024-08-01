@@ -10,8 +10,9 @@ interface SuggestionStrategyInterface {
     /**
      * @param Tuition $tuition
      * @param DateTime $date
-     * @param int $lesson
+     * @param int $lessonStart
+     * @param int $lessonEnd
      * @return PrioritizedSuggestion[]
      */
-    public function resolve(Tuition $tuition, DateTime $date, int $lesson): array;
+    public function resolve(Tuition $tuition, DateTime $date, int $lessonStart, int $lessonEnd): array;
 }

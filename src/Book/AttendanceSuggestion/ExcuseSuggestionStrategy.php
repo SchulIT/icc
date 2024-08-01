@@ -3,8 +3,8 @@
 namespace App\Book\AttendanceSuggestion;
 
 use App\Book\StudentsResolver;
-use App\Entity\LessonAttendanceExcuseStatus;
-use App\Entity\LessonAttendanceType;
+use App\Entity\AttendanceExcuseStatus;
+use App\Entity\AttendanceType;
 use App\Entity\Tuition;
 use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Response\Book\AttendanceSuggestion;
@@ -23,18 +23,27 @@ class ExcuseSuggestionStrategy implements SuggestionStrategyInterface {
                                 private readonly TranslatorInterface $translator,
                                 private readonly BookSettings $bookSettings) { }
 
-    public function resolve(Tuition $tuition, DateTime $date, int $lesson): array {
+    public function resolve(Tuition $tuition, DateTime $date, int $lessonStart, int $lessonEnd): array {
         $students = $this->studentsResolver->resolve($tuition);
         $suggestions = [ ];
 
         foreach($this->excuseNoteRepository->findByStudentsAndDate($students, $date) as $note) {
-            if($note->appliesToLesson($date, $lesson)) {
+            $lessons = [ ];
+
+            for($lessonNumber = $lessonStart; $lessonNumber <= $lessonEnd; $lessonNumber++) {
+                if($note->appliesToLesson($date, $lessonNumber)) {
+                    $lessons[] = $lessonNumber;
+                }
+            }
+
+            if(count($lessons) > 0) {
                 $suggestion = new AttendanceSuggestion(
                     $this->getStudent($note->getStudent()),
                     $this->translator->trans('book.attendance.absence_reason.excuse'),
-                    LessonAttendanceType::Absent,
+                    $lessons,
+                    AttendanceType::Absent,
                     false,
-                    LessonAttendanceExcuseStatus::Excused,
+                    AttendanceExcuseStatus::Excused,
                     $this->urlGenerator->generate('edit_excuse', ['uuid' => $note->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL)
                 );
 

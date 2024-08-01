@@ -103,10 +103,10 @@ class LessonEntry {
     private ?string $comment = null;
 
     /**
-     * @var Collection<LessonAttendance>
+     * @var Collection<Attendance>
      */
     #[Assert\Valid(groups: ['Default'])]
-    #[ORM\OneToMany(mappedBy: 'entry', targetEntity: LessonAttendance::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'entry', targetEntity: Attendance::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $attendances;
 
     /**
@@ -218,12 +218,12 @@ class LessonEntry {
         return $this;
     }
 
-    public function addAttendance(LessonAttendance $attendance): void {
+    public function addAttendance(Attendance $attendance): void {
         $attendance->setEntry($this);
         $this->attendances->add($attendance);
     }
 
-    public function removeAttendance(LessonAttendance $attendance): void {
+    public function removeAttendance(Attendance $attendance): void {
         $this->attendances->removeElement($attendance);
     }
 

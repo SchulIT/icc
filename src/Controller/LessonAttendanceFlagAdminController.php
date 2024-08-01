@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\LessonAttendanceFlag;
+use App\Entity\AttendanceFlag;
 use App\Form\LessonAttendanceFlagType;
 use App\Repository\LessonAttendanceFlagRepositoryInterface;
 use SchulIT\CommonBundle\Form\ConfirmType;
@@ -28,7 +28,7 @@ class LessonAttendanceFlagAdminController extends AbstractController {
 
     #[Route('/add', name: 'add_attendance_flags')]
     public function add(Request $request): RedirectResponse|Response {
-        $flag = new LessonAttendanceFlag();
+        $flag = new AttendanceFlag();
         $form = $this->createForm(LessonAttendanceFlagType::class, $flag);
         $form->handleRequest($request);
 
@@ -44,7 +44,7 @@ class LessonAttendanceFlagAdminController extends AbstractController {
     }
 
     #[Route('/{uuid}/edit', name: 'edit_attendance_flags')]
-    public function edit(LessonAttendanceFlag $flag, Request $request) {
+    public function edit(AttendanceFlag $flag, Request $request) {
         $form = $this->createForm(LessonAttendanceFlagType::class, $flag);
         $form->handleRequest($request);
 
@@ -60,7 +60,7 @@ class LessonAttendanceFlagAdminController extends AbstractController {
     }
 
     #[Route('/{uuid}/remove', name: 'remove_attendance_flags')]
-    public function remove(LessonAttendanceFlag $flag, Request $request) {
+    public function remove(AttendanceFlag $flag, Request $request) {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'admin.attendance_flags.remove.confirm',
             'message_parameters' => [

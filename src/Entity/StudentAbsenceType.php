@@ -42,11 +42,11 @@ class StudentAbsenceType implements Stringable {
     #[ORM\Column(type: 'boolean')]
     private bool $isTypeWithZeroAbsenceLessons = false;
 
-    #[ORM\Column(type: 'integer')]
-    private int $bookAttendanceType = LessonAttendanceType::Absent;
+    #[ORM\Column(type: 'integer', enumType: AttendanceType::class)]
+    private AttendanceType $bookAttendanceType = AttendanceType::Absent;
 
-    #[ORM\Column(type: 'integer')]
-    private int $bookExcuseStatus = LessonAttendanceExcuseStatus::NotExcused;
+    #[ORM\Column(type: 'integer', enumType: AttendanceExcuseStatus::class)]
+    private AttendanceExcuseStatus $bookExcuseStatus = AttendanceExcuseStatus::NotExcused;
 
     #[ORM\Column(type: 'json')]
     #[Assert\All([
@@ -68,12 +68,12 @@ class StudentAbsenceType implements Stringable {
     private bool $notifySubjectTeacher = false;
 
     /**
-     * @var Collection<LessonAttendanceFlag>
+     * @var Collection<AttendanceFlag>
      */
     #[ORM\JoinTable(name: 'student_absence_type_flags')]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
-    #[ORM\ManyToMany(targetEntity: LessonAttendanceFlag::class)]
+    #[ORM\ManyToMany(targetEntity: AttendanceFlag::class)]
     private Collection $flags;
 
     /**
@@ -198,11 +198,11 @@ class StudentAbsenceType implements Stringable {
         return $this;
     }
 
-    public function addFlag(LessonAttendanceFlag $flag): void {
+    public function addFlag(AttendanceFlag $flag): void {
         $this->flags->add($flag);
     }
 
-    public function removeFlag(LessonAttendanceFlag $flag): void {
+    public function removeFlag(AttendanceFlag $flag): void {
         $this->flags->removeElement($flag);
     }
 

@@ -2,13 +2,13 @@
 
 namespace App\Repository;
 
-use App\Entity\LessonAttendanceFlag;
+use App\Entity\AttendanceFlag;
 use App\Entity\Subject;
 
 class LessonAttendanceFlagRepository extends AbstractRepository implements LessonAttendanceFlagRepositoryInterface {
 
     public function findAll(): array {
-        return $this->em->getRepository(LessonAttendanceFlag::class)
+        return $this->em->getRepository(AttendanceFlag::class)
             ->findBy([], ['description' => 'asc']);
     }
 
@@ -16,7 +16,7 @@ class LessonAttendanceFlagRepository extends AbstractRepository implements Lesso
         $qb = $this->em->createQueryBuilder();
 
         return $qb->select('f')
-            ->from(LessonAttendanceFlag::class, 'f')
+            ->from(AttendanceFlag::class, 'f')
             ->leftJoin('f.subjects', 's')
             ->where($qb->expr()->isNull('s.id'))
             ->orWhere('s.id = :subject')
@@ -26,12 +26,12 @@ class LessonAttendanceFlagRepository extends AbstractRepository implements Lesso
             ->getResult();
     }
 
-    public function persist(LessonAttendanceFlag $flag): void {
+    public function persist(AttendanceFlag $flag): void {
         $this->em->persist($flag);
         $this->em->flush();
     }
 
-    public function remove(LessonAttendanceFlag $flag): void {
+    public function remove(AttendanceFlag $flag): void {
         $this->em->remove($flag);
         $this->em->flush();
     }

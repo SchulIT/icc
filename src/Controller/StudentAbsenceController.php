@@ -6,7 +6,7 @@ use App\Converter\StudyGroupStringConverter;
 use App\Entity\DateLesson;
 use App\Entity\Exam;
 use App\Entity\ExcuseNote;
-use App\Entity\LessonAttendanceExcuseStatus;
+use App\Entity\AttendanceExcuseStatus;
 use App\Entity\Student;
 use App\Entity\StudentAbsence;
 use App\Entity\StudentAbsenceAttachment;
@@ -379,7 +379,7 @@ class StudentAbsenceController extends AbstractController {
 
         if($this->isCsrfTokenValid('excuse_note', $request->request->get('_csrf_token')) !== true) {
             $this->addFlash('error', 'CSRF token invalid.');
-        } else if($absence->getType()->getBookExcuseStatus() === LessonAttendanceExcuseStatus::Excused) {
+        } else if($absence->getType()->getBookExcuseStatus() === AttendanceExcuseStatus::Excused) {
             $this->addFlash('success', 'absences.students.show.create_excuse_note.not_necessary');
         } else {
             $comment = 'student_absence:' . $absence->getUuid()->toString();

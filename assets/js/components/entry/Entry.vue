@@ -477,17 +477,20 @@ export default {
       let $this = this;
 
       if(this.entry.attendances.length === 0) {
-        this.students.forEach(function(student) {
-          $this.entry.attendances.push({
-            type: 1,
-            student: student,
-            minutes: 0,
-            lessons: 0,
-            excuse_status: 0,
-            comment: null,
-            flags: [ ]
-          });
-        });
+        for(let student of this.students) {
+          for(let lessonNumber = start; lessonNumber <= end; lessonNumber++) {
+            $this.entry.attendances.push({
+              type: 1,
+              student: student,
+              minutes: 0,
+              lesson: lessonNumber,
+              zero_absent_lesson: false,
+              excuse_status: 0,
+              comment: null,
+              flags: [ ]
+            });
+          }
+        }
       }
 
       this.show();

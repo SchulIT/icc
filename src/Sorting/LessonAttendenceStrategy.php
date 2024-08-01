@@ -2,7 +2,7 @@
 
 namespace App\Sorting;
 
-use App\Entity\LessonAttendance;
+use App\Entity\Attendance;
 
 class LessonAttendenceStrategy implements SortingStrategyInterface {
 
@@ -11,8 +11,8 @@ class LessonAttendenceStrategy implements SortingStrategyInterface {
     }
 
     /**
-     * @param LessonAttendance $objectA
-     * @param LessonAttendance $objectB
+     * @param Attendance $objectA
+     * @param Attendance $objectB
      */
     public function compare($objectA, $objectB): int {
         $dateCmp = $this->dateStrategy->compare($objectA->getEntry()->getLesson()->getDate(), $objectB->getEntry()->getLesson()->getDate());

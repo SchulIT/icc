@@ -30,13 +30,14 @@
             <div class="card-footer pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#info-{{ uuid }}-{{ item.uuid }}">
                 <span class="me-auto align-self-center">
                     <i class="fas fa-info-circle"></i> {{ item.student|student }}
+
+                    <span class="text-muted">
+                        <i class="fas fa-calendar-alt"></i> {{ item.from|format_date }} - {{ item.until|format_date }}
+                    </span>
                 </span>
                 <i class="fa indicator align-self-center fa-chevron-down"></i>
             </div>
             <div class="card-footer collapse border-top-0" id="info-{{ uuid }}-{{ item.uuid }}">
-                <div>
-                    <i class="fas fa-calendar-alt"></i> {{ item.from|format_date }} - {{ item.until|format_date }}
-                </div>
                 {{ item.content|markdown }}
             </div>
         {% endfor %}

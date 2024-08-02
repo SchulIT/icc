@@ -1,0 +1,72 @@
+<div class="bs-callout bs-callout-info">
+    <h5>{{ 'info.label'|trans }}</h5>
+    <p>{{ 'book.grades.info.no_edit_in_student_view'|trans }}</p>
+</div>
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered table-hover card-table" id="grades"
+               data-worksheet="{% if gradeFilter.currentGrade is not null %}{{ gradeFilter.currentGrade.name }}{% elseif tuitionFilter.currentTuition is not null %}{{ tuitionFilter.currentTuition.name }}{% elseif studentFilter.currentStudent is not null %}{{ studentFilter.currentStudent|student }}{% endif %}">
+            <colgroup>
+                <col>
+                {% for category in overview.categories %}
+                    {% if category.category.uuid.toString not in hiddenCategories %}
+                        <col class="{% if isGradeView or isStudentsView %}column-sm{% else %}column-md{% endif %}">
+                    {% endif %}
+                {% endfor %}
+            </colgroup>
+
+            <thead>
+            <tr>
+                <th>{{ 'label.tuition'|trans }}</th>
+                {% for category in overview.categories %}
+                    {% if category.category.uuid.toString not in hiddenCategories %}
+                        <th class="{% if isGradeView or isStudentsView %}rotate-90{% else %}text-center{% endif %}">
+                            <div>
+                                {% if isGradeView %}<span class="badge text-bg-primary">{{ category.tuition.name }}</span>{% endif%} {{ category.category.displayName }}
+                            </div>
+                        </th>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+            </thead>
+
+            <tbody>
+            {% set tabindex = 1000 %}
+            {% set rowCount = overview.rows|length %}
+            {% for row in overview.rows %}
+                {% set rowIdx = loop.index0 %}
+                <tr>
+                    <td class="align-middle" data-xlsx="raw">
+                        {{ row.tuitionOrStudent.name }}
+                    </td>
+                    {% for category in overview.categories %}
+                        {% if category.category.uuid.toString not in hiddenCategories %}
+                            {% set colorMap = category.category.catalog|gradeCatalogColorMap %}
+                            <td class="align-middle text-center" data-xlsx="encrypted">
+                                {% set grade = row.grade(row.tuitionOrStudent, category.category) %}
+                                {% set name = 'grades[' ~ row.tuitionOrStudent.uuid ~ '][' ~ category.category.uuid ~ ']' ~ '[' ~ category.tuition.uuid ~ ']' %}
+
+                                {% set id = name|replace({'[': '_', ']': '_'}) %}
+                                {% set isReadonly = isStudentsView or isForeignTuition %}
+
+                                <input type="hidden" data-encrypted="{{ grade != null ? grade.encryptedGrade|e('html_attr') : '' }}" value="{{ grade != null ? grade.encryptedGrade|e('html_attr') : '' }}" data-select="#{{ id }}" name="{{ name }}" data-colormap="{{ colorMap|json_encode|e('html_attr') }}">
+
+                                {% if isReadonly %}
+                                    <span id="{{ id }}"><i class="fas fa-lock"></i></span>
+                                {% else %}
+                                    <select class="form-select" tabindex="{{ tabindex + (rowCount*loop.index0) + rowIdx }}" disabled="disabled" id="{{ id }}">
+                                        <option value=""></option>
+                                        {% for value in category.category.catalog.grades %}
+                                            <option value="{{ value.value }}">{{ value.value }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% endif %}
+                            </td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

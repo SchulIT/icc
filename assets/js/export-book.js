@@ -421,8 +421,8 @@ document.addEventListener('DOMContentLoaded', function(event) {
                     if(lesson.was_cancelled) {
                         lesson.topic = '[Entfall] ' + lesson.topic;
                     }
-                    row.push([ lesson.topic ]);
-                    row.push([ lesson.exercises ]);
+                    row.push([ wrapWordsLongerThan(lesson.topic) ]);
+                    row.push([ wrapWordsLongerThan(lesson.exercises) ]);
                     row.push([ remarksAndAttendances.join('\n') ]);
 
                     if(lesson.teacher !== null) {
@@ -512,8 +512,8 @@ document.addEventListener('DOMContentLoaded', function(event) {
                     if(lesson.was_cancelled) {
                         lesson.topic = '[Entfall] ' + lesson.topic;
                     }
-                    row.push([ lesson.topic ]);
-                    row.push([ lesson.exercises ]);
+                    row.push([ wrapWordsLongerThan(lesson.topic) ]);
+                    row.push([ wrapWordsLongerThan(lesson.exercises) ]);
                     row.push([ remarksAndAttendances.join('\n') ]);
 
                     body.push(row);
@@ -534,6 +534,27 @@ document.addEventListener('DOMContentLoaded', function(event) {
                 fontSize: 8
             }
         });
+    }
+
+    function wrapWordsLongerThan(text, threshold = 30) {
+        if(text === null || text.length === 0) {
+            return text;
+        }
+
+        let wrappedText = [ ];
+        let regexp = new RegExp("(.{1," + threshold + "})", "g");
+        for(let word of text.split(' ')) {
+            if(word.length < threshold) {
+                wrappedText.push(word);
+                continue;
+            }
+
+            for(let part of word.match(regexp)) {
+                wrappedText.push(part);
+            }
+        }
+
+        return wrappedText.join(' ');
     }
 
     function addTitlePage(pdf, section, tuition, grades, responsibilities) {

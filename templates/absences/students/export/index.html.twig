@@ -30,9 +30,7 @@
                             <div class="mb-3">
                                 <label for="end" class="form-label">{{ 'label.end'|trans }}</label>
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                                    </div>
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                     <input class="form-control" type="date" name="end" id="end" pattern="\d{4}-\d{2}-\d{2}" value="{% if end is not null %}{{ end.format('Y-m-d') }}{% endif %}">
                                 </div>
                             </div>

@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Book\Grade\Category;
+use App\Book\Grade\GradeOverview;
 use App\Book\Grade\GradeOverviewHelper;
 use App\Book\Grade\GradePersister;
 use App\Entity\Grade;
+use App\Entity\GradeMembership;
 use App\Entity\GradeTeacher;
 use App\Entity\Section;
 use App\Entity\Student;
@@ -27,6 +29,9 @@ use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/book/gradebook')]
 class TuitionGradebookController extends AbstractController {
+
+    public const NumberOfStudentsPerPage = 25;
+    public const StudentPaginationThreshold = 35;
 
     #[Route('/keepalive', name: 'gradebook_keepalive')]
     public function keepAlive(Request $request): Response {
@@ -50,13 +55,26 @@ class TuitionGradebookController extends AbstractController {
         $ownGrades = $this->resolveOwnGrades($sectionFilterView->getCurrentSection(), $user);
 
         $overview = null;
+        $page = $request->query->getInt('page', 1);
+        if($page < 1) { $page = 1; }
+        $pages = 1;
 
         if($tuitionFilterView->getCurrentTuition() !== null) {
             $overview = $gradeOverviewHelper->computeOverviewForTuition($tuitionFilterView->getCurrentTuition());
         } else if($studentFilterView->getCurrentStudent() !== null) {
             $overview = $gradeOverviewHelper->computeOverviewForStudent($studentFilterView->getCurrentStudent(), $sectionFilterView->getCurrentSection());
         } else if($gradeFilterView->getCurrentGrade() !== null) {
-            $overview = $gradeOverviewHelper->computeForGrade($gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection());
+            $gradeStudents = $gradeFilterView->getCurrentGrade()->getMemberships()->map(fn(GradeMembership $membership) => $membership->getStudent())->toArray();
+
+            if(count($gradeStudents) > self::StudentPaginationThreshold) {
+                $pages = ceil(count($gradeStudents) / (double)self::NumberOfStudentsPerPage);
+                $gradeStudents = array_slice($gradeStudents, self::NumberOfStudentsPerPage * ($page - 1), self::NumberOfStudentsPerPage);
+            }
+
+            $overview = [ ];
+            foreach($gradeStudents as $gradeStudent) {
+                $overview[] = $gradeOverviewHelper->computeOverviewForStudent($gradeStudent, $sectionFilterView->getCurrentSection());
+            }
         }
 
         if($request->isMethod('POST')) {
@@ -77,11 +95,23 @@ class TuitionGradebookController extends AbstractController {
         $categories = [ ];
         $hiddenCategories = [ ];
 
-        if($overview !== null) {
+        if($overview !== null && !is_array($overview)) {
             $categories = ArrayUtils::createArrayWithKeys(
                 $overview->getCategories(),
                 fn(Category $category) => $category->getCategory()->getId()
             );
+        } else if(is_array($overview)) {
+            $categories = [ ];
+            foreach($overview as $studentOverview) {
+                foreach($studentOverview->getCategories() as $category) {
+                    if(!array_key_exists($category->getCategory()->getId(), $categories)) {
+                        $categories[$category->getCategory()->getId()] = $category;
+                    }
+                }
+            }
+        }
+
+        if($overview !== null) {
             $categories = array_map(fn(Category $category) => $category->getCategory(), $categories);
             $hiddenCategories = $request->query->all('hide');
         }
@@ -97,7 +127,9 @@ class TuitionGradebookController extends AbstractController {
             'key' => $gradebookSettings->getEncryptedMasterKey(),
             'ttl' => $gradebookSettings->getTtlForSessionStorage(),
             'categories' => $categories,
-            'hiddenCategories' => $hiddenCategories
+            'hiddenCategories' => $hiddenCategories,
+            'page' => $page,
+            'pages' => $pages
         ]);
     }
 

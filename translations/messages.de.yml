@@ -320,6 +320,12 @@ label:
         label: Im Unterrichtsbuch-Export anzeigen
         help: Wenn diese Option aktiv ist, taucht diese Information beim Export des Unterrichtsbuch der zum Kind gehörenden Klasse auf.
     value: Wert
+    untis_week:
+        label: Stundenplanwoche
+        help: Name der Woche in Untis
+    override_weeks:
+        label: wird ersetzt durch
+        help: mehrere Wochen durch Komma separieren
 
 markdown:
     label: Markdown
@@ -2112,6 +2118,10 @@ import:
         weeks:
             label: Schulwochen
             help: Mit dieser Übersetzungstabelle können Untis-Schulwochen in Kalenderwochen aufgelöst werden. Wenn das Info-Stundenplanmodul vorhanden ist, kann die durch den Datenbank-Export erzeugte date.txt-Datei importiert werden.
+        week_overrides:
+            label: Wochen-Aliase
+            help: Mit dieser Übersetzungstabelle können die aus Untis importierten Schulwochen vor dem Import geändert werden. Das ist hilfreich, wenn es eine Schulwoche "AB" gibt, die intern für die A- und B-Woche stehen.
+
         substitutions:
             days:
                 label: Tage

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Converter\EnumStringConverter;
 use App\Entity\Student;
 use App\Form\Import\Untis\RoomImportType;
+use App\Form\Import\Untis\WeekOverrideType;
 use App\Form\TextCollectionEntryType;
 use App\Request\ValidationFailedException;
 use App\Untis\Gpu\Room\RoomImporter;
@@ -167,6 +168,13 @@ class UntisImportController extends AbstractController {
                 ],
                 'data' => $settings->getStudentIdentifierSeparator()
             ])
+            ->add('week_overrides', CollectionType::class, [
+                'entry_type' => WeekOverrideType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'data' => $settings->getTimetableWeekOverrides()
+            ])
             ->getForm();
         $form->handleRequest($request);
 
@@ -185,6 +193,7 @@ class UntisImportController extends AbstractController {
             $settings->setEventsType($form->get('events_type')->getData());
             $settings->setIgnoredSubstitutionTypes($form->get('ignored_substitution_types')->getData());
             $settings->setRemoveAbsenceOnEventEnabled($form->get('remove_absences_on_event')->getData());
+            $settings->setTimetableWeekOverrides($form->get('week_overrides')->getData());
 
             /** @var UploadedFile|null $file */
             $file = $form->get('import_weeks')->getData();

@@ -225,6 +225,22 @@
     </div>
 {%- endblock -%}
 
+{%- block week_override_widget -%}
+    <div class="input-group mb-2">
+        <span class="input-group-text">{{ 'label.untis_week.label'|trans }}</span>
+
+        {{ form_widget(form.week) }}
+
+        <span class="input-group-text">{{ 'label.override_weeks.label'|trans }}</span>
+
+        {{ form_widget(form.overrides) }}
+
+        <button type="button" class="btn btn-danger btn-sm btn-delete float-right" data-selector=".input-group">
+            <i class="fa fa-trash"></i>
+        </button>
+    </div>
+{%- endblock -%}
+
 {%- block calendar_week_school_week_widget -%}
     <div class="input-group mb-2">
         <span class="input-group-text">{{ 'label.calendar_week'|trans }}</span>

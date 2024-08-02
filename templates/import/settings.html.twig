@@ -124,6 +124,32 @@
     </div>
 
     <div class="card">
+        <div class="card-header">{{ 'import.settings.week_overrides.label'|trans }}</div>
+        <div class="card-body">
+            <p>
+                {{ 'import.settings.week_overrides.help'|trans }}
+            </p>
+
+            <div class="week_overrides" data-collection="week_overrides" data-prototype="{{ form_widget(form.week_overrides.vars.prototype)|e('html_attr') }}">
+                {% for override in form.week_overrides %}
+                    {{ form_widget(override) }}
+                {% endfor %}
+            </div>
+
+            {{ form_errors(form.week_overrides) }}
+            {{ form_help(form.week_overrides) }}
+
+            {% do form.week_overrides.setRendered(true) %}
+        </div>
+
+        <div class="card-footer">
+            <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="week_overrides">
+                <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+            </button>
+        </div>
+    </div>
+
+    <div class="card">
         <div class="card-header">{{ 'import.settings.weeks.label'|trans }}</div>
 
         <div class="card-body">

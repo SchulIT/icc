@@ -44,6 +44,8 @@ class TimetableImporter {
             );
         }
 
+        $this->applyWeekOverrides($lessons);
+
         $groups = $this->grouper->group($lessons, LessonStrategy::class);
 
         $lessonsToImport = [ ];
@@ -142,6 +144,39 @@ class TimetableImporter {
         $data->setLessons($lessonsToImport);
 
         return $this->importer->replaceImport($data, $this->strategy);
+    }
+
+    /**
+     * @param Lesson[] $lessons
+     * @return void
+     */
+    private function applyWeekOverrides(array $lessons): void {
+        $overrideMap = $this->getWeekOverrideMap();
+
+        foreach($lessons as $lesson) {
+            $weeks = $lesson->getWeeks();
+            $newWeeks = [ ];
+
+            foreach($weeks as $week) {
+                if(!array_key_exists($week, $overrideMap)) {
+                    $newWeeks[] = $week;
+                } else {
+                    $newWeeks = array_merge($newWeeks, $overrideMap[$week]);
+                }
+            }
+
+            $lesson->setWeeks(array_unique($newWeeks));
+        }
+    }
+
+    private function getWeekOverrideMap(): array {
+        $map = [ ];
+
+        foreach($this->settings->getTimetableWeekOverrides() as $override) {
+            $map[$override['week']] = explode(',', $override['overrides']);
+        }
+
+        return $map;
     }
 
     private function getSubjectOverrideMap(): array {

@@ -116,4 +116,12 @@ class UntisSettings extends AbstractSettings {
     public function getStudentIdentifierFormat(): StudentIdFormat {
         return $this->getValue('untis.student_id.format', StudentIdFormat::LastnameFirstname);
     }
+
+    public function setTimetableWeekOverrides(array $aliases): void {
+        $this->setValue('untis.import.week_overrides', $aliases);
+    }
+
+    public function getTimetableWeekOverrides(): array {
+        return $this->getValue('untis.import.week_overrides', [ ]);
+    }
 }

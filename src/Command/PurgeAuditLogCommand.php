@@ -11,8 +11,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use function Symfony\Component\String\u;
 
-#[AsCommand('app:db:clear_audit', 'Leert das Audit-Log.')]
-class ClearAuditLogCommand extends Command {
+#[AsCommand('app:audit:purge', 'Leert das gesamte Audit-Log.')]
+class PurgeAuditLogCommand extends Command {
 
     public function __construct(private EntityManagerInterface $em, string $name = null) {
         parent::__construct($name);
@@ -34,6 +34,6 @@ class ClearAuditLogCommand extends Command {
         }
 
         $style->success('Fertig');
-        return 0;
+        return Command::SUCCESS;
     }
 }

@@ -35,7 +35,7 @@ $ php bin/console app:students:remove_orphaned
 $ # Alle Benutzer löschen, denen kein Schüler/keine Schülerin bzw. Lehrkraft zugeordnet ist
 $ php bin/console app:user:remove_orphaned
 $ # Das Audit-Log leeren
-$ php bin/console app:clear-audit
+$ php bin/console app:audit:purge
 $ # Datenbanktabellen optimieren
 $ php bin/console app:db:optimize
 ```

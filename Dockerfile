@@ -55,9 +55,9 @@ WORKDIR /var/www/html
 COPY . .
 
 # Install PHP dependencies including symfony/runtime
-RUN composer install --no-dev --classmap-authoritative --no-scripts
+RUN composer install --classmap-authoritative --no-scripts
 
-FROM base AS node
+FROM base AS runner
 
 # Set working directory
 WORKDIR /var/www/html
@@ -66,6 +66,13 @@ COPY --from=composer /var/www/html/vendor /var/www/html/vendor
 
 # Copy the package.json and package-lock.json files into the container
 COPY . .
+
+# Remove unnecessary files
+RUN rm -rf ./docs
+RUN rm -rf ./.github
+RUN rm -rf ./docker-compose.yml
+RUN rm -rf ./Dockerfile
+RUN rm -rf ./.gitignore
 
 # Install Node.js dependencies
 RUN apt-get update && apt-get install -y \
@@ -78,31 +85,10 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs \
     && npm install -g npm@latest
 
-# Install Node.js dependencies and build assets
-RUN npm install \
-    && php bin/console bazinga:js-translation:dump assets/js/ --merge-domains \
-    && npm run build
-
-FROM base AS runner
-
-WORKDIR /var/www/html
-
-# Copy necessary files into the container
-COPY . .
-
-# Remove unnecessary files
-RUN rm -rf ./docs
-RUN rm -rf ./.github
-RUN rm -rf ./docker-compose.yml
-RUN rm -rf ./Dockerfile
-RUN rm -rf ./.gitignore
+RUN npm install
 
 # Copy build files from the previous stages
-COPY --from=node /var/www/html/public /var/www/html/public
 COPY --from=composer /var/www/html/vendor /var/www/html/vendor
-
-# NOTE: Where are the assets:install command and the bazinga:js-translation:dump command coming from? / Where is the output landing?
-RUN php bin/console assets:install
 
 # Remove the .htaccess file because we are using Nginx
 RUN rm -rf ./public/.htaccess
@@ -115,9 +101,6 @@ COPY startup.sh /usr/local/bin/startup.sh
 
 # Ensure the startup script is executable
 RUN chmod +x /usr/local/bin/startup.sh
-
-# Set first run flag
-ENV FIRST_RUN=1
 
 # Expose port 80
 EXPOSE 80

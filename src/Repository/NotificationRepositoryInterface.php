@@ -33,5 +33,7 @@ interface NotificationRepositoryInterface {
 
     public function remove(Notification $notification): void;
 
+    public function removeAll(): int;
+
     public function removeBetween(DateTime $start, DateTime $end): int;
 }

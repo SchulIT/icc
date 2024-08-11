@@ -86,6 +86,13 @@ class NotificationRepository extends AbstractRepository implements NotificationR
         $this->em->flush();
     }
 
+    public function removeAll(): int {
+        return $this->em->createQueryBuilder()
+            ->delete(Notification::class, 'n')
+            ->getQuery()
+            ->execute();
+    }
+
     public function removeBetween(DateTime $start, DateTime $end): int {
         return $this->em->createQueryBuilder()
             ->delete(Notification::class, 'n')

@@ -55,7 +55,7 @@ WORKDIR /var/www/html
 COPY . .
 
 # Install PHP dependencies including symfony/runtime
-RUN composer install --classmap-authoritative --no-scripts
+RUN composer install --no-dev --classmap-authoritative --no-scripts
 
 FROM base AS runner
 

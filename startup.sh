@@ -16,7 +16,7 @@ if [ ! -e $CONTAINER_ALREADY_STARTED ]; then
     chown -R www-data:www-data /var/www/html/files
 
     # Check if the SAML certificate does not exist
-    if [ ! -f /var/www/html/certs/sp.crt ] || [ ! -f /var/www/html/certs/sp.key ]; then
+    if [ ! -f /var/www/html/saml/sp.crt ] || [ ! -f /var/www/html/saml/sp.key ]; then
         echo "Creating SAML certificate..."
 
         # Create SAML certificate

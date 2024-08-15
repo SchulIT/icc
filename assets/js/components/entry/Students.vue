@@ -269,7 +269,6 @@
 
 <script>
 import Choices from "choices.js";
-import { ref } from 'vue';
 
 export default {
   name: 'students',
@@ -279,7 +278,6 @@ export default {
     possibleAbsences: Array,
     suggestedRemovals: Array,
     attendances: Array,
-    step: Number,
     start: Number,
     end: Number,
     listStudentsUrl: String,
@@ -578,7 +576,6 @@ export default {
     },
     load() {
       let $this = this;
-      //let students = { };
 
       this.students.forEach(function(student) {
         if($this.attendances.filter(x => x.student.uuid === student.uuid).length === 0) {

@@ -104,13 +104,11 @@ class BookEventController extends AbstractController {
         $fakeTuition->setStudyGroup($fakeStudyGroup);
 
         $possibleAbsences = $serializer->serialize($suggestionResolver->resolve($fakeTuition, $event->getDate(), $event->getLessonStart(), $event->getLessonEnd()), 'json');
-        $possibleRemovals = $serializer->serialize($removeSuggestionResolver->resolve($fakeTuition, $event->getDate(), $event->getLessonStart(), $event->getLessonEnd()), 'json');
 
         return $this->render('books/events/edit.html.twig', [
             'form' => $form->createView(),
             'event' => $event,
-            'possibleAbsences' => $possibleAbsences,
-            'possibleRemovals' => $possibleRemovals
+            'possibleAbsences' => $possibleAbsences
         ]);
     }
 

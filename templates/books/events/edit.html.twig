@@ -42,7 +42,7 @@
                         <i class="fa fa-save"></i> {{ 'actions.save'|trans }}
                     </button>
 
-                    <a href="javascript:history.back()" class="btn btn-secondary btn-sm">
+                    <a href="javascript:history.back()" class="btn btn-secondary btn-sm ms-1">
                         <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
                     </a>
                 </div>
@@ -51,7 +51,7 @@
             <div class="col-md-6">
                 <students :attendances="{{ event.attendances.toArray|json_encode }}"
                           :possible-absences="{{ possibleAbsences }}"
-                          :suggested-removals="{{ possibleRemovals }}"
+                          :suggested-removals="[]"
                           :students="[]"
                           :step="1"
                           field-name="book_event"

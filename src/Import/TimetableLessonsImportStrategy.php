@@ -9,7 +9,6 @@ use App\Entity\Subject;
 use App\Entity\Teacher;
 use App\Entity\TimetableLesson;
 use App\Entity\Tuition;
-use App\Messenger\ResolveTimetableLessonsForAbsenceLessonMessage;
 use App\Repository\GradeRepositoryInterface;
 use App\Repository\RoomRepositoryInterface;
 use App\Repository\SubjectRepositoryInterface;
@@ -19,13 +18,10 @@ use App\Repository\TransactionalRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Request\Data\TimetableLessonData;
 use App\Request\Data\TimetableLessonsData;
-use App\Section\SectionResolver;
 use App\Section\SectionResolverInterface;
 use App\Utils\ArrayUtils;
 use App\Utils\CollectionUtils;
 use Psr\Log\LoggerInterface;
-use Ramsey\Uuid\Uuid;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 class TimetableLessonsImportStrategy implements ReplaceImportStrategyInterface, InitializeStrategyInterface, PostActionStrategyInterface {
 
@@ -38,7 +34,6 @@ class TimetableLessonsImportStrategy implements ReplaceImportStrategyInterface, 
     public function __construct(private readonly TimetableLessonRepositoryInterface $timetableRepository, private readonly TuitionRepositoryInterface $tuitionRepository,
                                 private readonly RoomRepositoryInterface $roomRepository, private readonly TeacherRepositoryInterface $teacherRepository,
                                 private readonly SubjectRepositoryInterface $subjectRepository, private readonly GradeRepositoryInterface $gradeRepository,
-                                private readonly MessageBusInterface $messageBus,
                                 private readonly SectionResolverInterface $sectionResolver, private readonly LoggerInterface $logger)
     {
     }
@@ -210,8 +205,5 @@ class TimetableLessonsImportStrategy implements ReplaceImportStrategyInterface, 
         if(!$request instanceof TimetableLessonsData) {
             return;
         }
-
-        // Trigger timetable lesson resolving
-        $this->messageBus->dispatch(new ResolveTimetableLessonsForAbsenceLessonMessage($request->getStartDate(), $request->getEndDate()));
     }
 }

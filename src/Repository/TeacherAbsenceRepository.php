@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Teacher;
 use App\Entity\TeacherAbsence;
-use App\Entity\TeacherAbsenceLesson;
+use App\Entity\TeacherAbsenceComment;
 use DateTime;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
@@ -46,12 +46,12 @@ class TeacherAbsenceRepository extends AbstractRepository implements TeacherAbse
         return $paginator;
     }
 
-    public function persist(TeacherAbsence|TeacherAbsenceLesson $absenceOrLesson): void {
+    public function persist(TeacherAbsence|TeacherAbsenceComment $absenceOrLesson): void {
         $this->em->persist($absenceOrLesson);
         $this->em->flush();
     }
 
-    public function remove(TeacherAbsence|TeacherAbsenceLesson $absenceOrLesson): void {
+    public function remove(TeacherAbsence|TeacherAbsenceComment $absenceOrLesson): void {
         $this->em->remove($absenceOrLesson);
         $this->em->flush();
     }

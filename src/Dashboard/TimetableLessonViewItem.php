@@ -3,8 +3,9 @@
 namespace App\Dashboard;
 
 use App\Entity\BookStudentInformation;
-use App\Entity\TeacherAbsenceLesson;
+use App\Entity\TeacherAbsenceComment;
 use App\Entity\TimetableLesson;
+use App\Entity\TimetableLessonAdditionalInformation;
 use App\Grouping\AbsentStudentGroup;
 
 class TimetableLessonViewItem extends AdditionalExtraAwareViewItem {
@@ -16,8 +17,9 @@ class TimetableLessonViewItem extends AdditionalExtraAwareViewItem {
      * @param TimetableLesson|null $lesson
      * @param AbsentStudentGroup[] $absentStudentGroups
      * @param BookStudentInformation[] $studentInfo
+     * @param TimetableLessonAdditionalInformation[] $additionalInformation
      */
-    public function __construct(private readonly ?TimetableLesson $lesson, array $absentStudentGroups, array $studentInfo, private readonly ?TeacherAbsenceLesson $absenceLesson) {
+    public function __construct(private readonly ?TimetableLesson $lesson, array $absentStudentGroups, array $studentInfo, private readonly array $additionalInformation) {
         parent::__construct($absentStudentGroups, $studentInfo);
     }
 
@@ -41,10 +43,10 @@ class TimetableLessonViewItem extends AdditionalExtraAwareViewItem {
     }
 
     /**
-     * @return TeacherAbsenceLesson|null
+     * @return TimetableLessonAdditionalInformation[]
      */
-    public function getAbsenceLesson(): ?TeacherAbsenceLesson {
-        return $this->absenceLesson;
+    public function getAdditionalInformation(): array {
+        return $this->additionalInformation;
     }
 
     public function getBlockName(): string {

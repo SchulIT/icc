@@ -42,8 +42,9 @@ use App\Repository\ResourceReservationRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\SubstitutionRepositoryInterface;
-use App\Repository\TeacherAbsenceLessonRepositoryInterface;
+use App\Repository\TeacherAbsenceCommentRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
+use App\Repository\TimetableLessonAdditionalInformationRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
@@ -82,7 +83,7 @@ class DashboardViewHelper {
                                 private ResourceReservationRepositoryInterface $roomReservationRepository, private FreeTimespanRepositoryInterface $freeTimespanRepository, private StudyGroupHelper $studyGroupHelper,
                                 private TimetableTimeHelper $timetableTimeHelper, private Sorter $sorter, private Grouper $grouper, private TimetableSettings $timetableSettings, private DashboardSettings $dashboardSettings,
                                 private AuthorizationCheckerInterface $authorizationChecker, private ValidatorInterface $validator, private DateHelper $dateHelper, private AbsenceResolver $absenceResolver,
-                                private SectionResolverInterface $sectionResolver, private readonly TuitionRepositoryInterface $tuitionRepository, private readonly TeacherAbsenceLessonRepositoryInterface $absenceLessonRepository,
+                                private SectionResolverInterface $sectionResolver, private readonly TuitionRepositoryInterface $tuitionRepository, private readonly TimetableLessonAdditionalInformationRepositoryInterface $timetableLessonAdditionalInformationRepository,
                                 private readonly BookSettings $bookSettings, private readonly LessonEntryRepositoryInterface $lessonEntryRepository, private readonly TeacherRepositoryInterface $teacherRepository,
                                 private readonly StudentRepositoryInterface $studentRepository, private readonly TokenStorageInterface $tokenStorage,
                                 private readonly ParentsDayRepositoryInterface $parentsDayRepository, private readonly ParentsDayAppointmentRepositoryInterface $parentsDayAppointmentRepository,
@@ -316,18 +317,18 @@ class DashboardViewHelper {
 
             for($lessonNumber = $lesson->getLessonStart(); $lessonNumber <= $lesson->getLessonEnd(); $lessonNumber++) {
                 $absentStudents = $computeAbsences ? $this->computeAbsentStudents($lessonStudents, $lessonNumber, $dateTime, [], $lesson->getTuition()) : [ ];
-                $absenceLesson = $this->absenceLessonRepository->findOneForLesson($lesson);
-                $dashboardView->addItem($lessonNumber, new TimetableLessonViewItem($lesson, $absentStudents, $studentInfo, $absenceLesson));
+                $additionalInfo = $this->timetableLessonAdditionalInformationRepository->findBy($lesson->getDate(), $lesson->getTuition()?->getStudyGroup(), $lessonNumber);
+                $dashboardView->addItem($lessonNumber, new TimetableLessonViewItem($lesson, $absentStudents, $studentInfo, $additionalInfo));
             }
         }
     }
 
-    private function addEmptyTimetableLessons(DashboardView $view, int $numberOfLessons) {
+    private function addEmptyTimetableLessons(DashboardView $view, int $numberOfLessons): void {
         $lessons = $view->getLessonNumbers();
 
         for($i = 1; $i <= $numberOfLessons; $i++) {
             if(!in_array($i, $lessons)) {
-                $view->addItem($i, new TimetableLessonViewItem(null, [], [],  null));
+                $view->addItem($i, new TimetableLessonViewItem(null, [], [],  []));
             }
         }
 
@@ -347,7 +348,7 @@ class DashboardViewHelper {
             }
 
             if($hasLessonEntry === false) {
-                $view->addItem($lessonNumber, new TimetableLessonViewItem(null, [], [], null));
+                $view->addItem($lessonNumber, new TimetableLessonViewItem(null, [], [], []));
             }
         }
     }
@@ -379,7 +380,7 @@ class DashboardViewHelper {
             $isFreeLesson = in_array($substitution->getType(), $freeTypes);
 
             if($substitution->startsBefore()) {
-                $dashboardView->addItemBefore($substitution->getLessonStart(), new SubstitutionViewItem($substitution, $isFreeLesson, [ ], [ ], [ ], null, null));
+                $dashboardView->addItemBefore($substitution->getLessonStart(), new SubstitutionViewItem($substitution, $isFreeLesson, [ ], [ ], [ ], null, []));
 
                 if($substitution->getLessonEnd() - $substitution->getLessonStart() === 0) {
                     // Do not expand more lessons when the end is the same lesson as the beginning
@@ -394,10 +395,14 @@ class DashboardViewHelper {
 
                 $absentStudents = $computeAbsences ? $this->computeAbsentStudents($students, $lesson, $substitution->getDate(), [], $tuition) : [ ];
                 $timetableLesson = $this->findTimetableLesson($substitution, $lesson);
-                $absenceLesson = null;
+                $additionalInfo = [ ];
 
-                if($timetableLesson !== null) {
-                    $absenceLesson = $this->absenceLessonRepository->findOneForLesson($timetableLesson);
+                if($substitution->getStudyGroups()->count() === 1 || $substitution->getReplacementStudyGroups()->count() === 1) {
+                    $studyGroup = $substitution->getReplacementStudyGroups()->count() === 1 ? $substitution->getReplacementStudyGroups()->first() : $substitution->getStudyGroups()->first();
+
+                    if($studyGroup !== false && $studyGroup !== null) {
+                        $additionalInfo = $this->timetableLessonAdditionalInformationRepository->findBy($substitution->getDate(), $studyGroup, $lesson);
+                    }
                 }
 
                 $studentInfo = [ ];
@@ -408,7 +413,7 @@ class DashboardViewHelper {
                     }
                 }
 
-                $dashboardView->addItem($lesson, new SubstitutionViewItem($substitution, $isFreeLesson, $students, $absentStudents, $studentInfo, $timetableLesson, $absenceLesson));
+                $dashboardView->addItem($lesson, new SubstitutionViewItem($substitution, $isFreeLesson, $students, $absentStudents, $studentInfo, $timetableLesson, $additionalInfo));
             }
         }
     }

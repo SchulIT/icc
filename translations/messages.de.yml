@@ -438,6 +438,19 @@ dashboard:
         header: Es können Termine für den Elternsprechtag am %date% gebucht werden.
         link: jetzt buchen
 
+    additional_information:
+        label: Information zur Stunde
+        add:
+            label: Information zur Stunde hinzufügen
+            success: Information zur Stunde erfolgreich hinzugefügt
+        edit:
+            label: Information zur Stunde bearbeiten
+            success: Information zur Stunde erfolgreich aktualisiert
+        remove:
+            label: Information zur Stunde löschen
+            confirm: 'Soll die Information am %date% zur %lesson% (Kurs: %studygroup%) wirklich gelöscht werden?'
+            success: Information erfolgreich gelöscht
+
 plans:
     label: Pläne
 
@@ -1731,7 +1744,7 @@ absences:
             lessons:
                 header: Betroffene Unterrichtsstunden
                 unavailable: Aufgrund einer Stundenplanänderung muss diese Abwesenheitsinformation einer vorhandenen Stundenplanstunde zugewiesen werden. Bitte die Bearbeiten-Funktion verwenden, um die betroffene Stundenplanstunde auszuwählen.
-                todo: Für diese Stunde wurden noch keine Informationen hinterlegt. Bitte die Bearbeiten-Funktion verwenden, um Informationen für Vertretungsplaner, Vertretungslehrkraft und/oder Lernende zu hinterlegen.
+                todo: Für diese Stunde wurden noch keine Informationen hinterlegt. Bitte die Bearbeiten-Funktion verwenden, um Informationen für die Vertretungsplaner zu hinterlegen.
                 add_missing:
                     label: Fehlende Unterrichtsstunden ergänzen
                     help: Ergänzt Unterrichtstunden, die in den Abwesenheitsbereich fallen und noch nicht hier hinterlegt sind.

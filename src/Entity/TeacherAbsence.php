@@ -41,10 +41,10 @@ class TeacherAbsence {
     private ?string $message;
 
     /**
-     * @var Collection<TeacherAbsenceLesson>
+     * @var Collection<TeacherAbsenceComment>
      */
-    #[ORM\OneToMany(mappedBy: 'absence', targetEntity: TeacherAbsenceLesson::class, cascade: ['persist'], orphanRemoval: true)]
-    private Collection $lessons;
+    #[ORM\OneToMany(mappedBy: 'absence', targetEntity: TeacherAbsenceComment::class, cascade: ['persist'], orphanRemoval: true)]
+    private Collection $comments;
 
     #[ORM\Column(type: 'datetime')]
     #[Timestampable(on: 'create')]
@@ -59,7 +59,7 @@ class TeacherAbsence {
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
-        $this->lessons = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     /**
@@ -142,20 +142,20 @@ class TeacherAbsence {
         return $this;
     }
 
-    public function addLesson(TeacherAbsenceLesson $lesson): void {
+    public function addComment(TeacherAbsenceComment $lesson): void {
         $lesson->setAbsence($this);
-        $this->lessons->add($lesson);
+        $this->comments->add($lesson);
     }
 
-    public function removeLesson(TeacherAbsenceLesson $lesson): void {
-        $this->lessons->removeElement($lesson);
+    public function removeComment(TeacherAbsenceComment $lesson): void {
+        $this->comments->removeElement($lesson);
     }
 
     /**
-     * @return Collection<TeacherAbsenceLesson>
+     * @return Collection<TeacherAbsenceComment>
      */
-    public function getLessons(): Collection {
-        return $this->lessons;
+    public function getComments(): Collection {
+        return $this->comments;
     }
 
     /**

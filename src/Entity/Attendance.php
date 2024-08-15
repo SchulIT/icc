@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Stringable;
@@ -21,10 +22,13 @@ class Attendance implements JsonSerializable, Stringable {
     #[ORM\Column(type: 'integer', enumType: AttendanceType::class)]
     private AttendanceType $type = AttendanceType::Present;
 
-    #[Assert\NotNull]
     #[ORM\ManyToOne(targetEntity: LessonEntry::class, inversedBy: 'attendances')]
-    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     private ?LessonEntry $entry = null;
+
+    #[ORM\ManyToOne(targetEntity: BookEvent::class, inversedBy: 'attendances')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
+    private ?BookEvent $event = null;
 
     #[ORM\Column(type: 'integer')]
     #[Assert\GreaterThan(0)]
@@ -79,6 +83,15 @@ class Attendance implements JsonSerializable, Stringable {
 
     public function setEntry(?LessonEntry $entry): Attendance {
         $this->entry = $entry;
+        return $this;
+    }
+
+    public function getEvent(): ?BookEvent {
+        return $this->event;
+    }
+
+    public function setEvent(?BookEvent $event): Attendance {
+        $this->event = $event;
         return $this;
     }
 
@@ -149,6 +162,10 @@ class Attendance implements JsonSerializable, Stringable {
      */
     public function getFlags(): Collection {
         return $this->flags;
+    }
+
+    public function getDate(): ?DateTime {
+        return $this->getEntry()?->getLesson()->getDate() ?? $this->getEvent()?->getDate();
     }
 
     public function jsonSerialize(): array {

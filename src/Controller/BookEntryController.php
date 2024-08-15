@@ -176,39 +176,6 @@ class BookEntryController extends AbstractController {
         ]);
     }
 
-    #[Route(path: '/{uuid}/students/add', name: 'add_student_to_entry')]
-    public function addStudent(LessonEntry $entry, Request $request): Response {
-        $this->denyAccessUnlessGranted(LessonEntryVoter::Edit, $entry);
-
-        $form = $this->createForm(LessonEntryAddStudent::class);
-        $form->handleRequest($request);
-
-        if($form->isSubmitted() && $form->isValid()) {
-            /** @var Student $student */
-            $student = $form->get('student')->getData();
-
-            $entry->addAttendance(
-                (new Attendance())
-                    ->setStudent($student)
-                    ->setType(AttendanceType::Present)
-                    ->setEntry($entry)
-            );
-
-            $this->repository->persist($entry);
-
-            $this->addFlash('success', 'book.entry.student.add.success');
-
-            return $this->redirectToRoute('show_entry', [
-                'uuid' => $entry->getUuid()->toString()
-            ]);
-        }
-
-        return $this->render('books/entry/add_student.html.twig', [
-            'form' => $form->createView(),
-            'entry' => $entry
-        ]);
-    }
-
     #[Route(path: '/{uuid}/remove', name: 'remove_entry')]
     public function remove(LessonEntry $entry, Request $request): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::Remove, $entry);

@@ -121,6 +121,7 @@
                               :suggested-removals="removals"
                               :students="students"
                               :step="1"
+                              field-name="lesson_entry"
                               :list-students-url="studentsUrl"
                               :list-study-groups-url="studyGroupsUrl"
                               :start="entry.start"

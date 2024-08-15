@@ -447,6 +447,87 @@
                                     {% endfor %}
                                 {% endif %}
 
+                                {% for event in overview.events(day.date) %}
+                                    <div class="list-group-item d-flex align-items-center">
+                                        <div class="book-lesson m-0 p-0">
+                                            {% for lessonNumber in event.lessonStart..event.lessonEnd %}
+                                                {{ lessonNumber }}<br>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="d-flex align-items-center flex-fill">
+                                            <div class="flex-fill">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="badge text-bg-primary">
+                                                        <i class="fas fa-calendar-alt"></i> {{ event.title|upper }}
+                                                    </div>
+
+                                                    <div class="ms-2">
+                                                        <i class="fas fa-chalkboard-teacher"></i>
+                                                        {{ event.teacher.acronym }}
+                                                    </div>
+                                                </div>
+                                                {% if event.description is not empty %}
+                                                <div class="mt-1 d-flex align-items-baseline">
+                                                    <i class="fas fa-info-circle"></i>
+                                                    <p class="mb-0 ms-1">{{ event.description }}</p>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+
+                                            {% if absentStudentsByEvent[event.uuid.toString] is defined or lateStudentsByEvent[event.uuid.toString] is defined %}
+                                                <div class="ms-2" style="min-width: 20%">
+                                                    <ul class="list-unstyled mb-0">
+                                                        {% for attendance in lateStudentsByEvent[event.uuid.toString] %}
+                                                            <li><i class="fa fa-user-clock"></i> {{ attendance.student|student }}
+                                                                <span class="badge text-bg-warning">{{ 'book.attendance.late_minutes'|trans({'%count%': attendance.lateMinutes}) }}</span>
+
+                                                                <span class="badge text-bg-secondary ms-1">
+                                                                    {{ 'label.substitution_lessons'|trans({'%start%' : attendance.lesson, '%count%': 0}) }}
+                                                                </span>
+                                                            </li>
+                                                        {% endfor %}
+
+                                                        {% for attendance in absentStudentsByEvent[event.uuid.toString] %}
+                                                            <li><i class="fa fa-user-times"></i> {{ attendance.student|student }}
+
+                                                                {% if attendance.isZeroAbsentLesson %}
+                                                                    <span class="badge text-bg-info">0 FS</span>
+                                                                {% elseif attendance.excuseStatus.value == 2 %}
+                                                                    <span class="badge text-bg-danger">{{ 'book.excuse_status_short.not_excused'|trans }}</span>
+                                                                {% elseif attendance.excuseStatus.value == 1 %}
+                                                                    <span class="badge text-bg-success">{{ 'book.excuse_status_short.excused'|trans }}</span>
+                                                                {% else %}
+                                                                    <span class="badge text-bg-warning">{{ 'book.excuse_status_short.not_set'|trans }}</span>
+                                                                {% endif %}
+
+                                                                <span class="badge text-bg-secondary ms-1">
+                                                                    {{ 'label.substitution_lessons'|trans({'%start%' : attendance.lesson, '%count%': 0}) }}
+                                                                </span>
+                                                            </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                </div>
+                                            {% endif %}
+
+                                            {% if is_granted('view', event) %}
+                                                <div class="ms-2">
+                                                    <a href="{{ path('show_or_edit_book_event_entry', { uuid: event.uuid }) }}" class="btn btn-success btn-sm" title="{{ 'book.events.show.label'|trans }}">
+                                                        <i class="fas fa-book-open"></i>
+                                                    </a>
+                                                </div>
+                                            {% endif %}
+                                            {% if is_granted('remove', event) %}
+                                                <div class="ms-2">
+                                                    <a href="{{ path('remove_book_event_entry', { uuid: event.uuid }) }}" class="btn btn-danger btn-sm" title="{{ 'book.events.remove.label'|trans }}">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+
                                 {% for lesson in day.lessons %}
                                     {% if lesson.entry is empty or lesson.lessonNumber == lesson.entry.lessonStart %}
                                     <div class="list-group-item d-flex align-items-center">
@@ -651,6 +732,12 @@
                         <a href="{{ path('add_excuse') }}" class="list-group-item list-group-item-action">
                             <i class="fas fa-plus"></i> {{ 'book.excuse_note.add.label'|trans }}
                         </a>
+
+                        {% if is_granted('new-bookevent') %}
+                        <a href="{{ path('create_book_event_entry') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-plus"></i> {{ 'book.events.add.label'|trans }}
+                        </a>
+                        {% endif %}
                     </div>
                 </div>
                 {% endif %}

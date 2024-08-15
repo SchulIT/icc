@@ -336,7 +336,28 @@ document.addEventListener('DOMContentLoaded', function(event) {
         return comments;
     }
 
-    function addComments(body, comments, colspan) {
+    function addEvents(body, events, flags) {
+        for(let event of events) {
+            body.push([
+                [ formatLessons(event.start, event.end) ],
+                [ 'Veranstaltung' ],
+                [
+                    [ event.title, event.description ].join('\n')
+                ],
+                [ '' ],
+                [
+                    formatAttendances(event.attendances, flags).join('\n')
+                ],
+                [
+                    event.teacher !== null ? event.teacher.acronym : ''
+                ]
+            ])
+        }
+
+        return body;
+    }
+
+    function addComments(body, comments) {
         comments.forEach(function(comment) {
             body.push([
                 {
@@ -407,6 +428,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
                 }]);
 
                 body = addComments(body, day.comments, 6);
+                body = addEvents(body, day.events, data.flags);
 
                 day.lessons.forEach(function(lesson) {
                     let row = [
@@ -500,6 +522,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
             week.days.forEach(function(day) {
                 body = addComments(body, day.comments, 4);
+                body = addEvents(body, day.events, data.flags);
 
                 day.lessons.forEach(function(lesson) {
                     let row = [

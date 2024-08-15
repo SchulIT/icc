@@ -3,6 +3,7 @@
 namespace App\Book;
 
 use App\Entity\BookComment;
+use App\Entity\BookEvent;
 use App\Entity\Grade;
 use App\Entity\LessonEntry;
 use App\Entity\Substitution;
@@ -14,6 +15,7 @@ use App\Grouping\LessonDayStrategy;
 use App\Repository\AppointmentCategoryRepositoryInterface;
 use App\Repository\AppointmentRepositoryInterface;
 use App\Repository\BookCommentRepositoryInterface;
+use App\Repository\BookEventRepositoryInterface;
 use App\Repository\FreeTimespanRepositoryInterface;
 use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Repository\LessonEntryRepositoryInterface;
@@ -29,7 +31,7 @@ use App\Utils\ArrayUtils;
 use DateTime;
 
 class EntryOverviewHelper {
-    public function __construct(private TimetableLessonRepositoryInterface $lessonRepository, private TuitionRepositoryInterface $tuitionRepository, private LessonEntryRepositoryInterface $entryRepository, private BookCommentRepositoryInterface $commentRepository, private LessonAttendanceRepositoryInterface $attendanceRepository, private SectionResolverInterface $sectionResolver, private TimetableSettings $timetableSettings, private AppointmentCategoryRepositoryInterface $appointmentCategoryRepository, private AppointmentRepositoryInterface $appointmentRepository, private FreeTimespanRepositoryInterface $freeTimespanRepository, private SubstitutionRepositoryInterface $substitutionRepository, private Grouper $grouper, private Sorter $sorter)
+    public function __construct(private TimetableLessonRepositoryInterface $lessonRepository, private TuitionRepositoryInterface $tuitionRepository, private LessonEntryRepositoryInterface $entryRepository, private BookCommentRepositoryInterface $commentRepository, private LessonAttendanceRepositoryInterface $attendanceRepository, private SectionResolverInterface $sectionResolver, private TimetableSettings $timetableSettings, private AppointmentCategoryRepositoryInterface $appointmentCategoryRepository, private AppointmentRepositoryInterface $appointmentRepository, private FreeTimespanRepositoryInterface $freeTimespanRepository, private SubstitutionRepositoryInterface $substitutionRepository, private readonly BookEventRepositoryInterface $bookEventRepository, private Grouper $grouper, private Sorter $sorter)
     {
     }
 
@@ -37,7 +39,7 @@ class EntryOverviewHelper {
         $entries = $this->entryRepository->findAllByTuition($tuition, $start, $end);
         $comments = $this->commentRepository->findAllByDateAndTuition($tuition, $start, $end);
 
-        return $this->computeOverview([$tuition], $entries, $comments, [ ], $start, $end);
+        return $this->computeOverview([$tuition], $entries, $comments, [ ], [ ], $start, $end);
     }
 
     /**
@@ -45,8 +47,9 @@ class EntryOverviewHelper {
      * @param LessonEntry[] $entries
      * @param BookComment[] $comments
      * @param Substitution[] $substitutions
+     * @param BookEvent[] $events
      */
-    private function computeOverview(array $tuitions, array $entries, array $comments, array $substitutions, DateTime $start, DateTime $end): EntryOverview {
+    private function computeOverview(array $tuitions, array $entries, array $comments, array $substitutions, array $events, DateTime $start, DateTime $end): EntryOverview {
         if($start > $end) {
             $tmp = $start;
             $start = $end;
@@ -154,7 +157,7 @@ class EntryOverviewHelper {
 
         $freeTimespans = $this->computeFreeTimespans($start, $end);
 
-        return new EntryOverview($start, $end, $groups, $comments, $freeTimespans);
+        return new EntryOverview($start, $end, $groups, $comments, $events, $freeTimespans);
     }
 
     public function computeOverviewForTeacher(Teacher $teacher, DateTime $start, DateTime $end): EntryOverview {
@@ -187,15 +190,16 @@ class EntryOverviewHelper {
         }
 
         $substitutions = array_filter($substitutions, fn(Substitution $substitution) => $substitution->getReplacementTeachers()->contains($teacher));
+        $events = $this->bookEventRepository->findByTeacher($teacher, $start, $end);
 
-        return $this->computeOverview($tuitions, $entries, $comments, $substitutions, $start, $end);
+        return $this->computeOverview($tuitions, $entries, $comments, $substitutions, $events, $start, $end);
     }
 
     public function computeOverviewForGrade(Grade $grade, DateTime $start, DateTime $end): EntryOverview {
         $section = $this->sectionResolver->getSectionForDate($start);
 
         if($section === null) {
-            return new EntryOverview($start, $end, [ ], [ ], [ ]);
+            return new EntryOverview($start, $end, [ ], [ ], [ ], [ ]);
         }
 
         if($end > $section->getEnd()) {
@@ -206,13 +210,15 @@ class EntryOverviewHelper {
         $tuitions = $this->tuitionRepository->findAllByGrades([$grade], $section);
 
         $comments = [ ];
+        $events = [ ];
         $section = $this->sectionResolver->getSectionForDate($start);
 
         if($section !== null) {
             $comments = $this->commentRepository->findAllByDateAndGrade($grade, $section, $start, $end);
+            $events = $this->bookEventRepository->findByGrade($grade, $section, $start, $end);
         }
 
-        return $this->computeOverview($tuitions, $entries, $comments, [ ], $start, $end);
+        return $this->computeOverview($tuitions, $entries, $comments, [ ], $events, $start, $end);
     }
 
     /**

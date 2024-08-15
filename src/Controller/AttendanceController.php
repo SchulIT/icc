@@ -3,11 +3,13 @@
 namespace App\Controller;
 
 use App\Book\Student\StudentInfoResolver;
+use App\Entity\BookEvent;
 use App\Entity\LessonEntry;
 use App\Entity\Teacher;
 use App\Entity\User;
 use App\Grouping\DateWeekOfYearStrategy;
 use App\Grouping\Grouper;
+use App\Repository\BookEventRepositoryInterface;
 use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Repository\LessonEntryRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
@@ -35,7 +37,7 @@ class AttendanceController extends AbstractController {
                           BookSettings $bookSettings, TimetableSettings $timetableSettings,
                           TuitionRepositoryInterface $tuitionRepository, LessonEntryRepositoryInterface $entryRepository,
                           StudentInfoResolver $infoResolver, Sorter $sorter, Grouper $grouper, DateHelper $dateHelper,
-                          LessonAttendanceRepositoryInterface $lessonAttendanceRepository): Response {
+                          LessonAttendanceRepositoryInterface $lessonAttendanceRepository, BookEventRepositoryInterface $bookEventRepository): Response {
         if($bookSettings->isAttendanceVisibleForStudentsAndParentsEnabled() === false) {
             throw new AccessDeniedHttpException();
         }
@@ -49,6 +51,7 @@ class AttendanceController extends AbstractController {
         $info = null;
         $groups = [ ];
         $entries = [ ];
+        $events = [ ];
 
         if($sectionFilterView->getCurrentSection() !== null && $studentFilterView->getCurrentStudent() !== null) {
             $tuitions = $tuitionRepository->findAllByStudents([$studentFilterView->getCurrentStudent()], $sectionFilterView->getCurrentSection());
@@ -63,6 +66,8 @@ class AttendanceController extends AbstractController {
             foreach($tuitions as $tuition) {
                 $entries = array_merge($entries, $entryRepository->findAllByTuition($tuition, $min, $max));
             }
+
+            $events = $bookEventRepository->findByStudent($studentFilterView->getCurrentStudent(), $min, $max);
 
             foreach($lessonAttendanceRepository->findByStudentAndDateRange($studentFilterView->getCurrentStudent(), $min, $max) as $attendance) {
                 if($attendance->getEntry() !== null && !in_array($attendance->getEntry(), $entries)) {
@@ -101,6 +106,21 @@ class AttendanceController extends AbstractController {
                 }
             }
 
+            /**
+             * @var int $key
+             * @var BookEvent $event
+             */
+            foreach($events as $key => $event) {
+                $events[$key] = [
+                    'uuid' => $event->getUuid()->toString(),
+                    'date' => $event->getDate()->format('c'),
+                    'start' => $event->getLessonStart(),
+                    'end' => $event->getLessonEnd(),
+                    'teacher' => $event->getTeacher()->getAcronym(),
+                    'title' => $event->getTitle()
+                ];
+            }
+
             $days = $this->getListOfDays($min, $max, $timetableSettings->getDays());
             $groups = $grouper->group($days, DateWeekOfYearStrategy::class);
 
@@ -114,7 +134,8 @@ class AttendanceController extends AbstractController {
             'sectionFilter' => $sectionFilterView,
             'studentFilter' => $studentFilterView,
             'numberOfLessons' => $timetableSettings->getMaxLessons(),
-            'entries' => $entries
+            'entries' => $entries,
+            'events' => $events
         ]);
     }
 

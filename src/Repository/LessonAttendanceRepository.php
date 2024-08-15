@@ -72,11 +72,12 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
 
     private function getDefaultQueryBuilder(): QueryBuilder {
         return $this->em->createQueryBuilder()
-            ->select(['a', 'e', 'l'])
+            ->select(['a', 'e', 'l', 'ev'])
             ->from(Attendance::class, 'a')
             ->leftJoin('a.entry', 'e')
             ->leftJoin('a.student', 's')
-            ->leftJoin('e.lesson', 'l');
+            ->leftJoin('e.lesson', 'l')
+            ->leftJoin('a.event', 'ev');
     }
 
     private function applyTuition(QueryBuilder $queryBuilder, array $tuitions): QueryBuilder {
@@ -93,13 +94,26 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
 
         $ids = array_map(fn(Tuition $tuition) => $tuition->getId(), $tuitions);
 
-        $queryBuilder
-            ->andWhere(
-                $queryBuilder->expr()->in(
-                    'a.id', $qbInner->getDQL()
+        if(count($tuitions) !== 1) {
+            $queryBuilder
+                ->andWhere(
+                    $queryBuilder->expr()->orX(
+                        $queryBuilder->expr()->in(
+                            'a.id', $qbInner->getDQL()
+                        ),
+                        $qbInner->expr()->isNotNull('a.event')
+                    )
                 )
-            )
-            ->setParameter('tuitions', $ids);
+                ->setParameter('tuitions', $ids);
+        } else {
+            $queryBuilder
+                ->andWhere(
+                    $queryBuilder->expr()->in(
+                        'a.id', $qbInner->getDQL()
+                    )
+                )
+                ->setParameter('tuitions', $ids);
+        }
 
         return $queryBuilder;
     }
@@ -155,10 +169,21 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
 
         $qb->andWhere('s.id = :student')
             ->setParameter('student', $student->getId())
-            ->andWhere('l.date >= :start')
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->andX(
+                        'l.date >= :start',
+                        'l.date <= :end'
+                    ),
+                    $qb->expr()->andX(
+                        'ev.date >= :start',
+                        'ev.date <= :end'
+                    )
+                )
+            )
             ->setParameter('start', $start)
-            ->andWhere('l.date <= :end')
             ->setParameter('end', $end);
+
 
         return $qb->getQuery()->getResult();
     }

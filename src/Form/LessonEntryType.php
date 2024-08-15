@@ -16,50 +16,20 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class LessonEntryType extends AbstractType {
+class LessonEntryType extends LessonEntryCreateType {
 
     public function buildForm(FormBuilderInterface $builder, array $options): void {
+        parent::buildForm($builder, $options);
+
         $builder
-            ->add('lessonStart', IntegerType::class, [
-                'label' => 'label.start'
-            ])
-            ->add('lessonEnd', IntegerType::class, [
-                'label' => 'label.end'
-            ])
-            ->add('replacementSubject', TextType::class, [
-                'label' => 'label.replacement_subject',
-                'required' => false
-            ])
-            ->add('replacementTeacher', TeacherChoiceType::class, [
-                'label' => 'label.replacement_teacher',
-                'required' => false,
-                'placeholder' => 'label.select.teacher'
-            ])
-            ->add('topic', TextType::class, [
-                'label' => 'label.topic'
-            ])
-            ->add('exercises', TextareaType::class, [
-                'label' => 'label.exercises',
-                'required' => false
-            ])
-            ->add('comment', TextareaType::class, [
-                'label' => 'label.comment',
-                'required' => false,
-                'help' => 'book.entry.comment.help'
-            ])
-            ->add('attendances', CollectionType::class, [
-                'entry_type' => LessonAttendanceType::class,
-                'allow_add' => true,
-                'allow_delete' => true,
-                'by_reference' => false
-            ]);
+            ->remove('teacher');
 
         $builder
             ->addEventListener(FormEvents::POST_SET_DATA, function(FormEvent $event) {
                 $form = $event->getForm();
                 $entry = $event->getData();
 
-                if($entry !== null && $entry instanceof LessonEntry) {
+                if($entry instanceof LessonEntry) {
                     if($entry->isCancelled()) {
                         $form->remove('replacementSubject')
                             ->remove('replacementTeacher')

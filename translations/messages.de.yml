@@ -2101,6 +2101,21 @@ book:
                 confirm: 'Soll die Information über %student% wirklich gelöscht werden?'
                 success: Information erfolgreich gelöscht
 
+    events:
+        label: Veranstaltungen
+        add:
+            label: Neue Veranstaltung
+            success: Veranstaltung erfolgreich erstellt
+        edit:
+            label: Veranstaltung bearbeiten
+            success: Veranstaltung erfolgreich aktualisiert
+        show:
+            label: Veranstaltung anzeigen oder bearbeiten
+        remove:
+            label: Veranstaltung löschen
+            success: Veranstaltung erfolgreich gelöscht
+            confirm: 'Soll die Veranstaltung %title% wirklich gelöscht werden?'
+
 export:
     caution: Ich bestätige, dass ich die Datei nur auf zugelassenen Endgeräten verarbeite. Die Datei darf nur lokal verarbeitet werden und nicht via E-Mail versendet oder auf Clouddiensten gespeichert werden.
 

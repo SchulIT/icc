@@ -3,7 +3,9 @@
 namespace App\Book;
 
 use App\Entity\BookComment;
+use App\Entity\BookEvent;
 use App\Grouping\LessonDayGroup;
+use App\Repository\BookEventRepositoryInterface;
 use DateTime;
 
 class EntryOverview {
@@ -11,9 +13,10 @@ class EntryOverview {
     /**
      * @param LessonDayGroup[] $days
      * @param BookComment[] $comments
+     * @param BookEvent[] $events
      * @param FreeTimespan[] $freeTimespans
      */
-    public function __construct(private DateTime $start, private DateTime $end, private array $days, private array $comments, private array $freeTimespans)
+    public function __construct(private DateTime $start, private DateTime $end, private array $days, private array $comments, private array $events, private array $freeTimespans)
     {
     }
 
@@ -38,6 +41,14 @@ class EntryOverview {
         }
 
         return array_filter($this->comments, fn(BookComment $comment) => $comment->getDate() == $dateTime);
+    }
+
+    public function getEvents(?DateTime $dateTime = null): array {
+        if($dateTime === null) {
+            return $this->events;
+        }
+
+        return array_filter($this->events, fn(BookEvent $event) => $event->getDate() == $dateTime);
     }
 
     public function hasLessonsWithinFreeTimespans(DateTime $dateTime): bool {

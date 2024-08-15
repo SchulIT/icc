@@ -7,22 +7,22 @@ use App\Book\Export\BookExporter;
 use App\Book\IntegrityCheck\CachedIntegrityCheckRunner;
 use App\Book\IntegrityCheck\IntegrityCheckRunner;
 use App\Book\IntegrityCheck\IntegrityCheckTeacherFilter;
-use App\Book\IntegrityCheck\Persistence\IntegrityCheckPersister;
 use App\Book\IntegrityCheck\Persistence\ViolationsResolver;
 use App\Book\Lesson;
 use App\Book\Student\AbsenceExcuseResolver;
 use App\Book\Student\StudentInfo;
 use App\Book\Student\StudentInfoResolver;
 use App\Book\StudentsResolver;
+use App\Entity\Attendance;
+use App\Entity\AttendanceExcuseStatus;
+use App\Entity\AttendanceType;
+use App\Entity\BookEvent;
 use App\Entity\BookIntegrityCheckViolation;
 use App\Entity\DateLesson;
 use App\Entity\ExcuseNote;
 use App\Entity\Grade;
 use App\Entity\GradeMembership;
 use App\Entity\GradeTeacher;
-use App\Entity\Attendance;
-use App\Entity\AttendanceExcuseStatus;
-use App\Entity\AttendanceType;
 use App\Entity\LessonEntry;
 use App\Entity\Section;
 use App\Entity\Student;
@@ -80,7 +80,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route(path: '/book')]
 class BookController extends AbstractController {
@@ -319,8 +319,42 @@ class BookController extends AbstractController {
 
         $lateStudentsByLesson = [ ];
         $absentStudentsByLesson = [ ];
+        $lateStudentsByEvent = [ ];
+        $absentStudentsByEvent = [ ];
 
         if($overview !== null) {
+            $excusesByStudent = [];
+            foreach($overview->getEvents() as $event) {
+                $uuid = $event->getUuid()->toString();
+                $lateStudentsByEvent[$uuid] = [ ];
+                $absentStudentsByEvent[$uuid] = [ ];
+
+                foreach($event->getAttendances() as $attendance) {
+                    if($gradeFilterView->getCurrentGrade() !== null && $attendance->getStudent()->getGrade($sectionFilterView->getCurrentSection())?->getId() !== $gradeFilterView->getCurrentGrade()->getId()) {
+                        continue;
+                    }
+
+                    if($attendance->getType() === AttendanceType::Late) {
+                        $lateStudentsByEvent[$uuid][] = $attendance;
+                    } else if($attendance->getType() === AttendanceType::Absent) {
+                        $studentUuid = $attendance->getStudent()->getUuid()->toString();
+
+                        if (!isset($excusesByStudent[$studentUuid])) {
+                            $excusesByStudent[$studentUuid] = $excuseNoteRepository->findByStudentsAndDate([$attendance->getStudent()], $event->getDate());
+                        }
+
+                        /** @var ExcuseNote $excuseNote */
+                        foreach ($excusesByStudent[$studentUuid] as $excuseNote) {
+                            if ((new DateLesson())->setDate($event->getDate())->setLesson($attendance->getLesson())->isBetween($excuseNote->getFrom(), $excuseNote->getUntil())) {
+                                $attendance->setExcuseStatus(AttendanceExcuseStatus::Excused);
+                            }
+                        }
+
+                        $absentStudentsByEvent[$uuid][] = $attendance;
+                    }
+                }
+            }
+
             foreach ($overview->getDays() as $day) {
                 $excusesByStudent = [];
 
@@ -383,6 +417,8 @@ class BookController extends AbstractController {
             'missingExcusesCount' => $missingExcuseCount,
             'absentStudentsByLesson' => $absentStudentsByLesson,
             'lateStudentsByLesson' => $lateStudentsByLesson,
+            'absentStudentsByEvent' => $absentStudentsByEvent,
+            'lateStudentsByEvent' => $lateStudentsByEvent,
             'responsibilities' => $responsibilities,
             'entriesWithExercises' => $entriesWithExercises,
             'exercisesDays' => $settings->getExercisesDays(),
@@ -568,6 +604,7 @@ class BookController extends AbstractController {
         );
 
         $entries = [ ];
+        $events = [ ];
         foreach($tuitions as $tuition) {
             $entries = array_merge($entries, $entryRepository->findAllByTuition($tuition, $min, $max));
         }
@@ -575,11 +612,13 @@ class BookController extends AbstractController {
         foreach($lessonAttendanceRepository->findByStudentAndDateRange($student, $min, $max) as $attendance) {
             if($attendance->getEntry() !== null && !in_array($attendance->getEntry(), $entries)) {
                 $entries[] = $attendance->getEntry();
+            } else if($attendance->getEvent() !== null && !in_array($attendance->getEvent(), $events)) {
+                $events[] = $attendance->getEvent();
             }
         }
 
         /**
-         * @var string $key
+         * @var int $key
          * @var LessonEntry $entry
          */
         foreach($entries as $key => $entry) {
@@ -609,6 +648,21 @@ class BookController extends AbstractController {
             }
         }
 
+        /**
+         * @var int $key
+         * @var BookEvent $event
+         */
+        foreach($events as $key => $event) {
+            $events[$key] = [
+                'uuid' => $event->getUuid()->toString(),
+                'date' => $event->getDate()->format('c'),
+                'start' => $event->getLessonStart(),
+                'end' => $event->getLessonEnd(),
+                'teacher' => $event->getTeacher()->getAcronym(),
+                'title' => $event->getTitle()
+            ];
+        }
+
         $info = $infoResolver->resolveStudentInfo($student, $sectionFilterView->getCurrentSection(), $tuitions);
 
         $days = $this->getListOfDays($min, $max, $timetableSettings->getDays());
@@ -626,7 +680,8 @@ class BookController extends AbstractController {
             'tuitionFilter' => $tuitionFilterView,
             'teacherFilter' => $teacherFilterView,
             'numberOfLessons' => $timetableSettings->getMaxLessons(),
-            'entries' => array_values($entries)
+            'entries' => array_values($entries),
+            'events' => array_values($events)
         ]);
     }
 

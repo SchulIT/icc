@@ -64,7 +64,7 @@ services:
         resource: '../src/Doctrine/*Subscriber.php'
         tags: ['doctrine.event_subscriber']
 
-    App\Doctrine\LessonAttendanceUpdateSubscriber:
+    App\Doctrine\AttendanceUpdateSubscriber:
         arguments:
             $isEnabled: '%env(ASYNC_CHECKS)%'
 

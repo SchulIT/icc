@@ -10,12 +10,6 @@ use App\Entity\Teacher;
 use DateTime;
 
 interface BookEventRepositoryInterface {
-
-    /**
-     * @return BookEvent[]
-     */
-    public function findByDate(DateTime $date, Grade $grade): array;
-
     /**
      * @param Teacher $teacher
      * @param DateTime $start

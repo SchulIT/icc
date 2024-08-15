@@ -231,7 +231,7 @@ class BookExporter {
             }
 
             foreach($overview->getEvents($day->getDate()) as $event) {
-                $exportDay->addEvent($this->castEvent($event, $section));
+                $exportDay->addEvent($this->castEvent($event, $section, $studentInfo));
             }
 
             $weeks[$weekNumber]->addDay($exportDay);
@@ -337,7 +337,7 @@ class BookExporter {
             ->setExercises($entry->getExercises())
             ->setIsMissing(false);
 
-        foreach($this->castAttendances($entry->getAttendances()->toArray(), $section, $entry) as $exportAttendance) {
+        foreach($this->castAttendances($entry->getAttendances()->toArray(), $section, $entry, $studentInfo) as $exportAttendance) {
             $lesson->addAttendance($exportAttendance);
         }
 
@@ -346,9 +346,10 @@ class BookExporter {
 
     /**
      * @param LessonAttendanceEntity[] $attendances
+     * @param StudentInfo[] $studentInfo
      * @return Attendance[]
      */
-    private function castAttendances(array $attendances, SectionEntity $section, LessonEntryEntity|BookEvent $entryOrEvent): array {
+    private function castAttendances(array $attendances, SectionEntity $section, LessonEntryEntity|BookEvent $entryOrEvent, array $studentInfo): array {
         $result = [ ];
 
         foreach($attendances as $attendance) {
@@ -423,7 +424,10 @@ class BookExporter {
         return $grade;
     }
 
-    private function castEvent(BookEvent $bookEvent, SectionEntity $section): Event {
+    /**
+     * @param StudentInfo[] $studentInfo
+     */
+    private function castEvent(BookEvent $bookEvent, SectionEntity $section, array $studentInfo): Event {
         $event = (new Event())
             ->setStart($bookEvent->getLessonStart())
             ->setEnd($bookEvent->getLessonEnd())
@@ -431,7 +435,7 @@ class BookExporter {
             ->setTitle($bookEvent->getTitle())
             ->setDescription($bookEvent->getDescription());
 
-        foreach($this->castAttendances($bookEvent->getAttendances()->toArray(), $section, $bookEvent) as $exportAttendance) {
+        foreach($this->castAttendances($bookEvent->getAttendances()->toArray(), $section, $bookEvent, $studentInfo) as $exportAttendance) {
             $event->addAttendance($exportAttendance);
         }
 

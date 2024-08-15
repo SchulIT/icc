@@ -11,10 +11,6 @@ use DateTime;
 
 class BookEventRepository extends AbstractRepository implements BookEventRepositoryInterface {
 
-    public function findByDate(DateTime $date, Grade $grade): array {
-
-    }
-
     public function persist(BookEvent $bookEvent): void {
         $this->em->persist($bookEvent);
         $this->em->flush();

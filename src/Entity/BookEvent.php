@@ -49,7 +49,6 @@ class BookEvent {
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
-        $this->grades = new ArrayCollection();
         $this->attendances = new ArrayCollection();
     }
 

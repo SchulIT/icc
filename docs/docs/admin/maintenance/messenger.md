@@ -62,11 +62,11 @@ RestartSec=30
 WantedBy=default.target
 ```
 
-Und noch der Dienst für allgemeine Hintergrundaufgaben `icc-background.service`:
+Der Dienst für allgemeine Hintergrundaufgaben `icc-background.service`:
 
 ```
 [Unit]
-Description=ICC Mails
+Description=ICC Hintergrundaufgaben
 
 [Service]
 ExecStart=/usr/bin/php /path/to/icc/bin/console messenger:consume async --time-limit=3600

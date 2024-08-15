@@ -450,9 +450,7 @@
                                 {% for event in overview.events(day.date) %}
                                     <div class="list-group-item d-flex align-items-center">
                                         <div class="book-lesson m-0 p-0">
-                                            {% for lessonNumber in event.lessonStart..event.lessonEnd %}
-                                                {{ lessonNumber }}<br>
-                                            {% endfor %}
+                                            {{ 'label.substitution_lessons'|trans({'%start%': event.lessonStart, '%end%': event.lessonEnd, '%count%': event.lessonEnd - event.lessonStart}) }}
                                         </div>
 
                                         <div class="d-flex align-items-center flex-fill">

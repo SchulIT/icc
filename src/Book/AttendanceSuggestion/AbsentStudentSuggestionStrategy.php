@@ -25,7 +25,7 @@ class AbsentStudentSuggestionStrategy implements SuggestionStrategyInterface {
     public function __construct(private readonly StudentAbsenceRepositoryInterface $absenceRepository,
                                 private readonly StudentsResolver $studentsResolver,
                                 private readonly UrlGeneratorInterface $urlGenerator,
-                                private readonly BookSettings  $bookSettings) { }
+                                private readonly BookSettings $bookSettings) { }
 
     public function resolve(Tuition $tuition, DateTime $date, int $lessonStart, int $lessonEnd): array {
         $students = $this->studentsResolver->resolve($tuition);
@@ -43,7 +43,7 @@ class AbsentStudentSuggestionStrategy implements SuggestionStrategyInterface {
             $type = $absence->getType();
             $subjectIds = array_map(fn(Subject $subject) => $subject->getId(), $type->getSubjects()->toArray());
 
-            if(count($subjectIds) > 0 && !in_array($tuition->getSubject()->getId(), $subjectIds)) {
+            if(count($subjectIds) > 0 && !in_array($tuition->getSubject()?->getId(), $subjectIds)) {
                 // Ignore absence in case the type is bound to any subject and the subject of the given tuition does not match
                 continue;
             }

@@ -52,7 +52,7 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     }
 
     public function findOneById(int $id): ?Exam {
-        return $this->getDefaultQueryBuilder()
+        return $this->getDefaultQueryBuilder(null, false, false)
             ->andWhere('e.id = :id')
             ->setParameter('id', $id)
             ->leftJoin('e.students', 'students')

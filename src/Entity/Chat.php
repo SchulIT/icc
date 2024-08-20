@@ -40,6 +40,7 @@ class Chat {
      */
     #[ORM\OneToMany(mappedBy: 'chat', targetEntity: ChatMessage::class, cascade: ['persist'])]
     #[ORM\OrderBy(['createdAt' => 'ASC'])]
+    #[Assert\Valid]
     private Collection $messages;
 
     public function __construct() {

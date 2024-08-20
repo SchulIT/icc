@@ -317,7 +317,10 @@ class DashboardViewHelper {
 
             for($lessonNumber = $lesson->getLessonStart(); $lessonNumber <= $lesson->getLessonEnd(); $lessonNumber++) {
                 $absentStudents = $computeAbsences ? $this->computeAbsentStudents($lessonStudents, $lessonNumber, $dateTime, [], $lesson->getTuition()) : [ ];
-                $additionalInfo = $this->timetableLessonAdditionalInformationRepository->findBy($lesson->getDate(), $lesson->getTuition()?->getStudyGroup(), $lessonNumber);
+                $additionalInfo = [ ];
+                if($lesson->getTuition()?->getStudyGroup() !== null) {
+                    $additionalInfo = $this->timetableLessonAdditionalInformationRepository->findBy($lesson->getDate(), $lesson->getTuition()?->getStudyGroup(), $lessonNumber);
+                }
                 $dashboardView->addItem($lessonNumber, new TimetableLessonViewItem($lesson, $absentStudents, $studentInfo, $additionalInfo));
             }
         }

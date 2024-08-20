@@ -92,7 +92,7 @@ class ReassignmentsHelper {
                 foreach ($exam->getTuitions() as $examTuition) {
                     $possibleTuitions = $examTuition->getStudyGroup()->getMemberships()->filter(fn(StudyGroupMembership $membership) => $membership->getStudent()->getId() === $student->getId());
                     if($possibleTuitions->count() === 1) {
-                        $tuition = $possibleTuitions->first();
+                        $tuition = $examTuition;
                     } else if($possibleTuitions->count() > 1) {
                         $tuition = null;
                     }

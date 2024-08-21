@@ -224,7 +224,7 @@
 
             <div class="col-md-3">
                 {% set canEdit = is_granted('edit', absence) %}
-                {% set canCreateExcuseNote = is_granted('new-excuse') and not absence.type.bookExcuseStatus == 1 and not excuseStatus.completelyExcused %}
+                {% set canCreateExcuseNote = is_granted('new-excuse') and not absence.type.bookExcuseStatus.value == 1 and not excuseStatus.completelyExcused %}
                 {% set canDelete = is_granted('remove', absence) %}
 
                 {% if canEdit or canCreateExcuseNote or canDelete %}

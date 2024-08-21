@@ -40,15 +40,11 @@ class BookEntryController extends AbstractController {
     public function cancelLesson(TimetableLesson $lesson, Request $request): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
-        $lessonStart = $request->query->getInt('lesson_start');
-        $lessonEnd = $request->query->getInt('lesson_end');
         $tuition = $lesson->getTuition();
 
         $entry = (new LessonEntry())
             ->setLesson($lesson)
             ->setTuition($tuition)
-            ->setLessonStart($lessonStart)
-            ->setLessonEnd($lessonEnd)
             ->setIsCancelled(true)
             ->setTeacher($tuition->getTeachers()->first())
             ->setSubject($tuition->getSubject());

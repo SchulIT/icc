@@ -199,6 +199,8 @@
 
             <input type="hidden" name="date" v-if="lesson.date !== null" :value="lesson.date.toJSON()">
             <input type="hidden" :name="'lesson_entry_cancel[' + csrfname + ']'" :value="csrftoken">
+            <input type="hidden" name="lesson_entry_cancel[lessonStart]" :value="entry.start">
+            <input type="hidden" name="lesson_entry_cancel[lessonEnd]" :value="entry.end">
             <input type="hidden" name="_ref" :value="ref">
 
           </form>

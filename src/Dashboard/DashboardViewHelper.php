@@ -161,7 +161,7 @@ class DashboardViewHelper {
 
         $this->addMessages($messages, $view);
 
-        $this->addSubstitutions($this->substitutionRepository->findAllForTeacher($teacher, $dateTime), $view, true);
+        $this->addSubstitutions($this->substitutionRepository->findAllForTeacher($teacher, $dateTime), $view, true, $teacher);
         $this->addExams($this->examRepository->findAllByTeacher($teacher, $dateTime, true), $view, $teacher, true);
         $this->addInfotexts($dateTime, $view);
         $this->addAbsentStudyGroup($this->absenceRepository->findAllStudyGroups($dateTime), $view);
@@ -372,9 +372,8 @@ class DashboardViewHelper {
     /**
      * @param Substitution[] $substitutions
      */
-    private function addSubstitutions(iterable $substitutions, DashboardView $dashboardView, bool $computeAbsences): void {
+    private function addSubstitutions(iterable $substitutions, DashboardView $dashboardView, bool $computeAbsences, ?Teacher $teacher = null): void {
         $freeTypes = $this->dashboardSettings->getFreeLessonSubstitutionTypes();
-        $teacher = $this->tokenStorage->getToken()?->getUser()?->getTeacher();
 
         foreach($substitutions as $substitution) {
             if($this->authorizationChecker->isGranted(SubstitutionVoter::View, $substitution) !== true) {

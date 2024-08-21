@@ -374,6 +374,7 @@ class DashboardViewHelper {
      */
     private function addSubstitutions(iterable $substitutions, DashboardView $dashboardView, bool $computeAbsences): void {
         $freeTypes = $this->dashboardSettings->getFreeLessonSubstitutionTypes();
+        $teacher = $this->tokenStorage->getToken()?->getUser()?->getTeacher();
 
         foreach($substitutions as $substitution) {
             if($this->authorizationChecker->isGranted(SubstitutionVoter::View, $substitution) !== true) {
@@ -417,6 +418,10 @@ class DashboardViewHelper {
                 }
 
                 $dashboardView->addItem($lesson, new SubstitutionViewItem($substitution, $isFreeLesson, $students, $absentStudents, $studentInfo, $timetableLesson, $additionalInfo));
+
+                if($teacher !== null && $substitution->getTeachers()->contains($teacher) && $substitution->getReplacementTeachers()->count() > 0 && !$substitution->getReplacementTeachers()->contains($teacher)) {
+                    $dashboardView->addAdditionalItem($lesson, new SubstitutionViewItem($substitution, false, $students, $absentStudents, $studentInfo, $timetableLesson, $additionalInfo));
+                }
             }
         }
     }

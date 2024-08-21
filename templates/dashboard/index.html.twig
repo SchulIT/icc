@@ -166,6 +166,41 @@
     {% endif %}
 {% endblock %}
 
+{% block additionalItems %}
+    {% if view.hasAdditionalItems %}
+        <div class="spacer">
+            <span><a id="additionals"></a><i class="fas fa-square-plus"></i> {{ 'dashboard.additional_items'|trans }}</span>
+        </div>
+
+        {% for lessonNumber in view.lessonNumbers %}
+            {% set lesson = view.additionalLesson(lessonNumber) %}
+            {% if lesson is not null %}
+                {% for item in lesson.items %}
+                    {% set type = item.blockName %}
+
+                    {% if type == 'exam' %}
+                        {{ dashboard.exam(item, lessonNumber, startTimes[lessonNumber], lesson.warning, endTimes[lessonNumber]) }}
+                    {% elseif type == 'lesson' %}
+                        {{ dashboard.lesson(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, lesson.isCurrent, gradesWithCourseNames) }}
+                    {% elseif type == 'free_lesson' %}
+                        {{ dashboard.free_lesson(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, lesson.isCurrent) }}
+                    {% elseif type == 'supervision' %}
+                        {{ dashboard.supervision(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, false, supervisionLabels) }}
+                    {% elseif type == 'substitution' %}
+                        {{ dashboard.substitution(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, lesson.isCurrent) }}
+                    {% elseif type == 'appointment' %}
+                        {{ dashboard.appointment(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, lesson.isCurrent) }}
+                    {% elseif type == 'exam_supervision' %}
+                        {{ dashboard.exam_supervision(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, lesson.isCurrent) }}
+                    {% elseif type == 'reservation' %}
+                        {{ dashboard.reservation(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber]) }}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
 {% block daily_info %}
     {% if view.infotexts|length > 0 or view.absentStudyGroups|length > 0 or view.absentTeachers|length > 0 %}
         <div class="spacer">

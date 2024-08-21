@@ -407,6 +407,7 @@ dashboard:
     substitution_mentions: Erwähnungen
     appointments: Termine
     exercises: Aufgaben
+    additional_items: Zusätzliche Einträge
     birthdays: Geburtstage
     collision:
         hint: Bitte überprüfen und den entsprechenden Ansprechpartner kontaktieren.

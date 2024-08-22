@@ -288,6 +288,7 @@ export default {
   },
   data() {
     return {
+      step: 1,
       isDirty: false,
       selectedAttendances: [ ],
       absences: [ ],

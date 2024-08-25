@@ -38,14 +38,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    document.querySelector('button[data-rename]').addEventListener('click', function(event) {
+    document.querySelector('button[data-rename]')?.addEventListener('click', function(event) {
         event.preventDefault();
 
         document.querySelector('.rename-chat').classList.remove('hide');
         document.querySelector('.chat-topic').classList.add('hide');
     });
 
-    document.querySelector('button[data-cancel-rename]').addEventListener('click', function(event) {
+    document.querySelector('button[data-cancel-rename]')?.addEventListener('click', function(event) {
         event.preventDefault();
 
         document.querySelector('.rename-chat').classList.add('hide');

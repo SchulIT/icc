@@ -447,21 +447,29 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
 
         $qb = $this->em->createQueryBuilder()
             ->select('SUM(l.lessonEnd - l.lessonStart + 1)')
-            ->from(TimetableLesson::class, 'l')
-            ->leftJoin('l.tuition', 't')
-            ->leftJoin('l.entries', 'e')
-            ->where('t.id IN (:tuitions)')
-            ->setParameter('tuitions', $tuitionIds);
+            ->from(TimetableLesson::class, 'l');
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('lInner.id')
+            ->from(TimetableLesson::class, 'lInner')
+            ->leftJoin('lInner.tuition', 'tInner')
+            ->leftJoin('lInner.entries', 'eInner')
+            ->where('tInner.id IN (:tuitions)');
 
         if($student !== null) {
-            $qb->leftJoin('t.studyGroup', 'sg')
-                ->leftJoin('sg.memberships', 'm')
-                ->leftJoin('m.student', 's')
-                ->leftJoin('e.attendances', 'a')
-                ->andWhere('a.student = :student')
-                ->andWhere('s.id = :student')
-                ->setParameter('student', $student->getId());
+            $qbInner->leftJoin('tInner.studyGroup', 'sgInner')
+                ->leftJoin('sgInner.memberships', 'mInner')
+                ->leftJoin('mInner.student', 'sInner')
+                ->leftJoin('eInner.attendances', 'aInner')
+                ->andWhere('aInner.student = :student')
+                ->andWhere('sInner.id = :student');
+
+            $qb->setParameter('student', $student->getId());
         }
+
+        $qb
+            ->where($qbInner->expr()->in('l.id', $qbInner->getDQL()))
+            ->setParameter('tuitions', $tuitionIds);
 
         return (int)$qb->getQuery()
             ->getSingleScalarResult();

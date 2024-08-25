@@ -28,4 +28,12 @@ class ChatSettings extends AbstractSettings {
     public function setUserTypesAllowedToSeeReadConfirmations(array $userTypes): void {
         $this->setValue('chat.read_confirmations.user_types', $userTypes);
     }
+
+    public function getUserTypesAllowedToEditOrRemoveMessages(): array {
+        return $this->getValue('chat.edit_or_remove.user_types', []);
+    }
+
+    public function setUserTypesAllowedToEditOrRemoveMessages(array $userTypes): void {
+        $this->setValue('chat.edit_or_remove.user_types', $userTypes);
+    }
 }

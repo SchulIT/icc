@@ -69,6 +69,10 @@ class ChatMessageVoter extends Voter {
             return false;
         }
 
+        if(!in_array($user->getUserType(), $this->chatSettings->getUserTypesAllowedToEditOrRemoveMessages(), true)) {
+            return false;
+        }
+
         return $user->getId() === $message->getCreatedBy()->getId();
     }
 

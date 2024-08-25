@@ -1077,6 +1077,9 @@ admin:
             view_read_confirmations:
                 label: Lesebestätigungen anzeigen
                 help: Legt die Benutzergruppen fest, die Lesebestätigungen einsehen können. Benutzer ausgewählter Gruppen sehen, wer eine Nachricht gesehen hat. Benutzer nicht ausgewählter Benutzergruppen können nicht sehen, wer eine Nachricht gesehen hat.
+            can_edit_or_remove:
+                label: Bearbeiten/Löschen erlaubt für
+                help: Legt die Benutzergruppen fest, die ihre eigenen Nachrichten bearbeiten bzw. löschen dürfen.
 
     timetable:
         label: Stundenplan
@@ -2379,6 +2382,7 @@ chat:
     add:
         label: Neue Nachricht
         success: Nachricht erfolgreich erstellt
+        caution: Das Bearbeiten und Löschen von Nachrichten ist nicht möglich. Bei Korrekturen kann eine neue Nachricht verfasst werden.
     rename:
         success: Gesprächsthema erfolgreich aktualisiert
     remove:

@@ -20,6 +20,7 @@ use App\Repository\ChatRepositoryInterface;
 use App\Security\Voter\ChatMessageAttachmentVoter;
 use App\Security\Voter\ChatMessageVoter;
 use App\Security\Voter\ChatVoter;
+use App\Settings\ChatSettings;
 use App\Sorting\ChatStrategy;
 use App\Sorting\SortDirection;
 use App\Sorting\Sorter;
@@ -40,7 +41,8 @@ class ChatController extends AbstractController {
     public function __construct(RefererHelper                                             $redirectHelper,
                                 private readonly ChatRepositoryInterface                  $chatRepository,
                                 private readonly ChatMessageRepositoryInterface           $chatMessageRepository,
-                                private readonly ChatMessageAttachmentRepositoryInterface $attachmentRepository) {
+                                private readonly ChatMessageAttachmentRepositoryInterface $attachmentRepository,
+                                private readonly ChatSettings $chatSettings) {
         parent::__construct($redirectHelper);
     }
 
@@ -85,7 +87,8 @@ class ChatController extends AbstractController {
         }
 
         return $this->render('chat/add.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'canEditOrRemove' => in_array($user->getUserType(), $this->chatSettings->getUserTypesAllowedToEditOrRemoveMessages(), strict: true)
         ]);
     }
 
@@ -130,6 +133,9 @@ class ChatController extends AbstractController {
     #[Route('/{uuid}', name: 'show_chat')]
     public function showChat(Chat $chat, Request $request, ChatSeenByHelper $chatSeenByHelper, EventDispatcherInterface $dispatcher, TranslatorInterface $translator): Response {
         $this->denyAccessUnlessGranted(ChatVoter::View, $chat);
+
+        /** @var User $user */
+        $user = $this->getUser();
 
         // mark messages read
         $chatSeenByHelper->markAllChatMessagesSeen($chat);
@@ -257,7 +263,8 @@ class ChatController extends AbstractController {
             'participantsForm' => $participantsForm->createView(),
             'editForms' => $editForms,
             'removeForms' => $removeForms,
-            'renameForm' => $renameForm->createView()
+            'renameForm' => $renameForm->createView(),
+            'canEditOrRemove' => in_array($user->getUserType(), $this->chatSettings->getUserTypesAllowedToEditOrRemoveMessages(), strict: true)
         ]);
     }
 

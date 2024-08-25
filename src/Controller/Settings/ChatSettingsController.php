@@ -66,6 +66,16 @@ class ChatSettingsController extends AbstractController {
                 'label' => 'admin.settings.chat.view_read_confirmations.label',
                 'help' => 'admin.settings.chat.view_read_confirmations.help',
                 'data' => $chatSettings->getUserTypesAllowedToSeeReadConfirmations()
+            ])
+            ->add('can_edit_or_remove', ChoiceType::class, [
+                'choices' => $userTypeChoices,
+                'choice_label' => $userTypeChoiceLabel,
+                'choice_value' => $userTypeChoiceValue,
+                'expanded' => true,
+                'multiple' => true,
+                'label' => 'admin.settings.chat.can_edit_or_remove.label',
+                'help' => 'admin.settings.chat.can_edit_or_remove.help',
+                'data' => $chatSettings->getUserTypesAllowedToEditOrRemoveMessages()
             ]);
 
         $form = $builder->getForm();
@@ -74,6 +84,7 @@ class ChatSettingsController extends AbstractController {
         if($form->isSubmitted() && $form->isValid()) {
             $chatSettings->setEnabledUserTypes($form->get('chat_enabled')->getData());
             $chatSettings->setUserTypesAllowedToSeeReadConfirmations($form->get('view_read_confirmations')->getData());
+            $chatSettings->setUserTypesAllowedToEditOrRemoveMessages($form->get('can_edit_or_remove')->getData());
 
             foreach(UserType::cases() as $userType) {
                 $allowed = $form->get(sprintf('%s_recipients', $userType->value))->getData();

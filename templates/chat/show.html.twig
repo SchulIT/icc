@@ -113,6 +113,13 @@
                 <div class="card">
                     <div class="card-header">{{ 'chat.message.add.label'|trans }}</div>
                     <div class="card-body">
+                        {% if not canEditOrRemove %}
+                            <div class="bs-callout bs-callout-danger">
+                                <h5>{{ 'caution'|trans }}</h5>
+                                <p>{{ 'chat.add.caution'|trans }}</p>
+                            </div>
+                        {% endif %}
+
                         {{ form_widget(form.content) }}
                     </div>
                     <div class="card-body">

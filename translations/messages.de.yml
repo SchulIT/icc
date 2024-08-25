@@ -2417,7 +2417,7 @@ chat:
             error: Person ist bereits Teilnehmer
         remove:
             success: Person erfolgreich aus dem Gespräch entfernt
-        missing_rights: Teilnehmer können nur vom Ersteller des Gesprächs und Benutzern mit der Rolle ROLE_CHAT_MOD hinzugefügt werden.
+        missing_rights: Teilnehmer können nur von Benutzern mit der Rolle ROLE_CHAT_MOD hinzugefügt werden.
 
 user_type:
     teacher: Lehrkraft

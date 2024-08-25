@@ -89,6 +89,15 @@
                                                 <div class="table-col column-md {% if violation.isSuppressed %}text-muted{% endif %}">
                                                     {{ violation.lesson.tuition.name }}
                                                 </div>
+                                            {% elseif violation.event is not null %}
+                                                <div class="table-col column-md {% if violation.isSuppressed %}text-muted{% endif %}">
+                                                    {% if violation.event.teacher is not null %}
+                                                        {{ violation.event.teacher.acronym }}
+                                                    {% endif %}
+                                                </div>
+                                                <div class="table-col column-md {% if violation.isSuppressed %}text-muted{% endif %}">
+                                                    {{ violation.event.title }}
+                                                </div>
                                             {% else %}
                                                 <div class="table-col column-md"></div>
                                                 <div class="table-col column-md"></div>

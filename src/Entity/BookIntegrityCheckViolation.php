@@ -27,6 +27,10 @@ class BookIntegrityCheckViolation {
     #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     private ?TimetableLesson $lesson;
 
+    #[ORM\ManyToOne(targetEntity: BookEvent::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
+    private ?BookEvent $event;
+
     #[ORM\Column(type: 'integer')]
     private int $lessonNumber;
 
@@ -76,6 +80,15 @@ class BookIntegrityCheckViolation {
 
     public function setLesson(?TimetableLesson $lesson): BookIntegrityCheckViolation {
         $this->lesson = $lesson;
+        return $this;
+    }
+
+    public function getEvent(): ?BookEvent {
+        return $this->event;
+    }
+
+    public function setEvent(?BookEvent $event): BookIntegrityCheckViolation {
+        $this->event = $event;
         return $this;
     }
 

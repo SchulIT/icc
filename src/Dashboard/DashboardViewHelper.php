@@ -319,7 +319,7 @@ class DashboardViewHelper {
                 $absentStudents = $computeAbsences ? $this->computeAbsentStudents($lessonStudents, $lessonNumber, $dateTime, [], $lesson->getTuition()) : [ ];
                 $additionalInfo = [ ];
                 if($lesson->getTuition()?->getStudyGroup() !== null) {
-                    $additionalInfo = $this->timetableLessonAdditionalInformationRepository->findBy($lesson->getDate(), $lesson->getTuition()?->getStudyGroup(), $lessonNumber);
+                    $additionalInfo = $this->timetableLessonAdditionalInformationRepository->findBy($lesson->getDate(), $lesson->getTuition()->getStudyGroup(), $lessonNumber);
                 }
                 $dashboardView->addItem($lessonNumber, new TimetableLessonViewItem($lesson, $absentStudents, $studentInfo, $additionalInfo));
             }

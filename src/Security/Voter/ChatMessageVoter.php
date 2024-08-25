@@ -4,27 +4,37 @@ namespace App\Security\Voter;
 
 use App\Entity\ChatMessage;
 use App\Entity\User;
+use App\Settings\ChatSettings;
 use LogicException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use function Symfony\Component\DependencyInjection\Loader\Configurator\expr;
 
 class ChatMessageVoter extends Voter {
+    public const CanViewReadConfirmations = 'can-view-read-confirmations';
     public const View = 'view';
     public const Edit = 'edit';
     public const Remove = 'remove';
 
-    public function __construct(private readonly AccessDecisionManagerInterface $accessDecisionManager) {
+    public function __construct(private readonly AccessDecisionManagerInterface $accessDecisionManager, private readonly ChatSettings $chatSettings) {
 
     }
 
 
     protected function supports(string $attribute, mixed $subject): bool {
+        if($attribute === self::CanViewReadConfirmations) {
+            return true;
+        }
+
         return $subject instanceof ChatMessage && in_array($attribute, [self::View, self::Edit, self::Remove], true);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool {
         switch($attribute) {
+            case self::CanViewReadConfirmations:
+                return $this->canViewReadConfirmations($token);
+
             case self::View:
                 return $this->canView($subject, $token);
 
@@ -36,6 +46,16 @@ class ChatMessageVoter extends Voter {
         }
 
         throw new LogicException('This code should not be executed.');
+    }
+
+    private function canViewReadConfirmations(TokenInterface $token): bool {
+        $user = $token->getUser();
+
+        if(!$user instanceof User) {
+            return false;
+        }
+
+        return in_array($user->getUserType(), $this->chatSettings->getUserTypesAllowedToSeeReadConfirmations(), true);
     }
 
     private function canView(ChatMessage $message, TokenInterface $token): bool {

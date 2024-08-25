@@ -56,11 +56,24 @@ class ChatSettingsController extends AbstractController {
                 ]);
         }
 
+        $builder
+            ->add('view_read_confirmations', ChoiceType::class, [
+                'choices' => $userTypeChoices,
+                'choice_label' => $userTypeChoiceLabel,
+                'choice_value' => $userTypeChoiceValue,
+                'expanded' => true,
+                'multiple' => true,
+                'label' => 'admin.settings.chat.view_read_confirmations.label',
+                'help' => 'admin.settings.chat.view_read_confirmations.help',
+                'data' => $chatSettings->getUserTypesAllowedToSeeReadConfirmations()
+            ]);
+
         $form = $builder->getForm();
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
             $chatSettings->setEnabledUserTypes($form->get('chat_enabled')->getData());
+            $chatSettings->setUserTypesAllowedToSeeReadConfirmations($form->get('view_read_confirmations')->getData());
 
             foreach(UserType::cases() as $userType) {
                 $allowed = $form->get(sprintf('%s_recipients', $userType->value))->getData();

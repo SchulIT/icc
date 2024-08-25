@@ -20,4 +20,12 @@ class ChatSettings extends AbstractSettings {
     public function setAllowedRecipients(UserType $userType, array $recipientUserTypes): void {
         $this->setValue(sprintf('chat.%s.recipient_types', $userType->value), $recipientUserTypes);
     }
+
+    public function getUserTypesAllowedToSeeReadConfirmations(): array {
+        return $this->getValue('chat.read_confirmations.user_types', []);
+    }
+
+    public function setUserTypesAllowedToSeeReadConfirmations(array $userTypes): void {
+        $this->setValue('chat.read_confirmations.user_types', $userTypes);
+    }
 }

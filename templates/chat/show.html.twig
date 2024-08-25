@@ -42,7 +42,7 @@
                                     <i class="fas fa-trash"></i>
                                 </button>
                             {% endif %}
-                            {% if message.createdBy == app.user %}
+                            {% if message.createdBy == app.user and is_granted('can-view-read-confirmations')%}
                                 {% if message.seenBy|length == 0 %}
                                     <div class="text-muted ms-2" title="{{ 'chat.show.seen_by_nobody'|trans }}">
                                         <i class="fas fa-user-times"></i>

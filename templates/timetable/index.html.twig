@@ -124,7 +124,9 @@
                                 <th>{{ 'label.lesson'|trans }}</th>
                                 {% for day in week.days %}
                                     <th{% if day.isCurrentDay or day.isUpcomingDay %} class="current" {% endif %}>
-                                        {{ day.date.format('w')|weekday }}
+                                        {{ day.date.format('w')|weekday }} <span class="badge text-bg-primary">{{ day.date|format_date('short', 'dd.MM.') }}</span>
+
+
                                         {% if day.isCurrentDay %}
                                             <span class="badge text-bg-secondary">{{ 'plans.timetable.today'|trans }}</span>
                                         {% endif %}

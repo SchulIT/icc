@@ -1591,6 +1591,10 @@ tools:
         info: Mit diesem Tool können Statistiken über Unterrichte abgerufen werden
         download: CSV-Datei herunterladen
 
+    untis:
+        timetable:
+            label: Untis GPU001.txt
+
 versions:
     label: Versionen
     restore:

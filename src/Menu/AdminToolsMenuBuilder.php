@@ -17,6 +17,10 @@ class AdminToolsMenuBuilder extends AbstractMenuBuilder {
             $root->addChild('tools.tuition_report.label', [
                 'route' => 'tuition_report_tool'
             ]);
+
+            $root->addChild('tools.untis.timetable.label',  [
+                'route' => 'untis_timetable_export'
+            ]);
         }
 
         return $root;

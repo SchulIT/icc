@@ -1,0 +1,39 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'tools.untis.timetable.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('tools') }}">{{ 'tools.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {{ knp_menu_render('toolsMenu', {'currentClass': 'active', 'template': 'admin/tools/_menu.html.twig' }) }}
+
+
+    {{ form_start(form) }}
+
+    <div class="card">
+        <div class="card-header">{{ block('title') }}</div>
+        <div class="card-body">
+            {{ form_row(form.start) }}
+            {{ form_row(form.end) }}
+
+            {% for week in form.weeks %}
+                {{ form_widget(week) }}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fas fa-download"></i> {{ 'actions.download'|trans }}
+        </button>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}
+

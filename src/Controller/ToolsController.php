@@ -2,9 +2,15 @@
 
 namespace App\Controller;
 
+use App\Export\Untis\Timetable\Configuration;
+use App\Export\Untis\Timetable\ConfigurationType;
+use App\Export\Untis\Timetable\TimetableGpuExporter;
+use App\Export\Untis\Timetable\Week;
 use App\Form\GradeTuitionTeachersIntersectionType;
 use App\Form\TuitionReportInputType;
 use App\Menu\AdminToolsMenuBuilder;
+use App\Repository\TimetableWeekRepositoryInterface;
+use App\Sorting\Sorter;
 use App\Tools\GradeTuitionTeachersIntersectionInput;
 use App\Tools\GradeTuitionTeachersIntersectionTool;
 use App\Tools\TuitionReport;
@@ -64,6 +70,29 @@ class ToolsController extends AbstractController {
         return $this->render('admin/tools/tuition_report.html.twig', [
             'form' => $form->createView(),
             'result' => $result
+        ]);
+    }
+
+    #[Route('/gpu001', name: 'untis_timetable_export')]
+    public function exportGpu001(Request $request, TimetableGpuExporter $timetableGpuExporter, TimetableWeekRepositoryInterface $weekRepository, Sorter $sorter): Response {
+        $configuration = new Configuration();
+
+        foreach($weekRepository->findAll() as $week) {
+            $weekItem = new Week();
+            $weekItem->week = $week;
+
+            $configuration->weeks[] = $weekItem;
+        }
+
+        $form = $this->createForm(ConfigurationType::class, $configuration);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            return $timetableGpuExporter->generateCsvResponse($configuration);
+        }
+
+        return $this->render('admin/tools/gpu001.html.twig', [
+            'form' => $form->createView()
         ]);
     }
 }

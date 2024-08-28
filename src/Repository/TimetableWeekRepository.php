@@ -42,7 +42,7 @@ class TimetableWeekRepository extends AbstractRepository implements TimetableWee
      */
     public function findAll() {
         return $this->em->getRepository(TimetableWeek::class)
-            ->findAll();
+            ->findBy([], ['key' => 'asc']);
     }
 
     /**

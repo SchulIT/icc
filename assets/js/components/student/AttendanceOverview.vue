@@ -427,13 +427,10 @@ export default {
 
       this.modal.show();
 
-      console.log(this.editLesson);
-      console.log(this.editAttendance);
-
       this.absences = [ ];
 
       let $this = this;
-      let url = this.absencesUrl + '?date' + lesson.attendance.date.substring(0, 10) + '&start=' + lesson.lesson + '&end=' + lesson.lesson;
+      let url = this.absencesUrl + '?date=' + lesson.attendance.date.substring(0, 10) + '&lesson=' + lesson.lesson;
       this.$http.get(url)
           .then(function(response) {
             $this.absences = response.data;

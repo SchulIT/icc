@@ -176,16 +176,9 @@ class BookXhrController extends AbstractController {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
         $date = new DateTime($request->query->get('date'));
-        $lessonStart = $request->query->getInt('start');
-        $lessonEnd = $request->query->getInt('end');
+        $lesson = $request->query->getInt('lesson');
 
-        $absences = [ ];
-        for($lessonNumber = $lessonStart; $lessonNumber <= $lessonEnd; $lessonNumber++) {
-            $absences = array_merge(
-                $absences,
-                $absenceRepository->findByStudents([$student], null, $date, $lessonNumber)
-            );
-        }
+        $absences = $absenceRepository->findByStudents([$student], null, $date, $lesson);
 
         $absences = ArrayUtils::unique($absences);
         $json = array_map(fn(StudentAbsence $absence) => [

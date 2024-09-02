@@ -112,7 +112,9 @@ class ExamAdminController extends AbstractController {
         $this->denyAccessUnlessGranted(ExamVoter::Add);
         $exam = new Exam();
 
-        $form = $this->createForm(ExamType::class, $exam);
+        $form = $this->createForm(ExamType::class, $exam, [
+            'validation_groups' => ['Default', 'planning']
+        ]);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
@@ -210,7 +212,9 @@ class ExamAdminController extends AbstractController {
     public function edit(Exam $exam, Request $request): Response {
         $this->denyAccessUnlessGranted(ExamVoter::Edit, $exam);
 
-        $form = $this->createForm(ExamType::class, $exam);
+        $form = $this->createForm(ExamType::class, $exam, [
+            'validation_groups' => ['Default', 'planning']
+        ]);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {

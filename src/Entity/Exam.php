@@ -29,17 +29,17 @@ class Exam {
     #[ORM\Column(type: 'string', unique: true, nullable: true)]
     private ?string $externalId = null;
 
-    #[DateInActiveSection]
-    #[Assert\NotNull]
+    #[DateInActiveSection(groups: ['planning'])]
+    #[Assert\NotNull(groups: ['planning'])]
     #[ORM\Column(type: 'date', nullable: true)]
     private ?DateTime $date = null;
 
-    #[Assert\GreaterThan(0)]
+    #[Assert\GreaterThan(0, groups: ['planning'])]
     #[ORM\Column(type: 'integer')]
     private int $lessonStart = 0;
 
-    #[Assert\GreaterThan(0)]
-    #[Assert\GreaterThanOrEqual(propertyPath: 'lessonStart')]
+    #[Assert\GreaterThan(0, groups: ['planning'])]
+    #[Assert\GreaterThanOrEqual(propertyPath: 'lessonStart', groups: ['planning'])]
     #[ORM\Column(type: 'integer')]
     private int $lessonEnd = 0;
 

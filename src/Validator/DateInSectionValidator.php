@@ -20,6 +20,10 @@ class DateInSectionValidator extends ConstraintValidator {
     }
 
     public function validate(mixed $value, Constraint $constraint): void {
+        if($value === null) {
+            return;
+        }
+
         if(!$value instanceof DateTime) {
             throw new UnexpectedTypeException($value, DateTime::class);
         }

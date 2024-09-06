@@ -16,8 +16,15 @@
 
         <div class="card-body">
             {{ form_row(form.email_enabled) }}
+
+            {% if isPushoverTokenMissing %}
+                <div class="bs-callout bs-callout-danger">
+                    <h5>{{ 'caution'|trans }}</h5>
+                    <p>{{ 'admin.settings.notifications.pushover.token.missing'|trans }}</p>
+                </div>
+            {% endif %}
+
             {{ form_row(form.pushover_enabled) }}
-            {{ form_row(form.pushover_token) }}
         </div>
     </div>
 

@@ -22,6 +22,12 @@ Es wurden folgende neuen Rollen hinzugefügt
 Folgende Rollen wurden gelöscht:
 * ROLE_KIOSK: Diese Rolle kann durch eine beliebige Anzahl an *_VIEWER-Rollen (siehe oben) ersetzt werden
 
+## Neue Paramenter für Konfigurationsdatei
+
+### PUSHOVER_TOKEN
+
+Das Pushover-Token wird nun in einer Umgebungsvariable gespeichert anstatt in den Einstellungen in der Datenbank.
+
 ## Neue Features / Verbesserungen
 
 Der zugrundeliegende Milestone 2.3 ist [auf GitHub](https://github.com/SchulIT/icc/milestone/14?closed=1) zu finden.
@@ -102,5 +108,6 @@ Konfigurationsdatei.
 
 ### Nach dem Upgrade TODO
 
+* Bei Bedarf das `PUSHOVER_TOKEN` in der `.env.local` Konfigurationsdatei setzen
 * Nach Belieben neue Abwesenheitsarten erstellen.
 * Prioritäten für die An- und Abwesenheitsvorschläge unter *Einstellungen ➜ Unterrichtsbuch* festlegen. Empfehlen finden sich im Handbuch.

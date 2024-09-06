@@ -1010,8 +1010,7 @@ admin:
                     label: Pushover-Benachrichtigungen aktiviert für
                     help: Schaltet Benachrichtigungen über die Pushover-App für diese Benutzergruppen frei oder sperrt sie.
                 token:
-                    label: Pushover API-Token
-                    help: Das API-Token, um sich gegenüber der API zu authentifizieren. Dieses muss über die Pushover-Website ausgestellt werden.
+                    missing: Das Pushover-Token wurde in der Konfigurationsdatei nicht festgelegt. Pushover-Benachrichtigungen sind daher grundsätzlich deaktiviert.
             email:
                 label: E-Mail Benachrichtigungen aktiviert für
                 help: Schaltet E-Mail-Benachrichtigungen für diese Benutzergruppen frei oder sperrt sie.

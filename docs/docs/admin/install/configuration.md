@@ -135,6 +135,11 @@ Empfohlener Wert: `30` Tage
 
 Mehr zur Aufbewahrungsrichtlinie gibt es Mehr unter [hier](../../features/audit#aufbewahrungsrichtlinie).
 
+#### PUSHOVER_TOKEN
+
+Für den Fall, dass [Benachrichtigungen via Pushover](../guides/pushover) gesendet werden sollen, muss das entsprechende Token hier hinterlegt
+werden.
+
 ### Datenbank
 
 #### DATABASE_URL

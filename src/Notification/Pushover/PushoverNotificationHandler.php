@@ -19,10 +19,10 @@ class PushoverNotificationHandler implements NotificationHandlerInterface {
 
     private ?Application $application = null;
 
-    public function __construct(private readonly NotificationSettings $notificationSettings, private readonly LoggerInterface $logger) { }
+    public function __construct(private readonly ?string $pushoverToken, private readonly NotificationSettings $notificationSettings, private readonly LoggerInterface $logger) { }
 
     public function canHandle(Notification $notification): bool {
-        return !empty($this->notificationSettings->getPushoverApiToken())
+        return !empty($this->pushoverToken)
             && !empty($notification->getRecipient()->getPushoverToken())
             && ArrayUtils::inArray($notification->getRecipient()->getUserType(), $this->notificationSettings->getPushoverEnabledUserTypes()) !== false;
     }
@@ -32,7 +32,7 @@ class PushoverNotificationHandler implements NotificationHandlerInterface {
             return;
         }
 
-        $this->application = new Application($this->notificationSettings->getPushoverApiToken());
+        $this->application = new Application($this->pushoverToken);
     }
 
     public function handle(Notification $notification): void {

@@ -232,6 +232,10 @@ services:
         arguments:
             $isAsyncChecksEnabled: '%env(ASYNC_CHECKS)%'
 
+    App\Controller\Settings\NotificationSettingsController:
+        arguments:
+            $pushoverToken: '%env(PUSHOVER_TOKEN)%'
+
     # MARKDOWN
     League\CommonMark\Extension\CommonMarkCoreExtension: ~
 
@@ -310,6 +314,7 @@ services:
 
     App\Notification\Pushover\PushoverNotificationHandler:
         arguments:
+            $pushoverToken: '%env(PUSHOVER_TOKEN)%'
             $logger: '@monolog.logger.notifications'
 
     App\Notification\Email\DefaultEmailStrategy:

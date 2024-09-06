@@ -54,6 +54,12 @@ Es können nun Elternsprechtage über das ICC gebucht werden. Mehr dazu [im Hand
 Man kann Lernenden und Eltern ermöglichen, die Anwesenheit einzusehen. Dazu muss die entsprechende Option in den
 Einstellungen vom Unterrichtsbuch aktiviert werden (diese Option ist standardmäßig deaktiviert).
 
+### Unterrichtsthemen einsehbar
+
+Ähnlich zur Anwesenheit können auch die Unterrichtsthemen für Lernende und Eltern einsehbar gemacht werden. Dazu 
+muss die entsprechende Option in den Einstellungen vom Unterrichtsbuch aktiviert werden (diese Option ist standardmäßig
+deaktiviert).
+
 ### Aufbewahrungsrichtlinie im Auditlog für importierte Daten
 
 Es ist nun möglich, das Auditlog für importierte Daten nur für die letzten N Tage beizubehalten. So können große

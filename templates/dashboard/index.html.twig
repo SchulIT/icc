@@ -391,8 +391,9 @@
                 {% set canCreateReservation = is_granted('new-reservation') %}
                 {% set canCreateExcuseNote = is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
                 {% set canCreateTeacherAbsence = is_granted('new-teacher-absence') %}
+                {% set canCreateAdditionalInformationForLesson = is_granted('new-timetablelesson-additionalinformation') %}
 
-                {% if canCreateMessage or canCreateAbsence or canCreateBulkAbsence or canCreateReservation or canCreateExcuseNote or canCreateTeacherAbsence %}
+                {% if canCreateMessage or canCreateAbsence or canCreateBulkAbsence or canCreateReservation or canCreateExcuseNote or canCreateTeacherAbsence or canCreateAdditionalInformationForLesson %}
                     <div class="card">
                         <div class="list-group list-group-flush">
                             {% if canCreateMessage %}
@@ -430,6 +431,11 @@
                             {% if canCreateExcuseNote %}
                                 <a href="{{ path('add_excuse') }}" class="list-group-item list-group-item-action">
                                     <i class="fas fa-plus"></i> {{ 'book.excuse_note.add.label'|trans }}
+                                </a>
+                            {% endif %}
+                            {% if canCreateAdditionalInformationForLesson %}
+                                <a href="{{ path('add_timetable_lesson_additional_information') }}" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-plus"></i> {{ 'dashboard.additional_information.label'|trans }}
                                 </a>
                             {% endif %}
                         </div>

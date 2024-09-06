@@ -13,7 +13,7 @@ class TimetableLessonAdditionalInformation {
     use UuidTrait;
 
     #[ORM\Column(type: 'date')]
-    #[Assert\NotNull()]
+    #[Assert\NotNull]
     private DateTime $date;
 
     #[ORM\Column(type: 'integer')]

@@ -39,13 +39,15 @@ class TimetableLessonAdditionalInformationController extends AbstractController 
             ->setLessonStart($request->query->getInt('start'))
             ->setLessonEnd($request->query->getInt('end'));
 
-        $studyGroup = $studyGroupRepository->findOneByUuid($request->query->get('studygroup'));
+        if($request->query->has('studygroup')) {
+            $studyGroup = $studyGroupRepository->findOneByUuid($request->query->get('studygroup'));
 
-        if($studyGroup === null) {
-            throw new NotFoundHttpException();
+            if ($studyGroup === null) {
+                throw new NotFoundHttpException();
+            }
+
+            $additionalInformation->setStudyGroup($studyGroup);
         }
-
-        $additionalInformation->setStudyGroup($studyGroup);
 
         $form = $this->createForm(TimetableLessonAdditionInformationType::class, $additionalInformation);
         $form->handleRequest($request);

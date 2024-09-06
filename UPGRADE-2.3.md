@@ -37,6 +37,12 @@ Der zugrundeliegende Milestone 2.3 ist [auf GitHub](https://github.com/SchulIT/i
 Es ist nun möglich, private Nachrichten über das System zu verschicken. Das Feature muss in den Einstellungen für die
 gewünschten Benutzergruppen freigeschaltet werden und ist in das Benachrichtigungssystem integriert. Mehr dazu [im Handbuch](https://docs.schulit.de/icc/features/chat)
 
+Private Nachrichten werden verschlüsselt in der Datenbank gespeichert. Dazu muss in der [Konfigurationsdatei](https://docs.schulit.de/icc/admin/install/configuration)
+der Parameter `DB_SECRET` gesetzt werden.
+
+Sind bereits Werte in der Datenbank, so können diese nach dem Upgrade mittels `php bin/console doctrine:encrypt:database`
+nachträglich verschlüsselt werden.
+
 ### Elternsprechtagsplanung
 
 Es können nun Elternsprechtage über das ICC gebucht werden. Mehr dazu [im Handbuch](https://docs.schulit.de/icc/features/parents_day)

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Ambta\DoctrineEncryptBundle\Configuration\Encrypted;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -15,9 +16,10 @@ class Chat {
     use IdTrait;
     use UuidTrait;
 
-    #[ORM\Column(type: 'string')]
+    #[ORM\Column(type: 'text')]
     #[Assert\NotBlank]
     #[Assert\Length(max: 255)]
+    #[Encrypted]
     private ?string $topic;
 
     #[Gedmo\Blameable(on: 'create')]

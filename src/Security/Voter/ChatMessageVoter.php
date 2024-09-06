@@ -9,7 +9,6 @@ use LogicException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use function Symfony\Component\DependencyInjection\Loader\Configurator\expr;
 
 class ChatMessageVoter extends Voter {
     public const CanViewReadConfirmations = 'can-view-read-confirmations';

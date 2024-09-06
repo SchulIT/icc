@@ -6,6 +6,7 @@ use App\Entity\BookComment;
 use App\Entity\BookEvent;
 use App\Entity\Grade;
 use App\Entity\LessonEntry;
+use App\Entity\Student as StudentEntity;
 use App\Entity\Substitution;
 use App\Entity\Teacher;
 use App\Entity\TimetableLesson;
@@ -219,6 +220,30 @@ class EntryOverviewHelper {
         }
 
         return $this->computeOverview($tuitions, $entries, $comments, [ ], $events, $start, $end);
+    }
+
+    public function computeOverviewForStudentWithoutComment(StudentEntity $student, DateTime $start, DateTime $end): EntryOverview {
+        $section = $this->sectionResolver->getSectionForDate($start);
+
+        if($section === null) {
+            return new EntryOverview($start, $end, [ ], [ ], [ ], [ ]);
+        }
+
+        if($end > $section->getEnd()) {
+            $end = $section->getEnd();
+        }
+
+        $entries = $this->entryRepository->findAllByStudents($student, $start, $end);
+        $tuitions = $this->tuitionRepository->findAllByStudents([$student], $section);
+
+        $events = [ ];
+        $section = $this->sectionResolver->getSectionForDate($start);
+
+        if($section !== null) {
+            $events = $this->bookEventRepository->findByStudent($student, $start, $end);
+        }
+
+        return $this->computeOverview($tuitions, $entries, [ ], [ ], $events, $start, $end);
     }
 
     /**

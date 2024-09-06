@@ -123,6 +123,25 @@ class LessonEntryRepository extends AbstractRepository implements LessonEntryRep
         return $qb->getQuery()->getResult();
     }
 
+    public function findAllByStudents(Student $student, DateTime $start, DateTime $end): array {
+        $qb = $this->createDefaultQueryBuilder();
+        $qb = $this->applyStartEnd($qb, $start, $end);
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('tInner.id')
+            ->from(Tuition::class, 'tInner')
+            ->leftJoin('tInner.studyGroup', 'sgInner')
+            ->leftJoin('sgInner.memberships', 'sgmInner')
+            ->where('sgmInner.student = :student');
+
+        $qb->andWhere(
+            $qb->expr()->in('tt.id', $qbInner->getDQL())
+        )
+            ->setParameter('student', $student->getId());
+
+        return $qb->getQuery()->getResult();
+    }
+
     public function persist(LessonEntry $entry): void {
         $this->em->persist($entry);
         $this->em->flush();

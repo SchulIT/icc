@@ -76,6 +76,12 @@ class BookSettingsController extends AbstractController {
                 'help' => 'admin.settings.book.attendances_visible_for_students_and_parents.help',
                 'data' => $settings->isAttendanceVisibleForStudentsAndParentsEnabled()
             ])
+            ->add('lesson_topics_visible_for_students_and_parents', CheckboxType::class, [
+                'required' => false,
+                'label' => 'admin.settings.book.lesson_topics_visible_for_students_and_parents.label',
+                'help' => 'admin.settings.book.lesson_topics_visible_for_students_and_parents.help',
+                'data' => $settings->isLessonTopicsVisibleForStudentsAndParentsEnabled()
+            ])
             ->add('suggestion_priority_exam', IntegerType::class, [
                 'required' => true,
                 'label' => 'admin.settings.book.attendance_suggestion.priority.exam',
@@ -121,6 +127,9 @@ class BookSettingsController extends AbstractController {
                 },
                 'attendances_visible_for_students_and_parents' => function(bool $isEnabled) use($settings) {
                     $settings->setAttendanceVisibleForStudentsAndParentsEnabled($isEnabled);
+                },
+                'lesson_topics_visible_for_students_and_parents' => function(bool $isEnabled) use ($settings) {
+                    $settings->setLessonTopicsVisibleForStudentsAndParentsEnabled($isEnabled);
                 },
                 'suggestion_priority_exam' => function(int $priority) use ($settings) {
                     $settings->setSuggestionPriorityForExams($priority);

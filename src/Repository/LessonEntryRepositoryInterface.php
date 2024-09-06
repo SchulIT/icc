@@ -51,6 +51,14 @@ interface LessonEntryRepositoryInterface {
      */
     public function findAllByStudentWithExercises(Student $student, DateTime $start, DateTime $end): array;
 
+    /**
+     * @param Student $student
+     * @param DateTime $start
+     * @param DateTime $end
+     * @return LessonEntry[]
+     */
+    public function findAllByStudents(Student $student, DateTime $start, DateTime $end): array;
+
     public function persist(LessonEntry $entry): void;
 
     public function remove(LessonEntry $entry): void;

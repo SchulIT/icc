@@ -72,6 +72,14 @@ class BookSettings extends AbstractSettings {
         $this->setValue('book.attendance.visible_for_students_and_parents', $isEnabled);
     }
 
+    public function isLessonTopicsVisibleForStudentsAndParentsEnabled(): bool {
+        return $this->getValue('book.lesson_topics.visible_for_students_and_parents', false);
+    }
+
+    public function setLessonTopicsVisibleForStudentsAndParentsEnabled(bool $isEnabled): void {
+        $this->setValue('book.lesson_topics.visible_for_students_and_parents', $isEnabled);
+    }
+
     public function isIntegrityCheckEnabled(string $check): bool {
         return $this->getValue(sprintf('book.integrity_check.%s.enabled', $check), true);
     }

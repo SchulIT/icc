@@ -1037,6 +1037,9 @@ admin:
             attendances_visible_for_students_and_parents:
                 label: Anwesenheit für Lernende und Eltern sichtbar machen
                 help: 'Wenn diese Option aktiv ist, erhalten Lernende und Eltern den Menüpunkt Anwesenheiten, in dem sie die eigene Anwesenheiten (inkl. Anzahl Fehlstunden und Entschuldigungsstatus) einsehen können. Wichtig: Anwesenheiten können erst ab dem Folgetag eingesehen werden.'
+            lesson_topics_visible_for_students_and_parents:
+                label: Stundenübersicht für Lernende und Eltern sichtbar machen
+                help: 'Wenn diese Option aktiv ist, können Lernende und Eltern über den Menüpunkt Unterrichtsthemen und Hausaufgaben einsehen. Wichtig: Die Informationen werden in Echtzeit angezeigt.'
             attendance_suggestion:
                 label: An- und Abwesenheitsvorschläge
                 priority:
@@ -2286,6 +2289,13 @@ attendance:
     info: Bitte beachten, dass Lehrkräfte Anwesenheiten ggf. zeitverzögert eintragen. Bei Rückfragen bitte an die Fachlehrkraft oder die Klassen-/Stufenleitung wenden.
     delay: Anwesenheiten sind erst am Folgetag einsehbar.
     legend: Die einzelnen Farben spiegeln die Anwesenheit wieder. Ist eine Zelle weiß, so fand hier kein Unterricht statt (z.B. Freistunde in der Oberstufe) oder die Lehrkraft hat noch keine Eintragung vorgenommen.
+
+lesson_topics:
+    label: Unterrichtsthemen
+    empty: Diese Übersicht ist aktuell leer.
+
+reports:
+    label: Unterrichtsthemen & Anwesenheit
 
 parents_day:
     label: Elternsprechtag

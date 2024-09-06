@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Book\EntryOverviewHelper;
 use App\Book\Student\StudentInfoResolver;
 use App\Entity\BookEvent;
 use App\Entity\LessonEntry;
@@ -29,15 +30,56 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/attendance')]
-class AttendanceController extends AbstractController {
+#[Route('/report')]
+class BookStudentsParentsReportController extends AbstractController {
 
-    #[Route(name: 'student_attendance')]
-    public function index(Request $request, StudentFilter $studentFilter, SectionFilter $sectionFilter,
-                          BookSettings $bookSettings, TimetableSettings $timetableSettings,
-                          TuitionRepositoryInterface $tuitionRepository, LessonEntryRepositoryInterface $entryRepository,
-                          StudentInfoResolver $infoResolver, Sorter $sorter, Grouper $grouper, DateHelper $dateHelper,
-                          LessonAttendanceRepositoryInterface $lessonAttendanceRepository, BookEventRepositoryInterface $bookEventRepository): Response {
+    use CalendarWeeksTrait;
+
+    #[Route('/lessons', name: 'student_lessons_overview')]
+    public function lessons(Request $request, StudentFilter $studentFilter, SectionFilter $sectionFilter,
+                            BookSettings $bookSettings, EntryOverviewHelper $entryOverviewHelper,
+                            Sorter $sorter, Grouper $grouper, DateHelper $dateHelper) {
+        if($bookSettings->isLessonTopicsVisibleForStudentsAndParentsEnabled() === false) {
+            throw new AccessDeniedHttpException();
+        }
+
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
+        $studentFilterView = $studentFilter->handle($request->query->get('student'), $sectionFilterView->getCurrentSection(), $user, true);
+
+        $selectedDate = $this->resolveSelectedDate($request, $sectionFilterView->getCurrentSection(), $dateHelper);
+
+        $overview = null;
+
+        if($selectedDate !== null && $studentFilterView->getCurrentStudent() !== null) {
+            $overview = $entryOverviewHelper->computeOverviewForStudentWithoutComment($studentFilterView->getCurrentStudent(), $selectedDate, (clone $selectedDate)->modify('+6 days'));
+        }
+
+        $weekStarts = [ ];
+
+        if($sectionFilterView->getCurrentSection() !== null) {
+            $weekStarts = $this->listCalendarWeeks($sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd());
+        }
+
+        dump($overview);
+
+        return $this->render('books/lesson_topics/index.html.twig', [
+            'sectionFilter' => $sectionFilterView,
+            'studentFilter' => $studentFilterView,
+            'overview' => $overview,
+            'weekStarts' => $weekStarts,
+            'selectedDate' => $selectedDate
+        ]);
+    }
+
+    #[Route('/attendance', name: 'student_attendance')]
+    public function attendance(Request $request, StudentFilter $studentFilter, SectionFilter $sectionFilter,
+                               BookSettings $bookSettings, TimetableSettings $timetableSettings,
+                               TuitionRepositoryInterface $tuitionRepository, LessonEntryRepositoryInterface $entryRepository,
+                               StudentInfoResolver $infoResolver, Sorter $sorter, Grouper $grouper, DateHelper $dateHelper,
+                               LessonAttendanceRepositoryInterface $lessonAttendanceRepository, BookEventRepositoryInterface $bookEventRepository): Response {
         if($bookSettings->isAttendanceVisibleForStudentsAndParentsEnabled() === false) {
             throw new AccessDeniedHttpException();
         }

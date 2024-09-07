@@ -63,8 +63,6 @@ class BookStudentsParentsReportController extends AbstractController {
             $weekStarts = $this->listCalendarWeeks($sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd());
         }
 
-        dump($overview);
-
         return $this->render('books/lesson_topics/index.html.twig', [
             'sectionFilter' => $sectionFilterView,
             'studentFilter' => $studentFilterView,

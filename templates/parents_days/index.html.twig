@@ -155,6 +155,10 @@
                                 {% set alreadyBooked = teacherGroup.teacher in studentGroup.bookedTeachers %}
                                 {% set appointmentRequested = teacherGroup.teacher in studentGroup.teachersWithRequest %}
                                 {% set appointmentNotNecessary = teacherGroup.teacher in studentGroup.teachersNotNecessary %}
+                                {% set comments = [ ] %}
+                                {% if studentGroup.comments[teacherGroup.teacher.acronym] is defined %}
+                                    {% set comments = studentGroup.comments[teacherGroup.teacher.acronym] %}
+                                {% endif %}
 
                                 <div class="list-group-item d-flex {% if alreadyBooked %}bg-success-subtle{% elseif appointmentRequested %}bg-danger-subtle{% endif %}">
                                     <div class="flex-fill align-self-center">
@@ -173,10 +177,16 @@
                                         {% if alreadyBooked %}
                                             <span class="badge text-bg-success">{{ 'parents_day.appointments.already_booked'|trans }}</span>
                                         {% endif %}
+
+                                        {% for comment in comments %}
+                                            <div>
+                                                <i class="fas fa-info-circle"></i> {{ comment }}
+                                            </div>
+                                        {% endfor %}
                                     </div>
 
                                     {% if is_granted('book-parentsdayappointment', parentsDayFilter.currentParentsDay) %}
-                                        <a href="{{ path('book_parents_day_appointment_overview', { uuid: parentsDayFilter.currentParentsDay.uuid, teacher: teacherGroup.teacher.uuid }) }}" class="btn btn-sm btn-outline-primary">
+                                        <a href="{{ path('book_parents_day_appointment_overview', { uuid: parentsDayFilter.currentParentsDay.uuid, teacher: teacherGroup.teacher.uuid }) }}" class="btn btn-sm btn-outline-primary align-self-center">
                                             {% if not alreadyBooked %}
                                                 {{ 'parents_day.appointments.book.label'|trans }}
                                             {% else %}

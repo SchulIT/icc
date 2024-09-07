@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Ambta\DoctrineEncryptBundle\Configuration\Encrypted;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -37,6 +38,11 @@ class ParentsDayParentalInformation {
 
     #[ORM\Column(type: 'boolean')]
     private bool $isAppointmentRequested = false;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\Length(max: 255)]
+    #[Encrypted]
+    private ?string $comment = null;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
@@ -93,6 +99,15 @@ class ParentsDayParentalInformation {
 
     public function setIsAppointmentRequested(bool $isAppointmentRequested): ParentsDayParentalInformation {
         $this->isAppointmentRequested = $isAppointmentRequested;
+        return $this;
+    }
+
+    public function getComment(): ?string {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): ParentsDayParentalInformation {
+        $this->comment = $comment;
         return $this;
     }
 

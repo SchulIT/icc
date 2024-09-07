@@ -43,7 +43,8 @@
                         <table class="card-table table table-striped table-bordered">
                             <colgroup>
                                 <col>
-                                <col class="column-lg">
+                                <col class="column-180">
+                                <col class="column-180">
                                 <col class="column-lg">
                             </colgroup>
                             <thead>
@@ -58,6 +59,9 @@
                                     </td>
                                     <td class="align-middle">
                                         {{ form_widget(student.isAppointmentRequested) }}
+                                    </td>
+                                    <td class="align-middle">
+                                        {{ form_widget(student.comment) }}
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -87,6 +91,13 @@
                                 ({% for grade in tuition.studyGroup.grades %}{{ grade.name }}{% if not loop.last %}, {% endif %}{% endfor %})
                             </a>
                         {% endfor %}
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-circle-info"></i> {{ 'info.label'|trans }}</h5>
+                        <p>{{ 'parents_day.prepare.info'|trans }}</p>
                     </div>
                 </div>
 

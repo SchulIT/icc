@@ -97,6 +97,7 @@ class ParentsDayController extends AbstractController {
 
                     $teachersWithRequest = [ ];
                     $teachersNotNecessary = [ ];
+                    $comments = [ ];
 
                     foreach($parentalInformationRepository->findForStudent($parentsDayFilterView->getCurrentParentsDay(), $student) as $information) {
                         if($information->isAppointmentNotNecessary()) {
@@ -106,11 +107,20 @@ class ParentsDayController extends AbstractController {
                         if($information->isAppointmentRequested()) {
                             $teachersWithRequest[] = $information->getTeacher();
                         }
+
+                        if(!empty($information->getComment())) {
+                            if(!isset($comments[$information->getTeacher()->getAcronym()])) {
+                                $comments[$information->getTeacher()->getAcronym()] = [ ];
+                            }
+
+                            $comments[$information->getTeacher()->getAcronym()][] = $information->getComment();
+                        }
                     }
 
                     $tuitions[] = [
                         'student' => $student,
                         'groups' => $groups,
+                        'comments' => $comments,
                         'bookedTeachers' => $bookedTeachers,
                         'teachersWithRequest' => $teachersWithRequest,
                         'teachersNotNecessary' => $teachersNotNecessary

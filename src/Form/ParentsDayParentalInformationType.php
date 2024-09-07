@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\ParentsDayParentalInformation;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -20,6 +21,13 @@ class ParentsDayParentalInformationType extends AbstractType {
             ->add('isAppointmentRequested', CheckboxType::class, [
                 'required' => false,
                 'label' => 'parents_day.prepare.requested.label'
+            ])
+            ->add('comment', TextType::class, [
+                'required' => false,
+                'label' => 'label.comment',
+                'attr' => [
+                    'placeholder' => 'label.comment'
+                ]
             ]);
     }
 

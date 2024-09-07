@@ -43,6 +43,12 @@ der Parameter `DB_SECRET` gesetzt werden.
 Sind bereits Werte in der Datenbank, so können diese nach dem Upgrade mittels `php bin/console doctrine:encrypt:database`
 nachträglich verschlüsselt werden.
 
+### Datenbankverschlüsselung
+
+Einige sensible Daten werden nun bereits verschlüsselt, bevor sie in die Datenbank geschrieben werden. Das betrifft unter
+anderem die bereits erwähnten privaten Nachrichten sowie Abwesenheitsmeldungen (inkl. der Nachrichten) von Lernenden
+und Lehrkräften. Außerdem werden die Initialpasswörter von Lernplattformen verschlüsselt abgespeichert.
+
 ### Elternsprechtagsplanung
 
 Es können nun Elternsprechtage über das ICC gebucht werden. Mehr dazu [im Handbuch](https://docs.schulit.de/icc/features/parents_day)

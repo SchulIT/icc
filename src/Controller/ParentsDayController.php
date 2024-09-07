@@ -492,7 +492,7 @@ class ParentsDayController extends AbstractController {
                 }
                 $repository->commit();
 
-                $this->addFlash('success', 'parents_day.plan.success');
+                $this->addFlash('success', 'parents_day.prepare.success');
                 return $this->redirectToRoute('prepare_parents_day', [
                     'uuid' => $parentsDay->getUuid(),
                     'tuition' => $tuitionFilterView->getCurrentTuition()->getUuid()

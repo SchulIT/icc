@@ -2305,6 +2305,7 @@ parents_day:
         introduction: Bitte zunächst über den Filter einen Unterricht auswählen.
         help: Hier können Informationen zu Lernenden hinterlegt werden, bspw. ob Termine erwünscht oder nicht notwendig sind.
         info: Die hier hinterlegten Informationen beziehen sich auf alle Unterrichte. Kommentare sollten daher alle Unterrichte berücksichtigen.
+        success: Informationen erfolgreich aktualisiert
         cancelled:
             label: Termin abgesagt
         not_necessary:

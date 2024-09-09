@@ -4,7 +4,7 @@
 
 Zur Sicherheit werden einige sensible Daten auf dem ICC verschlüsselt in der Datenbank gespeichert. Darunter zählen:
 
-* private Nachrichten (sowohl der Titel als auch alle Nachrichten)
+* private Nachrichten (nur Nachrichten, der Titel bleibt aus Performancegründen unverschlüsselt)
 * Abwesenheitsmeldungen von Lernenden und Lehrkräften
 * Lernplattform-Initialpasswörter von Lernenden
 

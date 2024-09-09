@@ -59,9 +59,15 @@ class ChatController extends AbstractController {
             $unreadCount[$chat->getId()] = $this->chatMessageRepository->countUnreadMessages($user, $chat);
         }
 
+        $attachmentsCount = [ ];
+        foreach($chats as $chat) {
+            $attachmentsCount[$chat->getId()] = $this->attachmentRepository->countByChat($chat);
+        }
+
         return $this->render('chat/index.html.twig', [
             'chats' => $chats,
-            'unreadCount' => $unreadCount
+            'unreadCount' => $unreadCount,
+            'attachmentsCount' => $attachmentsCount
         ]);
     }
 

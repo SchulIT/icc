@@ -41,7 +41,7 @@
                                             <i class="fa-regular fa-comments"></i> {{ chat.messages|length }}
                                         </span>
 
-                                        {% set attachmentsCount = chat.countAttachments %}
+                                        {% set attachmentsCount = attachmentsCount[chat.id] %}
                                         {% if attachmentsCount > 0 %}
                                             <span class="badge text-bg-secondary ms-2">
                                             <i class="fa-solid fa-paperclip"></i> {{ attachmentsCount }}

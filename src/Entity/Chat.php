@@ -39,7 +39,7 @@ class Chat {
     /**
      * @var Collection<ChatMessage>
      */
-    #[ORM\OneToMany(mappedBy: 'chat', targetEntity: ChatMessage::class, cascade: ['persist'])]
+    #[ORM\OneToMany(mappedBy: 'chat', targetEntity: ChatMessage::class, cascade: ['persist'], fetch: 'EXTRA_LAZY')]
     #[ORM\OrderBy(['createdAt' => 'ASC'])]
     #[Assert\Valid]
     private Collection $messages;
@@ -93,15 +93,5 @@ class Chat {
     public function setCreatedBy(?User $createdBy): Chat {
         $this->createdBy = $createdBy;
         return $this;
-    }
-
-    public function countAttachments(): int {
-        $result = 0;
-
-        foreach($this->messages as $message) {
-            $result += count($message->getAttachments());
-        }
-
-        return $result;
     }
 }

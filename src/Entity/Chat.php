@@ -19,7 +19,6 @@ class Chat {
     #[ORM\Column(type: 'text')]
     #[Assert\NotBlank]
     #[Assert\Length(max: 255)]
-    #[Encrypted]
     private ?string $topic;
 
     #[Gedmo\Blameable(on: 'create')]

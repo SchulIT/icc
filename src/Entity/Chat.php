@@ -19,7 +19,7 @@ class Chat {
     #[ORM\Column(type: 'text')]
     #[Assert\NotBlank]
     #[Assert\Length(max: 255)]
-    private ?string $topic;
+    private ?string $topic = null;
 
     #[Gedmo\Blameable(on: 'create')]
     #[ORM\ManyToOne(targetEntity: User::class)]

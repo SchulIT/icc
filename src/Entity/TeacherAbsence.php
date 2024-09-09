@@ -40,7 +40,7 @@ class TeacherAbsence {
 
     #[ORM\Column(type: 'text', nullable: true)]
     #[Encrypted]
-    private ?string $message;
+    private ?string $message = null;
 
     /**
      * @var Collection<TeacherAbsenceComment>

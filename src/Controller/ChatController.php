@@ -52,11 +52,19 @@ class ChatController extends AbstractController {
         $user = $this->getUser();
 
         $chats = $this->chatRepository->findAllByUser($user);
-        $sorter->sort($chats, ChatStrategy::class, SortDirection::Descending);
+        // Do NOT sort here as it triggers the whole messages collection to be loaded which
+        // leads to decrypting all messages :-(
+        // Sort in database instead!
+        //$sorter->sort($chats, ChatStrategy::class, SortDirection::Descending);
 
         $unreadCount = [ ];
         foreach($chats as $chat) {
             $unreadCount[$chat->getId()] = $this->chatMessageRepository->countUnreadMessages($user, $chat);
+        }
+
+        $messagesCount = [ ];
+        foreach($chats as $chat) {
+            $messagesCount[$chat->getId()] = 0 /*$chat->getMessages()->count()*/;
         }
 
         $attachmentsCount = [ ];
@@ -66,6 +74,7 @@ class ChatController extends AbstractController {
 
         return $this->render('chat/index.html.twig', [
             'chats' => $chats,
+            'messagesCount' => $messagesCount,
             'unreadCount' => $unreadCount,
             'attachmentsCount' => $attachmentsCount
         ]);

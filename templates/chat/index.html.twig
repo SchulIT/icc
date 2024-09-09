@@ -38,13 +38,12 @@
                                         </span>
 
                                         <span class="badge text-bg-secondary ms-2">
-                                            <i class="fa-regular fa-comments"></i> {{ chat.messages|length }}
+                                            <i class="fa-regular fa-comments"></i> {{ messagesCount[chat.id] }}
                                         </span>
 
-                                        {% set attachmentsCount = attachmentsCount[chat.id] %}
-                                        {% if attachmentsCount > 0 %}
+                                        {% if attachmentsCount[chat.id] > 0 %}
                                             <span class="badge text-bg-secondary ms-2">
-                                            <i class="fa-solid fa-paperclip"></i> {{ attachmentsCount }}
+                                            <i class="fa-solid fa-paperclip"></i> {{ attachmentsCount[chat.id] }}
                                         </span>
                                         {% endif %}
                                     </div>

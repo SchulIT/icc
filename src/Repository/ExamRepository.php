@@ -208,8 +208,9 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
             ->select('eInner.id')
             ->from(Exam::class, 'eInner')
             ->leftJoin('eInner.students', 'sInner')
+            ->leftJoin('sInner.student', 'stInner')
             ->where(
-                $qb->expr()->in('sInner.student', ':studentIds')
+                $qb->expr()->in('stInner.id', ':studentIds')
             );
 
         $qb

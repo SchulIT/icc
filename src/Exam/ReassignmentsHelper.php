@@ -23,7 +23,7 @@ class ReassignmentsHelper {
         $oldExams = ArrayUtils::createArrayWithKeys(
             array_filter(
                 $this->examRepository->findAllByStudents([$student]),
-                fn(Exam $exam) => ($exam->getDate() === null || $exam->getDate() >= $start) && $exam->getStudents()->contains($student)
+                fn(Exam $exam) => ($exam->getDate() === null || $exam->getDate() >= $start) && $this->isStudentPartOfExam($exam, $student)
             ),
             fn(Exam $exam) => $exam->getId()
         );
@@ -36,7 +36,7 @@ class ReassignmentsHelper {
                     null,
                     false
                 ),
-                fn(Exam $exam) => ($exam->getDate() === null || $exam->getDate() >= $start) && $exam->getStudents()->contains($student) !== true
+                fn(Exam $exam) => ($exam->getDate() === null || $exam->getDate() >= $start) && $this->isStudentPartOfExam($exam, $student) !== true
             ),
             fn(Exam $exam) => $exam->getId()
         );
@@ -108,5 +108,15 @@ class ReassignmentsHelper {
         }
 
         $this->examRepository->commit();
+    }
+
+    private function isStudentPartOfExam(Exam $exam, Student $student): bool {
+        foreach($exam->getStudents() as $examStudent) {
+            if($examStudent->getStudent()->getId() === $student->getId()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

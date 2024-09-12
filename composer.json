@@ -27,7 +27,7 @@
         "jms/serializer-bundle": "^5.0",
         "jsvrcek/ics": "^0.8",
         "knplabs/knp-menu-bundle": "^3.0",
-        "league/commonmark": "^1.0",
+        "league/commonmark": "^2.0",
         "league/csv": "^9.7",
         "league/flysystem": "3.0",
         "lightsaml2/lightsaml": "^2.0",

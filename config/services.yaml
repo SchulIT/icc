@@ -20,6 +20,15 @@ parameters:
         use_underscore: true,
         html_input: 'escape'
         allow_unsafe_links: false
+        default_attributes:
+            League\CommonMark\Extension\Table\Table:
+                class: 'table table-striped table-hover align-td-middle'
+        table:
+            wrap:
+                enabled: true
+                tag: div
+                attributes:
+                    class: 'table-responsive'
 
 services:
     # default configuration for services in *this* file
@@ -237,23 +246,29 @@ services:
             $pushoverToken: '%env(PUSHOVER_TOKEN)%'
 
     # MARKDOWN
-    League\CommonMark\Extension\CommonMarkCoreExtension: ~
+    League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension: ~
 
     League\CommonMark\Extension\Autolink\AutolinkExtension: ~
 
-    League\CommonMark\EnvironmentInterface:
-        class: League\CommonMark\Environment
+    League\CommonMark\Extension\Table\TableExtension: ~
+
+    League\CommonMark\Extension\DefaultAttributes\DefaultAttributesExtension: ~
+
+    League\CommonMark\Environment\EnvironmentInterface:
+        class: League\CommonMark\Environment\Environment
         arguments:
             $config: "%commonmark.config%"
         calls:
-            - [ addExtension, [ "@League\\CommonMark\\Extension\\CommonMarkCoreExtension" ]]
+            - [ addExtension, [ "@League\\CommonMark\\Extension\\CommonMark\\CommonMarkCoreExtension" ]]
             - [ addExtension, [ "@League\\CommonMark\\Extension\\Autolink\\AutolinkExtension"]]
+            - [ addExtension, [ "@League\\CommonMark\\Extension\\Table\\TableExtension"]]
+            - [ addExtension, [ "@League\\CommonMark\\Extension\\DefaultAttributes\\DefaultAttributesExtension"]]
             - [ addExtension, [ "@App\\Markdown\\MarkdownExtension" ]]
 
-    League\CommonMark\MarkdownConverterInterface:
+    League\CommonMark\ConverterInterface:
         class: League\CommonMark\MarkdownConverter
         arguments:
-            $environment: "@League\\CommonMark\\EnvironmentInterface"
+            $environment: "@League\\CommonMark\\Environment\\EnvironmentInterface"
 
     EasySlugger\SluggerInterface:
         class: EasySlugger\Utf8Slugger

@@ -2,20 +2,22 @@
 
 namespace App\Markdown\Processor;
 
-use App\Markdown\Element\AnchorLink;
-use App\Markdown\Element\Icon;
+use App\Markdown\Node\Inline\Icon;
 use App\Repository\DocumentRepositoryInterface;
 use App\Repository\WikiArticleRepositoryInterface;
 use League\CommonMark\Event\DocumentParsedEvent;
-use League\CommonMark\Inline\Element\HtmlInline;
-use League\CommonMark\Inline\Element\Link;
+use League\CommonMark\Extension\CommonMark\Node\Inline\HtmlInline;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Link;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LinkProcessor {
 
-    public function __construct(private DocumentRepositoryInterface $documentRepository, private WikiArticleRepositoryInterface $wikiArticleRepository, private UrlGeneratorInterface $urlGenerator, private TranslatorInterface $translator)
+    public function __construct(private readonly DocumentRepositoryInterface $documentRepository,
+                                private readonly WikiArticleRepositoryInterface $wikiArticleRepository,
+                                private readonly UrlGeneratorInterface  $urlGenerator,
+                                private readonly TranslatorInterface $translator)
     {
     }
 
@@ -26,13 +28,13 @@ class LinkProcessor {
         while($event = $walker->next()) {
             $node = $event->getNode();
 
-            if(!$node instanceof Link || $node instanceof AnchorLink || !$event->isEntering()) {
+            if(!$node instanceof Link || !$event->isEntering()) {
                 continue;
             }
 
             $url = $node->getUrl();
 
-            $node->data['attributes']['class'] = 'btn btn-outline-primary btn-sm';
+            $node->data->set('attributes/class', 'btn btn-outline-primary btn-sm');
 
             if(str_starts_with($url, 'mailto:')) {
                 $this->prependIcon($node, 'far fa-envelope');
@@ -73,6 +75,7 @@ class LinkProcessor {
                     $this->appendBroken($node);
                 }
             } else {
+                $node->data->set('attributes/target', '_blank');
                 $this->prependIcon($node, 'fas fa-external-link-alt');
             }
         }
@@ -89,6 +92,6 @@ class LinkProcessor {
     private function appendBroken(Link $node): void {
         $node->setUrl('');
         $icon = $this->prependIcon($node, 'fas fa-unlink');
-        $icon->data['attributes']['title'] = $this->translator->trans('markdown.link_broken');
+        $icon->data->set('attributes/title',$this->translator->trans('markdown.link_broken'));
     }
 }

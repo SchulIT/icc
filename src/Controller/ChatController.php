@@ -17,6 +17,7 @@ use App\Form\ChatType;
 use App\Repository\ChatMessageAttachmentRepositoryInterface;
 use App\Repository\ChatMessageRepositoryInterface;
 use App\Repository\ChatRepositoryInterface;
+use App\Repository\UserRepositoryInterface;
 use App\Security\Voter\ChatMessageAttachmentVoter;
 use App\Security\Voter\ChatMessageVoter;
 use App\Security\Voter\ChatVoter;
@@ -81,12 +82,24 @@ class ChatController extends AbstractController {
     }
 
     #[Route('/add', name: 'new_chat')]
-    public function add(Request $request): Response {
+    public function add(Request $request, UserRepositoryInterface $userRepository): Response {
         /** @var User $user */
         $user = $this->getUser();
 
         $chat = new Chat();
         $chat->addMessage(new ChatMessage());
+
+        if($request->query->all('recipients')) {
+            foreach($request->query->all('recipients') as $uuid) {
+                $user = $userRepository->findOneByUuid($uuid);
+
+                if($user !== null) {
+                    $chat->addParticipants($user);
+                }
+            }
+        }
+
+
         $form = $this->createForm(ChatType::class, $chat);
         $form->handleRequest($request);
 

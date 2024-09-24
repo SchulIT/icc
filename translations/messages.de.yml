@@ -622,6 +622,7 @@ lists:
         student_teachers_export:
             copy: E-Mail Adressen der Fachlehrkräfte kopieren
             mail: E-Mail an Fachlehrkräfte verfassen
+        chat: Private Nachricht an Fachlehrkräfte verfassen
 
     study_groups:
         label: Lerngruppen

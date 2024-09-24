@@ -145,16 +145,25 @@
             </div>
             <div class="col-md-3 sticky-sidebar">
             {% endif %}
-                {% if teacherMailAddresses is not null and teacherMailAddresses|length > 0 and is_granted('export-lists') %}
+                {% set canExportOrSendMail = teacherMailAddresses is not null and teacherMailAddresses|length > 0 and is_granted('export-lists') %}
+                {% set canSendChat = teacherPrivateMessageLink is not null %}
+                {% if canExportOrSendMail or canSendChat %}
                     <div class="card">
                         <div class="list-group list-group-flush">
-                            <a href="#" class="list-group-item list-group-item-action" data-clipboard-text="{% for address in teacherMailAddresses %}{{ address }}{% if not loop.last %};{% endif %}{% endfor %}">
-                                <i class="fa fa-copy"></i> {{ 'lists.tuitions.student_teachers_export.copy'|trans }}
-                            </a>
+                            {% if canExportOrSendMail %}
+                                <a href="#" class="list-group-item list-group-item-action" data-clipboard-text="{% for address in teacherMailAddresses %}{{ address }}{% if not loop.last %};{% endif %}{% endfor %}">
+                                    <i class="fa fa-copy"></i> {{ 'lists.tuitions.student_teachers_export.copy'|trans }}
+                                </a>
 
-                            <a href="mailto:{% for address in teacherMailAddresses %}{{ address }}{% if not loop.last %};{% endif %}{% endfor %}" class="list-group-item list-group-item-action">
-                                <i class="fa fa-envelope"></i> {{ 'lists.tuitions.student_teachers_export.mail'|trans }}
-                            </a>
+                                <a href="mailto:{% for address in teacherMailAddresses %}{{ address }}{% if not loop.last %};{% endif %}{% endfor %}" class="list-group-item list-group-item-action">
+                                    <i class="fa fa-envelope"></i> {{ 'lists.tuitions.student_teachers_export.mail'|trans }}
+                                </a>
+                            {% endif %}
+                            {% if canSendChat %}
+                                <a href="{{ teacherPrivateMessageLink }}" class="list-group-item list-group-item-action">
+                                    <i class="fa-solid fa-comments"></i> {{ 'lists.tuitions.chat'|trans }}
+                                </a>
+                            {% endif %}
                         </div>
                     </div>
                 {% endif %}

@@ -15,8 +15,6 @@ class AlertRenderer implements NodeRendererInterface {
         Alert::assertInstanceOf($node);
         assert($node instanceof Alert);
 
-        dump($node);
-
         return new HtmlElement(
             'div',
             [

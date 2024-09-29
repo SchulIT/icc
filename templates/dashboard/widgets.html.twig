@@ -55,12 +55,12 @@
         <div class="card-footer collapse border-top-0" id="absences-{{ id }}">
             {% for group in groups %}
                 <div>
-                    {% if group.isExam or group.isAppointment %}
+                    {% if group.isExam or group.isBookEvent %}
                         <div class="d-block font-weight-bolder">
                             {% if group.isExam %}
                                 <i class="fa fa-edit"></i> {% for tuition in group.objective.tuitions %}{{ tuition.name }} ({{ tuition.teachers|teachers }}){% if not loop.last %}, {% endif %}{% endfor %}:
-                            {% elseif group.isAppointment %}
-                                <i class="fa fa-calendar-alt"></i> {{ group.objective.title }} {% if group.objective.organizers|length > 0 %}({% for organizer in group.objective.organizers %}{{ organizer|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}){% endif %}
+                            {% elseif group.isBookEvent %}
+                                <i class="fa fa-calendar-alt"></i> <a href="{{ path('show_or_edit_book_event_entry', { uuid: group.objective.uuid }) }}">{{ group.objective.title }}</a> ({{ group.objective.teacher|teacher }}) <i class="fas fa-clock"></i> {{ 'label.exam_lessons'|trans({'%count%': group.objective.lessonEnd - group.objective.lessonStart, '%start%': group.objective.lessonStart, '%end%': group.objective.lessonEnd }) }}
                             {% else %}
 
                             {% endif %}

@@ -1,0 +1,44 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'parents_day.appointments.unassign.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('parents_day') }}">{{ 'parents_day.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ appointment.parentsDay.title }} <span class="badge text-bg-primary">{{ appointment.parentsDay.date|format_date }}</span></li>
+        <li class="breadcrumb-item">{{ appointment.start|format_time('short') }}-{{ appointment.end|format_time('short') }}</li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+
+    <div class="card">
+        <div class="card-header">
+            {{ 'parents_day.appointments.unassign.label'|trans }}
+            <span class="badge text-bg-secondary">{{ appointment.start|format_time('short') }}-{{ appointment.end|format_time('short') }}</span>
+        </div>
+
+        <div class="card-body">
+            <div class="bs-callout bs-callout-info">
+                <p>{{ 'parents_day.appointments.unassign.info'|trans }}</p>
+            </div>
+
+            {{ form_widget(form.group_general.confirm) }}
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa fa-check"></i> {{ 'actions.confirm'|trans }}
+        </button>
+
+        <a href="{{ path('parents_day') }}" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}

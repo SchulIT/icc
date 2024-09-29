@@ -115,6 +115,10 @@
                                             <i class="fas fa-user-check"></i> {{ 'parents_day.appointments.assign.label'|trans }}
                                         </a>
 
+                                        <a href="{{ path('unassign_parents_day_appointment', { uuid: appointment.uuid}) }}" class="dropdown-item">
+                                            <i class="fas fa-user-times"></i> {{ 'parents_day.appointments.unassign.label'|trans }}
+                                        </a>
+
                                         {% if not appointment.blocked %}
                                             <a href="{{ path('block_parents_day_appointment', { uuid: appointment.uuid}) }}" class="dropdown-item">
                                                 <i class="fas fa-lock"></i> {{ 'parents_day.appointments.block.label'|trans }}

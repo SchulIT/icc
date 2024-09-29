@@ -2349,6 +2349,7 @@ parents_day:
             button: Termin absagen
         cancel_all:
             label: Alle Termine absagen
+            invalid: Termine können erst nach dem Buchungszeitraum abgesagt werden.
             help: Hier können (bspw. aufgrund von Krankheit) alle Termine abgesagt werden.
             confirm: Sollen alle Termine wirklich abgesagt werden?
             success: Alle Termine wurden abgesagt
@@ -2356,8 +2357,13 @@ parents_day:
             button: Alle Termine absagen
         assign:
             label: Termin zuweisen
-            info: Der Termin wird den ausgewählten Kindern zugewiesen.
+            info: Der Termin wird den ausgewählten Kindern zugewiesen. Eltern und volljährige Kinder werden benachrichtigt.
             success: Der Termin ist nun zugewiesen.
+        unassign:
+            label: Zuweisung löschen
+            info: Alle Kinder und Lehrkräfte werden von diesem Termin entfernt. Eltern und volljährige Kinder werden benachrichtigt.
+            success: Terminzuweisung gelöscht
+            confirm: Soll die Zuweisung wirklich gelöscht werden?
         block:
             label: Termin blockieren
             info: Durch das Blocken von Terminen werden diese nicht gelöscht, sodass sie zu einem späteren Zeitpunkt belegt werden können. In der Zwischenzeit ist das Buchen des Termins nicht möglich.

@@ -35,6 +35,10 @@ class ParentsDayAppointmentCancelledEventSubscriber implements EventSubscriberIn
                 continue;
             }
 
+            if($event->getAppointment()->getParentsDay()->getBookingAllowedFrom() > $this->dateHelper->getToday()) {
+                // do not notify before booking window starts
+                continue;
+            }
 
             $notification = new Notification(
                 $recipient,

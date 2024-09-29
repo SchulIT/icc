@@ -58,6 +58,7 @@
             {{ form_row(form.suggestion_priority_exam) }}
             {{ form_row(form.suggestion_priority_previously_absent) }}
             {{ form_row(form.suggestion_priority_excuse_note) }}
+            {{ form_row(form.suggestion_priority_book_event) }}
 
             {% for type in types %}
                 {{ form_row(form['suggestion_priority_' ~ type.uuid.toString ]) }}

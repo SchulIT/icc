@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Book\AttendanceSuggestion\BookEventSuggestionStrategy;
 use App\Book\AttendanceSuggestion\RemoveSuggestionResolver;
 use App\Book\AttendanceSuggestion\SuggestionResolver;
 use App\Entity\Attendance;
@@ -103,7 +104,7 @@ class BookEventController extends AbstractController {
 
         $fakeTuition->setStudyGroup($fakeStudyGroup);
 
-        $possibleAbsences = $serializer->serialize($suggestionResolver->resolve($fakeTuition, $event->getDate(), $event->getLessonStart(), $event->getLessonEnd()), 'json');
+        $possibleAbsences = $serializer->serialize($suggestionResolver->resolve($fakeTuition, $event->getDate(), $event->getLessonStart(), $event->getLessonEnd(), [ BookEventSuggestionStrategy::class ]), 'json');
 
         return $this->render('books/events/edit.html.twig', [
             'form' => $form->createView(),

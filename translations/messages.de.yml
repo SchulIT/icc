@@ -1049,6 +1049,7 @@ admin:
                     previously_absent: Abwesenheit in vorheriger Stunde
                     excuse_note: Entschuldigung liegt vor
                     absence_note: Abwesenheitsart %type%
+                    book_event: Veranstaltung
 
         tuition_grades:
             label: Notenmodul

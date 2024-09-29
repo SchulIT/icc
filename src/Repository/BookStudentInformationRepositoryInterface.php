@@ -37,6 +37,8 @@ interface BookStudentInformationRepositoryInterface {
      */
     public function findByStudyGroup(StudyGroup $studyGroup, DateTime|null $from = null, DateTime|null $until = null): array;
 
+    public function removeExpired(DateTime $dateTime): int;
+
     public function persist(BookStudentInformation $information): void;
 
     public function remove(BookStudentInformation $information): void;

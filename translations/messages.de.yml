@@ -1488,6 +1488,7 @@ admin:
                 substitutions: Alle Vertretungen in diesem Abschnitt (inkl. Absenzen, unterrichtsfreie Zeiten und Tagestexte)
                 appointments: Alle Termine in diesem Abschnitt - es werden alle Termine gelöscht, deren Startdatum im Abschnitt liegt
                 parents_day: Alle Elternsprechtage in diesem Abschnitt (inkl. vergebener Termine)
+                student_information: Alle Lernendeninfos, die vor dem Endatum des Abschnittes abgelaufen sind. Hierbei werden - sofern vorhanden - auch Infos aus zeitlich vorherigen Abschnitten gelöscht.
 
             success: Abschnitt erfolgreich gelöscht
 

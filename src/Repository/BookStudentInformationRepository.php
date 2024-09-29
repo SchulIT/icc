@@ -84,6 +84,15 @@ class BookStudentInformationRepository extends AbstractRepository implements Boo
         return $qb->getQuery()->getResult();
     }
 
+    public function removeExpired(DateTime $dateTime): int {
+        return $this->em->createQueryBuilder()
+            ->delete(BookStudentInformation::class, 'i')
+            ->where('i.until <= :date')
+            ->setParameter('date', $dateTime)
+            ->getQuery()
+            ->execute();
+    }
+
     public function persist(BookStudentInformation $information): void {
         $this->em->persist($information);
         $this->em->flush();

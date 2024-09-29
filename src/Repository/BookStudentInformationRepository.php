@@ -18,19 +18,22 @@ class BookStudentInformationRepository extends AbstractRepository implements Boo
             ->from(BookStudentInformation::class, 'i')
             ->leftJoin('i.student', 's');
 
-        if($from == $until) {
+        if($from !== null && $from == $until) {
             $qb->where('i.from <= :date')
                 ->andWhere('i.until >= :date ')
                 ->setParameter('date', $from);
-        } else {
-            if ($from !== null) {
-                $qb->andWhere('i.from >= :from')
-                    ->setParameter('from', $from);
-            }
-            if ($until !== null) {
-                $qb->andWhere('i.until >= :until')
-                    ->setParameter('until', $until);
-            }
+        } else if($until !== null && $from !== null) {
+            $qb->where('i.from <= :until')
+                ->setParameter('until', $until)
+                ->andWhere('i.until >= :from')
+                ->setParameter('from', $from);
+        } else if ($from !== null) {
+            $qb->andWhere('i.from <= :from')
+                ->setParameter('from', $from);
+        }
+        else if ($until !== null) {
+            $qb->andWhere('i.until >= :until')
+                ->setParameter('until', $until);
         }
 
         return $qb;

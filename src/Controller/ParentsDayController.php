@@ -46,7 +46,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 #[Security('is_granted("parentsdayappointments")')]
 class ParentsDayController extends AbstractController {
 
-    public function __construct(RefererHelper $redirectHelper, private readonly ParentsDayRepositoryInterface $parentsDayRepository, private readonly ParentsDayAppointmentRepositoryInterface $appointmentRepository, private readonly EventDispatcherInterface $eventDispatcher) {
+    public function __construct(RefererHelper $redirectHelper, private readonly ParentsDayRepositoryInterface $parentsDayRepository, private readonly ParentsDayAppointmentRepositoryInterface $appointmentRepository) {
         parent::__construct($redirectHelper);
     }
 

@@ -18,6 +18,7 @@ use App\Repository\ChatMessageAttachmentRepositoryInterface;
 use App\Repository\ChatMessageRepositoryInterface;
 use App\Repository\ChatRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
+use App\Security\Firewall\Attribute\IsGrantedIfNotImpersonated;
 use App\Security\Voter\ChatMessageAttachmentVoter;
 use App\Security\Voter\ChatMessageVoter;
 use App\Security\Voter\ChatVoter;
@@ -35,6 +36,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/chat')]
 #[IsGranted(ChatVoter::ChatEnabled)]
+#[IsGrantedIfNotImpersonated]
 class ChatController extends AbstractController {
 
     public function __construct(RefererHelper                                             $redirectHelper,

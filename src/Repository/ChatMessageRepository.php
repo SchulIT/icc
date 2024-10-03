@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Chat;
 use App\Entity\ChatMessage;
 use App\Entity\User;
+use DateTime;
 use Doctrine\DBAL\Exception as DbalException;
 use PHPUnit\Exception;
 
@@ -26,6 +27,48 @@ class ChatMessageRepository extends AbstractRepository  implements ChatMessageRe
         $qb->setMaxResults($numberOfMessages);
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function findLastMessageDate(Chat $chat): ?DateTime {
+        $dateString = $this->em->createQueryBuilder()
+            ->select('m.updatedAt')
+            ->from(ChatMessage::class, 'm')
+            ->where('m.chat = :chat')
+            ->setParameter('chat', $chat->getId())
+            ->setMaxResults(1)
+            ->orderBy('m.createdAt', 'DESC')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        if($dateString !== null) {
+            return new DateTime($dateString);
+        }
+
+        $dateString = $this->em->createQueryBuilder()
+            ->select('m.createdAt')
+            ->from(ChatMessage::class, 'm')
+            ->where('m.chat = :chat')
+            ->setParameter('chat', $chat->getId())
+            ->setMaxResults(1)
+            ->orderBy('m.createdAt', 'DESC')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        if($dateString !== null) {
+            return new DateTime($dateString);
+        }
+
+        return null;
+    }
+
+    public function countByChat(Chat $chat): int {
+        return $this->em->createQueryBuilder()
+            ->select('COUNT(m.id)')
+            ->from(ChatMessage::class, 'm')
+            ->where('m.chat = :chat')
+            ->setParameter('chat', $chat->getId())
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     public function countUnreadMessages(User $user, Chat|null $chat = null): int {

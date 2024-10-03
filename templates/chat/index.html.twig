@@ -37,6 +37,13 @@
                                             {% endif %}
                                         </span>
 
+                                        {% set lastMessageDate = lastMessageDates[chat.id] %}
+                                        {% if lastMessageDate is not null %}
+                                            <span class="badge text-bg-secondary ms-2">
+                                                <i class="fas fa-clock"></i> {{ lastMessageDate|format_datetime }}
+                                            </span>
+                                        {% endif %}
+
                                         <span class="badge text-bg-secondary ms-2">
                                             <i class="fa-regular fa-comments"></i> {{ messagesCount[chat.id] }}
                                         </span>

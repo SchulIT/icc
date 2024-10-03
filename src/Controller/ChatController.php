@@ -11,9 +11,8 @@ use App\Event\ChatMessageCreatedEvent;
 use App\Filesystem\ChatFilesystem;
 use App\Filesystem\FileNotFoundException;
 use App\Form\ChatMessageType;
-use App\Form\ChatUserRecipientType;
-use App\Form\Model\NewChat;
 use App\Form\ChatType;
+use App\Form\ChatUserRecipientType;
 use App\Repository\ChatMessageAttachmentRepositoryInterface;
 use App\Repository\ChatMessageRepositoryInterface;
 use App\Repository\ChatRepositoryInterface;
@@ -22,14 +21,11 @@ use App\Security\Voter\ChatMessageAttachmentVoter;
 use App\Security\Voter\ChatMessageVoter;
 use App\Security\Voter\ChatVoter;
 use App\Settings\ChatSettings;
-use App\Sorting\ChatStrategy;
-use App\Sorting\SortDirection;
 use App\Sorting\Sorter;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -43,7 +39,7 @@ class ChatController extends AbstractController {
                                 private readonly ChatRepositoryInterface                  $chatRepository,
                                 private readonly ChatMessageRepositoryInterface           $chatMessageRepository,
                                 private readonly ChatMessageAttachmentRepositoryInterface $attachmentRepository,
-                                private readonly ChatSettings $chatSettings) {
+                                private readonly ChatSettings                             $chatSettings) {
         parent::__construct($redirectHelper);
     }
 
@@ -63,9 +59,11 @@ class ChatController extends AbstractController {
             $unreadCount[$chat->getId()] = $this->chatMessageRepository->countUnreadMessages($user, $chat);
         }
 
+        $lastMessageDates = [ ];
         $messagesCount = [ ];
         foreach($chats as $chat) {
-            $messagesCount[$chat->getId()] = 0 /*$chat->getMessages()->count()*/;
+            $messagesCount[$chat->getId()] = $this->chatMessageRepository->countByChat($chat);
+            $lastMessageDates[$chat->getId()] = $this->chatMessageRepository->findLastMessageDate($chat);
         }
 
         $attachmentsCount = [ ];
@@ -77,6 +75,7 @@ class ChatController extends AbstractController {
             'chats' => $chats,
             'messagesCount' => $messagesCount,
             'unreadCount' => $unreadCount,
+            'lastMessageDates' => $lastMessageDates,
             'attachmentsCount' => $attachmentsCount
         ]);
     }

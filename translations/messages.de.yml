@@ -1578,8 +1578,22 @@ admin:
             label: Elternsprechtag löschen
             success: Elternsprechtag erfolgreich gelöscht
             confirm: 'Soll der Elternsprechtag %title% wirklich gelöscht werden? Alle bereits erstellten Termine werden gelöscht.'
-        appointments:
 
+    chat:
+        tags:
+            label: Tags (Private Nachrichten)
+            empty: Bisher wurden keine Tags angelegt
+            info: Mithilfe von Tags können Benutzer die privaten Nachrichten für sich kategorisieren (andere Beteiligte sehen nicht, welche Tags hinzugefügt wurden).
+            add:
+                label: Neuer Tag
+                success: Tag erfolgreich angelegt
+            edit:
+                label: Tag bearbeiten
+                success: Tag erfolgreich aktualisiert
+            remove:
+                label: Tag löschen
+                success: Tag erfolgreich gelöscht
+                confirm: 'Soll der Tag %title% wirklich gelöscht werden? Der Tag wird automatisch von allen Konversationen entfernt (sofern von Benutzern hinzugefügt).'
 
 tools:
     label: Tools
@@ -2442,6 +2456,11 @@ chat:
         remove:
             success: Person erfolgreich aus dem Gespräch entfernt
         missing_rights: Teilnehmer können nur von Benutzern mit der Rolle ROLE_CHAT_MOD hinzugefügt werden.
+    tags:
+        label: Kategorien
+        filter: Kategorie
+        saved: Kategorien gespeichert
+        info: "Zur besseren Übersicht können Konversationen einer oder mehreren Kategorien zugeordnet werden. Wichtig: Die zugeordnete Kategorie ist nur für den aktuellen Benutzer und nicht für alle Teilnehmer der Konversation sichtbar."
 
 user_type:
     teacher: Lehrkraft

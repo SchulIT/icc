@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Chat\ChatSeenByHelper;
+use App\Chat\ChatTagHelper;
 use App\Entity\Chat;
 use App\Entity\ChatMessage;
 use App\Entity\ChatMessageAttachment;
@@ -22,6 +23,7 @@ use App\Security\Voter\ChatMessageVoter;
 use App\Security\Voter\ChatVoter;
 use App\Settings\ChatSettings;
 use App\Sorting\Sorter;
+use App\View\Filter\ChatTagFilter;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,11 +46,17 @@ class ChatController extends AbstractController {
     }
 
     #[Route('', name: 'chats')]
-    public function index(Sorter $sorter): Response {
+    public function index(ChatTagHelper $chatTagHelper, ChatTagFilter $chatTagFilter, Request $request): Response {
         /** @var User $user */
         $user = $this->getUser();
 
         $chats = $this->chatRepository->findAllByUser($user);
+        $chatTagFilterView = $chatTagFilter->handle($request->query->get('tag', null), $user);
+
+        if($chatTagFilterView->getCurrentTag() !== null) {
+            $chats = $chatTagHelper->filterChats($chats, $chatTagFilterView->getCurrentTag(), $user);
+        }
+
         // Do NOT sort here as it triggers the whole messages collection to be loaded which
         // leads to decrypting all messages :-(
         // Sort in database instead!
@@ -59,9 +67,11 @@ class ChatController extends AbstractController {
             $unreadCount[$chat->getId()] = $this->chatMessageRepository->countUnreadMessages($user, $chat);
         }
 
+        $userTags = [ ];
         $lastMessageDates = [ ];
         $messagesCount = [ ];
         foreach($chats as $chat) {
+            $userTags[$chat->getId()] = $chatTagHelper->getTagsForUser($chat, $user);
             $messagesCount[$chat->getId()] = $this->chatMessageRepository->countByChat($chat);
             $lastMessageDates[$chat->getId()] = $this->chatMessageRepository->findLastMessageDate($chat);
         }
@@ -76,7 +86,9 @@ class ChatController extends AbstractController {
             'messagesCount' => $messagesCount,
             'unreadCount' => $unreadCount,
             'lastMessageDates' => $lastMessageDates,
-            'attachmentsCount' => $attachmentsCount
+            'attachmentsCount' => $attachmentsCount,
+            'userTags' => $userTags,
+            'tagFilter' => $chatTagFilterView
         ]);
     }
 
@@ -158,7 +170,7 @@ class ChatController extends AbstractController {
     }
 
     #[Route('/{uuid}', name: 'show_chat')]
-    public function showChat(Chat $chat, Request $request, ChatSeenByHelper $chatSeenByHelper, EventDispatcherInterface $dispatcher, TranslatorInterface $translator): Response {
+    public function showChat(Chat $chat, Request $request, ChatSeenByHelper $chatSeenByHelper, ChatTagHelper $chatTagHelper, EventDispatcherInterface $dispatcher, TranslatorInterface $translator): Response {
         $this->denyAccessUnlessGranted(ChatVoter::View, $chat);
 
         /** @var User $user */
@@ -283,6 +295,21 @@ class ChatController extends AbstractController {
             }
         }
 
+        // User Tags
+        $tags = $chatTagHelper->getAll($user->getUserType());
+        $userTags = $chatTagHelper->getTagsForUser($chat, $user);
+
+        if($request->isMethod(Request::METHOD_POST) && $this->isCsrfTokenValid('chat', $request->request->get('_csrf_token'))) {
+            $enabledTags = $request->request->all('userTags');
+            $chatTagHelper->synchronizeUserTags($chat, $user, $enabledTags);
+            $this->chatRepository->persist($chat);
+
+            $this->addFlash('success', 'chat.tags.saved');
+            return $this->redirectToRoute('show_chat', [
+                'uuid' => $chat->getUuid()
+            ]);
+        }
+
         return $this->render('chat/show.html.twig', [
             'chat' => $chat,
             'attachments' => $attachments,
@@ -291,6 +318,8 @@ class ChatController extends AbstractController {
             'editForms' => $editForms,
             'removeForms' => $removeForms,
             'renameForm' => $renameForm->createView(),
+            'tags' => $tags,
+            'userTags' => $userTags,
             'canEditOrRemove' => in_array($user->getUserType(), $this->chatSettings->getUserTypesAllowedToEditOrRemoveMessages(), strict: true)
         ]);
     }

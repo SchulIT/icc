@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use Ambta\DoctrineEncryptBundle\Configuration\Encrypted;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -44,10 +43,14 @@ class Chat {
     #[Assert\Valid]
     private Collection $messages;
 
+    #[ORM\OneToMany(mappedBy: 'chat', targetEntity: ChatUserTag::class, cascade: ['persist'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    private Collection $userTags;
+
     public function __construct() {
         $this->uuid = Uuid::uuid4();
         $this->participants = new ArrayCollection();
         $this->messages = new ArrayCollection();
+        $this->userTags = new ArrayCollection();
     }
 
     public function getTopic(): ?string {
@@ -84,6 +87,21 @@ class Chat {
      */
     public function getMessages(): Collection {
         return $this->messages;
+    }
+
+    public function addUserTag(ChatUserTag $tag): void {
+        $this->userTags->add($tag);
+    }
+
+    public function removeUserTag(ChatUserTag $tag): void {
+        $this->userTags->removeElement($tag);
+    }
+
+    /**
+     * @return Collection<ChatUserTag>
+     */
+    public function getUserTags(): Collection {
+        return $this->userTags;
     }
 
     public function getCreatedBy(): ?User {

@@ -252,6 +252,36 @@
                     </div>
                 </div>
                 {% endif %}
+
+                {% if tags|length > 0 %}
+                <form method="post">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('chat') }}">
+                    <div class="card">
+                        <div class="card-header">{{ 'chat.tags.label'|trans }}</div>
+                        <div class="card-body">
+                            {{ 'chat.tags.info'|trans }}
+                        </div>
+                        <div class="list-group list-group-flush">
+                            {% for tag in tags %}
+                                <div class="list-group-item">
+                                    <div class="form-check">
+                                        <input class="form-check-input" name="userTags[]" type="checkbox" value="{{ tag.uuid }}" id="tag_{{ tag.uuid }}" {% if tag in userTags %}checked{% endif %}>
+                                        <label class="form-check-label" for="tag_{{ tag.uuid }}">
+                                            <span class="badge" style="background: {{ tag.color }}; color: {{ foreground(tag.color) }}">{{ tag.name }}</span>
+                                        </label>
+                                    </div>
+
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fas fa-save"></i> {{ 'actions.save'|trans }}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                {% endif %}
             </div>
         </div>
     </div>

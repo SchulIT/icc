@@ -103,6 +103,11 @@ class AdminDataMenuBuilder extends AbstractMenuBuilder {
                 'route' => 'admin_parents_days'
             ])
                 ->setExtra('icon', 'fa-solid fa-people-arrows');
+
+            $root->addChild('admin.chat.tags.label', [
+                'route' => 'admin_chat_tags'
+            ])
+                ->setExtra('icon', 'fa-solid fa-user-tag');
         }
 
         if($this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN')) {

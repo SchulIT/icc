@@ -43,6 +43,9 @@ class Chat {
     #[Assert\Valid]
     private Collection $messages;
 
+    /**
+     * @var Collection<ChatUserTag>
+     */
     #[ORM\OneToMany(mappedBy: 'chat', targetEntity: ChatUserTag::class, cascade: ['persist'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     private Collection $userTags;
 

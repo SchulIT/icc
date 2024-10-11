@@ -16,7 +16,7 @@ class InvolvedUsersResolver {
 
     /**
      * @param Student $student
-     * @param TeacherItem[] $teachers
+     * @param Teacher[] $teachers
      * @param User|null $exclude
      * @return User[]
      */
@@ -39,7 +39,7 @@ class InvolvedUsersResolver {
     }
 
     /**
-     * @param TeacherItem[] $teachers
+     * @param Teacher[] $teachers
      * @return User[]
      */
     private function getTeacherUsers(array $teachers): array {

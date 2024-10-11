@@ -86,7 +86,7 @@ class TeacherOverviewHelper {
             $items[] = new TeacherItem(
                 $teacher,
                 in_array($teacher, $gradeTeachers),
-                isset($teacherToAppointmentsMap[$teacher->getId()]) && count($teacherToAppointmentsMap[$teacher->getId()]) > 0,
+                isset($teacherToAppointmentsMap[$teacher->getId()]),
                 in_array($teacher, $teachersWithRequest),
                 in_array($teacher, $teachersNotNecessary),
                 $comments[$teacher->getId()] ?? [ ],

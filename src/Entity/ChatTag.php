@@ -59,7 +59,7 @@ class ChatTag {
         $this->userTypes->add($userType);
     }
 
-    public function removeUserType(UserTypEEntity $userType): void {
+    public function removeUserType(UserTypeEntity $userType): void {
         $this->userTypes->removeElement($userType);
     }
 

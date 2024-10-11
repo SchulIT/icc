@@ -21,6 +21,11 @@ class AdminToolsMenuBuilder extends AbstractMenuBuilder {
             $root->addChild('tools.untis.timetable.label',  [
                 'route' => 'untis_timetable_export'
             ]);
+
+            $root->addChild('tools.missing_users.label', [
+                'route' => 'missing_users_tool'
+            ])
+                ->setExtra('icon', 'fas fa-user-times');
         }
 
         return $root;

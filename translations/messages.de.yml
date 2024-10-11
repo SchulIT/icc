@@ -1614,6 +1614,17 @@ tools:
         timetable:
             label: Untis GPU001.txt
 
+    missing_users:
+        label: Fehlende Benutzer
+        info: Mit diesem Tool lässt sich herausfinden, welcher Lernende oder welche Eltern sich noch nicht am ICC angemeldet haben.
+        start: Bitte rechts im Filter eine Lerngruppe auswählen.
+        students:
+            header: Lernende
+            empty: Alle Lernende sind mindestens einem Lernenden-Benutzer zugeordnet.
+        parents:
+            header: Eltern
+            empty: Alle Lernende sind mindestens einem Eltern-Benutzer zugeordnet.
+
 versions:
     label: Versionen
     restore:

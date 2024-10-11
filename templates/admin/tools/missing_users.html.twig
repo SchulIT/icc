@@ -1,0 +1,83 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'tools.missing_users.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('tools') }}">{{ 'tools.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {{ knp_menu_render('toolsMenu', {'currentClass': 'active', 'template': 'admin/tools/_menu.html.twig' }) }}
+
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% if studyGroupFilter.currentStudyGroup is null %}
+                    <div class="bs-callout bs-callout-info">
+                        <h5>{{ 'info.label'|trans }}</h5>
+                        <p>{{ 'tools.missing_users.start'|trans }}</p>
+                    </div>
+                {% else %}
+                    <div class="card">
+                        <div class="card-header">
+                            {{ 'tools.missing_users.students.header'|trans }}
+                            <span class="badge rounded-pill text-bg-primary">{{ missingStudents|length }}</span>
+                        </div>
+
+                        {% if missingStudents|length == 0 %}
+                            <div class="card-body">
+                                <div class="bs-callout bs-callout-success mb-0">
+                                    {{ 'tools.missing_users.students.empty'|trans }}
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="list-group list-group-flush">
+                                {% for student in missingStudents %}
+                                    <div class="list-group list-group-item">
+                                        {{ student|student }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            {{ 'tools.missing_users.parents.header'|trans }}
+                            <span class="badge rounded-pill text-bg-primary">{{ missingParents|length }}</span>
+                        </div>
+
+                        {% if missingParents|length == 0 %}
+                            <div class="card-body">
+                                <div class="bs-callout bs-callout-success mb-0">
+                                    {{ 'tools.missing_users.parents.empty'|trans }}
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="list-group list-group-flush">
+                                {% for student in missingParents %}
+                                    <div class="list-group list-group-item">
+                                        {{ student|student }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-md-3 sticky-sidebar">
+                <div class="card">
+                    <div class="card-body">
+                        {% include "_filter/study_group.html.twig" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

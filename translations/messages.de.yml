@@ -2327,6 +2327,9 @@ parents_day:
             label: Termin abgesagt
         not_necessary:
             label: Kein Termin benötigt
+            all:
+                label: 'Setze "Kein Termin benötigt" bei allen Lernenden'
+                caution: Bitte anschließend alle Optionen kontrollieren, ob einzelne Lernende aufgrund eines zweiten Faches einen Termin benötigen, und mit Speichern bestätigen.
         requested:
             label: Termin erwünscht
     appointments:

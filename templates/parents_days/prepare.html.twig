@@ -73,8 +73,17 @@
                     <button type="submit" class="btn btn-primary btn-sm">
                         <i class="fas fa-save"></i> {{ 'actions.save'|trans }}
                     </button>
-
                     {{ form_end(form) }}
+
+                    <div class="bs-callout bs-callout-info">
+                        <h5>{{ 'parents_day.prepare.not_necessary.all.label'|trans }}</h5>
+                        <p>
+                            {{ 'parents_day.prepare.not_necessary.all.caution'|trans }}
+                        </p>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="checkAll()">
+                            <i class="fas fa-check-square"></i> {{ 'parents_day.prepare.not_necessary.all.label'|trans }}
+                        </button>
+                    </div>
                 {% endif %}
             </div>
             <div class="col-md-3 sticky-sidebar">
@@ -116,4 +125,11 @@
 {% block javascript %}
     {{ parent() }}
     <script src="{{ asset('build/parents_day.js') }}"></script>
+    <script>
+        function checkAll() {
+            for(let checkbox of document.querySelectorAll('[data-check-all=not_necessary]')) {
+                checkbox.checked = true;
+            }
+        }
+    </script>
 {% endblock %}

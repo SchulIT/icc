@@ -16,7 +16,10 @@ class ParentsDayParentalInformationType extends AbstractType {
         $builder
             ->add('isAppointmentNotNecessary', CheckboxType::class, [
                 'required' => false,
-                'label' => 'parents_day.prepare.not_necessary.label'
+                'label' => 'parents_day.prepare.not_necessary.label',
+                'attr' => [
+                    'data-check-all' => 'not_necessary',
+                ]
             ])
             ->add('isAppointmentRequested', CheckboxType::class, [
                 'required' => false,

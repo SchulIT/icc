@@ -151,38 +151,34 @@
                 </div>
                 {% endif %}
 
-                {% for studentGroup in tuitions %}
+                {% for overview in teacherOverviews %}
                     <div class="card">
-                        <div class="card-header">{{ 'lists.tuitions.heading.student'|trans({'%student%': studentGroup.student|student }) }}</div>
+                        <div class="card-header">{{ overview.student|student }}</div>
                         <div class="list-group list-group-flush">
-                            {% for teacherGroup in studentGroup.groups %}
-                                {% set alreadyBooked = teacherGroup.teacher in studentGroup.bookedTeachers %}
-                                {% set appointmentRequested = teacherGroup.teacher in studentGroup.teachersWithRequest %}
-                                {% set appointmentNotNecessary = teacherGroup.teacher in studentGroup.teachersNotNecessary %}
-                                {% set comments = [ ] %}
-                                {% if studentGroup.comments[teacherGroup.teacher.acronym] is defined %}
-                                    {% set comments = studentGroup.comments[teacherGroup.teacher.acronym] %}
-                                {% endif %}
-
-                                <div class="list-group-item d-flex {% if alreadyBooked %}bg-success-subtle{% elseif appointmentRequested %}bg-danger-subtle{% endif %}">
+                            {% for item in overview.items %}
+                                <div class="list-group-item d-flex {% if item.alreadyBooked %}bg-success-subtle{% elseif item.appointmentRequested %}bg-danger-subtle{% endif %}">
                                     <div class="flex-fill align-self-center">
-                                        {{ teacherGroup.teacher|teacher }}
+                                        {{ item.teacher|teacher }}
 
-                                        {% for tuition in teacherGroup.tuitions %}
+                                        {% if item.isGradeTeacher %}
+                                            <span class="badge text-bg-primary">{{ 'lists.study_groups.grade_teacher'|trans }}</span>
+                                        {% endif %}
+
+                                        {% for tuition in item.tuitions %}
                                             <span class="badge text-bg-secondary">{{ tuition.subject.name }}</span>
                                         {% endfor %}
 
-                                        {% if appointmentRequested %}
+                                        {% if item.appointmentRequested %}
                                             <span class="badge text-bg-danger">{{ 'parents_day.prepare.requested.label'|trans }}</span>
-                                        {% elseif appointmentNotNecessary %}
+                                        {% elseif item.appointmentNotNecessary %}
                                             <span class="badge text-bg-success">{{ 'parents_day.prepare.not_necessary.label'|trans }}</span>
                                         {% endif %}
 
-                                        {% if alreadyBooked %}
+                                        {% if item.alreadyBooked %}
                                             <span class="badge text-bg-success">{{ 'parents_day.appointments.already_booked'|trans }}</span>
                                         {% endif %}
 
-                                        {% for comment in comments %}
+                                        {% for comment in item.comments %}
                                             <div>
                                                 <i class="fas fa-info-circle"></i> {{ comment }}
                                             </div>
@@ -190,8 +186,8 @@
                                     </div>
 
                                     {% if is_granted('book-parentsdayappointment', parentsDayFilter.currentParentsDay) %}
-                                        <a href="{{ path('book_parents_day_appointment_overview', { uuid: parentsDayFilter.currentParentsDay.uuid, teacher: teacherGroup.teacher.uuid }) }}" class="btn btn-sm btn-outline-primary align-self-center">
-                                            {% if not alreadyBooked %}
+                                        <a href="{{ path('book_parents_day_appointment_overview', { uuid: parentsDayFilter.currentParentsDay.uuid, teacher: item.teacher.uuid }) }}" class="btn btn-sm btn-outline-primary align-self-center">
+                                            {% if not item.alreadyBooked %}
                                                 {{ 'parents_day.appointments.book.label'|trans }}
                                             {% else %}
                                                 {{ 'parents_day.appointments.rebook.label'|trans }}

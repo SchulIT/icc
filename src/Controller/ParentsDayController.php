@@ -4,28 +4,24 @@ namespace App\Controller;
 
 use App\Entity\ParentsDay;
 use App\Entity\ParentsDayAppointment;
+use App\Entity\Student;
 use App\Entity\User;
-use App\Event\ParentsDayAppointmentCancelledEvent;
 use App\Form\AppointmentsCreatorParamsType;
 use App\Form\BookParentsDayAppointmentType;
 use App\Form\CancelParentsDayAppointmentType;
 use App\Form\ParentsDayAppointmentType;
 use App\Form\ParentsDayParentalInformationType;
-use App\Grouping\Grouper;
-use App\Grouping\TeacherTuitionsStrategy;
 use App\ParentsDay\AppointmentsCreator;
 use App\ParentsDay\AppointmentsCreatorParams;
 use App\ParentsDay\ParentsDayParentalInformationResolver;
+use App\ParentsDay\TeacherOverviewHelper;
 use App\Repository\ParentsDayAppointmentRepositoryInterface;
 use App\Repository\ParentsDayParentalInformationRepositoryInterface;
 use App\Repository\ParentsDayRepositoryInterface;
-use App\Repository\TuitionRepositoryInterface;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\ParentsDayAppointmentVoter;
 use App\Sorting\ParentsDayAppointmentStrategy;
 use App\Sorting\Sorter;
-use App\Sorting\TeacherTuitionsGroupStrategy;
-use App\Sorting\TuitionStrategy;
 use App\View\Filter\ParentsDayFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\StudentFilterView;
@@ -35,12 +31,10 @@ use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 #[Route('/parents_day')]
 #[Security('is_granted("parentsdayappointments")')]
@@ -53,8 +47,9 @@ class ParentsDayController extends AbstractController {
     #[Route('', name: 'parents_day')]
     public function index(DateHelper $dateHelper, TeacherFilter $teacherFilter,
                           StudentFilter $studentFilter, ParentsDayFilter $parentsDayFilter,
+                          TeacherOverviewHelper $teacherOverviewHelper,
                           SectionResolverInterface $sectionResolver, Request $request, ParentsDayParentalInformationRepositoryInterface $parentalInformationRepository,
-                          TuitionRepositoryInterface $tuitionRepository, Sorter $sorter, Grouper $grouper): Response {
+                          Sorter $sorter): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -67,12 +62,13 @@ class ParentsDayController extends AbstractController {
         }
 
         $appointments = [ ];
-        $tuitions = [ ];
+        $teachers = [ ];
 
         if($parentsDayFilterView->getCurrentParentsDay() !== null) {
             if($user->isTeacher() && $teacherFilterView->getCurrentTeacher() !== null) {
                 $appointments = $this->appointmentRepository->findForTeacher($teacherFilterView->getCurrentTeacher(), $parentsDayFilterView->getCurrentParentsDay());
             } else if($user->isStudentOrParent() || $studentFilterView->getCurrentStudent() !== null) {
+                /** @var Student[] $students */
                 $students = $user->getStudents()->toArray();
 
                 if($studentFilterView->getCurrentStudent() !== null) {
@@ -82,52 +78,7 @@ class ParentsDayController extends AbstractController {
                 $appointments = $this->appointmentRepository->findForStudents($students, $parentsDayFilterView->getCurrentParentsDay());
 
                 foreach($students as $student) {
-                    $tuitionsForStudent = $tuitionRepository->findAllByStudents([$student], $sectionResolver->getCurrentSection());
-                    $groups = $grouper->group($tuitionsForStudent, TeacherTuitionsStrategy::class);
-
-                    $sorter->sort($groups, TeacherTuitionsGroupStrategy::class);
-                    $sorter->sortGroupItems($groups, TuitionStrategy::class);
-
-                    $bookedTeachers = [ ];
-
-                    foreach($appointments as $appointment) {
-                        if($appointment->getStudents()->contains($student)) {
-                            foreach($appointment->getTeachers() as $teacher) {
-                                $bookedTeachers[] = $teacher;
-                            }
-                        }
-                    }
-
-                    $teachersWithRequest = [ ];
-                    $teachersNotNecessary = [ ];
-                    $comments = [ ];
-
-                    foreach($parentalInformationRepository->findForStudent($parentsDayFilterView->getCurrentParentsDay(), $student) as $information) {
-                        if($information->isAppointmentNotNecessary()) {
-                            $teachersNotNecessary[] = $information->getTeacher();
-                        }
-
-                        if($information->isAppointmentRequested()) {
-                            $teachersWithRequest[] = $information->getTeacher();
-                        }
-
-                        if(!empty($information->getComment())) {
-                            if(!isset($comments[$information->getTeacher()->getAcronym()])) {
-                                $comments[$information->getTeacher()->getAcronym()] = [ ];
-                            }
-
-                            $comments[$information->getTeacher()->getAcronym()][] = $information->getComment();
-                        }
-                    }
-
-                    $tuitions[] = [
-                        'student' => $student,
-                        'groups' => $groups,
-                        'comments' => $comments,
-                        'bookedTeachers' => $bookedTeachers,
-                        'teachersWithRequest' => $teachersWithRequest,
-                        'teachersNotNecessary' => $teachersNotNecessary
-                    ];
+                    $teachers[] = $teacherOverviewHelper->collectTeachersForStudent($student, $parentsDayFilterView->getCurrentParentsDay());
                 }
             }
         }
@@ -140,7 +91,7 @@ class ParentsDayController extends AbstractController {
             'teacherFilter' => $teacherFilterView,
             'studentFilter' => $studentFilterView,
             'parentsDayFilter' => $parentsDayFilterView,
-            'tuitions' => $tuitions
+            'teacherOverviews' => $teachers
         ]);
     }
 

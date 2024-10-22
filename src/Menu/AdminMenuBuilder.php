@@ -10,7 +10,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AdminMenuBuilder extends AbstractMenuBuilder {
 
-    public function __construct(private readonly AdminDataMenuBuilder $dataMenuBuilder, private readonly AdminSettingsMenuBuilder $settingsMenuBuilder, private readonly AdminToolsMenuBuilder $toolsMenuBuilder,
+    public function __construct(private readonly AdminDataMenuBuilder $dataMenuBuilder, private readonly AdminToolsMenuBuilder $toolsMenuBuilder,
                                 FactoryInterface $factory, TokenStorageInterface $tokenStorage, AuthorizationCheckerInterface $authorizationChecker, TranslatorInterface $translator) {
         parent::__construct($factory, $tokenStorage, $authorizationChecker, $translator);
     }
@@ -30,15 +30,6 @@ class AdminMenuBuilder extends AbstractMenuBuilder {
             ->setExtra('menu-container', '#submenu')
             ->setExtra('pull-right', true);
 
-        $settingsMenu = $this->settingsMenuBuilder->settingsMenu();
-
-        if($settingsMenu->count() > 0) {
-            $menu->addChild('admin.settings.label', [
-                'route' => 'admin_settings'
-            ])
-                ->setExtra('icon', 'fas fa-wrench');
-        }
-
         $dataMenu = $this->dataMenuBuilder->dataMenu();
 
         if($dataMenu->count() > 0) {
@@ -48,7 +39,7 @@ class AdminMenuBuilder extends AbstractMenuBuilder {
             $menu->addChild('admin.label', [
                 'route' => 'admin'
             ])
-                ->setExtra('icon', 'fas fa-school');
+                ->setExtra('icon', 'fas fa-cogs');
         }
 
         $toolsMenu = $this->toolsMenuBuilder->toolsMenu();

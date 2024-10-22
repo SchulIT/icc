@@ -222,7 +222,7 @@ class MessageAdminController extends AbstractController {
             }
         }
 
-        return $this->render('messages/confirmations.html.twig', [
+        return $this->render('admin/messages/confirmations.html.twig', [
             'message' => $message,
             'studentsRequired' => $studentsRequired,
             'parentsRequired' => $parentsRequired,

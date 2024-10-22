@@ -1,4 +1,4 @@
-{% extends "main.html.twig" %}
+{% extends "admin/_main.html.twig" %}
 
 {% block title %}{{ 'messages.overview.label'|trans }}{% endblock %}
 
@@ -14,168 +14,162 @@
     </ol>
 {% endblock %}
 
-{% block content %}
-    {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
+{% block inner %}
+    <div id="app">
+    {% if groups|length == 0 %}
+        <div class="bs-callout bs-callout-info mt-0">
+            <h5>{{ 'info.label'|trans }}</h5>
 
-    <div class="container-fluid px-0" id="app">
-        <div class="row">
-            <div class="col-md-9">
-                {% if groups|length == 0 %}
-                    <div class="bs-callout bs-callout-info">
-                        <h5>{{ 'info.label'|trans }}</h5>
+            <p>{{ 'messages.overview.empty'|trans }}</p>
+        </div>
+    {% endif %}
 
-                        <p>{{ 'messages.overview.empty'|trans }}</p>
-                    </div>
-                {% endif %}
+    {% for group in groups %}
+        <div class="card">
+            <div class="card-header d-flex align-items-center">
+                <div class="flex-fill">
+                    {% if group.expired %}
+                        {{ 'admin.messages.overview.expired'|trans }}
+                    {% else %}
+                        {{ 'admin.messages.overview.active'|trans }}
+                    {% endif %}
+                    <span class="badge rounded-pill badge-primary">{{ group.messages|length }}</span>
+                </div>
 
-                {% for group in groups %}
-                    <div class="card">
-                        <div class="card-header d-flex align-items-center">
-                            <div class="flex-fill">
-                                {% if group.expired %}
-                                    {{ 'admin.messages.overview.expired'|trans }}
-                                {% else %}
-                                    {{ 'admin.messages.overview.active'|trans }}
-                                {% endif %}
-                                <span class="badge rounded-pill badge-primary">{{ group.messages|length }}</span>
-                            </div>
-
-                            {% set actions = [ ] %}
-                            {% for message in group.messages %}
-                                {% set actions = actions|merge([ url('xhr_remove_message', { uuid: message.uuid.toString })]) %}
-                            {% endfor %}
-
-                            {% if is_granted('ROLE_ADMIN') %}
-                                <bulk-remove-button :actions="{{ actions|json_encode }}"
-                                                    csrftoken="{{ csrf_token('remove_message') }}"></bulk-remove-button>
-                            {% endif %}
-                        </div>
-
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover card-table">
-                                <colgroup>
-                                    <col>
-                                    <col class="column-320">
-                                    <col class="column-md">
-                                    <col class="column-320">
-                                    <col class="column-sm">
-                                </colgroup>
-
-                                <thead>
-                                <tr>
-                                    <th>{{ 'label.title'|trans }}</th>
-                                    <th>{{ 'label.visibility'|trans }}</th>
-                                    <th>{{ 'message.expires'|trans }}</th>
-                                    <th>{{ 'label.study_groups'|trans({'%count%': 0}) }}</th>
-                                    <th></th>
-                                </tr>
-                                </thead>
-
-                                <tbody>
-                                {% for message in group.messages %}
-                                    <tr>
-                                        <td class="align-middle">
-                                            {{ message.title }}
-                                            {% include "_includes/_id.html.twig" with { id: message.id } %}
-                                        </td>
-                                        <td class="align-middle">{% include "_includes/visibilities.html.twig" with { visibilities: message.visibilities } only %}</td>
-                                        <td class="align-middle">
-                                            {{ message.expireDate|format_date }}
-                                        </td>
-                                        <td class="align-middle">{% include "_includes/study_groups.html.twig" with { studyGroups: message.studyGroups, id: message.uuid } only %}</td>
-                                        <td class="align-middle">
-                                            <div class="dropdown">
-                                                <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
-                                                    <i class="fas fa-ellipsis-v"></i>
-                                                </button>
-
-                                                <div class="dropdown-menu dropdown-menu-end">
-                                                    {% if is_granted('view', message) %}
-                                                        <a href="{{ path('show_message', { uuid: message.uuid }) }}" class="dropdown-item">
-                                                            <i class="fas fa-envelope-open-text"></i> {{ 'actions.view'|trans }}
-                                                        </a>
-                                                    {% endif %}
-
-                                                    {% if is_granted('edit', message) %}
-                                                        <a href="{{ path('edit_message', { uuid: message.uuid }) }}" class="dropdown-item">
-                                                            <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
-                                                        </a>
-
-                                                        {% if message.mustConfirm %}
-                                                            <a href="{{ path('message_confirmations', { uuid: message.uuid }) }}" class="dropdown-item">
-                                                                <i class="fas fa-tasks"></i> {{ 'message.confirmations.label'|trans }}
-                                                            </a>
-                                                        {% endif %}
-
-                                                        {% if message.isPollEnabled %}
-                                                            <a href="{{ path('poll_result', { uuid: message.uuid }) }}" class="dropdown-item">
-                                                                <i class="fas fa-poll"></i> {{ 'messages.poll.result.label'|trans }}
-                                                            </a>
-                                                        {% endif %}
-
-                                                        {% if message.downloadsEnabled %}
-                                                            <a href="{{ path('message_downloads_admin', { uuid: message.uuid }) }}" class="dropdown-item">
-                                                                <i class="fa fa-download"></i> {{ 'messages.downloads.label'|trans }}
-                                                            </a>
-                                                        {% endif %}
-                                                        {% if message.uploadsEnabled %}
-                                                            <a href="{{ path('message_uploads_admin', { uuid: message.uuid }) }}" class="dropdown-item">
-                                                                <i class="fa fa-upload"></i> {{ 'messages.uploads.label'|trans }}
-                                                            </a>
-                                                        {% endif %}
-                                                    {% endif %}
-                                                    {% if is_granted('remove', message) %}
-                                                        <a href="{{ path('remove_message', { uuid: message.uuid }) }}" class="dropdown-item text-danger">
-                                                            <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
-                                                        </a>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                {% set actions = [ ] %}
+                {% for message in group.messages %}
+                    {% set actions = actions|merge([ url('xhr_remove_message', { uuid: message.uuid.toString })]) %}
                 {% endfor %}
+
+                {% if is_granted('ROLE_ADMIN') %}
+                    <bulk-remove-button :actions="{{ actions|json_encode }}"
+                                        csrftoken="{{ csrf_token('remove_message') }}"></bulk-remove-button>
+                {% endif %}
             </div>
 
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="list-group list-group-flush">
-                        <a href="{{ path('add_message') }}" class="list-group-item list-group-item-action">
-                            <i class="fa fa-plus"></i> {{ 'messages.add.label'|trans }}
-                        </a>
-                    </div>
-                </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover card-table">
+                    <colgroup>
+                        <col>
+                        <col class="column-320">
+                        <col class="column-md">
+                        <col class="column-320">
+                        <col class="column-sm">
+                    </colgroup>
 
-                <div class="card">
-                    <div class="card-body">
-                        {% include "_filter/grade.html.twig" with { params: { own: onlyOwn }} %}
+                    <thead>
+                    <tr>
+                        <th>{{ 'label.title'|trans }}</th>
+                        <th>{{ 'label.visibility'|trans }}</th>
+                        <th>{{ 'message.expires'|trans }}</th>
+                        <th>{{ 'label.study_groups'|trans({'%count%': 0}) }}</th>
+                        <th></th>
+                    </tr>
+                    </thead>
 
-                        {% include "_filter/user_type.html.twig" with { params: { own: onlyOwn }} %}
+                    <tbody>
+                    {% for message in group.messages %}
+                        <tr>
+                            <td class="align-middle">
+                                {{ message.title }}
+                                {% include "_includes/_id.html.twig" with { id: message.id } %}
+                            </td>
+                            <td class="align-middle">{% include "_includes/visibilities.html.twig" with { visibilities: message.visibilities } only %}</td>
+                            <td class="align-middle">
+                                {{ message.expireDate|format_date }}
+                            </td>
+                            <td class="align-middle">{% include "_includes/study_groups.html.twig" with { studyGroups: message.studyGroups, id: message.uuid } only %}</td>
+                            <td class="align-middle">
+                                <div class="dropdown">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
 
-                        <form role="form" method="get" class="form">
-                            <div class="mb-3 mb-0">
-                                {% include "_filter/_params.html.twig" with { params: {
-                                    grade: gradeFilter.currentGrade is not null ? gradeFilter.currentGrade.uuid : null,
-                                    type: userTypeFilter.currentType is not null ? userTypeFilter.currentType.uuid : null
-                                }  } %}
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        {% if is_granted('view', message) %}
+                                            <a href="{{ path('show_message', { uuid: message.uuid }) }}" class="dropdown-item">
+                                                <i class="fas fa-envelope-open-text"></i> {{ 'actions.view'|trans }}
+                                            </a>
+                                        {% endif %}
 
-                                <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="all" data-trigger="submit" name="all" value="✓" {% if not onlyOwn %} checked="checked"{% endif %}>
-                                    <label class="form-check-label" for="all">{{ 'label.show_all'|trans }}</label>
+                                        {% if is_granted('edit', message) %}
+                                            <a href="{{ path('edit_message', { uuid: message.uuid }) }}" class="dropdown-item">
+                                                <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
+                                            </a>
+
+                                            {% if message.mustConfirm %}
+                                                <a href="{{ path('message_confirmations', { uuid: message.uuid }) }}" class="dropdown-item">
+                                                    <i class="fas fa-tasks"></i> {{ 'message.confirmations.label'|trans }}
+                                                </a>
+                                            {% endif %}
+
+                                            {% if message.isPollEnabled %}
+                                                <a href="{{ path('poll_result', { uuid: message.uuid }) }}" class="dropdown-item">
+                                                    <i class="fas fa-poll"></i> {{ 'messages.poll.result.label'|trans }}
+                                                </a>
+                                            {% endif %}
+
+                                            {% if message.downloadsEnabled %}
+                                                <a href="{{ path('message_downloads_admin', { uuid: message.uuid }) }}" class="dropdown-item">
+                                                    <i class="fa fa-download"></i> {{ 'messages.downloads.label'|trans }}
+                                                </a>
+                                            {% endif %}
+                                            {% if message.uploadsEnabled %}
+                                                <a href="{{ path('message_uploads_admin', { uuid: message.uuid }) }}" class="dropdown-item">
+                                                    <i class="fa fa-upload"></i> {{ 'messages.uploads.label'|trans }}
+                                                </a>
+                                            {% endif %}
+                                        {% endif %}
+                                        {% if is_granted('remove', message) %}
+                                            <a href="{{ path('remove_message', { uuid: message.uuid }) }}" class="dropdown-item text-danger">
+                                                <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
+                                            </a>
+                                        {% endif %}
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
-                    </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+    {% endblock%}
 
-                    <div class="card-footer">
-                        <a href="{{ path('admin_messages') }}" class="btn btn-primary btn-sm">{{ 'filter.reset'|trans }}</a>
+{% block sidebar %}
+    <div class="card">
+        <div class="list-group list-group-flush">
+            <a href="{{ path('add_message') }}" class="list-group-item list-group-item-action">
+                <i class="fa fa-plus"></i> {{ 'messages.add.label'|trans }}
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            {% include "_filter/grade.html.twig" with { params: { own: onlyOwn }} %}
+
+            {% include "_filter/user_type.html.twig" with { params: { own: onlyOwn }} %}
+
+            <form role="form" method="get" class="form">
+                <div class="mb-3 mb-0">
+                    {% include "_filter/_params.html.twig" with { params: {
+                        grade: gradeFilter.currentGrade is not null ? gradeFilter.currentGrade.uuid : null,
+                        type: userTypeFilter.currentType is not null ? userTypeFilter.currentType.uuid : null
+                    }  } %}
+
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="all" data-trigger="submit" name="all" value="✓" {% if not onlyOwn %} checked="checked"{% endif %}>
+                        <label class="form-check-label" for="all">{{ 'label.show_all'|trans }}</label>
                     </div>
                 </div>
-            </div>
+            </form>
+        </div>
+
+        <div class="card-footer">
+            <a href="{{ path('admin_messages') }}" class="btn btn-primary btn-sm">{{ 'filter.reset'|trans }}</a>
         </div>
     </div>
 {% endblock %}

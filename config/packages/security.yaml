@@ -38,7 +38,7 @@ security:
         - { path: ^/admin/audit/, roles: ROLE_SUPER_ADMIN }
         - { path: ^/tools/, roles: ROLE_TOOLS }
         - { path: ^/settings/dark_mode$, roles: ROLE_USER }
-        - { path: ^/settings/, roles: ROLE_ADMIN }
+        - { path: ^/admin/settings/, roles: ROLE_ADMIN }
         - { path: ^/admin/editor/links$ , roles: [ ROLE_MESSAGE_CREATOR, ROLE_WIKI_ADMIN, ROLE_DOCUMENTS_ADMIN ] }
         - { path: ^/admin/(messages|exams|documents|appointments|import), roles: ROLE_USER }
         - { path: ^/admin/wiki, roles: ROLE_WIKI_ADMIN }

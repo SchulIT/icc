@@ -1,4 +1,4 @@
-{% extends "main.html.twig" %}
+{% extends "admin/_form.html.twig" %}
 
 {% block title %}{{ 'admin.sections.edit.label'|trans }}{% endblock %}
 
@@ -11,7 +11,7 @@
     </ol>
 {% endblock %}
 
-{% block content %}
+{% block inner %}
     {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
 
     {{ form_start(form) }}

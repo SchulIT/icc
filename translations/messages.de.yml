@@ -823,10 +823,23 @@ date:
         12: Dezember
 
 admin:
-    label: Datenverwaltung
+    label: Verwaltung
 
     ea:
         label: EasyAdmin
+
+    headers:
+        information: Informationen
+        core: Stammdaten
+        appointments: Termine
+        exams: Klausuren
+        timetable: Stundenplan
+        substitutions: Vertretungsplan
+        features: Features
+        chat: Private Nachrichten
+        absence: Abwesenheiten
+        book: Unterrichtsbuch
+        imported: Importierte Daten
 
     settings:
         label: Einstellungen
@@ -839,7 +852,7 @@ admin:
                 help: Gibt den aktuellen Abschnitt im Schuljahr an.
 
         import:
-            label: Import
+            label: Import-Einstellungen
             exam_rules:
                 label: Regeln für Klausurschreibende
                 help: Mit diesen Regeln wird festgelegt, welche Lernende automatisch einer Klausur zugeordnet werden, wenn diese nicht beim Import angegeben werden.
@@ -1052,7 +1065,7 @@ admin:
                     book_event: Veranstaltung
 
         tuition_grades:
-            label: Notenmodul
+            label: Notenmodul-Einstellungen
             confirm:
                 label: Schlüsseländerung bestätigen
                 help: Der obige Hinweis wurde zur Kenntnis genommen.
@@ -1115,24 +1128,6 @@ admin:
                 caution:
                     header: Achtung
                     message: Beim Löschen dieser Stundenplan-Woche wird der zugehörige Stundenplan ebenfalls gelöscht.
-
-        periods:
-            label: Stundenplan-Perioden
-            overview:
-                empty: Aktuell sind keine Stundenplan-Perioden hinterlegt.
-            add:
-                label: Neue Stundenplan-Periode
-                success: Stundenplan-Periode erfolgreich angelegt
-            edit:
-                label: Stundenplan-Periode bearbeiten
-                success: Stundenplan-Periode erfolgreich aktualisiert
-            remove:
-                label: Stundenplan-Periode löschen
-                confirm: 'Soll die Stundenplan-Periode "%name%" wirklich gelöscht werden?'
-                success: Stundenplan-Periode erfolgreich gelöscht
-                caution:
-                    header: Achtung
-                    message: Beim Löschen dieser Stundenplan-Periode wird der zugehörige Stundenplan ebenfalls gelöscht.
 
     messages:
         label: Mitteilungen

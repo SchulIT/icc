@@ -1,4 +1,4 @@
-{% extends "main.html.twig" %}
+{% extends "admin/_main.html.twig" %}
 
 {% block title %}{{ 'admin.timetable.label'|trans }}{% endblock %}
 
@@ -10,88 +10,77 @@
     </ol>
 {% endblock %}
 
-{% block content %}
-    {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
+{% block inner %}
+    {% if weeks|length == 0 %}
+        <div class="bs-callout bs-callout-info">
+            <h5>{{ 'info.label'|trans }}</h5>
 
-    <div class="container-fluid px-0">
-        <div class="row">
-            <div class="col-md-9">
-                <div class="card">
-                    <div class="card-header">{{ 'admin.timetable.weeks.label'|trans }}</div>
+            <p>{{ 'admin.timetable.weeks.overview.empty'|trans }}</p>
 
-                    {% if weeks|length == 0 %}
-                        <div class="card-body">
-                            <div class="bs-callout bs-callout-info">
-                                <h5>{{ 'info.label'|trans }}</h5>
+            <a href="{{ path('add_default_timetable_weeks') }}" class="btn btn-primary btn-sm">
+                <i class="fa fa-plus"></i> {{ 'admin.timetable.weeks.add_default.label'|trans }}
+            </a>
+        </div>
+    {% else %}
+        <div class="card">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover card-table">
+                    <colgroup>
+                        <col>
+                        <col>
+                        <col class="column-sm">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>{{ 'label.name'|trans }} </th>
+                        <th>{{ 'label.weeks'|trans }}</th>
+                        <th> </th>
+                    </tr>
+                    </thead>
 
-                                <p>{{ 'admin.timetable.weeks.overview.empty'|trans }}</p>
-
-                                <a href="{{ path('add_default_timetable_weeks') }}" class="btn btn-primary btn-sm">
-                                    <i class="fa fa-plus"></i> {{ 'admin.timetable.weeks.add_default.label'|trans }}
-                                </a>
-                            </div>
-                        </div>
-                    {% else %}
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover card-table">
-                                <colgroup>
-                                    <col>
-                                    <col>
-                                    <col class="column-sm">
-                                </colgroup>
-                                <thead>
-                                <tr>
-                                    <th>{{ 'label.name'|trans }} </th>
-                                    <th>{{ 'label.weeks'|trans }}</th>
-                                    <th> </th>
-                                </tr>
-                                </thead>
-
-                                <tbody>
-                                {% for week in weeks %}
-                                    <tr>
-                                        <td class="align-middle">
-                                            {{ week.displayName }} <span class="badge text-bg-secondary">{{ week.key }}</span>
-                                        </td>
-                                        <td class="align-middle">
-                                            {% for calendarWeek in week.weeks %}
-                                                {{ calendarWeek.number }}{% if not loop.last %}, {% endif %}
-                                            {% endfor %}
-                                        </td>
-                                        <td class="align-middle">
-                                            <div class="dropdown">
-                                                <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
-                                                    <i class="fas fa-ellipsis-v"></i>
-                                                </button>
-
-                                                <div class="dropdown-menu dropdown-menu-end">
-                                                    <a href="{{ path('admin_edit_timetable_week', { uuid: week.uuid }) }}" class="dropdown-item">
-                                                        <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
-                                                    </a>
-
-                                                    <a href="{{ path('admin_remove_timetable_week', { uuid: week.uuid }) }}" class="dropdown-item text-danger">
-                                                        <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
+                    <tbody>
+                    {% for week in weeks %}
+                        <tr>
+                            <td class="align-middle">
+                                {{ week.displayName }} <span class="badge text-bg-secondary">{{ week.key }}</span>
+                            </td>
+                            <td class="align-middle">
+                                {% for calendarWeek in week.weeks %}
+                                    {{ calendarWeek.number }}{% if not loop.last %}, {% endif %}
                                 {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    {% endif %}
-                </div>
+                            </td>
+                            <td class="align-middle">
+                                <div class="dropdown">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <a href="{{ path('admin_edit_timetable_week', { uuid: week.uuid }) }}" class="dropdown-item">
+                                            <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
+                                        </a>
+
+                                        <a href="{{ path('admin_remove_timetable_week', { uuid: week.uuid }) }}" class="dropdown-item text-danger">
+                                            <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="list-group list-group-flush">
-                        <a href="{{ path('admin_add_timetable_week') }}" class="list-group-item list-group-item-action">
-                            <i class="fa fa-plus"></i> {{ 'admin.timetable.weeks.add.label'|trans }}
-                        </a>
-                    </div>
-                </div>
-            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block sidebar %}
+    <div class="card">
+        <div class="list-group list-group-flush">
+            <a href="{{ path('admin_add_timetable_week') }}" class="list-group-item list-group-item-action">
+                <i class="fa fa-plus"></i> {{ 'admin.timetable.weeks.add.label'|trans }}
+            </a>
         </div>
     </div>
 {% endblock %}

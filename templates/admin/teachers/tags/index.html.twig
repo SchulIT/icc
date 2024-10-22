@@ -1,4 +1,4 @@
-{% extends "main.html.twig" %}
+{% extends "admin/_main.html.twig" %}
 
 {% block title %}{{ 'admin.teachers.tags.label'|trans }}{% endblock %}
 
@@ -11,83 +11,75 @@
     </ol>
 {% endblock %}
 
-{% block content %}
-    {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
+{% block inner %}
+    {% if tags|length == 0 %}
+        <div class="bs-callout bs-callout-info">
+            <h5>{{ 'info.label'|trans }}</h5>
 
-    <div class="container-fluid px-0">
-        <div class="row">
-            <div class="col-md-9">
-                {% if tags|length == 0 %}
-                    <div class="bs-callout bs-callout-info">
-                        <h5>{{ 'info.label'|trans }}</h5>
+            <p>{{ 'admin.teachers.tags.overview.empty'|trans }}</p>
+        </div>
+    {% else %}
+        <div class="card">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover card-table">
+                    <colgroup>
+                        <col>
+                        <col class="column-md">
+                        <col class="column-sm">
+                    </colgroup>
 
-                        <p>{{ 'admin.teachers.tags.overview.empty'|trans }}</p>
-                    </div>
-                {% else %}
-                    <div class="card">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover card-table">
-                                <colgroup>
-                                    <col>
-                                    <col class="column-md">
-                                    <col class="column-sm">
-                                </colgroup>
+                    <thead>
+                    <tr>
+                        <th>{{ 'label.name'|trans }}</th>
+                        <th>{{ 'label.color'|trans }}</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for tag in tags %}
+                        <tr>
+                            <td>
+                                {{ tag.name }}
+                                <span class="badge text-bg-primary">{{ tag.externalId }}</span>
+                                {% include "_includes/_id.html.twig" with { id: tag.id } %}
+                            </td>
+                            <td><span class="color-rect" style="background: {{ tag.color }}"></span> </td>
+                            <td>
+                                <div class="dropdown">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
 
-                                <thead>
-                                <tr>
-                                    <th>{{ 'label.name'|trans }}</th>
-                                    <th>{{ 'label.color'|trans }}</th>
-                                    <th></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% for tag in tags %}
-                                    <tr>
-                                        <td>
-                                            {{ tag.name }}
-                                            <span class="badge text-bg-primary">{{ tag.externalId }}</span>
-                                            {% include "_includes/_id.html.twig" with { id: tag.id } %}
-                                        </td>
-                                        <td><span class="color-rect" style="background: {{ tag.color }}"></span> </td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
-                                                    <i class="fas fa-ellipsis-v"></i>
-                                                </button>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <a href="{{ path('edit_teacher_tag', { uuid: tag.uuid}) }}" class="dropdown-item">
+                                            <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
+                                        </a>
 
-                                                <div class="dropdown-menu dropdown-menu-end">
-                                                    <a href="{{ path('edit_teacher_tag', { uuid: tag.uuid}) }}" class="dropdown-item">
-                                                        <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
-                                                    </a>
-
-                                                    <a href="{{ path('remove_teacher_tag', { uuid: tag.uuid }) }}" class="dropdown-item text-danger">
-                                                        <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                {% endif %}
+                                        <a href="{{ path('remove_teacher_tag', { uuid: tag.uuid }) }}" class="dropdown-item text-danger">
+                                            <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
+        </div>
+    {% endif %}
+{% endblock %}
 
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="list-group list-group-flush">
-                        <a href="{{ path('add_teacher_tag') }}" class="list-group-item list-group-item-action">
-                            <i class="fa fa-plus"></i> {{ 'admin.teachers.tags.add.label'|trans }}
-                        </a>
+{% block sidebar %}
+    <div class="card">
+        <div class="list-group list-group-flush">
+            <a href="{{ path('add_teacher_tag') }}" class="list-group-item list-group-item-action">
+                <i class="fa fa-plus"></i> {{ 'admin.teachers.tags.add.label'|trans }}
+            </a>
 
-                        <a href="{{ path('admin_teachers') }}" class="list-group-item list-group-item-action">
-                            <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <a href="{{ path('admin_teachers') }}" class="list-group-item list-group-item-action">
+                <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+            </a>
         </div>
     </div>
 {% endblock %}

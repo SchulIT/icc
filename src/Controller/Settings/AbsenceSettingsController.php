@@ -16,11 +16,11 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 
-#[Route(path: '/settings')]
+#[Route(path: '/admin/settings')]
 #[Security("is_granted('ROLE_ADMIN')")]
 class AbsenceSettingsController extends AbstractController {
     #[Route(path: '/absences', name: 'admin_settings_absences')]

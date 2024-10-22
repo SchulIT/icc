@@ -177,10 +177,6 @@ services:
         tags:
             - { name: knp_menu.menu_builder, method: dataMenu, alias: dataMenu }
 
-    App\Menu\AdminSettingsMenuBuilder:
-        tags:
-            - { name: knp_menu.menu_builder, method: settingsMenu, alias: settingsMenu }
-
     App\Menu\AdminToolsMenuBuilder:
         tags:
             - { name: knp_menu.menu_builder, method: toolsMenu, alias: toolsMenu }

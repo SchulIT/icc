@@ -1,4 +1,4 @@
-{% extends "main.html.twig" %}
+{% extends "admin/_main.html.twig" %}
 
 {% block post_javascript %}
     <script src="{{ asset('build/zipper.js') }}"></script>
@@ -73,191 +73,185 @@
     {% endfor %}
 {% endmacro %}
 
-{% block content %}
-    {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
+{% block inner %}
+    <div id="explorer">
+        {# Students #}
+        {% for grade in grades %}
+            <div class="card">
+                <div class="card-header d-flex pointer" data-toggle="table-collapse" data-target="#uploads-{{ grade.grade.uuid }}">
+                    <span class="me-auto align-self-center">{{ grade.grade.name }}</span>
 
-    <div class="container-fluid px-0">
-        <div class="row">
-            <div class="col-md-9" id="explorer">
-                {# Students #}
-                {% for grade in grades %}
-                    <div class="card">
-                        <div class="card-header d-flex pointer" data-toggle="table-collapse" data-target="#uploads-{{ grade.grade.uuid }}">
-                            <span class="me-auto align-self-center">{{ grade.grade.name }}</span>
+                    <i class="fa fa-chevron-up float-right indicator align-self-center"></i>
+                </div>
 
-                            <i class="fa fa-chevron-up float-right indicator align-self-center"></i>
-                        </div>
+                <div id="uploads-{{ grade.grade.uuid }}">
+                    <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#uploads-students-{{ grade.grade.uuid }}">
+                        <span class="me-auto align-self-center">{{ 'user_type.student'|trans({}, 'enums') }}</span>
 
-                        <div id="uploads-{{ grade.grade.uuid }}">
-                            <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#uploads-students-{{ grade.grade.uuid }}">
-                                <span class="me-auto align-self-center">{{ 'user_type.student'|trans({}, 'enums') }}</span>
-
-                                {{ _self.progressBar(view.studentProgress(grade.students, message.files)) }}
-                                <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
-                            </div>
-
-                            <div class="table-responsive">
-                                <table class="table table-bordered collapse card-table" id="uploads-students-{{ grade.grade.uuid }}">
-                                    <colgroup>
-                                        <col class="column-lg">
-                                        <col>
-                                        <col class="column-lg">
-                                        <col class="column-lg">
-                                    </colgroup>
-                                    <thead>
-                                    <tr>
-                                        <th>{{ 'label.name'|trans }}</th>
-                                        <th>{{ 'label.file'|trans }}</th>
-                                        <th>{{ 'label.filesize'|trans }}</th>
-                                        <th>{{ 'label.date'|trans }}</th>
-                                    </tr>
-                                    </thead>
-
-                                    <tbody>
-                                    {% for student in grade.students %}
-                                        {% set users = view.studentUsers(student) %}
-                                        {{ _self.printUsers(view, message, users, student|student ) }}
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#uploads-parents-{{ grade.grade.uuid }}">
-                                <span class="me-auto align-self-center">{{ 'user_type.parent'|trans({}, 'enums') }}</span>
-
-                                {{ _self.progressBar(view.parentProgress(grade.students, message.files)) }}
-                                <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
-                            </div>
-
-                            <div class="table-responsive">
-                                <table class="table table-bordered collapse card-table" id="uploads-parents-{{ grade.grade.uuid }}">
-                                    <colgroup>
-                                        <col class="column-lg">
-                                        <col>
-                                        <col class="column-lg">
-                                        <col class="column-lg">
-                                    </colgroup>
-                                    <thead>
-                                    <tr>
-                                        <th>{{ 'label.name'|trans }}</th>
-                                        <th>{{ 'label.file'|trans }}</th>
-                                        <th>{{ 'label.filesize'|trans }}</th>
-                                        <th>{{ 'label.date'|trans }}</th>
-                                    </tr>
-                                    </thead>
-
-                                    <tbody>
-                                    {% for student in grade.students %}
-                                        {% set users = view.parentUsers(student) %}
-                                        {{ _self.printUsers(view, message, users, student|student ) }}
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                        {{ _self.progressBar(view.studentProgress(grade.students, message.files)) }}
+                        <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
                     </div>
-                {% endfor %}
-                {# Teachers #}
-                {% if teachers|length > 0 %}
-                    <div class="card">
-                        <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#uploads-teachers">
-                            <span class="me-auto align-self-center">{{ 'user_type.teacher'|trans({}, 'enums') }}</span>
 
-                            {{ _self.progressBar(view.teacherProgress(teachers, message.files)) }}
-                            <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
-                        </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered collapse card-table" id="uploads-students-{{ grade.grade.uuid }}">
+                            <colgroup>
+                                <col class="column-lg">
+                                <col>
+                                <col class="column-lg">
+                                <col class="column-lg">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>{{ 'label.name'|trans }}</th>
+                                <th>{{ 'label.file'|trans }}</th>
+                                <th>{{ 'label.filesize'|trans }}</th>
+                                <th>{{ 'label.date'|trans }}</th>
+                            </tr>
+                            </thead>
 
-                        <div class="table-responsive">
-                            <table class="table table-bordered card-table collapse" id="uploads-teachers">
-                                <colgroup>
-                                    <col class="column-lg">
-                                    <col>
-                                    <col class="column-lg">
-                                    <col class="column-lg">
-                                </colgroup>
-                                <thead>
-                                <tr>
-                                    <th>{{ 'label.name'|trans }}</th>
-                                    <th>{{ 'label.file'|trans }}</th>
-                                    <th>{{ 'label.filesize'|trans }}</th>
-                                    <th>{{ 'label.date'|trans }}</th>
-                                </tr>
-                                </thead>
-
-                                <tbody>
-                                {% for teacher in teachers %}
-                                    {% set users = view.teacherUsers(teacher) %}
-                                    {{ _self.printUsers(view, message, users, teacher|teacher ) }}
-                                {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
+                            <tbody>
+                            {% for student in grade.students %}
+                                {% set users = view.studentUsers(student) %}
+                                {{ _self.printUsers(view, message, users, student|student ) }}
+                            {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
-                {% endif %}
 
-                {# Users #}
-                {% for group in userGroups %}
-                    <div class="card">
-                        <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#uploads-users">
-                            <span class="me-auto align-self-center">{{ group.userType|enum }}</span>
+                    <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#uploads-parents-{{ grade.grade.uuid }}">
+                        <span class="me-auto align-self-center">{{ 'user_type.parent'|trans({}, 'enums') }}</span>
 
-                            {{ _self.progressBar(view.progress(group.users, message.files)) }}
-                            <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
-                        </div>
-
-                        <div class="table-responsive">
-                            <table class="table table-bordered card-table collapse" id="uploads-users">
-                                <colgroup>
-                                    <col class="column-lg">
-                                    <col>
-                                    <col class="column-lg">
-                                    <col class="column-lg">
-                                </colgroup>
-                                <thead>
-                                <tr>
-                                    <th>{{ 'label.name'|trans }}</th>
-                                    <th>{{ 'label.file'|trans }}</th>
-                                    <th>{{ 'label.filesize'|trans }}</th>
-                                    <th>{{ 'label.date'|trans }}</th>
-                                </tr>
-                                </thead>
-
-                                <tbody>
-                                    {% for user in group.users %}
-                                        {{ _self.printUsers(view, message, [ user ], user|user ) }}
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
+                        {{ _self.progressBar(view.parentProgress(grade.students, message.files)) }}
+                        <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
                     </div>
-                {% endfor %}
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered collapse card-table" id="uploads-parents-{{ grade.grade.uuid }}">
+                            <colgroup>
+                                <col class="column-lg">
+                                <col>
+                                <col class="column-lg">
+                                <col class="column-lg">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>{{ 'label.name'|trans }}</th>
+                                <th>{{ 'label.file'|trans }}</th>
+                                <th>{{ 'label.filesize'|trans }}</th>
+                                <th>{{ 'label.date'|trans }}</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            {% for student in grade.students %}
+                                {% set users = view.parentUsers(student) %}
+                                {{ _self.printUsers(view, message, users, student|student ) }}
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
+        {% endfor %}
+        {# Teachers #}
+        {% if teachers|length > 0 %}
+            <div class="card">
+                <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#uploads-teachers">
+                    <span class="me-auto align-self-center">{{ 'user_type.teacher'|trans({}, 'enums') }}</span>
 
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="list-group list-group-flush">
-                        <a href="#" class="list-group-item list-group-item-action" data-toggle="table-show-all" data-container="#explorer">
-                            <i class="fas fa-chevron-down"></i> {{ 'actions.show_all'|trans }}
-                        </a>
-
-                        <a href="#" class="list-group-item list-group-item-action" data-toggle="table-collapse-all" data-container="#explorer">
-                            <i class="fas fa-chevron-up"></i> {{ 'actions.collapse_all'|trans }}
-                        </a>
-
-                        <a href="#" class="list-group-item list-group-item-action" data-action="zip" data-files="#explorer" data-progress="#zip-progress">
-                            <i class="far fa-file-archive"></i> {{ 'messages.uploads.download.label'|trans }}
-                        </a>
-                    </div>
+                    {{ _self.progressBar(view.teacherProgress(teachers, message.files)) }}
+                    <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
                 </div>
 
-                <div class="card" id="zip-progress" style="display: none;">
-                    <div class="card-body">
-                        <span class="w-100" data-zip-progress-file></span>
-                        <div class="progress">
-                            <div class="progress-bar" role="progressbar" style="width: 0" data-zip-progress-bar></div>
-                        </div>
-                    </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered card-table collapse" id="uploads-teachers">
+                        <colgroup>
+                            <col class="column-lg">
+                            <col>
+                            <col class="column-lg">
+                            <col class="column-lg">
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th>{{ 'label.name'|trans }}</th>
+                            <th>{{ 'label.file'|trans }}</th>
+                            <th>{{ 'label.filesize'|trans }}</th>
+                            <th>{{ 'label.date'|trans }}</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        {% for teacher in teachers %}
+                            {% set users = view.teacherUsers(teacher) %}
+                            {{ _self.printUsers(view, message, users, teacher|teacher ) }}
+                        {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
+            </div>
+        {% endif %}
+
+        {# Users #}
+        {% for group in userGroups %}
+            <div class="card">
+                <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#uploads-users">
+                    <span class="me-auto align-self-center">{{ group.userType|enum }}</span>
+
+                    {{ _self.progressBar(view.progress(group.users, message.files)) }}
+                    <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered card-table collapse" id="uploads-users">
+                        <colgroup>
+                            <col class="column-lg">
+                            <col>
+                            <col class="column-lg">
+                            <col class="column-lg">
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th>{{ 'label.name'|trans }}</th>
+                            <th>{{ 'label.file'|trans }}</th>
+                            <th>{{ 'label.filesize'|trans }}</th>
+                            <th>{{ 'label.date'|trans }}</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for user in group.users %}
+                                {{ _self.printUsers(view, message, [ user ], user|user ) }}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block sidebar %}
+    <div class="card">
+        <div class="list-group list-group-flush">
+            <a href="#" class="list-group-item list-group-item-action" data-toggle="table-show-all" data-container="#explorer">
+                <i class="fas fa-chevron-down"></i> {{ 'actions.show_all'|trans }}
+            </a>
+
+            <a href="#" class="list-group-item list-group-item-action" data-toggle="table-collapse-all" data-container="#explorer">
+                <i class="fas fa-chevron-up"></i> {{ 'actions.collapse_all'|trans }}
+            </a>
+
+            <a href="#" class="list-group-item list-group-item-action" data-action="zip" data-files="#explorer" data-progress="#zip-progress">
+                <i class="far fa-file-archive"></i> {{ 'messages.uploads.download.label'|trans }}
+            </a>
+        </div>
+    </div>
+
+    <div class="card" id="zip-progress" style="display: none;">
+        <div class="card-body">
+            <span class="w-100" data-zip-progress-file></span>
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: 0" data-zip-progress-bar></div>
             </div>
         </div>
     </div>

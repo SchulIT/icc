@@ -2,7 +2,7 @@
 sidebar_position: 10
 ---
 
-# Import
+# Import-Einstellungen
 
 Hier können allgemeine Regeln für Importe festgelegt werden.
 

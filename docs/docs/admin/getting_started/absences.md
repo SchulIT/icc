@@ -7,10 +7,15 @@ sidebar_position: 20
 ## Lernende
 
 Möchte man die Funktion *Abwesenheitsmeldungen* nutzen, so müssen Abwesenheitsarten festlegen. Diese werden unter *Verwaltung
-➜ Datenverwaltung ➜ Abwesenheitsart (Lernende)* festgelegt. Dabei lassen sich dann auch einige Parameter festlegen,
+➜ Verwaltung ➜ Abwesenheitsart (Lernende)* festgelegt. Dabei lassen sich dann auch einige Parameter festlegen,
 wie bspw. ob eine Abwesenheitsmeldung genehmigt werden muss oder automatisch als entschuldigt gilt im Unterrichtsbuch.
 Außerdem lässt sich festlegen, welche Benutzergruppen welche Abwesenheitsmeldungen überhaupt erstellen können (Schulveranstaltungen
 sollten z.B. nur von Lehrkräften eingetragen werden).
+
+:::danger Wichtig
+Das Feature muss unter *Verwaltung ➜ Verwaltung ➜ Abwesenheiten (Einstellungen)* aktiviert werden. Dort lassen
+sich weitere Optionen festlegen.
+:::
 
 ### Vorschläge
 
@@ -26,5 +31,10 @@ Folgende Abwesenheitsarten haben sich im Schulalltag bewährt, können aber nat�
 
 ## Lehrkräfte
 
-Unter *Verwaltung ➜ Datenverwaltung ➜ Abwesenheitsart (Lehrkräfte)* lassen sich die Abwesenheitsarten für Lehrkräfte
+Unter *Verwaltung ➜ Verwaltung ➜ Abwesenheitsart (Lehrkräfte)* lassen sich die Abwesenheitsarten für Lehrkräfte
 eintragen. Diese sorgen später für eine bessere Bearbeitung durch die zuständigen Vertretungsplaner.
+
+:::danger Wichtig
+Das Feature muss unter *Verwaltung ➜ Verwaltung ➜ Abwesenheiten (Einstellungen)* aktiviert werden. Dort lassen
+sich weitere Optionen festlegen.
+:::

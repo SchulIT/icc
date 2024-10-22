@@ -9,15 +9,18 @@ ohne Altlasten beginnen kann.
 
 ## Altlasten entfernen
 
-1. Unter *Verwaltung ➜ Datenverwaltung ➜ Mitteilungen* alle alten Mitteilungen entfernen.
-2. Unter *Verwaltung ➜ Datenverwaltung ➜ Abschnitte* alle Abschnitte aus dem Schuljahr entfernen. Mit diesem Schritt
+1. Unter *Verwaltung ➜ Verwaltung ➜ Mitteilungen* alle alten Mitteilungen entfernen.
+2. Unter *Verwaltung ➜ Verwaltung ➜ Abschnitte* alle Abschnitte aus dem Schuljahr entfernen. Mit diesem Schritt
 werden auch alle Unterrichte, Lerngruppen etc. entfernt.
 3. Alle Chats aus dem System löschen. Dazu muss `php bin/console app:chats:purge` ausgeführt werden. Aktuell kann diese
 Aktion nicht mittels Browser durchgeführt werden.
 
 ## Neues Schuljahr anlegen
 
-Unter *Verwaltung ➜ Datenverwaltung ➜ Abschnitte* alle Abschnitte für das neue Schuljahr anlegen.
+Unter *Verwaltung ➜ Verwaltung ➜ Abschnitte* alle Abschnitte für das neue Schuljahr anlegen. Anschließend unter
+*Verwaltung ➜ Verwaltung ➜ Allgemein* den ersten Abschnitt im neuen Schuljahr auswählen. 
+
+Zusätzlich unter *Verwaltung ➜ Verwaltung ➜ Import-Einstellungen* den Fallback-Abschnitt auf das erste Halbjahr einstellen.
 
 ## Stammdaten importieren
 

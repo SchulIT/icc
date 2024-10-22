@@ -1595,19 +1595,25 @@ tools:
 
     grade_teacher_intersection:
         label: Fachlehrer-Schnittmenge
-        info: Mit diesem Tool kann die Schnittmenge der Fachlehrkräfte zwischen mehreren Klassen berechnet werden.
+        info: Mit diesem Tool kann die Schnittmenge der Fachlehrkräfte zwischen mehreren Klassen berechnet werden. Das kann beispielsweise bei der Planung paralleler Zeugniskonferenzen hilfreich sein.
         left_grades: Klassen (links)
         right_grades: Klassen (rechts)
         intersection: Gemeinsame Lehrkräfte
 
     tuition_report:
         label: Unterrichtsbericht
-        info: Mit diesem Tool können Statistiken über Unterrichte abgerufen werden
+        info: Mit diesem Tool können Statistiken über Unterrichte abgerufen werden, beispielsweise wie viele Kursteilnehmer mit welcher Kursart an einem Kurs bzw. Unterricht teilnehmen.
+        process: Es empfiehlt sich, den Bericht als CSV-Datei herunterzuladen und bspw. in Excel weiterzuverarbeiten.
         download: CSV-Datei herunterladen
 
     untis:
         timetable:
             label: Untis GPU001.txt
+            info: Mit diesem Tool kann aus den Stundenplandaten vom ICC eine GPU001.txt erzeugt werden.
+            tuition_numbers:
+                label: Unterrichtsnummern
+                info: Da die Unterrichtsnummern aus Untis nicht bekannt sind, wird stattdessen die ID (vom ICC) für den Unterricht verwendet. Für gleiche Unterrichte ist die Unterrichtsnummer somit stets identisch (etwas, das Untis nicht kann).
+            caution: Ein Import nach Untis darf mit dieser Datei nicht getätigt werden.
 
     missing_users:
         label: Fehlende Benutzer

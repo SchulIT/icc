@@ -13,27 +13,49 @@
 {% block content %}
     {{ knp_menu_render('toolsMenu', {'currentClass': 'active', 'template': 'admin/tools/_menu.html.twig' }) }}
 
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {{ form_start(form) }}
 
-    {{ form_start(form) }}
+                <div class="card">
+                    <div class="card-header">{{ block('title') }}</div>
+                    <div class="card-body">
+                        {{ form_row(form.start) }}
+                        {{ form_row(form.end) }}
 
-    <div class="card">
-        <div class="card-header">{{ block('title') }}</div>
-        <div class="card-body">
-            {{ form_row(form.start) }}
-            {{ form_row(form.end) }}
+                        {% for week in form.weeks %}
+                            {{ form_widget(week) }}
+                        {% endfor %}
+                    </div>
+                </div>
 
-            {% for week in form.weeks %}
-                {{ form_widget(week) }}
-            {% endfor %}
+                <div class="buttons">
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <i class="fas fa-download"></i> {{ 'actions.download'|trans }}
+                    </button>
+                </div>
+
+                {{ form_end(form) }}
+            </div>
+
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ 'info.label'|trans }}</h5>
+                        <p>{{ 'tools.untis.timetable.info'|trans }}</p>
+
+                        <h5 class="card-title">{{ 'tools.untis.timetable.tuition_numbers.label'|trans }}</h5>
+                        <p>{{ 'tools.untis.timetable.tuition_numbers.info'|trans }}</p>
+
+                        <div class="bs-callout bs-callout-danger mb-0">
+                            {{ 'tools.untis.timetable.caution'|trans }}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="buttons">
-        <button type="submit" class="btn btn-primary btn-sm">
-            <i class="fas fa-download"></i> {{ 'actions.download'|trans }}
-        </button>
-    </div>
-
-    {{ form_end(form) }}
 {% endblock %}
 

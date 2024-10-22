@@ -20,10 +20,10 @@ use App\Tools\GradeTuitionTeachersIntersectionTool;
 use App\Tools\MissingUsersReportHelper;
 use App\Tools\TuitionReport;
 use App\Tools\TuitionReportInput;
-use App\View\Filter\SectionFilter;
 use App\View\Filter\StudyGroupFilter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/tools')]
@@ -33,10 +33,13 @@ class ToolsController extends AbstractController {
     public function index(AdminToolsMenuBuilder $menuBuilder): Response {
         $toolsMenu = $menuBuilder->toolsMenu([]);
 
-        $firstKey = array_key_first($toolsMenu->getChildren());
-        $first = $toolsMenu->getChildren()[$firstKey];
+        foreach($toolsMenu->getChildren() as $child) {
+            if(!empty($child->getUri())) {
+                return $this->redirect($child->getUri());
+            }
+        }
 
-        return $this->redirect($first->getUri());
+        throw new AccessDeniedHttpException();
     }
 
     #[Route('/teacher_intersection', name: 'grade_tuition_teachers_intersection')]

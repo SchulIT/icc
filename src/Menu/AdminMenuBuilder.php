@@ -33,9 +33,6 @@ class AdminMenuBuilder extends AbstractMenuBuilder {
         $dataMenu = $this->dataMenuBuilder->dataMenu();
 
         if($dataMenu->count() > 0) {
-            $firstKey = array_key_first($dataMenu->getChildren());
-            $first = $dataMenu->getChildren()[$firstKey];
-
             $menu->addChild('admin.label', [
                 'route' => 'admin'
             ])
@@ -44,11 +41,8 @@ class AdminMenuBuilder extends AbstractMenuBuilder {
 
         $toolsMenu = $this->toolsMenuBuilder->toolsMenu();
         if($toolsMenu->count() > 0) {
-            $firstKey = array_key_first($toolsMenu->getChildren());
-            $first = $toolsMenu->getChildren()[$firstKey];
-
             $menu->addChild('tools.label', [
-                'uri' => $first->getUri()
+                'route' => 'tools'
             ])
                 ->setExtra('icon', 'fas fa-toolbox');
         }

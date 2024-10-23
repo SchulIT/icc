@@ -326,7 +326,6 @@ services:
     App\Notification\Pushover\PushoverNotificationHandler:
         arguments:
             $pushoverToken: '%env(PUSHOVER_TOKEN)%'
-            $logger: '@monolog.logger.notifications'
 
     App\Notification\Email\DefaultEmailStrategy:
         arguments:
@@ -459,6 +458,11 @@ services:
         arguments:
             $client: '@eight_points_guzzle.client.sso'
             $isDebug: '%kernel.debug%'
+
+    App\Messenger\SendPushoverNotificationHandler:
+        arguments:
+            $pushoverToken: '%env(PUSHOVER_TOKEN)%'
+            $logger: '@monolog.logger.notifications'
 
 when@test:
     # See https://github.com/DamienHarper/auditor/issues/141#issuecomment-1397949309

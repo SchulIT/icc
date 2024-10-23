@@ -8,6 +8,7 @@ use App\Entity\Student;
 use App\Repository\ParentsDayAppointmentRepositoryInterface;
 use App\Repository\ParentsDayParentalInformationRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
+use App\Repository\UserRepositoryInterface;
 use App\Section\SectionResolverInterface;
 use App\Sorting\Sorter;
 use App\Sorting\TeacherStrategy;
@@ -18,6 +19,7 @@ class TeacherOverviewHelper {
                                 private readonly ParentsDayAppointmentRepositoryInterface $appointmentRepository,
                                 private readonly ParentsDayParentalInformationRepositoryInterface $parentalInformationRepository,
                                 private readonly TuitionRepositoryInterface $tuitionRepository,
+                                private readonly UserRepositoryInterface $userRepository,
                                 private readonly Sorter $sorter) {
 
     }
@@ -83,6 +85,13 @@ class TeacherOverviewHelper {
         $items = [ ];
 
         foreach($teachers as $teacher) {
+            $users = $this->userRepository->findAllTeachers([$teacher]);
+            $userUuid = null;
+
+            if(count($users) > 0) {
+                $userUuid = $users[0]->getUuid();
+            }
+
             $items[] = new TeacherItem(
                 $teacher,
                 in_array($teacher, $gradeTeachers),
@@ -90,7 +99,8 @@ class TeacherOverviewHelper {
                 in_array($teacher, $teachersWithRequest),
                 in_array($teacher, $teachersNotNecessary),
                 $comments[$teacher->getId()] ?? [ ],
-                $teacherToTuitionsMap[$teacher->getId()] ?? [ ]
+                $teacherToTuitionsMap[$teacher->getId()] ?? [ ],
+                $userUuid,
             );
         }
 

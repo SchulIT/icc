@@ -2329,6 +2329,7 @@ reports:
 parents_day:
     label: Elternsprechtag
     empty: In nächster Zeit ist kein Elternsprechtag.
+    chat: Private Nachricht
     prepare:
         label: Elternsprechtag vorbereiten
         introduction: Bitte zunächst über den Filter einen Unterricht auswählen.

@@ -17,7 +17,8 @@ class TeacherItem {
                                 private readonly bool $isAppointmentRequested,
                                 private readonly bool $isAppointmentNotNecessary,
                                 private readonly array $comments = [ ],
-                                private readonly array $tuitions = [ ]) {
+                                private readonly array $tuitions = [ ],
+                                private readonly ?string $userUuid) {
 
     }
 
@@ -53,5 +54,9 @@ class TeacherItem {
      */
     public function getTuitions(): array {
         return $this->tuitions;
+    }
+
+    public function getUserUuid(): ?string {
+        return $this->userUuid;
     }
 }

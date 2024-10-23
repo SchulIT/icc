@@ -194,7 +194,13 @@
                                             {% endif %}
                                         </a>
                                     {% else %}
-                                        <span class="text-muted">{{ 'parents_day.appointments.booking_unavailable'|trans }}</span>
+                                        <span class="text-muted align-self-center">{{ 'parents_day.appointments.booking_unavailable'|trans }}</span>
+                                    {% endif %}
+
+                                    {% if is_granted('is-chat-enabled') and item.userUuid is not null %}
+                                        <a href="{{ path('new_chat', { recipients: [ item.userUuid ]}) }}" class="btn btn-outline-secondary btn-sm ms-2" title="{{ 'parents_day.chat'|trans }}">
+                                            <i class="fa-solid fa-comments"></i>
+                                        </a>
                                     {% endif %}
                                 </div>
                             {% endfor %}

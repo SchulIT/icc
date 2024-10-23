@@ -108,6 +108,11 @@ Das System versucht nun, bei Klausurschreibenden die entsprechenden Kurse zuzuor
 Das Limit von E-Mails wird nun streng eingehalten. Dazu müssen die Konfigurationsvariablen `MAILER_LIMIT` und `MAILER_INTERVAL`
 entsprechend gesetzt werden. Siehe [Handbuch](https://docs.schulit.de/icc/admin/install/configuration#mailer_limit)
 
+### Pushover-Benachrichtigungen asynchron versenden
+
+Pushover-Benachrichtigungen werden nun über eine Hintergrundaufgabe verschickt. Je nach Anzahl der zu verschickenden
+Benachrichtigungen könnte hier ein Zeitlimit überschritten werden.
+
 ### Hintergrundaufgaben
 
 Hintergrundaufgaben erledigen zeitintensive Aufgaben wie beispielsweise den Versand von E-Mails. Bisher wurden diese
@@ -116,6 +121,11 @@ Aufgaben nicht ordnungsgemäß ausgeführt werden.
 
 Es ist nun möglich, Hintergrundaufgaben nicht als Cronjob sondern mithilfe eines Dienstes (bspw. systemd) auszuführen.
 Mehr dazu gibt es im [Handbuch](https://docs.schulit.de/icc/admin/maintenance/messenger).
+
+### Einstellungen & Datenverwaltung zusammengefasst
+
+Um einen besseren Überblick über Einstellungen und die Daten im ICC zu bekommen, wurden beide "Ansichten" zusammengefasst
+und ein neues vertikales Menü erstellt.
 
 ## Upgrade TODO
 

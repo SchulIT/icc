@@ -1677,6 +1677,9 @@ profile:
         pushover:
             label: Pushover Benutzer-Token
             help: Hier kann das Benutzertoken von Pushover eingetragen werden.
+            test:
+                label: Benachrichtigung testen
+                success: Benachrichtigung verschickt. Es kann einige Augenblicke dauern, bis die Benachrichtigung auf dem Smartphone ankommt.
             info:
                 label: Pushover-App
                 description: Pushover ist ein Dienst, um Pushbenachrichtigungen z.B. auf das Smartphone oder Tablet zu erhalten. Es handelt sich dabei um einen externen Anbieter.

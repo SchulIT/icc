@@ -7,8 +7,8 @@ class SendPushoverNotificationMessage {
                                 public readonly string $recipientUserIdentifier,
                                 public readonly string $content,
                                 public readonly ?string $subject,
-                                public readonly ?string $link,
-                                public readonly ?string $linkText) {
+                                public readonly ?string $link = null,
+                                public readonly ?string $linkText = null) {
     }
 
 }

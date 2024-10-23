@@ -241,6 +241,10 @@ services:
         arguments:
             $pushoverToken: '%env(PUSHOVER_TOKEN)%'
 
+    App\Controller\ProfileController:
+        arguments:
+            $pushoverToken: '%env(PUSHOVER_TOKEN)%'
+
     # MARKDOWN
     League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension: ~
 

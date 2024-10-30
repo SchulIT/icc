@@ -96,9 +96,6 @@ class ChatController extends AbstractController {
 
     #[Route('/add', name: 'new_chat')]
     public function add(Request $request, UserRepositoryInterface $userRepository): Response {
-        /** @var User $user */
-        $user = $this->getUser();
-
         $chat = new Chat();
         $chat->addMessage(new ChatMessage());
 
@@ -112,6 +109,8 @@ class ChatController extends AbstractController {
             }
         }
 
+        /** @var User $user */
+        $user = $this->getUser();
 
         $form = $this->createForm(ChatType::class, $chat);
         $form->handleRequest($request);

@@ -17,6 +17,8 @@ use App\Entity\TuitionGradeCategory;
 use App\Entity\User;
 use App\Repository\TuitionRepositoryInterface;
 use App\Settings\TuitionGradebookSettings;
+use App\Sorting\Sorter;
+use App\Sorting\StudentStrategy;
 use App\Utils\ArrayUtils;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\SectionFilter;
@@ -42,7 +44,7 @@ class TuitionGradebookController extends AbstractController {
     public function index(Request $request, TuitionFilter $tuitionFilter, StudentFilter $studentFilter,
                           SectionFilter $sectionFilter, TuitionRepositoryInterface $tuitionRepository,
                           GradeOverviewHelper $gradeOverviewHelper, TuitionGradebookSettings $gradebookSettings,
-                          GradePersister $gradePersister, GradeFilter $gradeFilter): Response {
+                          GradePersister $gradePersister, GradeFilter $gradeFilter, Sorter $sorter): Response {
         /** @var User $user */
         $user = $this->getUser();
         
@@ -65,6 +67,8 @@ class TuitionGradebookController extends AbstractController {
             $overview = $gradeOverviewHelper->computeOverviewForStudent($studentFilterView->getCurrentStudent(), $sectionFilterView->getCurrentSection());
         } else if($gradeFilterView->getCurrentGrade() !== null) {
             $gradeStudents = $gradeFilterView->getCurrentGrade()->getMemberships()->map(fn(GradeMembership $membership) => $membership->getStudent())->toArray();
+
+            $sorter->sort($gradeStudents, StudentStrategy::class);
 
             if(count($gradeStudents) > self::StudentPaginationThreshold) {
                 $pages = ceil(count($gradeStudents) / (double)self::NumberOfStudentsPerPage);

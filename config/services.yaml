@@ -23,6 +23,8 @@ parameters:
         default_attributes:
             League\CommonMark\Extension\Table\Table:
                 class: 'table table-striped table-hover align-td-middle'
+            League\CommonMark\Extension\CommonMark\Node\Block\BlockQuote:
+                class: 'blockquote'
         table:
             wrap:
                 enabled: true

@@ -18,7 +18,7 @@ class TeacherItem {
                                 private readonly bool $isAppointmentNotNecessary,
                                 private readonly array $comments = [ ],
                                 private readonly array $tuitions = [ ],
-                                private readonly ?string $userUuid) {
+                                private readonly ?string $userUuid = null) {
 
     }
 

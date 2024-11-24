@@ -293,8 +293,8 @@ class BookXhrController extends AbstractController {
                 'lesson_end' => $lesson->getLessonEnd(),
                 'tuition' => $this->getTuition($lesson->getTuition())
             ],
-            'absences' => $this->possiblyAbsentStudents($lesson->getTuition(), $lesson->getDate(), $start, $lesson->getLessonEnd(), $suggestionResolver),
-            'removals' => $this->removeSuggestions($lesson->getTuition(), $lesson->getDate(), $start, $lesson->getLessonEnd(), $removeSuggestionResolver),
+            'absences' => $this->possiblyAbsentStudents($lesson->getTuition(), $lesson->getDate(), $lesson->getLessonStart(), $lesson->getLessonEnd(), $suggestionResolver),
+            'removals' => $this->removeSuggestions($lesson->getTuition(), $lesson->getDate(), $lesson->getLessonStart(), $lesson->getLessonEnd(), $removeSuggestionResolver),
             'entry' => $entryJson,
             'students' => $students,
             'has_other_entries' => count($lesson->getEntries()) > 0,

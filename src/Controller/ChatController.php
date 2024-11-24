@@ -251,7 +251,6 @@ class ChatController extends AbstractController {
             }
 
             $this->chatRepository->persist($chat);
-            //$dispatcher->dispatch(new ChatMessageCreatedEvent($chat->getMessages()->first()));
             $this->addFlash('success', 'chat.participants.add.success');
 
             return $this->redirectToRoute('show_chat', [

@@ -22,7 +22,10 @@ class LessonEntryType extends LessonEntryCreateType {
         parent::buildForm($builder, $options);
 
         $builder
-            ->remove('teacher');
+            ->remove('lessonStart')
+            ->remove('lessonEnd')
+            ->remove('teacher')
+            ->remove('subject');
 
         $builder
             ->addEventListener(FormEvents::POST_SET_DATA, function(FormEvent $event) {

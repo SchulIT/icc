@@ -57,20 +57,6 @@
                     </div>
 
                     <div class="card-body no-columns">
-                        {{ form_row(form.lessonStart) }}
-                        {{ form_row(form.lessonEnd) }}
-                        {{ form_row(form.subject) }}
-
-                        {% if form.replacementSubject is defined %}
-                            {{ form_row(form.replacementSubject) }}
-                        {% endif %}
-
-                        {{ form_row(form.teacher) }}
-
-                        {% if form.replacementTeacher is defined %}
-                            {{ form_row(form.replacementTeacher) }}
-                        {% endif %}
-
                         {% if form.topic is defined %}
                             {{ form_row(form.topic) }}
                         {% endif %}
@@ -83,6 +69,14 @@
 
                         {% if form.cancelReason is defined %}
                             {{ form_row(form.cancelReason) }}
+                        {% endif %}
+
+                        {% if form.replacementSubject is defined %}
+                            {{ form_row(form.replacementSubject) }}
+                        {% endif %}
+
+                        {% if form.replacementTeacher is defined %}
+                            {{ form_row(form.replacementTeacher) }}
                         {% endif %}
                     </div>
 
@@ -101,12 +95,18 @@
 
             <div class="col-md-6">
                 {% if form.attendances is defined %}
-                <students :attendancedata="{{ entry.attendances.toArray|json_encode }}"
-                          students-url="{{ url('xhr_tuition_students', { uuid: entry.tuition.uuid.toString, lesson: entry.lessonStart, date: entry.lesson.date.format('Y-m-d') }) }}"
+                <students :attendances="{{ entry.attendances.toArray|json_encode }}"
+                          :possible-absences="[]"
+                          :suggested-removals="[]"
+                          :students="[]"
                           :step="1"
+                          :flags="[]"
+                          field-name="lesson_entry"
                           :show-save-button="true"
                           :start="{{ entry.lessonStart }}"
                           :end="{{ entry.lessonEnd }}"
+                          :standalone="true"
+                          list-study-groups-url="{{ url('xhr_studygroups') }}"
                           list-students-url="{{ url('xhr_students') }}"
                 ></students>
                     {% do form.attendances.setRendered %}

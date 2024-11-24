@@ -12,6 +12,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -63,12 +64,13 @@ class LessonEntryCreateType extends AbstractType {
                 'label' => 'label.replacement_subject',
                 'required' => false
             ])
-            ->add('exercises', MarkdownType::class, [
+            ->add('exercises', TextareaType::class, [
                 'label' => 'label.exercises',
                 'required' => false
             ])
-            ->add('comment', MarkdownType::class, [
-                'label' => 'label.comment',
+            ->add('comment', TextareaType::class, [
+                'label' => 'book.entry.comment.label',
+                'help' => 'book.entry.comment.help',
                 'required' => false
             ])
             ->add('attendances', CollectionType::class, [

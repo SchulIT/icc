@@ -435,6 +435,7 @@ dashboard:
         tuition: Zur Lernendenübersicht
         book: Zum Unterrichtsbuch
         gradebook: Zur Notenübersicht
+        last_entry: Letzter Eintrag
     parents_day:
         header: Es können Termine für den Elternsprechtag am %date% gebucht werden.
         link: jetzt buchen
@@ -1958,7 +1959,10 @@ book:
         comment:
             label: Bemerkungen zur Lerngruppe
             help: Bitte hier keine Kommentare zu einzelnen Schülerinenn und Schülern hinterlassen. Stattdessen die Kommentar-Funktion verwenden.
-
+        redirect_to_last:
+            error:
+                not_found: Es wurde kein Eintrag gefunden.
+                invalid_date: Ungültiges Datum angegeben
 
     comment:
         label: Kommentare

@@ -8,6 +8,7 @@ use App\Entity\LessonEntry;
 use App\Entity\Student;
 use App\Entity\StudyGroupMembership;
 use App\Entity\TimetableLesson;
+use App\Entity\Tuition;
 use App\Entity\User;
 use App\Form\LessonAttendanceExcuseType;
 use App\Form\LessonEntryAddStudent;
@@ -16,8 +17,12 @@ use App\Form\LessonEntryType;
 use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Repository\LessonEntryRepositoryInterface;
 use App\Security\Voter\LessonEntryVoter;
+use DateMalformedStringException;
+use DateTime;
+use Doctrine\DBAL\Driver\Exception;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -148,12 +153,33 @@ class BookEntryController extends AbstractController {
         ]);
     }
 
-    #[Route(path: '/{uuid}', name: 'show_entry')]
+    #[Route('/redirect/{uuid}', name: 'redirect_to_last_entry', methods: ['GET'])]
+    public function redirectToLastEntry(Tuition $tuition, Request $request, LessonEntryRepositoryInterface $entryRepository): RedirectResponse {
+        try {
+            $dateTime = new DateTime($request->query->get('date'));
+            $last = $entryRepository->findLastByTuition($tuition, $dateTime);
+
+            if($last === null) {
+                $this->addFlash('error', 'book.entry.redirect_to_last.error.not_found');
+                return $this->redirectToRoute('book');
+            }
+
+            return $this->redirectToRoute('show_entry',  [
+                'uuid' => $last->getUuid()->toString()
+            ]);
+        } catch(DateMalformedStringException) {
+            $this->addFlash('error', 'book.entry.redirect_to_last.error.invalid_date');
+            return $this->redirectToRoute('book');
+        }
+    }
+
+    #[Route(path: '/{uuid}', name: 'show_entry', methods: ['GET'])]
     public function show(LessonEntry $entry, Request $request): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::Edit, $entry);
 
         $form = $this->createForm(LessonEntryType::class, $entry, [
-            'validation_groups' => [ $entry->isCancelled() ? 'cancel' : 'Default' ]
+            'validation_groups' => [ $entry->isCancelled() ? 'cancel' : 'Default' ],
+            'csrf_token_id' => 'book_entry'
         ]);
         $form->handleRequest($request);
 

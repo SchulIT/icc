@@ -11,6 +11,8 @@ use DateTime;
 
 interface LessonEntryRepositoryInterface {
 
+    public function findLastByTuition(Tuition $tuition, DateTime $today): ?LessonEntry;
+
     /**
      * @param Tuition $tuition
      * @param DateTime $start

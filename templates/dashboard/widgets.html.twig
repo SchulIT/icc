@@ -316,6 +316,9 @@
                                             <a href="{{ path('book', { section: lesson.tuition.section.uuid, tuition: lesson.tuition.uuid}) }}" class="dropdown-item" target="_blank">
                                                 <i class="fas fa-book-open"></i> {{ 'dashboard.links.book'|trans }} <i class="fas fa-external-link-alt"></i>
                                             </a>
+                                            <a href="{{ path('redirect_to_last_entry', { uuid: lesson.tuition.uuid, date: lesson.date.format('Y-m-d')}) }}" class="dropdown-item" target="_blank">
+                                                <i class="fas fa-book-open"></i> {{ 'dashboard.links.last_entry'|trans }} <i class="fas fa-external-link-alt"></i>
+                                            </a>
                                         {% endif %}
                                         {% if openGradebook %}
                                             <a href="{{ path('gradebook', { section: lesson.tuition.section.uuid, tuition: lesson.tuition.uuid}) }}" class="dropdown-item" target="_blank">

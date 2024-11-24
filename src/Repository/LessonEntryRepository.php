@@ -31,6 +31,18 @@ class LessonEntryRepository extends AbstractRepository implements LessonEntryRep
             ->setParameter('end', $end);
     }
 
+    public function findLastByTuition(Tuition $tuition, DateTime $today): ?LessonEntry {
+        return $this->createDefaultQueryBuilder()
+            ->andWhere('tt.id = :tuition')
+            ->andWhere('l.date < :today')
+            ->setParameter('tuition', $tuition)
+            ->setParameter('today', $today)
+            ->setMaxResults(1)
+            ->orderBy('l.date', 'DESC')
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     /**
      * @inheritDoc
      */

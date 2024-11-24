@@ -2482,6 +2482,9 @@ chat:
         remove:
             success: Person erfolgreich aus dem Gespräch entfernt
         missing_rights: Teilnehmer können nur von Benutzern mit der Rolle ROLE_CHAT_MOD hinzugefügt werden.
+        success:
+            added: "%users% zu diesem Gespräch hinzugefügt."
+            remove: "%users% aus diesem Gespräch entfernt."
     tags:
         label: Kategorien
         filter: Kategorie

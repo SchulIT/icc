@@ -206,12 +206,11 @@
 
                         {{ form_start(participantsForm) }}
 
-                        <div class="input-group">
-                            {{ form_widget(participantsForm) }}
-                            <button class="btn btn-outline-secondary btn-sm">
-                                <i class="fas fa-plus"></i> {{ 'actions.add'|trans }}
-                            </button>
-                        </div>
+                        {{ form_widget(participantsForm) }}
+
+                        <button class="btn btn-outline-secondary btn-sm mt-1">
+                            <i class="fas fa-plus"></i> {{ 'actions.add'|trans }}
+                        </button>
 
                         {{ form_end(participantsForm) }}
                     </div>

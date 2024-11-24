@@ -238,22 +238,21 @@ class ChatController extends AbstractController {
             ]);
         }
 
-        $participantsForm = $this->createForm(ChatUserRecipientType::class, null, ['multiple' => false, 'required' => false]);
+        $participantsForm = $this->createForm(ChatUserRecipientType::class, null, ['multiple' => true, 'required' => false]);
         $participantsForm->handleRequest($request);
 
         if($this->isGranted(ChatVoter::Edit, $chat) && $participantsForm->isSubmitted() && $participantsForm->isValid()) {
-            $newParticipant = $participantsForm->getData();
+            $newParticipants = $participantsForm->getData();
 
-            if(!$chat->getParticipants()->contains($newParticipant)) {
-                $chat->getParticipants()->add($newParticipant);
-                $this->chatRepository->persist($chat);
-
-                $dispatcher->dispatch(new ChatMessageCreatedEvent($chat->getMessages()->first()));
-
-                $this->addFlash('success', 'chat.participants.add.success');
-            } else {
-                $this->addFlash('error', 'chat.participants.add.error');
+            foreach ($newParticipants as $newParticipant) {
+                if (!$chat->getParticipants()->contains($newParticipant)) {
+                    $chat->getParticipants()->add($newParticipant);
+                }
             }
+
+            $this->chatRepository->persist($chat);
+            //$dispatcher->dispatch(new ChatMessageCreatedEvent($chat->getMessages()->first()));
+            $this->addFlash('success', 'chat.participants.add.success');
 
             return $this->redirectToRoute('show_chat', [
                 'uuid' => $chat->getUuid()

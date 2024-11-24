@@ -326,6 +326,9 @@ label:
     override_weeks:
         label: wird ersetzt durch
         help: mehrere Wochen durch Komma separieren
+    associated_study_group:
+        label: Zugehörige Lerngruppe
+        help: Wenn eine Lerngruppe angegeben wird, wird diese Reserveriung auch bei den Lernenden auf der Übersichtsseite angezeigt. Dazu muss der Zeitpunkt der Reservierung jedoch im angegebenen Abschnitt liegen.
 
 markdown:
     label: Markdown

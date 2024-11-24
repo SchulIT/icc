@@ -205,6 +205,7 @@ class DashboardViewHelper {
         $this->addAbsentStudyGroup($this->absenceRepository->findAllStudyGroups($dateTime), $view);
         $this->addAbsentTeachers($this->absenceRepository->findAllTeachers($dateTime), $view);
         $this->addAppointments($this->appointmentRepository->findAllForStudents([$student], $dateTime), $view);
+        $this->addRoomReservations($this->roomReservationRepository->findAllByStudentAndDate($student, $dateTime), $view);
         $this->addFreeTimespans($this->freeTimespanRepository->findAllByDate($dateTime), $view);
         $this->setCurrentLesson($view);
 

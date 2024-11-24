@@ -12,6 +12,13 @@ substitution:
   sender: Vertretungsplaner
   link: Vertretungsplan anzeigen
 
+  mention:
+    create:
+      title: Erwähnung im Vertretungsplan
+      content: Es wurde eine Vertretung (%date%, %lesson%, %studygroup%, %subject%) hochgeladen, in der das Kürzel %acronym% vorkommt.
+      empty_studygroup: keine Lerngruppe
+      empty_subject: kein Fach
+
 exam:
   title: Neuer Klausurplan
   content: es wurde ein neuer Klausurplan hochgeladen.

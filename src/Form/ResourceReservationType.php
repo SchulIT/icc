@@ -50,6 +50,7 @@ class ResourceReservationType extends AbstractType {
             ->add('associatedStudyGroup', StudyGroupType::class, [
                 'label' => 'label.associated_study_group.label',
                 'help' => 'label.associated_study_group.help',
+                'required' => false
             ]);
     }
 }

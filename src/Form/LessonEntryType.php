@@ -22,10 +22,7 @@ class LessonEntryType extends LessonEntryCreateType {
         parent::buildForm($builder, $options);
 
         $builder
-            ->remove('lessonStart')
-            ->remove('lessonEnd')
-            ->remove('teacher')
-            ->remove('subject');
+            ->remove('teacher');
 
         $builder
             ->addEventListener(FormEvents::POST_SET_DATA, function(FormEvent $event) {
@@ -44,6 +41,11 @@ class LessonEntryType extends LessonEntryCreateType {
                             'label' => 'book.entry.cancel.reason',
                             'required' => true
                         ]);
+                    } else if($entry->getId() !== null) {
+                        $form
+                            ->remove('lessonStart')
+                            ->remove('lessonEnd')
+                            ->remove('subject');
                     }
                 }
             });

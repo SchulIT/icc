@@ -55,11 +55,6 @@ class LessonEntryCreateType extends AbstractType {
 
                 }
             ])
-            ->add('subject', EntityType::class, [
-                'class' => Subject::class,
-                'label' => 'label.subject',
-                'disabled' => true
-            ])
             ->add('replacementSubject', TextType::class, [
                 'label' => 'label.replacement_subject',
                 'required' => false

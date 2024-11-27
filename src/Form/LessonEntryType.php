@@ -43,9 +43,16 @@ class LessonEntryType extends LessonEntryCreateType {
                         ]);
                     } else if($entry->getId() !== null) {
                         $form
-                            ->remove('lessonStart')
-                            ->remove('lessonEnd')
-                            ->remove('subject');
+                            ->add('lessonStart', IntegerType::class, [
+                                'label' => 'label.start',
+                                'disabled' => true,
+                                'required' => false
+                            ])
+                            ->add('lessonEnd', IntegerType::class, [
+                                'label' => 'label.end',
+                                'disabled' => true,
+                                'required' => false
+                            ]);
                     }
                 }
             });

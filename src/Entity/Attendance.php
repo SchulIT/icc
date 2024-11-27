@@ -177,7 +177,7 @@ class Attendance implements JsonSerializable, Stringable {
             'is_zero_absent_lesson' => $this->isZeroAbsentLesson(),
             'excuse_status' => $this->getExcuseStatus()->value,
             'comment' => $this->getComment(),
-            'flags' => $this->flags->toArray(),
+            'flags' => $this->flags->map(fn(AttendanceFlag $flag) => $flag->getId())->toArray(),
             'lesson' => $this->getLesson()
         ];
     }

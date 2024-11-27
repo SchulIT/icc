@@ -57,6 +57,9 @@
                     </div>
 
                     <div class="card-body no-columns">
+                        {% do form.lessonStart.setRendered(true) %}
+                        {% do form.lessonEnd.setRendered(true) %}
+
                         {% if form.topic is defined %}
                             {{ form_row(form.topic) }}
                         {% endif %}
@@ -100,7 +103,7 @@
                           :suggested-removals="[]"
                           :students="[]"
                           :step="1"
-                          :flags="[]"
+                          :flags="{{ flags|json_encode }}"
                           field-name="lesson_entry"
                           :show-save-button="true"
                           :start="{{ entry.lessonStart }}"

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Attendance;
+use App\Entity\AttendanceFlag;
 use App\Entity\AttendanceType;
 use App\Entity\LessonEntry;
 use App\Entity\Student;
@@ -14,6 +15,7 @@ use App\Form\LessonAttendanceExcuseType;
 use App\Form\LessonEntryAddStudent;
 use App\Form\LessonEntryCancelType;
 use App\Form\LessonEntryType;
+use App\Repository\LessonAttendanceFlagRepositoryInterface;
 use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Repository\LessonEntryRepositoryInterface;
 use App\Security\Voter\LessonEntryVoter;
@@ -174,7 +176,7 @@ class BookEntryController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}', name: 'show_entry', methods: ['GET'])]
-    public function show(LessonEntry $entry, Request $request): Response {
+    public function show(LessonEntry $entry, Request $request, LessonAttendanceFlagRepositoryInterface $attendanceFlagRepository): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::Edit, $entry);
 
         $form = $this->createForm(LessonEntryType::class, $entry, [
@@ -192,9 +194,12 @@ class BookEntryController extends AbstractController {
             ]);
         }
 
+
+
         return $this->render('books/entry/show.html.twig', [
             'entry' => $entry,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'flags' => $attendanceFlagRepository->findAllBySubject($entry->getSubject())
         ]);
     }
 

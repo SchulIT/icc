@@ -26,6 +26,10 @@ class AdminToolsMenuBuilder extends AbstractMenuBuilder {
                 'route' => 'missing_users_tool'
             ])
                 ->setExtra('icon', 'fas fa-user-times');
+
+            $root->addChild('tools.substitution_report.label', [
+                'route' => 'substitution_report_tool'
+            ]);
         }
 
         return $root;

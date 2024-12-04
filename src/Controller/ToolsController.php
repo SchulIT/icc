@@ -18,6 +18,9 @@ use App\Sorting\StudentStrategy;
 use App\Tools\GradeTuitionTeachersIntersectionInput;
 use App\Tools\GradeTuitionTeachersIntersectionTool;
 use App\Tools\MissingUsersReportHelper;
+use App\Tools\SubstitutionEvaluation\ReportInput;
+use App\Tools\SubstitutionEvaluation\ReportInputType;
+use App\Tools\SubstitutionEvaluation\ReportManager;
 use App\Tools\TuitionReport;
 use App\Tools\TuitionReportInput;
 use App\View\Filter\StudyGroupFilter;
@@ -126,6 +129,24 @@ class ToolsController extends AbstractController {
             'studyGroupFilter' => $studyGroupFilterView,
             'missingStudents' => $missingStudents,
             'missingParents' => $missingParents
+        ]);
+    }
+
+    #[Route('/substitution_report', name: 'substitution_report_tool')]
+    public function substitutionReport(ReportManager $manager, Request $request): Response {
+        $input = new ReportInput();
+        $form = $this->createForm(ReportInputType::class, $input);
+        $form->handleRequest($request);
+
+        $result = [ ];
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $result = $manager->evaluate($input);
+        }
+
+        return $this->render('admin/tools/substitution_report.html.twig', [
+            'form' => $form->createView(),
+            'result' => $result
         ]);
     }
 }

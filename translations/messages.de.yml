@@ -329,6 +329,7 @@ label:
     associated_study_group:
         label: Zugehörige Lerngruppe
         help: Wenn eine Lerngruppe angegeben wird, wird diese Reserveriung auch bei den Lernenden auf der Übersichtsseite angezeigt. Dazu muss der Zeitpunkt der Reservierung jedoch im angegebenen Abschnitt liegen.
+    substitution_types: Vertretungsarten
 
 markdown:
     label: Markdown
@@ -1629,6 +1630,13 @@ tools:
         parents:
             header: Eltern
             empty: Alle Lernende sind mindestens einem Eltern-Benutzer zugeordnet.
+
+    substitution_report:
+        label: Vertretungsauswertung
+        info: Mit diesem Tool lässt sich die Anzahl an Vertretungsstunden und deren Ursacher auswerten.
+        empty: Bitte einen Filter rechts auswählen oder den Filter ändern.
+        num_substitutions: Anzahl Stunden, die Lehrkraft vertreten hat
+        num_was_substituted: Anzahl Stunden, die Lehrkraft vertreten wurde
 
 versions:
     label: Versionen

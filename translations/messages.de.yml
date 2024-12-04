@@ -1637,6 +1637,7 @@ tools:
         empty: Bitte einen Filter rechts auswählen oder den Filter ändern.
         num_substitutions: Anzahl Stunden, die Lehrkraft vertreten hat
         num_was_substituted: Anzahl Stunden, die Lehrkraft vertreten wurde
+        difference: Differenz (hat vertreten - wurde vertreten)
 
 versions:
     label: Versionen

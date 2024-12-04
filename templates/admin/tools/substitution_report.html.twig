@@ -30,6 +30,7 @@
                                     <th>{{ 'label.teacher'|trans }}</th>
                                     <th>{{ 'tools.substitution_report.num_was_substituted'|trans }}</th>
                                     <th>{{ 'tools.substitution_report.num_substitutions'|trans }}</th>
+                                    <th>{{ 'tools.substitution_report.difference'|trans }}</th>
                                 </tr>
                                 </thead>
 
@@ -39,6 +40,7 @@
                                         <td>{{ row.teacher.acronym }}</td>
                                         <td>{{ row.numWasSubstituted }}</td>
                                         <td>{{ row.numSubstitute }}</td>
+                                        <td>{{ row.numSubstitute - row.numWasSubstituted }}</td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>

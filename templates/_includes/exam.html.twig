@@ -66,7 +66,7 @@
         </div>
     {% endif %}
     {% if relatedExams|length > 0 %}
-        <div class="card-footer">
+        <div class="card-footer d-print-none">
             {% for relatedExam in relatedExams %}
                 {% for examTuition in relatedExam.tuitions %}
                     <a href="{{ path('show_exam', { uuid: relatedExam.uuid }) }}" class="btn btn-outline-primary btn-sm">

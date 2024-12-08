@@ -226,6 +226,8 @@ class ExamController extends AbstractControllerWithMessages {
             }
         }
 
+        $relatedExams = array_filter($relatedExams, fn(Exam $e) => $e->getId() !== $exam->getId());
+
         return $this->renderWithMessages('exams/details.html.twig', [
             'exam' => $exam,
             'groups' => $groups,

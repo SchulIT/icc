@@ -21,8 +21,10 @@ class AdminDataMenuBuilder extends AbstractMenuBuilder {
                 ->setExtra('icon', 'fas fa-upload');
         }
 
-        $root->addChild('admin.headers.information', [])
-            ->setExtra('isHeader', true);
+        if($this->authorizationChecker->isGranted('ROLE_DOCUMENTS_ADMIN') || $this->authorizationChecker->isGranted('ROLE_MESSAGE_CREATOR') || $this->authorizationChecker->isGranted('ROLE_WIKI_ADMIN')) {
+            $root->addChild('admin.headers.information', [])
+                ->setExtra('isHeader', true);
+        }
 
         if($this->authorizationChecker->isGranted('ROLE_DOCUMENTS_ADMIN')) {
             $root->addChild('admin.documents.label', [

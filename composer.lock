@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9b8c2649a8cd23074881b74346eb7505",
+    "content-hash": "9b719cb94d96ffa4541a2ea191dc6f32",
     "packages": [
         {
             "name": "beberlei/doctrineextensions",
@@ -176,6 +176,61 @@
                 }
             ],
             "time": "2023-11-29T23:19:16+00:00"
+        },
+        {
+            "name": "chrisguitarguy/request-id-bundle",
+            "version": "v6.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/chrisguitarguy/RequestIdBundle.git",
+                "reference": "4d202bdf62fd0e4bc1b300478ed8cb31276537f1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/chrisguitarguy/RequestIdBundle/zipball/4d202bdf62fd0e4bc1b300478ed8cb31276537f1",
+                "reference": "4d202bdf62fd0e4bc1b300478ed8cb31276537f1",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.2",
+                "ramsey/uuid": "^3.9 || ^4.3",
+                "symfony/framework-bundle": "^5.4 || ^6.0 || ^7.0"
+            },
+            "conflict": {
+                "twig/twig": "<2.7"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5",
+                "symfony/browser-kit": "^5.4 || ^6.0 || ^7.0",
+                "symfony/css-selector": "^5.4 || ^6.0 || ^7.0",
+                "symfony/monolog-bridge": "^5.4 || ^6.0 || ^7.0",
+                "symfony/monolog-bundle": "^3.7",
+                "symfony/phpunit-bridge": "^5.4 || ^6.0 || ^7.0",
+                "symfony/templating": "^5.4 || ^6.0 || ^7.0",
+                "symfony/twig-bundle": "^5.4 || ^6.0 || ^7.0",
+                "symfony/yaml": "^5.4 || ^6.0 || ^7.0",
+                "twig/twig": "^2.7 || ^3.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Chrisguitarguy\\RequestId\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Add request IDs to to your Symfony requests.",
+            "keywords": [
+                "request id",
+                "symfony"
+            ],
+            "support": {
+                "issues": "https://github.com/chrisguitarguy/RequestIdBundle/issues",
+                "source": "https://github.com/chrisguitarguy/RequestIdBundle/tree/v6.0.0"
+            },
+            "time": "2024-01-19T19:51:04+00:00"
         },
         {
             "name": "composer/package-versions-deprecated",
@@ -6015,19 +6070,20 @@
         },
         {
             "name": "schulit/common-bundle",
-            "version": "4.4.4",
+            "version": "4.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SchulIT/common-bundle.git",
-                "reference": "f2d95c6a56965574ca3cbd45f8bbf869caeff7d3"
+                "reference": "cb86023012251d210e46d4f3849b030ac5a443f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SchulIT/common-bundle/zipball/f2d95c6a56965574ca3cbd45f8bbf869caeff7d3",
-                "reference": "f2d95c6a56965574ca3cbd45f8bbf869caeff7d3",
+                "url": "https://api.github.com/repos/SchulIT/common-bundle/zipball/cb86023012251d210e46d4f3849b030ac5a443f7",
+                "reference": "cb86023012251d210e46d4f3849b030ac5a443f7",
                 "shasum": ""
             },
             "require": {
+                "chrisguitarguy/request-id-bundle": "^6.0",
                 "ext-iconv": "*",
                 "ext-openssl": "*",
                 "frostiede/composer-dependency-list-bundle": "^3.0|^4.0",
@@ -6064,9 +6120,9 @@
             ],
             "support": {
                 "issues": "https://github.com/SchulIT/common-bundle/issues",
-                "source": "https://github.com/SchulIT/common-bundle/tree/4.4.4"
+                "source": "https://github.com/SchulIT/common-bundle/tree/4.5.1"
             },
-            "time": "2024-11-04T20:03:10+00:00"
+            "time": "2024-12-08T18:05:33+00:00"
         },
         {
             "name": "scienta/doctrine-json-functions",

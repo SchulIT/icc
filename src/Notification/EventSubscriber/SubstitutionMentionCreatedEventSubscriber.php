@@ -9,11 +9,11 @@ use App\Notification\NotificationService;
 use App\Repository\UserRepositoryInterface;
 use App\Sorting\Sorter;
 use App\Sorting\StudyGroupStrategy;
-use Doctrine\Common\EventSubscriber;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class SubstitutionMentionCreatedEventSubscriber implements EventSubscriber {
+class SubstitutionMentionCreatedEventSubscriber implements EventSubscriberInterface {
 
     public function __construct(private readonly UserRepositoryInterface $userRepository,
                                 private readonly NotificationService $notificationService,
@@ -69,7 +69,7 @@ class SubstitutionMentionCreatedEventSubscriber implements EventSubscriber {
         }
     }
 
-    public function getSubscribedEvents(): array {
+    public static function getSubscribedEvents(): array {
         return [
             SubstitutionMentionCreatedEvent::class => 'onSubstitutionMentionCreated'
         ];

@@ -357,7 +357,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
         return body;
     }
 
-    function addComments(body, comments) {
+    function addComments(body, comments, colspan) {
         comments.forEach(function(comment) {
             body.push([
                 {

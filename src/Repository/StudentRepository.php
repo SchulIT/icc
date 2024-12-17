@@ -11,6 +11,7 @@ use App\Entity\Tuition;
 use App\Entity\User;
 use App\Entity\UserType;
 use DateTime;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
@@ -68,6 +69,18 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
             ->setParameter('email', $email)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    public function findAllByNameAndBirthday(string $firstname, string $lastname, DateTime $dateTime): array {
+        return $this->getDefaultQueryBuilder()
+            ->where('s.firstname = :firstName')
+            ->andWhere('s.lastname = :lastName')
+            ->andWhere('s.birthday = :dateTime')
+            ->setParameter('firstName', $firstname)
+            ->setParameter('lastName', $lastname)
+            ->setParameter('dateTime', $dateTime, Types::DATE_MUTABLE)
+            ->getQuery()
+            ->getResult();
     }
 
     /**

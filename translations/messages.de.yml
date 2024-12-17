@@ -53,6 +53,7 @@ label:
         lms: Lernplattform auswählen
         parents_day: Elternsprechtag auswählen
         user: Person auswählen
+        grade_category: Notenkategorie auswählen
     search:
         student: Lernenden suchen
     scope: Bereich
@@ -330,6 +331,8 @@ label:
         label: Zugehörige Lerngruppe
         help: Wenn eine Lerngruppe angegeben wird, wird diese Reserveriung auch bei den Lernenden auf der Übersichtsseite angezeigt. Dazu muss der Zeitpunkt der Reservierung jedoch im angegebenen Abschnitt liegen.
     substitution_types: Vertretungsarten
+    gradebook:
+        grade_category: Notenkategorie
 
 markdown:
     label: Markdown
@@ -2071,6 +2074,7 @@ book:
             success: Passwort erfolgreich angewendet, der PDF-Export enthält Noten.
             pending: Es wurde noch kein Passwort für die Noten eingetragen. Der PDF-Export enthält keine Noten.
 
+
     excuse_note:
         label: Entschuldigungen
         add:
@@ -2122,6 +2126,18 @@ book:
             label: Excel-Datei
             info: Die Excel-Datei ist mit demselben Passwort verschlüsselt, das auch hier eingegeben werden muss.
             download: Download
+
+            schild_leistungsdaten:
+                label: SchILD Leistungsdaten-Export
+                info: Hier kann eine SchILD Leistungsdaten.dat hochgeladen werden, sodass Noten und Fehlstunden automatisch eingetragen werden.
+                convert:
+                    label: Konvertiere Notenpunkte
+                    help: Wenn diese Option aktiv ist, werden Notenpunkte in die zugehörige Note umgewandelt. Also bspw. 15 →  1+, 14 →  1 usw.
+
+                include_absent_lessons:
+                    label: Fehlstunden exportieren
+                    help: Wenn diese Option aktiv ist, werden Fehlstunden (pro Unterricht) exportiert.
+                button: Export starten
 
     integrity_check:
         label: Plausibilitätscheck

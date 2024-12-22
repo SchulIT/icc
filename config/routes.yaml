@@ -8,7 +8,7 @@ lightsaml_sp:
 
 common:
     resource: "@CommonBundle/Controller"
-    type: annotation
+    type: attribute
 
 logout:
     path: /logout
@@ -44,7 +44,7 @@ composer:
 
 dh_doctrine_audit:
     resource: "@DHAuditorBundle/Controller/"
-    type: annotation
+    type: attribute
     prefix: /admin
 
 _bazinga_jstranslation:

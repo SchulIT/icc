@@ -39,7 +39,7 @@ use App\View\Filter\TeacherFilter;
 use DateInterval;
 use DateTime;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route(path: '/appointments')]

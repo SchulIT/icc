@@ -27,7 +27,7 @@ use App\View\Filter\TuitionFilter;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/book/gradebook')]
 class TuitionGradebookController extends AbstractController {

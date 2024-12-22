@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Menu\AdminDataMenuBuilder;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route(path: '/admin')]
 class AdminController extends AbstractController {

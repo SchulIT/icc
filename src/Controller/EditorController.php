@@ -12,7 +12,7 @@ use App\Sorting\DocumentCategoryGroupStrategy;
 use App\Sorting\DocumentNameStrategy;
 use App\Sorting\Sorter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as SymfonyAbstractController;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route(path: '/admin/editor')]
 class EditorController extends SymfonyAbstractController {

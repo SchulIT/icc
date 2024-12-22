@@ -29,7 +29,7 @@ class WeekType extends AbstractType {
         $resolver->setDefault('data_class', Week::class);
     }
 
-    public function getBlockPrefix() {
+    public function getBlockPrefix(): string {
         return 'week_type';
     }
 }

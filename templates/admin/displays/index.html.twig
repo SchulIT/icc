@@ -1,4 +1,4 @@
-{% extends "main.html.twig" %}
+{% extends "admin/_main.html.twig" %}
 
 {% block title %}{{ 'admin.subjects.label'|trans }}{% endblock %}
 
@@ -18,103 +18,95 @@
     {% endif %}
 {% endmacro %}
 
-{% block content %}
-    {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
+{% block inner %}
+    {% if displays|length == 0 %}
+        <div class="bs-callout bs-callout-info">
+            <h5>{{ 'info.label'|trans }}</h5>
 
-    <div class="container-fluid px-0">
-        <div class="row">
-            <div class="col-md-9">
-                {% if displays|length == 0 %}
-                    <div class="bs-callout bs-callout-info">
-                        <h5>{{ 'info.label'|trans }}</h5>
+            <p>{{ 'admin.displays.empty'|trans }}</p>
+        </div>
+    {% else %}
+        <div class="card">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover card-table">
+                    <colgroup>
+                        <col>
+                        <col class="column-sm">
+                    </colgroup>
 
-                        <p>{{ 'admin.displays.empty'|trans }}</p>
-                    </div>
-                {% else %}
-                    <div class="card">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover card-table">
-                                <colgroup>
-                                    <col>
-                                    <col class="column-sm">
-                                </colgroup>
+                    <thead>
+                    <tr>
+                        <th>{{ 'label.name'|trans }}</th>
+                        <th></th>
+                    </tr>
+                    </thead>
 
-                                <thead>
-                                <tr>
-                                    <th>{{ 'label.name'|trans }}</th>
-                                    <th></th>
-                                </tr>
-                                </thead>
+                    <tbody>
+                    {% for display in displays %}
+                        <tr>
+                            <td>
+                                {{ display.name }}
 
-                                <tbody>
-                                {% for display in displays %}
-                                    <tr>
-                                        <td>
-                                            {{ display.name }}
-
-                                            <span class="badge text-bg-secondary">
+                                <span class="badge text-bg-secondary">
                                                 {{ url('show_display', { uuid: display.uuid }) }}
                                             </span>
 
-                                            {% include "_includes/_id.html.twig" with { id: display.id } %}
-                                        </td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
-                                                    <i class="fas fa-ellipsis-v"></i>
-                                                </button>
+                                {% include "_includes/_id.html.twig" with { id: display.id } %}
+                            </td>
+                            <td>
+                                <div class="dropdown">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
 
-                                                <div class="dropdown-menu dropdown-menu-end">
-                                                    <a href="{{ path('show_display', { uuid: display.uuid }) }}" class="dropdown-item" target="_blank">
-                                                        <i class="fa fa-play"></i> {{ 'actions.play'|trans }}
-                                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <a href="{{ path('show_display', { uuid: display.uuid }) }}" class="dropdown-item" target="_blank">
+                                            <i class="fa fa-play"></i> {{ 'actions.play'|trans }}
+                                        </a>
 
-                                                    <a href="{{ path('edit_display', { uuid: display.uuid })}}" class="dropdown-item">
-                                                        <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
-                                                    </a>
+                                        <a href="{{ path('edit_display', { uuid: display.uuid })}}" class="dropdown-item">
+                                            <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
+                                        </a>
 
-                                                    <a href="{{ path('remove_display', { uuid: display.uuid })}}" class="dropdown-item text-danger">
-                                                        <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                {% endif %}
+                                        <a href="{{ path('remove_display', { uuid: display.uuid })}}" class="dropdown-item text-danger">
+                                            <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
+        </div>
+    {% endif %}
+{% endblock %}
 
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="list-group list-group-flush">
-                        <a href="{{ path('add_display') }}" class="list-group-item list-group-item-action">
-                            <i class="fa fa-plus"></i> {{ 'admin.displays.add.label'|trans }}
-                        </a>
-                    </div>
-                </div>
+{% block sidebar %}
+    <div class="card">
+        <div class="list-group list-group-flush">
+            <a href="{{ path('add_display') }}" class="list-group-item list-group-item-action">
+                <i class="fa fa-plus"></i> {{ 'admin.displays.add.label'|trans }}
+            </a>
+        </div>
+    </div>
 
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ 'admin.displays.settings.label'|trans }}</h5>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ 'admin.displays.settings.label'|trans }}</h5>
 
-                        <p>{{ 'admin.displays.settings.important'|trans }}</p>
+            <p>{{ 'admin.displays.settings.important'|trans }}</p>
 
-                        {{ form_start(form) }}
-                        {% form_theme form 'bootstrap_4_layout.html.twig' %}
-                        {{ form_widget(form) }}
+            {{ form_start(form) }}
+            {% form_theme form 'bootstrap_4_layout.html.twig' %}
+            {{ form_widget(form) }}
 
-                        <button class="btn btn-primary btn-sm" type="submit">
-                            {{ 'action.save'|trans }}
-                        </button>
+            <button class="btn btn-primary btn-sm" type="submit">
+                {{ 'action.save'|trans }}
+            </button>
 
-                        {{ form_end(form) }}
-                    </div>
-                </div>
-            </div>
+            {{ form_end(form) }}
         </div>
     </div>
 {% endblock %}

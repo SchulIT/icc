@@ -14,3 +14,6 @@ substitutions:
   title: Neuer Vertretungsplan verfügbar
   content: Es wurde ein neuer Vertretungsplan bereitgestellt.
 
+test:
+  title: Pushover-Test
+  content: Anscheinend war der Test erfolgreich. Pushover ist nun eingerichtet.

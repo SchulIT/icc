@@ -9,17 +9,18 @@ use App\Entity\User;
 use App\Event\ParentsDayAppointmentCancelledEvent;
 use App\EventSubscriber\DoctrineEventsCollector;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
+use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\Event\PreRemoveEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\PersistentCollection;
 use Doctrine\ORM\UnitOfWork;
 use LogicException;
-use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-#[AsDoctrineListener(event: Events::preUpdate)]
 #[AsDoctrineListener(event: Events::preRemove)]
+#[AsDoctrineListener(event: Events::preFlush)]
+#[AsDoctrineListener(event: Events::preUpdate)]
 class ParentsDayAppointmentCancelledListener {
 
     public function __construct(private readonly DoctrineEventsCollector $collector, private readonly TokenStorageInterface $tokenStorage) {
@@ -36,18 +37,6 @@ class ParentsDayAppointmentCancelledListener {
         throw new LogicException('This code should not be executed.');
     }
 
-    public function preRemove(PreRemoveEventArgs $args): void {
-        $appointment = $args->getObject();
-        if(!$appointment instanceof ParentsDayAppointment) {
-            return;
-        }
-
-        foreach($appointment->getStudents() as $student) {
-            $this->collector->collect(new ParentsDayAppointmentCancelledEvent($appointment, $student, $this->getUser()));
-        }
-    }
-
-
     public function preUpdate(PreUpdateEventArgs $args): void {
         $appointment = $args->getObject();
 
@@ -60,29 +49,32 @@ class ParentsDayAppointmentCancelledListener {
                 $this->collector->collect(new ParentsDayAppointmentCancelledEvent($appointment, $student, $this->getUser()));
             }
         }
+    }
 
+    public function preFlush(PreFlushEventArgs $args): void {
         $uow = $args->getObjectManager()->getUnitOfWork();
 
-        foreach($uow->getScheduledCollectionDeletions() as $collectionDeletion) {
-            $owner = $collectionDeletion->getOwner();
+        foreach($uow->getScheduledCollectionDeletions() as $deletion) {
+            $owner = $deletion->getOwner();
 
-            if(!$owner instanceof ParentsDayAppointment) {
-                continue;
+            if($owner instanceof ParentsDayAppointment) {
+                $this->handleCollectionChange($deletion, $uow, $owner);
             }
-
-            $this->handleCollectionChange($collectionDeletion, $uow, $owner);
-        }
-
-        foreach($uow->getScheduledCollectionUpdates() as $collectionUpdate) {
-            $owner = $collectionUpdate->getOwner();
-
-            if(!$owner instanceof ParentsDayAppointment) {
-                continue;
-            }
-
-            $this->handleCollectionChange($collectionUpdate, $uow, $owner);
         }
     }
+
+    public function preRemove(PreRemoveEventArgs $args): void {
+        $appointment = $args->getObject();
+
+        if(!$appointment instanceof ParentsDayAppointment) {
+            return;
+        }
+
+        foreach($appointment->getStudents() as $student) {
+            $this->collector->collect(new ParentsDayAppointmentCancelledEvent($appointment, $student, $this->getUser()));
+        }
+    }
+
 
     private function handleCollectionChange(PersistentCollection $collection, UnitOfWork $uow, ParentsDayAppointment $appointment): void {
         $deleted = $collection->getDeleteDiff();

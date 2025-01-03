@@ -38,7 +38,7 @@ security:
         - { path: ^/admin/audit/, roles: ROLE_SUPER_ADMIN }
         - { path: ^/tools/, roles: ROLE_TOOLS }
         - { path: ^/settings/dark_mode$, roles: ROLE_USER }
-        - { path: ^/settings/, roles: ROLE_ADMIN }
+        - { path: ^/admin/settings/, roles: ROLE_ADMIN }
         - { path: ^/admin/editor/links$ , roles: [ ROLE_MESSAGE_CREATOR, ROLE_WIKI_ADMIN, ROLE_DOCUMENTS_ADMIN ] }
         - { path: ^/admin/(messages|exams|documents|appointments|import), roles: ROLE_USER }
         - { path: ^/admin/wiki, roles: ROLE_WIKI_ADMIN }
@@ -53,7 +53,7 @@ security:
 
     role_hierarchy:
         # Administrator
-        ROLE_ADMIN: [ ROLE_USER, ROLE_TOOLS, ROLE_IMPORTER, ROLE_WIKI_ADMIN, ROLE_DOCUMENTS_ADMIN, ROLE_MESSAGE_ADMIN, ROLE_APPOINTMENTS_ADMIN, ROLE_EXAMS_ADMIN, ROLE_STUDENT_ABSENCE_VIEWER, ROLE_STUDENT_ABSENCE_CREATOR, ROLE_STUDENT_ABSENCE_APPROVER, ROLE_BOOK_ENTRY_CREATOR, ROLE_SHOW_BIRTHDAY, ROLE_TEACHER_ABSENCE_MANAGER, ROLE_LISTS_EXPORTER ]
+        ROLE_ADMIN: [ ROLE_USER, ROLE_TOOLS, ROLE_IMPORTER, ROLE_WIKI_ADMIN, ROLE_DOCUMENTS_ADMIN, ROLE_MESSAGE_ADMIN, ROLE_APPOINTMENTS_ADMIN, ROLE_EXAMS_ADMIN, ROLE_STUDENT_ABSENCE_VIEWER, ROLE_STUDENT_ABSENCE_CREATOR, ROLE_STUDENT_ABSENCE_APPROVER, ROLE_BOOK_ENTRY_CREATOR, ROLE_SHOW_BIRTHDAY, ROLE_TEACHER_ABSENCE_MANAGER, ROLE_LISTS_EXPORTER, ROLE_CHAT_MOD ]
         # Administrator which is allowed to switch user
         ROLE_SUPER_ADMIN: [ ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH ]
 

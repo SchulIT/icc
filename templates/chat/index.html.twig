@@ -37,14 +37,24 @@
                                             {% endif %}
                                         </span>
 
+                                        {% for tag in userTags[chat.id] %}
+                                            <span class="badge ms-2 d-none d-md-inline-block" style="background: {{ tag.color }}; color: {{ foreground(tag.color) }}">{{ tag.name }}</span>
+                                        {% endfor %}
+
+                                        {% set lastMessageDate = lastMessageDates[chat.id] %}
+                                        {% if lastMessageDate is not null %}
+                                            <span class="badge text-bg-secondary ms-2">
+                                                <i class="fas fa-clock"></i> {{ lastMessageDate|format_datetime }}
+                                            </span>
+                                        {% endif %}
+
                                         <span class="badge text-bg-secondary ms-2">
-                                            <i class="fa-regular fa-comments"></i> {{ chat.messages|length }}
+                                            <i class="fa-regular fa-comments"></i> {{ messagesCount[chat.id] }}
                                         </span>
 
-                                        {% set attachmentsCount = chat.countAttachments %}
-                                        {% if attachmentsCount > 0 %}
+                                        {% if attachmentsCount[chat.id] > 0 %}
                                             <span class="badge text-bg-secondary ms-2">
-                                            <i class="fa-solid fa-paperclip"></i> {{ attachmentsCount }}
+                                            <i class="fa-solid fa-paperclip"></i> {{ attachmentsCount[chat.id] }}
                                         </span>
                                         {% endif %}
                                     </div>
@@ -69,6 +79,28 @@
                         </a>
                     </div>
                 </div>
+
+                {% if tagFilter.enabled %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-filter"></i> {{ 'chat.tags.filter'|trans }}</h5>
+                        </div>
+
+                        <div class="list-group list-group-flush">
+                            {% for tag in tagFilter.tags %}
+                                <a href="{{ path('chats', { tag: tag.uuid }) }}" class="list-group-item list-group-item-action {% if tagFilter.currentTag != null and tagFilter.currentTag.uuid == tag.uuid %}active{% endif %}">
+                                    <span class="badge" style="background: {{ tag.color }}; color: {{ foreground(tag.color) }}">{{ tag.name }}</span>
+                                </a>
+                            {% endfor %}
+                        </div>
+
+                        <div class="card-footer">
+                            <a href="{{ path('chats') }}" class="btn btn-primary btn-sm">
+                                {{ 'filter.reset'|trans }}
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
 
                 <div class="w-100">
                     <a href="#" class="btn btn-primary btn-sm float-right" data-trigger="scroll">

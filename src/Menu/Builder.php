@@ -80,11 +80,8 @@ class Builder {
             $this->absencesMenu($menu);
         }
 
-        if($user instanceof User && $user->isStudentOrParent() && $this->bookSettings->isAttendanceVisibleForStudentsAndParentsEnabled()) {
-            $menu->addChild('attendance.label', [
-                'route' => 'student_attendance'
-            ])
-                ->setExtra('icon', 'fa-solid fa-chalkboard-user');
+        if($user instanceof User) {
+            $this->reportMenu($menu, $user);
         }
 
         if($this->authorizationChecker->isGranted(ParentsDayAppointmentVoter::VIEW)) {
@@ -97,6 +94,36 @@ class Builder {
         if($this->authorizationChecker->isGranted('ROLE_BOOK_VIEWER')) {
             $this->bookMenu($menu);
         }
+
+        return $menu;
+    }
+
+    private function reportMenu(ItemInterface $menu, User $user): ItemInterface {
+        if(!$user->isStudentOrParent()) {
+            return $menu;
+        }
+
+        $reports = $menu->addChild('reports.label')
+            ->setExtra('menu', 'reports')
+            ->setExtra('menu-container', '#submenu')
+            ->setExtra('icon', 'fa fa-chalkboard-user');
+
+        if($this->bookSettings->isLessonTopicsVisibleForStudentsAndParentsEnabled()) {
+            $reports->addChild('lesson_topics.label', [
+                'route' => 'student_lessons_overview'
+            ])
+                ->setExtra('icon', 'fa-solid fa-book-open');
+        }
+
+        if($this->bookSettings->isAttendanceVisibleForStudentsAndParentsEnabled()) {
+            $reports
+                ->addChild('attendance.label', [
+                'route' => 'student_attendance'
+            ])
+                ->setExtra('icon', 'fa-solid fa-list-check');
+        }
+
+        $this->replaceWithFirstItem($menu, $reports, false, false);
 
         return $menu;
     }

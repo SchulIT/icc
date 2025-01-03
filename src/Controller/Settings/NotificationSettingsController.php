@@ -12,11 +12,16 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
-#[Route(path: '/settings')]
+#[Route(path: '/admin/settings')]
 #[Security("is_granted('ROLE_ADMIN')")]
 class NotificationSettingsController extends AbstractController {
+
+    public function __construct(private readonly ?string $pushoverToken) {
+
+    }
+
     #[Route(path: '/notifications', name: 'admin_settings_notifications')]
     public function notifications(Request $request, NotificationSettings $notificationSettings, EnumStringConverter $enumStringConverter): Response {
         $builder = $this->createFormBuilder();
@@ -45,14 +50,8 @@ class NotificationSettingsController extends AbstractController {
                 'data' => $notificationSettings->getPushoverEnabledUserTypes(),
                 'label_attr' => [
                     'class' => 'checkbox-custom'
-                ]
-            ])
-            ->add('pushover_token', TextType::class, [
-                'label' => 'admin.settings.notifications.pushover.token.label',
-                'help' => 'admin.settings.notifications.pushover.token.help',
-                'required' => false,
-                'mapped' => false,
-                'data' => $notificationSettings->getPushoverApiToken()
+                ],
+                'disabled' => empty($this->pushoverToken)
             ]);
 
         $form = $builder->getForm();
@@ -65,9 +64,6 @@ class NotificationSettingsController extends AbstractController {
                 },
                 'pushover_enabled' => function($types) use($notificationSettings) {
                     $notificationSettings->setPushoverEnabledUserTypes($types);
-                },
-                'pushover_token' => function($token) use($notificationSettings) {
-                    $notificationSettings->setPushoverApiToken($token);
                 }
             ];
 
@@ -82,7 +78,8 @@ class NotificationSettingsController extends AbstractController {
         }
 
         return $this->render('admin/settings/notifications.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'isPushoverTokenMissing' => empty($this->pushoverToken)
         ]);
     }
 }

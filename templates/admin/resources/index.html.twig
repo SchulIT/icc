@@ -1,4 +1,4 @@
-{% extends "main.html.twig" %}
+{% extends "admin/_main.html.twig" %}
 
 {% block title %}{{ 'admin.resources.label'|trans }}{% endblock %}
 
@@ -10,117 +10,109 @@
     </ol>
 {% endblock %}
 
-{% block content %}
-    {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
+{% block inner %}
+    {% if resources|length == 0 %}
+        <div class="bs-callout bs-callout-info">
+            <h5>{{ 'info.label'|trans }}</h5>
 
-    <div class="container-fluid px-0">
-        <div class="row">
-            <div class="col-md-9">
-                {% if resources|length == 0 %}
-                <div class="bs-callout bs-callout-info">
-                    <h5>{{ 'info.label'|trans }}</h5>
+            <p>{{ 'admin.resources.empty'|trans }}</p>
+        </div>
+    {% else %}
+        <div class="card">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover card-table">
+                    <colgroup>
+                        <col class="column-sm">
+                        <col>
+                        <col>
+                        <col class="column-md">
+                        <col class="column-sm">
+                        <col class="column-sm">
+                    </colgroup>
 
-                    <p>{{ 'admin.resources.empty'|trans }}</p>
-                </div>
-                {% else %}
-                <div class="card">
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover card-table">
-                            <colgroup>
-                                <col class="column-sm">
-                                <col>
-                                <col>
-                                <col class="column-md">
-                                <col class="column-sm">
-                                <col class="column-sm">
-                            </colgroup>
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>{{ 'label.name'|trans }}</th>
+                        <th>{{ 'label.description'|trans }}</th>
+                        <th>{{ 'label.capacity'|trans }}</th>
+                        <th>{{ 'label.reservation_enabled.label'|trans }}</th>
+                        <th></th>
+                    </tr>
+                    </thead>
 
-                            <thead>
-                            <tr>
-                                <th></th>
-                                <th>{{ 'label.name'|trans }}</th>
-                                <th>{{ 'label.description'|trans }}</th>
-                                <th>{{ 'label.capacity'|trans }}</th>
-                                <th>{{ 'label.reservation_enabled.label'|trans }}</th>
-                                <th></th>
-                            </tr>
-                            </thead>
+                    <tbody>
+                    {% for resource in resources %}
+                        <tr>
+                            <td>
+                                {% if resource.type.icon is not empty %}
+                                    <i class="{{ resource.type.icon }}" title="{{ resource.type.name }}"></i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ resource.name }}
+                                {% include "_includes/_id.html.twig" with { id: resource.id } %}
+                            </td>
+                            <td>{{ resource.description }}</td>
+                            <td>
+                                {% if resource.capacity is defined %}
+                                    {{ resource.capacity }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if resource.reservationEnabled %}
+                                    <i class="fa fa-check"></i>
+                                {% else %}
+                                    <i class="fa fa-times"></i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="dropdown">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
 
-                            <tbody>
-                            {% for resource in resources %}
-                                <tr>
-                                    <td>
-                                        {% if resource.type.icon is not empty %}
-                                            <i class="{{ resource.type.icon }}" title="{{ resource.type.name }}"></i>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        {% if is_granted('edit', resource) %}
+                                            <a href="{{ path('edit_resource', { uuid: resource.uuid }) }}" class="dropdown-item">
+                                                <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
+                                            </a>
                                         {% endif %}
-                                    </td>
-                                    <td>
-                                        {{ resource.name }}
-                                        {% include "_includes/_id.html.twig" with { id: resource.id } %}
-                                    </td>
-                                    <td>{{ resource.description }}</td>
-                                    <td>
-                                        {% if resource.capacity is defined %}
-                                            {{ resource.capacity }}
+                                        {% if is_granted('remove', resource) %}
+                                            <a href="{{ path('remove_resource', { uuid: resource.uuid }) }}" class="dropdown-item text-danger">
+                                                <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
+                                            </a>
                                         {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if resource.reservationEnabled %}
-                                            <i class="fa fa-check"></i>
-                                        {% else %}
-                                            <i class="fa fa-times"></i>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <div class="dropdown">
-                                            <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
-                                                <i class="fas fa-ellipsis-v"></i>
-                                            </button>
-
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                {% if is_granted('edit', resource) %}
-                                                    <a href="{{ path('edit_resource', { uuid: resource.uuid }) }}" class="dropdown-item">
-                                                        <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
-                                                    </a>
-                                                {% endif %}
-                                                {% if is_granted('remove', resource) %}
-                                                    <a href="{{ path('remove_resource', { uuid: resource.uuid }) }}" class="dropdown-item text-danger">
-                                                        <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
-                                                    </a>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
+        </div>
+    {% endif %}
+{% endblock %}
 
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="list-group list-group-flush">
-                        <a href="{{ path('add_resource') }}" class="list-group-item list-group-item-action">
-                            <i class="fa fa-plus"></i> {{ 'admin.resources.add.label'|trans }}
-                        </a>
+{% block sidebar %}
+    <div class="card">
+        <div class="list-group list-group-flush">
+            <a href="{{ path('add_resource') }}" class="list-group-item list-group-item-action">
+                <i class="fa fa-plus"></i> {{ 'admin.resources.add.label'|trans }}
+            </a>
 
-                        <a href="{{ path('add_resource', { type: 'resource' }) }}" class="list-group-item list-group-item-action">
-                            <i class="fa fa-plus"></i> {{ 'admin.resources.add.label_room'|trans }}
-                        </a>
+            <a href="{{ path('add_resource', { type: 'resource' }) }}" class="list-group-item list-group-item-action">
+                <i class="fa fa-plus"></i> {{ 'admin.resources.add.label_room'|trans }}
+            </a>
 
-                        <a href="{{ path('admin_room_tags') }}" class="list-group-item list-group-item-action">
-                            <i class="fa fa-cogs"></i> {{ 'admin.resources.tags.label'|trans }}
-                        </a>
+            <a href="{{ path('admin_room_tags') }}" class="list-group-item list-group-item-action">
+                <i class="fa fa-cogs"></i> {{ 'admin.resources.tags.label'|trans }}
+            </a>
 
-                        <a href="{{ path('admin_resource_types') }}" class="list-group-item list-group-item-action">
-                            <i class="fa fa-cogs"></i> {{ 'admin.resources.types.label'|trans }}
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <a href="{{ path('admin_resource_types') }}" class="list-group-item list-group-item-action">
+                <i class="fa fa-cogs"></i> {{ 'admin.resources.types.label'|trans }}
+            </a>
         </div>
     </div>
 {% endblock %}

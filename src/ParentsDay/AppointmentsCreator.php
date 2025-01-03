@@ -62,6 +62,10 @@ class AppointmentsCreator {
         $conflicts = [ ];
 
         foreach($existingAppointments as $appointment) {
+            if($appointment->getStartDateTime() == $newAppointment->getEndDateTime()) {
+                continue;
+            }
+
             if($this->dateHelper->isBetween($appointment->getStartDateTime(), $newAppointment->getStartDateTime(), $newAppointment->getEndDateTime())
                 || $this->dateHelper->isBetween($appointment->getEndDateTime(), $newAppointment->getStartDateTime(), $newAppointment->getEndDateTime())) {
                 $conflicts[] = $appointment;

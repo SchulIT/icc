@@ -2,15 +2,16 @@
 
 namespace App\Markdown;
 
-use EasySlugger\SluggerInterface;
-use League\CommonMark\Block\Element\Document;
-use League\CommonMark\Block\Element\Heading;
-use League\CommonMark\DocParser;
-use League\CommonMark\EnvironmentInterface;
+use App\Markdown\Node\Inline\Anchor;
+use League\CommonMark\Environment\EnvironmentInterface;
+use League\CommonMark\Extension\CommonMark\Node\Block\Heading;
+use League\CommonMark\Node\Block\Document;
+use League\CommonMark\Node\Inline\Text;
+use League\CommonMark\Parser\MarkdownParser;
 use Psr\Cache\CacheItemPoolInterface;
 
 class TableOfContentsHelper {
-    public function __construct(private SluggerInterface $slugger, private CacheItemPoolInterface $cache, private EnvironmentInterface $environment)
+    public function __construct(private readonly CacheItemPoolInterface $cache, private readonly EnvironmentInterface $environment)
     {
     }
 
@@ -30,7 +31,7 @@ class TableOfContentsHelper {
     }
 
     private function computeToc(string $markdown): array {
-        $parser = new DocParser($this->environment);
+        $parser = new MarkdownParser($this->environment);
         $document = $parser->parse($markdown);
         $toc = $this->processDocument($document);
 
@@ -82,17 +83,23 @@ class TableOfContentsHelper {
         while($event = $walker->next()) {
             $node = $event->getNode();
 
-            if(!($node instanceof Heading) || !$event->isEntering()) {
+            if(!$node instanceof Heading || !$event->isEntering()) {
                 continue;
             }
 
-            $heading = $node->getStringContent();
-            $slug = $this->slugger->slugify($heading);
+            $anchor = $node->firstChild();
+            $text = $node->lastChild();
+
+            if(!$anchor instanceof Anchor || !$text instanceof Text) {
+                continue;
+            }
+
+            $heading = $text->getLiteral();
 
             $level = min($node->getLevel() + 1, 6);
 
             $toc[] = [
-                'id' => $slug,
+                'id' => $anchor->getId(),
                 'level' => $level,
                 'text' => $heading
             ];

@@ -7,6 +7,11 @@ use App\Entity\TuitionGradeCatalog;
 
 class TuitionGradeCategoryRepository extends AbstractRepository implements TuitionGradeCategoryRepositoryInterface {
 
+    public function findOneByUuid(string $uuid): ?TuitionGradeCategory {
+        return $this->em->getRepository(TuitionGradeCategory::class)
+            ->findOneBy(['uuid' => $uuid]);
+    }
+
     public function findAll(): array {
         return $this->em->getRepository(TuitionGradeCategory::class)
             ->findBy([], ['position' => 'asc']);

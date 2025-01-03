@@ -534,3 +534,12 @@ table.sticky-header thead th {
   position: sticky;
   top: 0;
 }
+
+blockquote.blockquote {
+  background: var(--bs-secondary-bg);
+  padding: var(--bs-card-cap-padding-x);
+  border: 1px solid var(--bs-secondary-border-subtle);
+  border-left: 0.3rem solid var(--bs-secondary-border-subtle);
+  font-size: inherit;
+  border-radius: var(--bs-card-border-radius);
+}

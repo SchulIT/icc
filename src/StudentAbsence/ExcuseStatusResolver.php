@@ -40,8 +40,13 @@ class ExcuseStatusResolver {
             $this->lessonAttendanceRepository->findByStudentAndDateRange($absence->getStudent(), $absence->getFrom()->getDate(), $absence->getUntil()->getDate()),
             function(Attendance $attendance) {
                 $keys = [];
-                for($lesson = $attendance->getEntry()->getLessonStart(); $lesson <= $attendance->getEntry()->getLessonEnd(); $lesson++) {
-                    $keys[] = sprintf('%s-%d', $attendance->getEntry()->getLesson()->getDate()->format('Y-m-d'), $lesson);
+
+                $start = $attendance->getEntry() !== null ? $attendance->getEntry()->getLessonStart() : $attendance->getEvent()->getLessonStart();
+                $end = $attendance->getEntry() !== null ? $attendance->getEntry()->getLessonEnd() : $attendance->getEvent()->getLessonEnd();
+                $date = $attendance->getEntry() !== null ? $attendance->getEntry()->getLesson()->getDate() : $attendance->getEvent()->getDate();
+
+                for($lesson = $start; $lesson <= $end; $lesson++) {
+                    $keys[] = sprintf('%s-%d', $date->format('Y-m-d'), $lesson);
                 }
 
                 return $keys;

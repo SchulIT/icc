@@ -9,6 +9,7 @@ import Entry from "./components/entry/Entry";
 import SuppressButton from "./components/integrity_check/SuppressButton.vue";
 import Attendance from "./components/student/Attendance";
 import AttendanceOverview from "./components/student/AttendanceOverview.vue";
+import Students from "./components/entry/Students";
 
 const app = createApp({
     components: {
@@ -17,7 +18,8 @@ const app = createApp({
         LessonAttendanceInfo,
         Attendance,
         AttendanceOverview,
-        SuppressButton
+        SuppressButton,
+        Students
     },
     methods: { },
     data() {

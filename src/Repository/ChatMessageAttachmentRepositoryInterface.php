@@ -13,5 +13,7 @@ interface ChatMessageAttachmentRepositoryInterface {
      */
     public function findByChat(Chat $chat): array;
 
+    public function countByChat(Chat $chat): int;
+
     public function remove(ChatMessageAttachment $attachment): void;
 }

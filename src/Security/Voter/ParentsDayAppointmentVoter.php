@@ -204,6 +204,10 @@ class ParentsDayAppointmentVoter extends Voter {
 
         $user = $this->getUser($token);
 
+        if($parentsDay->getBookingAllowedFrom() > $this->dateHelper->getToday()) {
+            return false;
+        }
+
         if($parentsDay->getBookingAllowedUntil() < $this->dateHelper->getToday()) {
             return false;
         }

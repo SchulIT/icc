@@ -13,45 +13,62 @@
 {% block content %}
     {{ knp_menu_render('toolsMenu', {'currentClass': 'active', 'template': 'admin/tools/_menu.html.twig' }) }}
 
-    {{ form_start(form) }}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {{ form_start(form) }}
 
-    <div class="card">
-        <div class="card-body">
-            {{ form_widget(form) }}
-        </div>
-    </div>
+                <div class="card">
+                    <div class="card-body">
+                        {{ form_widget(form) }}
+                    </div>
+                </div>
 
-    <div class="buttons">
-        <button type="submit" class="btn btn-primary btn-sm">
-            <i class="fa fa-play"></i> {{ 'actions.submit'|trans }}
-        </button>
-    </div>
+                <div class="buttons">
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <i class="fa fa-play"></i> {{ 'actions.submit'|trans }}
+                    </button>
+                </div>
 
-    {{ form_end(form) }}
+                {{ form_end(form) }}
 
-    {% if intersections is not null %}
-        <div class="card mt-3">
-            <div class="table-responsive">
-                <table class="table table-striped table-bordered table-hover card-table">
-                    <thead>
-                    <tr>
-                        <th>{{ 'label.grade'|trans }}</th>
-                        <th>{{ 'label.grade'|trans }}</th>
-                        <th>{{ 'tools.grade_teacher_intersection.intersection'|trans }}</th>
-                    </tr>
-                    </thead>
+                {% if intersections is not null %}
+                    <div class="card mt-3">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered table-hover card-table">
+                                <thead>
+                                <tr>
+                                    <th>{{ 'label.grade'|trans }}</th>
+                                    <th>{{ 'label.grade'|trans }}</th>
+                                    <th>{{ 'tools.grade_teacher_intersection.intersection'|trans }}</th>
+                                </tr>
+                                </thead>
 
-                    <tbody>
-                    {% for intersection in intersections %}
-                        <tr>
-                            <td>{{ intersection.leftGrade.name }}</td>
-                            <td>{{ intersection.rightGrade.name }}</td>
-                            <td>{{ intersection.intersection|join(', ') }}</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                                <tbody>
+                                {% for intersection in intersections %}
+                                    <tr>
+                                        <td>{{ intersection.leftGrade.name }}</td>
+                                        <td>{{ intersection.rightGrade.name }}</td>
+                                        <td>{{ intersection.intersection|join(', ') }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ 'info.label'|trans }}</h5>
+                        <p>{{ 'tools.grade_teacher_intersection.info'|trans }}</p>
+                    </div>
+                </div>
             </div>
         </div>
-    {% endif %}
+    </div>
+
+
 {% endblock %}

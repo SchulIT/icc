@@ -15,11 +15,11 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\Type;
 
-#[Route(path: '/settings')]
+#[Route(path: '/admin/settings')]
 #[Security("is_granted('ROLE_ADMIN')")]
 class SubstitutionSettingsController extends AbstractController {
     #[Route(path: '/substitutions', name: 'admin_settings_substitutions')]

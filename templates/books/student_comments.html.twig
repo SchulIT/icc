@@ -1,5 +1,7 @@
 {% extends "main.html.twig" %}
 
+{% block title %}{{ 'book.comment.label'|trans }}{% endblock %}
+
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>

@@ -5,7 +5,8 @@
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
-        <li class="breadcrumb-item"><a href="{{ path('admin_settings') }}">{{ 'admin.settings.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ 'admin.settings.label'|trans }}</li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
 {% endblock %}
@@ -16,8 +17,15 @@
 
         <div class="card-body">
             {{ form_row(form.email_enabled) }}
+
+            {% if isPushoverTokenMissing %}
+                <div class="bs-callout bs-callout-danger">
+                    <h5>{{ 'caution'|trans }}</h5>
+                    <p>{{ 'admin.settings.notifications.pushover.token.missing'|trans }}</p>
+                </div>
+            {% endif %}
+
             {{ form_row(form.pushover_enabled) }}
-            {{ form_row(form.pushover_token) }}
         </div>
     </div>
 

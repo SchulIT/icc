@@ -230,7 +230,7 @@ class DashboardViewCollapseHelper {
 
         // ADD FREE HOURS
         if(count($lesson->getItems()) === 0) {
-            $lesson->addItem(new TimetableLessonViewItem(null, [ ], [ ],  null));
+            $lesson->addItem(new TimetableLessonViewItem(null, [ ], [ ],  []));
         }
 
         // ADD ALL ITEMS THAT HAVE NOT BEEN TAKE CONCIDERATION
@@ -307,7 +307,7 @@ class DashboardViewCollapseHelper {
 
         $firstView = array_shift($lessonViews);
 
-        $view = new TimetableLessonViewItem($firstView->getLesson(), $absentGroups, $studentInfo, $firstView->getAbsenceLesson());
+        $view = new TimetableLessonViewItem($firstView->getLesson(), $absentGroups, $studentInfo, $firstView->getAdditionalInformation());
 
         foreach($lessonViews as $lessonView) {
             $view->addAdditionalLesson($lessonView->getLesson());
@@ -426,7 +426,7 @@ class DashboardViewCollapseHelper {
 
             if($isMerged === false) {
                 $clonedSubstitution = $substitution->clone(); // Somehow, clone $substitution does not work (when renameing clone() to __clone())
-                $item = new SubstitutionViewItem($clonedSubstitution, false, $substitutionViewItem->getStudents(), $substitutionViewItem->getAbsentStudentGroups(), $substitutionViewItem->getStudentInfo(), $substitutionViewItem->getTimetableLesson(), $substitutionViewItem->getAbsenceLesson());
+                $item = new SubstitutionViewItem($clonedSubstitution, false, $substitutionViewItem->getStudents(), $substitutionViewItem->getAbsentStudentGroups(), $substitutionViewItem->getStudentInfo(), $substitutionViewItem->getTimetableLesson(), $substitutionViewItem->getAdditionalInformation());
                 $merged[] = $item;
             }
         }

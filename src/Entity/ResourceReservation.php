@@ -41,6 +41,10 @@ class ResourceReservation {
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Teacher $teacher = null;
 
+    #[ORM\ManyToOne(targetEntity: StudyGroup::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
+    private ?StudyGroup $associatedStudyGroup = null;
+
     public function __construct() {
         $this->uuid = Uuid::uuid4();
     }
@@ -88,6 +92,14 @@ class ResourceReservation {
     public function setTeacher(?Teacher $teacher): ResourceReservation {
         $this->teacher = $teacher;
         return $this;
+    }
+
+    public function getAssociatedStudyGroup(): ?StudyGroup {
+        return $this->associatedStudyGroup;
+    }
+
+    public function setAssociatedStudyGroup(?StudyGroup $associatedStudyGroup): void {
+        $this->associatedStudyGroup = $associatedStudyGroup;
     }
 
 }

@@ -3,6 +3,7 @@
 namespace App\Grouping;
 
 use App\Entity\Appointment;
+use App\Entity\BookEvent;
 use App\Entity\Exam;
 use App\Entity\Student;
 
@@ -12,16 +13,16 @@ class AbsentStudentGroup implements GroupInterface, SortableGroupInterface {
     private $students;
 
     /**
-     * @param Exam|Appointment|null $objective
+     * @param BookEvent|Exam|null $objective
      */
-    public function __construct(private $objective)
+    public function __construct(private readonly BookEvent|Exam|null $objective)
     {
     }
 
     /**
-     * @return Appointment|Exam|null
+     * @return BookEvent|Exam|null
      */
-    public function getObjective() {
+    public function getObjective(): BookEvent|Exam|null {
         return $this->objective;
     }
 
@@ -45,7 +46,7 @@ class AbsentStudentGroup implements GroupInterface, SortableGroupInterface {
         return $this->objective instanceof Exam;
     }
 
-    public function isAppointment(): bool {
-        return $this->objective instanceof Appointment;
+    public function isBookEvent(): bool {
+        return $this->objective instanceof BookEvent;
     }
 }

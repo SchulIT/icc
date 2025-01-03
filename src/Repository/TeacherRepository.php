@@ -34,7 +34,7 @@ class TeacherRepository extends AbstractTransactionalRepository implements Teach
             ->setParameter('id', $id)
             ->setMaxResults(1);
 
-        return $qb->getQuery()->getResult();
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     /**
@@ -47,7 +47,7 @@ class TeacherRepository extends AbstractTransactionalRepository implements Teach
             ->setParameter('uuid', $uuid)
             ->setMaxResults(1);
 
-        return $qb->getQuery()->getResult();
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     /**

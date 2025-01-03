@@ -1,0 +1,39 @@
+{% import "knp_menu.html.twig" as macros %}
+
+<div class="card">
+    <div class="card-header border-bottom-0">
+        <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#adminMenuSidebar" aria-controls="adminMenuSidebar" aria-expanded="true" aria-label="Toggle navigation">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <div class="collapse" id="adminMenuSidebar">
+            <ul class="nav nav-pills flex-column card-header-pills" >
+                {% for child in knp_menu_get('dataMenu') %}
+                {% set isCurrent = false %}
+                {%- if matcher.isCurrent(child) or matcher.isAncestor(child) %}
+                    {%- set isCurrent = true %}
+                {%- endif -%}
+                <li class="nav-item">
+                    {% if child.extras['isHeader'] is defined and child.extras['isHeader'] %}
+                        <div class="nav-link disabled">
+                            {{ child.label|trans }}
+                        </div>
+                    {% else %}
+                        <a href="{{ child.uri }}" class="nav-link {% if matcher.isCurrent(child) %}active{% endif %}" {{ macros.attributes(child.linkAttributes) }}>
+                            {% if child.extras['icon'] is defined %}
+                                <i class="{{ child.extras['icon'] }}"></i>
+                                {{ child.label|trans }}
+                            {% else %}
+                                {{ child.label|trans }}
+                            {% endif %}
+                            {% if child.extras['badge'] is defined %}
+                                <span class="badge text-bg-primary">{{ child.extras['badge']|trans }}</span>
+                            {% endif %}
+                        </a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>

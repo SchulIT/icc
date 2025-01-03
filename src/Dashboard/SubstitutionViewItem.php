@@ -4,12 +4,22 @@ namespace App\Dashboard;
 
 use App\Entity\Student;
 use App\Entity\Substitution;
-use App\Entity\TeacherAbsenceLesson;
+use App\Entity\TeacherAbsenceComment;
 use App\Entity\TimetableLesson;
+use App\Entity\TimetableLessonAdditionalInformation;
 
 class SubstitutionViewItem extends AdditionalExtraAwareViewItem {
 
-    public function __construct(private Substitution $substitution, private bool $isFreeLessonType, private array $students, array $absentStudentGroups, array $studentInfo, private readonly ?TimetableLesson $lesson, private readonly ?TeacherAbsenceLesson $absenceLesson) {
+    /**
+     * @param Substitution $substitution
+     * @param bool $isFreeLessonType
+     * @param array $students
+     * @param array $absentStudentGroups
+     * @param array $studentInfo
+     * @param TimetableLesson|null $lesson
+     * @param TimetableLessonAdditionalInformation[] $additionalInformation
+     */
+    public function __construct(private readonly Substitution $substitution, private readonly bool $isFreeLessonType, private readonly array $students, array $absentStudentGroups, array $studentInfo, private readonly ?TimetableLesson $lesson, private readonly array $additionalInformation) {
         parent::__construct($absentStudentGroups, $studentInfo);
     }
 
@@ -25,8 +35,11 @@ class SubstitutionViewItem extends AdditionalExtraAwareViewItem {
         return $this->lesson;
     }
 
-    public function getAbsenceLesson(): ?TeacherAbsenceLesson {
-        return $this->absenceLesson;
+    /**
+     * @return TimetableLessonAdditionalInformation[]
+     */
+    public function getAdditionalInformation(): array {
+        return $this->additionalInformation;
     }
 
     /**

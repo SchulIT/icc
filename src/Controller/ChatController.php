@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Chat\ChatSeenByHelper;
+use App\Chat\ChatTagHelper;
 use App\Entity\Chat;
 use App\Entity\ChatMessage;
 use App\Entity\ChatMessageAttachment;
@@ -11,23 +12,23 @@ use App\Event\ChatMessageCreatedEvent;
 use App\Filesystem\ChatFilesystem;
 use App\Filesystem\FileNotFoundException;
 use App\Form\ChatMessageType;
-use App\Form\ChatUserRecipientType;
-use App\Form\Model\NewChat;
 use App\Form\ChatType;
+use App\Form\ChatUserRecipientType;
 use App\Repository\ChatMessageAttachmentRepositoryInterface;
 use App\Repository\ChatMessageRepositoryInterface;
 use App\Repository\ChatRepositoryInterface;
+use App\Repository\UserRepositoryInterface;
+use App\Security\Firewall\Attribute\IsGrantedIfNotImpersonated;
 use App\Security\Voter\ChatMessageAttachmentVoter;
 use App\Security\Voter\ChatMessageVoter;
 use App\Security\Voter\ChatVoter;
-use App\Sorting\ChatStrategy;
-use App\Sorting\SortDirection;
+use App\Settings\ChatSettings;
 use App\Sorting\Sorter;
+use App\View\Filter\ChatTagFilter;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -35,41 +36,82 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/chat')]
 #[IsGranted(ChatVoter::ChatEnabled)]
+#[IsGrantedIfNotImpersonated]
 class ChatController extends AbstractController {
 
     public function __construct(RefererHelper                                             $redirectHelper,
                                 private readonly ChatRepositoryInterface                  $chatRepository,
                                 private readonly ChatMessageRepositoryInterface           $chatMessageRepository,
-                                private readonly ChatMessageAttachmentRepositoryInterface $attachmentRepository) {
+                                private readonly ChatMessageAttachmentRepositoryInterface $attachmentRepository,
+                                private readonly ChatSettings                             $chatSettings) {
         parent::__construct($redirectHelper);
     }
 
     #[Route('', name: 'chats')]
-    public function index(Sorter $sorter): Response {
+    public function index(ChatTagHelper $chatTagHelper, ChatTagFilter $chatTagFilter, Request $request): Response {
         /** @var User $user */
         $user = $this->getUser();
 
         $chats = $this->chatRepository->findAllByUser($user);
-        $sorter->sort($chats, ChatStrategy::class, SortDirection::Descending);
+        $chatTagFilterView = $chatTagFilter->handle($request->query->get('tag', null), $user);
+
+        if($chatTagFilterView->getCurrentTag() !== null) {
+            $chats = $chatTagHelper->filterChats($chats, $chatTagFilterView->getCurrentTag(), $user);
+        }
+
+        // Do NOT sort here as it triggers the whole messages collection to be loaded which
+        // leads to decrypting all messages :-(
+        // Sort in database instead!
+        //$sorter->sort($chats, ChatStrategy::class, SortDirection::Descending);
 
         $unreadCount = [ ];
         foreach($chats as $chat) {
             $unreadCount[$chat->getId()] = $this->chatMessageRepository->countUnreadMessages($user, $chat);
         }
 
+        $userTags = [ ];
+        $lastMessageDates = [ ];
+        $messagesCount = [ ];
+        foreach($chats as $chat) {
+            $userTags[$chat->getId()] = $chatTagHelper->getTagsForUser($chat, $user);
+            $messagesCount[$chat->getId()] = $this->chatMessageRepository->countByChat($chat);
+            $lastMessageDates[$chat->getId()] = $this->chatMessageRepository->findLastMessageDate($chat);
+        }
+
+        $attachmentsCount = [ ];
+        foreach($chats as $chat) {
+            $attachmentsCount[$chat->getId()] = $this->attachmentRepository->countByChat($chat);
+        }
+
         return $this->render('chat/index.html.twig', [
             'chats' => $chats,
-            'unreadCount' => $unreadCount
+            'messagesCount' => $messagesCount,
+            'unreadCount' => $unreadCount,
+            'lastMessageDates' => $lastMessageDates,
+            'attachmentsCount' => $attachmentsCount,
+            'userTags' => $userTags,
+            'tagFilter' => $chatTagFilterView
         ]);
     }
 
     #[Route('/add', name: 'new_chat')]
-    public function add(Request $request): Response {
+    public function add(Request $request, UserRepositoryInterface $userRepository): Response {
+        $chat = new Chat();
+        $chat->addMessage(new ChatMessage());
+
+        if($request->query->all('recipients')) {
+            foreach($request->query->all('recipients') as $uuid) {
+                $user = $userRepository->findOneByUuid($uuid);
+
+                if($user !== null) {
+                    $chat->addParticipants($user);
+                }
+            }
+        }
+
         /** @var User $user */
         $user = $this->getUser();
 
-        $chat = new Chat();
-        $chat->addMessage(new ChatMessage());
         $form = $this->createForm(ChatType::class, $chat);
         $form->handleRequest($request);
 
@@ -85,7 +127,8 @@ class ChatController extends AbstractController {
         }
 
         return $this->render('chat/add.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'canEditOrRemove' => in_array($user->getUserType(), $this->chatSettings->getUserTypesAllowedToEditOrRemoveMessages(), strict: true)
         ]);
     }
 
@@ -128,8 +171,11 @@ class ChatController extends AbstractController {
     }
 
     #[Route('/{uuid}', name: 'show_chat')]
-    public function showChat(Chat $chat, Request $request, ChatSeenByHelper $chatSeenByHelper, EventDispatcherInterface $dispatcher, TranslatorInterface $translator): Response {
+    public function showChat(Chat $chat, Request $request, ChatSeenByHelper $chatSeenByHelper, ChatTagHelper $chatTagHelper, EventDispatcherInterface $dispatcher, TranslatorInterface $translator): Response {
         $this->denyAccessUnlessGranted(ChatVoter::View, $chat);
+
+        /** @var User $user */
+        $user = $this->getUser();
 
         // mark messages read
         $chatSeenByHelper->markAllChatMessagesSeen($chat);
@@ -192,22 +238,20 @@ class ChatController extends AbstractController {
             ]);
         }
 
-        $participantsForm = $this->createForm(ChatUserRecipientType::class, null, ['multiple' => false, 'required' => false]);
+        $participantsForm = $this->createForm(ChatUserRecipientType::class, null, ['multiple' => true, 'required' => false]);
         $participantsForm->handleRequest($request);
 
         if($this->isGranted(ChatVoter::Edit, $chat) && $participantsForm->isSubmitted() && $participantsForm->isValid()) {
-            $newParticipant = $participantsForm->getData();
+            $newParticipants = $participantsForm->getData();
 
-            if(!$chat->getParticipants()->contains($newParticipant)) {
-                $chat->getParticipants()->add($newParticipant);
-                $this->chatRepository->persist($chat);
-
-                $dispatcher->dispatch(new ChatMessageCreatedEvent($chat->getMessages()->first()));
-
-                $this->addFlash('success', 'chat.participants.add.success');
-            } else {
-                $this->addFlash('error', 'chat.participants.add.error');
+            foreach ($newParticipants as $newParticipant) {
+                if (!$chat->getParticipants()->contains($newParticipant)) {
+                    $chat->getParticipants()->add($newParticipant);
+                }
             }
+
+            $this->chatRepository->persist($chat);
+            $this->addFlash('success', 'chat.participants.add.success');
 
             return $this->redirectToRoute('show_chat', [
                 'uuid' => $chat->getUuid()
@@ -250,6 +294,21 @@ class ChatController extends AbstractController {
             }
         }
 
+        // User Tags
+        $tags = $chatTagHelper->getAll($user->getUserType());
+        $userTags = $chatTagHelper->getTagsForUser($chat, $user);
+
+        if($request->isMethod(Request::METHOD_POST) && $this->isCsrfTokenValid('chat', $request->request->get('_csrf_token'))) {
+            $enabledTags = $request->request->all('userTags');
+            $chatTagHelper->synchronizeUserTags($chat, $user, $enabledTags);
+            $this->chatRepository->persist($chat);
+
+            $this->addFlash('success', 'chat.tags.saved');
+            return $this->redirectToRoute('show_chat', [
+                'uuid' => $chat->getUuid()
+            ]);
+        }
+
         return $this->render('chat/show.html.twig', [
             'chat' => $chat,
             'attachments' => $attachments,
@@ -257,7 +316,10 @@ class ChatController extends AbstractController {
             'participantsForm' => $participantsForm->createView(),
             'editForms' => $editForms,
             'removeForms' => $removeForms,
-            'renameForm' => $renameForm->createView()
+            'renameForm' => $renameForm->createView(),
+            'tags' => $tags,
+            'userTags' => $userTags,
+            'canEditOrRemove' => in_array($user->getUserType(), $this->chatSettings->getUserTypesAllowedToEditOrRemoveMessages(), strict: true)
         ]);
     }
 

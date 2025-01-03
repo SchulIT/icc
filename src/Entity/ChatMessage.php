@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Ambta\DoctrineEncryptBundle\Configuration\Encrypted;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -35,6 +36,7 @@ class ChatMessage {
 
     #[ORM\Column(type: 'text')]
     #[Assert\NotBlank]
+    #[Encrypted]
     private ?string $content;
 
     /**

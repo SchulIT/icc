@@ -3,8 +3,8 @@
 namespace App\Markdown\Processor;
 
 use League\CommonMark\Event\DocumentParsedEvent;
-use League\CommonMark\Inline\Element\Image;
-use League\CommonMark\Inline\Element\Newline;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Image;
+use League\CommonMark\Node\Inline\Newline;
 
 class ImageProcessor {
     public function onDocumentParsed(DocumentParsedEvent $event): void {
@@ -19,7 +19,7 @@ class ImageProcessor {
             }
 
             if(($node->next() === null || $node->next() instanceof Image || $node->next() instanceof Newline) && ($node->previous() === null || $node->previous() instanceof Image || $node->previous() instanceof Newline)) {
-                $node->data['attributes']['class'] = 'img-fluid mx-auto d-block';
+                $node->data->set('attributes/class', 'img-fluid mx-auto d-block');
             }
         }
     }

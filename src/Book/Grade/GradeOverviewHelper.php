@@ -29,12 +29,12 @@ class GradeOverviewHelper {
 
         foreach($tuitions as $tuition) {
             $gradeCategories = $tuition->getGradeCategories()->toArray();
-            $this->sorter->sort($gradeCategories, TuitionGradeCategoryStrategy::class);
-
             foreach($gradeCategories as $category) {
                 $categories[$category->getId()] = new Category($tuition, $category);
             }
         }
+
+        $this->sorter->sort($categories, CategoryStrategy::class);
 
         $grades = ArrayUtils::createArrayWithKeys(
             $this->tuitionGradeRepository->findAllByStudent($student, $section),

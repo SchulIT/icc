@@ -4,10 +4,10 @@ namespace App\Controller;
 
 use App\Entity\DateLesson;
 use App\Entity\TeacherAbsence;
-use App\Entity\TeacherAbsenceLesson;
+use App\Entity\TeacherAbsenceComment;
 use App\Entity\TimetableLesson;
 use App\Entity\User;
-use App\Form\TeacherAbsenceLessonType;
+use App\Form\TeacherAbsenceCommentType;
 use App\Form\TeacherAbsenceType;
 use App\Repository\TeacherAbsenceRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
@@ -15,8 +15,9 @@ use App\Security\Voter\TeacherAbsenceVoter;
 use App\Settings\DashboardSettings;
 use App\Settings\TimetableSettings;
 use App\Sorting\Sorter;
-use App\Sorting\TeacherAbsenceLessonStrategy;
+use App\Sorting\TeacherAbsenceCommentStrategy;
 use App\Timetable\TimetableTimeHelper;
+use App\Utils\ArrayUtils;
 use App\View\Filter\SectionFilter;
 use App\View\Filter\TeacherFilter;
 use DateTime;
@@ -105,7 +106,7 @@ class TeacherAbsenceController extends AbstractController {
         ]);
     }
 
-    private function addAbsenceLessons(TeacherAbsence $absence, TimetableLessonRepositoryInterface $timetableLessonRepository) {
+    private function addAbsenceLessons(TeacherAbsence $absence, TimetableLessonRepositoryInterface $timetableLessonRepository): void {
         $lessons = array_filter(
             $timetableLessonRepository->findAllByTeacher($absence->getFrom()->getDate(), $absence->getUntil()->getDate(), $absence->getTeacher()),
             function(TimetableLesson $lesson) use ($absence) {
@@ -119,15 +120,40 @@ class TeacherAbsenceController extends AbstractController {
             }
         );
 
-        $existingLessons = $absence->getLessons()->map(fn(TeacherAbsenceLesson $lesson) => $lesson->getLesson()?->getUuid()->toString())->toArray();
+        $existingLessons = ArrayUtils::createArrayWithKeys(
+            $absence->getComments()->toArray(),
+            fn(TeacherAbsenceComment $comment) => sprintf(
+                '%d-%s-%d-%d',
+                $comment->getTuition()?->getId(),
+                $comment->getDate()->format('Y-m-d'),
+                $comment->getLessonStart(),
+                $comment->getLessonEnd()
+            )
+        );
 
         foreach ($lessons as $lesson) {
-            if(!in_array($lesson->getUuid()->toString(), $existingLessons)) {
-                $absenceLesson = (new TeacherAbsenceLesson())
-                    ->setAbsence($absence)
-                    ->setLesson($lesson);
+            if($lesson->getTuition() === null) {
+                continue;
+            }
 
-                $absence->addLesson($absenceLesson);
+            $key = sprintf(
+                '%d-%s-%d-%d',
+                $lesson->getTuition()->getId(),
+                $lesson->getDate()->format('Y-m-d'),
+                $lesson->getLessonStart(),
+                $lesson->getLessonEnd()
+            );
+
+
+            if(!array_key_exists($key, $existingLessons)) {
+                $absenceLesson = (new TeacherAbsenceComment())
+                    ->setAbsence($absence)
+                    ->setTuition($lesson->getTuition())
+                    ->setDate($lesson->getDate())
+                    ->setLessonStart($lesson->getLessonStart())
+                    ->setLessonEnd($lesson->getLessonEnd());
+
+                $absence->addComment($absenceLesson);
             }
         }
     }
@@ -135,12 +161,12 @@ class TeacherAbsenceController extends AbstractController {
     #[Route('/{uuid}', name: 'show_teacher_absence')]
     public function show(TeacherAbsence $absence, Sorter $sorter): Response {
         $this->denyAccessUnlessGranted(TeacherAbsenceVoter::Show, $absence);
-        $sortedLessons = $absence->getLessons()->toArray();
-        $sorter->sort($sortedLessons, TeacherAbsenceLessonStrategy::class);
+        $sortedComments = $absence->getComments()->toArray();
+        $sorter->sort($sortedComments, TeacherAbsenceCommentStrategy::class);
 
         return $this->render('absences/teachers/show.html.twig', [
             'absence' => $absence,
-            'lessons' => $sortedLessons
+            'comments' => $sortedComments
         ]);
     }
 
@@ -209,8 +235,8 @@ class TeacherAbsenceController extends AbstractController {
         if(!$this->isCsrfTokenValid(self::CSRF_TOKEN_ID, $request->query->get('_csrf_token'))) {
             $this->addFlash('error', 'CSRF token invalid.');
         } else {
-            foreach ($absence->getLessons() as $lesson) {
-                if ($lesson->getLesson() === null) {
+            foreach ($absence->getComments() as $lesson) {
+                if ($lesson->getTuition() === null) {
                     $this->repository->remove($lesson);
                 }
             }
@@ -223,11 +249,11 @@ class TeacherAbsenceController extends AbstractController {
         ]);
     }
 
-    #[Route('/l/{uuid}/edit', name: 'edit_teacher_absence_lesson')]
-    public function editLesson(TeacherAbsenceLesson $lesson, Request $request): Response {
+    #[Route('/l/{uuid}/edit', name: 'edit_teacher_absence_comment')]
+    public function editLesson(TeacherAbsenceComment $lesson, Request $request): Response {
         $this->denyAccessUnlessGranted(TeacherAbsenceVoter::Edit, $lesson->getAbsence());
 
-        $form = $this->createForm(TeacherAbsenceLessonType::class, $lesson);
+        $form = $this->createForm(TeacherAbsenceCommentType::class, $lesson);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {

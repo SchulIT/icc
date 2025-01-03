@@ -1,4 +1,4 @@
-{% extends "main.html.twig" %}
+{% extends "admin/_form.html.twig" %}
 
 {% block title %}{{ 'admin.tuition_grade_catalogs.add.label'|trans }}{% endblock %}
 
@@ -16,9 +16,7 @@
     <script src="{{ asset('build/collection.js') }}"></script>
 {% endblock %}
 
-{% block content %}
-    {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
-
+{% block inner %}
     {{ form_start(form) }}
 
     <div class="card">

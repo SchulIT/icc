@@ -29,6 +29,45 @@
                 <template v-for="lesson in days[day]">
                   <td class="align-middle p-0" v-if="lesson !== null">
                     <div class="w-100 d-flex">
+                      <div v-for="event in lesson.events"
+                           @click.prevent="edit(event)"
+                           @contextmenu.prevent="changeExcuseStatus(event)"
+                           :class="'flex-fill p-3 text-center align-middle ' + (event.attendance !== null && event.attendance.attendance.type === 1 ? 'text-bg-success' : '') + (event.attendance !== null && event.attendance.attendance.type === 0 ? 'text-bg-danger' : '') + (event.attendance !== null && event.attendance.attendance.type === 2 ? 'text-bg-warning' : '') + ' ' + (!readonly ? 'pointer' : '')"
+                           :title="event.event !== null ? event.event.title + ' (' + event.event.teacher + ')' : ''">
+                        <div v-if="event.attendance !== null && event.attendance.attendance.type === 1" class="d-inline">
+                          <i class="fas fa-user-check"></i>
+                        </div>
+                        <div v-if="event.attendance !== null && event.attendance.attendance.type === 2" class="d-inline">
+                          <i class="fas fa-user-clock"></i>
+
+                          <span class="badge text-bg-info ms-2">
+                            {{ $trans('book.attendance.late_minutes', { 'count': event.attendance.attendance.late_minutes}) }}
+                        </span>
+                        </div>
+                        <div v-if="event.attendance !== null && event.attendance.attendance.type === 0" class="d-inline">
+                        <span v-if="event.attendance.has_excuses === true">
+                          <i class="fas fa-check"></i>
+                        </span>
+                          <span v-if="event.attendance.has_excuses === false">
+                          <i class="fas fa-question" v-if="event.attendance.attendance.excuse_status === 0 && event.attendance.attendance.zero_absent_lesson !== true"></i>
+                          <i class="fas fa-check" v-if="event.attendance.attendance.excuse_status === 1 || event.attendance.attendance.zero_absent_lesson === true"></i>
+                          <i class="fas fa-times" v-if="event.attendance.attendance.excuse_status === 2"></i>
+                        </span>
+
+                          <span class="badge text-bg-info ms-2" v-if="event.attendance.attendance.zero_absent_lesson">
+                          0 FS
+                        </span>
+                        </div>
+                        <div class="d-inline ms-2" v-if="event.attendance !== null && event.attendance.attendance.flags !== null && event.attendance.attendance.flags.length > 0">
+                          <div class="d-inline" v-for="flag in event.attendance.attendance.flags" :title="flag.description">
+                          <span class="fa-stack fa-1x m-n2">
+                            <i :class="flag.icon + ' fa-stack-1x'"></i>
+                            <i :class="flag.stack_icon + ' fa-stack-1x text-danger'" v-if="flag.stack_icon !== null"></i>
+                          </span>
+                          </div>
+                        </div>
+                      </div>
+
                     <div v-for="entry in lesson.entries"
                          @click.prevent="edit(entry)"
                          @contextmenu.prevent="changeExcuseStatus(entry)"
@@ -89,7 +128,7 @@
           </div>
 
           <div class="modal-body" v-if="editAttendance !== null && editLesson !== null">
-            <div class="d-flex" v-if="editLesson !== null">
+            <div class="d-flex" v-if="editLesson.entry !== undefined">
               <span class="badge text-bg-primary">
                 {{ editLesson.entry.lesson.subject }}
               </span>
@@ -103,6 +142,29 @@
                 <i class="fas fa-calendar-alt"></i>
 
                 {{ date(editLesson.entry.lesson.date) }}
+              </div>
+
+              <div class="ms-2">
+                <i class="fas fa-clock"></i>
+
+                {{ $transChoice('label.exam_lessons', 0, { 'start': editAttendance.lesson}) }}
+              </div>
+            </div>
+
+            <div class="d-flex" v-if="editLesson.event !== undefined">
+              <span class="badge text-bg-primary">
+                {{ editLesson.event.title }}
+              </span>
+
+              <div class="ms-2">
+                <i class="fas fa-chalkboard-teacher"></i>
+                {{ editLesson.event.teacher }}
+              </div>
+
+              <div class="ms-2">
+                <i class="fas fa-calendar-alt"></i>
+
+                {{ date(editLesson.event.date) }}
               </div>
 
               <div class="ms-2">
@@ -242,6 +304,7 @@ export default {
   props: {
     readonly: Boolean,
     entries: Object,
+    events: Array,
     attendances: Array,
     dayGroups: Array,
     maxLessons: Number,
@@ -268,7 +331,6 @@ export default {
     // Create data structures
     let $this = this;
     let lessonRange = [...Array(this.maxLessons).keys()].map(i => i + 1);
-    console.log($this.attendances);
 
     for(let group of this.dayGroups) {
       for(let day of group.days) {
@@ -277,8 +339,24 @@ export default {
         for(let lessonNumber of lessonRange) {
           let lessonEntries = {
             'lessonNumber': lessonNumber,
-            'entries': [ ]
+            'entries': [ ],
+            'events': [ ]
           };
+
+          let events = $this.events.filter(e => e.date === day && e.start <= lessonNumber && lessonNumber <= e.end);
+
+          for(let event of events) {
+            let attendance = $this.attendances.filter(a => a.date === day && a.lesson === lessonNumber && a.event === event.uuid)[0] ?? null;
+
+            if(attendance !== null) {
+              lessonEntries.events.push({
+                'lesson': lessonNumber,
+                'event': event,
+                'attendance': attendance
+              });
+            }
+          }
+
           let entries = $this.entries.filter(a => a.lesson.date === day && a.start <= lessonNumber && lessonNumber <= a.end);
 
           for (let entry of entries) {
@@ -292,7 +370,6 @@ export default {
               });
             }
           }
-
           lessons[lessonNumber - 1] = lessonEntries;
         }
 
@@ -333,7 +410,11 @@ export default {
         return;
       }
 
-      if(lesson.entry === null || lesson.attendance === null) {
+      if(lesson.attendance === null) {
+        return;
+      }
+
+      if(lesson.entry === null && lesson.event === null) {
         return;
       }
 
@@ -348,17 +429,15 @@ export default {
 
       this.absences = [ ];
 
-      if(lesson.attendance.attendance.type !== 1) {
-        let $this = this;
-        let url = this.absencesUrl.replace('lesson', lesson.entry.lesson.uuid);
-        this.$http.get(url)
-            .then(function(response) {
-              $this.absences = response.data;
-            })
-            .catch(function(error) {
-              console.error(error);
-            });
-      }
+      let $this = this;
+      let url = this.absencesUrl + '?date=' + lesson.attendance.date.substring(0, 10) + '&lesson=' + lesson.lesson;
+      this.$http.get(url)
+          .then(function(response) {
+            $this.absences = response.data;
+          })
+          .catch(function(error) {
+            console.error(error);
+          });
     },
     minusMinute() {
       if(this.editAttendance.attendance.late_minutes > 0) {
@@ -413,6 +492,7 @@ export default {
       this.uploadData(this.editLesson, function() {
         $this.editLesson = null;
         $this.editAttendance = null;
+        $this.editEvent = null;
         $this.modal.hide();
       });
     },
@@ -464,7 +544,7 @@ export default {
         return;
       }
 
-      if(lesson.entry === null || lesson.attendance === null || lesson.attendance.attendance.type !== 0) {
+      if((lesson.entry === null && lesson.event === null) || lesson.attendance === null || lesson.attendance.attendance.type !== 0) {
         return;
       }
 

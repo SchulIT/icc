@@ -1,4 +1,4 @@
-{% extends "main.html.twig" %}
+{% extends "admin/_main.html.twig" %}
 
 {% block title %}{{ 'admin.documents.categories.label'|trans }}{% endblock %}
 
@@ -11,85 +11,77 @@
     </ol>
 {% endblock %}
 
-{% block content %}
-    {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
+{% block inner %}
+    {% if categories|length == 0 %}
+        <div class="bs-callout bs-callout-info">
+            <h5>{{ 'info.label'|trans }}</h5>
 
-    <div class="container-fluid px-0">
-        <div class="row">
-            <div class="col-md-9">
-                {% if categories|length == 0 %}
-                    <div class="bs-callout bs-callout-info">
-                        <h5>{{ 'info.label'|trans }}</h5>
+            <p>{{ 'admin.documents.categories.overview.empty'|trans }}</p>
+        </div>
+    {% else %}
+        <div class="card">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover card-table">
+                    <colgroup>
+                        <col>
+                        <col class="column-lg">
+                        <col class="column-sm">
+                    </colgroup>
 
-                        <p>{{ 'admin.documents.categories.overview.empty'|trans }}</p>
-                    </div>
-                {% else %}
-                    <div class="card">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover card-table">
-                                <colgroup>
-                                    <col>
-                                    <col class="column-lg">
-                                    <col class="column-sm">
-                                </colgroup>
+                    <thead>
+                    <tr>
+                        <th>{{ 'label.name'|trans }} </th>
+                        <th>{{ 'admin.documents.categories.overview.num_documents'|trans }}</th>
+                        <th> </th>
+                    </tr>
+                    </thead>
 
-                                <thead>
-                                <tr>
-                                    <th>{{ 'label.name'|trans }} </th>
-                                    <th>{{ 'admin.documents.categories.overview.num_documents'|trans }}</th>
-                                    <th> </th>
-                                </tr>
-                                </thead>
+                    <tbody>
+                    {% for category in categories %}
+                        <tr>
+                            <td class="align-middle">
+                                {{ category.name }}
+                                {% include "_includes/_id.html.twig" with { id: category.id } %}
+                            </td>
+                            <td class="align-middle">
+                                {{ category.documents.count }}
+                            </td>
+                            <td class="align-middle">
+                                <div class="dropdown">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
 
-                                <tbody>
-                                {% for category in categories %}
-                                    <tr>
-                                        <td class="align-middle">
-                                            {{ category.name }}
-                                            {% include "_includes/_id.html.twig" with { id: category.id } %}
-                                        </td>
-                                        <td class="align-middle">
-                                            {{ category.documents.count }}
-                                        </td>
-                                        <td class="align-middle">
-                                            <div class="dropdown">
-                                                <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
-                                                    <i class="fas fa-ellipsis-v"></i>
-                                                </button>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <a href="{{ path('admin_edit_document_category', { uuid: category.uuid }) }}" class="dropdown-item">
+                                            <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
+                                        </a>
 
-                                                <div class="dropdown-menu dropdown-menu-end">
-                                                    <a href="{{ path('admin_edit_document_category', { uuid: category.uuid }) }}" class="dropdown-item">
-                                                        <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
-                                                    </a>
-
-                                                    <a href="{{ path('admin_remove_document_category', { uuid: category.uuid }) }}" class="dropdown-item text-danger">
-                                                        <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                {% endif %}
+                                        <a href="{{ path('admin_remove_document_category', { uuid: category.uuid }) }}" class="dropdown-item text-danger">
+                                            <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
+        </div>
+    {% endif %}
+{% endblock %}
 
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="list-group list-group-flush">
-                        <a href="{{ path('admin_add_document_category') }}" class="list-group-item list-group-item-action">
-                            <i class="fa fa-plus"></i> {{ 'admin.documents.categories.add.label'|trans }}
-                        </a>
+{% block sidebar %}
+    <div class="card">
+        <div class="list-group list-group-flush">
+            <a href="{{ path('admin_add_document_category') }}" class="list-group-item list-group-item-action">
+                <i class="fa fa-plus"></i> {{ 'admin.documents.categories.add.label'|trans }}
+            </a>
 
-                        <a href="{{ path('admin_documents') }}" class="list-group-item list-group-item-action">
-                            <i class="fa fa-arrow-left"></i> {{ 'admin.documents.categories.overview.back'|trans }}
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <a href="{{ path('admin_documents') }}" class="list-group-item list-group-item-action">
+                <i class="fa fa-arrow-left"></i> {{ 'admin.documents.categories.overview.back'|trans }}
+            </a>
         </div>
     </div>
 {% endblock %}

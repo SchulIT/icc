@@ -4,7 +4,6 @@ import Choices from "choices.js";
 import { v4 as uuidv4 } from 'uuid';
 import { DataTable } from "simple-datatables";
 import { Modal, Tooltip, Popover } from "bootstrap";
-let Masonry = require('masonry-layout');
 
 let ClipboardJS = require('clipboard');
 

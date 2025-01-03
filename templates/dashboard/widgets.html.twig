@@ -55,12 +55,12 @@
         <div class="card-footer collapse border-top-0" id="absences-{{ id }}">
             {% for group in groups %}
                 <div>
-                    {% if group.isExam or group.isAppointment %}
+                    {% if group.isExam or group.isBookEvent %}
                         <div class="d-block font-weight-bolder">
                             {% if group.isExam %}
                                 <i class="fa fa-edit"></i> {% for tuition in group.objective.tuitions %}{{ tuition.name }} ({{ tuition.teachers|teachers }}){% if not loop.last %}, {% endif %}{% endfor %}:
-                            {% elseif group.isAppointment %}
-                                <i class="fa fa-calendar-alt"></i> {{ group.objective.title }} {% if group.objective.organizers|length > 0 %}({% for organizer in group.objective.organizers %}{{ organizer|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}){% endif %}
+                            {% elseif group.isBookEvent %}
+                                <i class="fa fa-calendar-alt"></i> <a href="{{ path('show_or_edit_book_event_entry', { uuid: group.objective.uuid }) }}">{{ group.objective.title }}</a> ({{ group.objective.teacher|teacher }}) <i class="fas fa-clock"></i> {{ 'label.exam_lessons'|trans({'%count%': group.objective.lessonEnd - group.objective.lessonStart, '%start%': group.objective.lessonStart, '%end%': group.objective.lessonEnd }) }}
                             {% else %}
 
                             {% endif %}
@@ -297,8 +297,9 @@
                         {% set openLists = is_granted('tuitions') %}
                         {% set openBook = is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
                         {% set openGradebook = is_granted('ROLE_BOOK_ENTRY_CREATOR') and lesson.tuition.gradeCategories.count > 0 %}
+                        {% set addAdditionalInfo = is_granted('new-timetablelesson-additionalinformation') %}
 
-                        {% if openLists or openBook or openGradebook %}
+                        {% if openLists or openBook or openGradebook or addAdditionalInfo %}
                             <div class="align-self-center pe-3">
                                 <div class="dropdown ms-1">
                                     <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -315,10 +316,18 @@
                                             <a href="{{ path('book', { section: lesson.tuition.section.uuid, tuition: lesson.tuition.uuid}) }}" class="dropdown-item" target="_blank">
                                                 <i class="fas fa-book-open"></i> {{ 'dashboard.links.book'|trans }} <i class="fas fa-external-link-alt"></i>
                                             </a>
+                                            <a href="{{ path('redirect_to_last_entry', { uuid: lesson.tuition.uuid, date: lesson.date.format('Y-m-d')}) }}" class="dropdown-item" target="_blank">
+                                                <i class="fas fa-book-open"></i> {{ 'dashboard.links.last_entry'|trans }} <i class="fas fa-external-link-alt"></i>
+                                            </a>
                                         {% endif %}
                                         {% if openGradebook %}
                                             <a href="{{ path('gradebook', { section: lesson.tuition.section.uuid, tuition: lesson.tuition.uuid}) }}" class="dropdown-item" target="_blank">
                                                 <i class="fas fa-user-graduate"></i> {{ 'dashboard.links.gradebook'|trans }} <i class="fas fa-external-link-alt"></i>
+                                            </a>
+                                        {% endif %}
+                                        {% if addAdditionalInfo %}
+                                            <a href="{{ path('add_timetable_lesson_additional_information', { date: lesson.date.format('Y-m-d'), start: lesson.lessonStart, end: lesson.lessonEnd, studygroup: lesson.tuition.studyGroup.uuid }) }}" class="dropdown-item">
+                                                <i class="fas fa-plus"></i> {{ 'dashboard.additional_information.label'|trans }}
                                             </a>
                                         {% endif %}
                                     </div>
@@ -331,9 +340,7 @@
             {% endif %}
         </div>
 
-        {% if item.absenceLesson is not null %}
-            {{ _self.absenceLesson(item.absenceLesson) }}
-        {% endif %}
+        {{ _self.additionalInfo(item.additionalInformation, lesson) }}
 
         {% if item.lesson is not null and item.lesson.tuition is not null and item.lesson.tuition.studyGroup is not null %}
             {{ _self.absences(item.absentStudentGroups, item.absentStudentsCount, item.lesson.uuid ~ lesson, item.lesson.tuition.studyGroup.memberships|length) }}
@@ -452,7 +459,7 @@
                             {% set editAction = path('edit_entry', { uuid: entry.uuid }) %}
                         {% endif %}
                     {% endfor %}
-                    <div class="align-self-center px-3">
+                    <div class="align-self-center ps-3">
                         <entry students-url="{{ url('xhr_students') }}"
                                teachers-url="{{ url('xhr_teachers') }}"
                                study-groups-url="{{ url('xhr_studygroups') }}"
@@ -466,6 +473,43 @@
                                cancel-action="{{ path('cancel_lesson', { uuid: timetableLesson.uuid }) }}"></entry>
                     </div>
                 {% endif %}
+
+                {% set openLists = is_granted('tuitions') and timetableLesson is not null and timetableLesson.tuition is not null %}
+                {% set openBook = is_granted('ROLE_BOOK_ENTRY_CREATOR') and timetableLesson is not null and timetableLesson.tuition is not null %}
+                {% set addAdditionalInfo = is_granted('new-timetablelesson-additionalinformation') and (substitution.studyGroups|length == 1 or substitution.replacementStudyGroups|length == 1) %}
+
+                {% if openLists or openBook or addAdditionalInfo %}
+                    <div class="align-self-center pe-3">
+                        <div class="dropdown ms-1">
+                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <div class="dropdown-header">{{ 'dashboard.links.header'|trans }}</div>
+                                {% if openLists %}
+                                    <a href="{{ path('list_tuition', { uuid: timetableLesson.tuition.uuid}) }}" class="dropdown-item" target="_blank">
+                                        <i class="fas fa-list"></i> {{ 'dashboard.links.tuition'|trans }} <i class="fas fa-external-link-alt"></i>
+                                    </a>
+                                {% endif %}
+                                {% if openBook %}
+                                    <a href="{{ path('book', { section: timetableLesson.tuition.section.uuid, tuition: timetableLesson.tuition.uuid}) }}" class="dropdown-item" target="_blank">
+                                        <i class="fas fa-book-open"></i> {{ 'dashboard.links.book'|trans }} <i class="fas fa-external-link-alt"></i>
+                                    </a>
+                                {% endif %}
+                                {% if addAdditionalInfo %}
+                                    {% set studyGroup = substitution.studyGroups.first %}
+
+                                    {% if studyGroup == false %}
+                                        {% set studyGroup = substitution.replacementStudyGroups.first %}
+                                    {% endif %}
+                                    <a href="{{ path('add_timetable_lesson_additional_information', { date: substitution.date.format('Y-m-d'), start: substitution.lessonStart, end: substitution.lessonEnd, studygroup: studyGroup.uuid }) }}" class="dropdown-item">
+                                        <i class="fas fa-plus"></i> {{ 'dashboard.additional_information.label'|trans }}
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         </div>
 
@@ -475,38 +519,74 @@
             </div>
         {% endif %}
 
-        {% if item.absenceLesson is not null %}
-            {{ _self.absenceLesson(item.absenceLesson) }}
-        {% endif %}
+        {{ _self.additionalInfo(item.additionalInformation, lesson) }}
 
         {{ _self.absences(item.absentStudentGroups, item.absentStudentsCount, substitution.uuid ~ lesson|replace({'.': '', '/': ''}), item.students|length ) }}
         {{ _self.studentInfo(item.studentInfo, substitution.uuid) }}
     </div>
 {% endmacro %}
 
-{% macro absenceLesson(absenceLesson) %}
-    {% if absenceLesson.commentStudents is not empty %}
-        <div class="card-footer pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#studentinfo-{{ absenceLesson.uuid }}">
+{% macro additionalInfo(additionalInformation, lesson) %}
+    {% for info in additionalInformation %}
+        {% if info.commentStudents is not empty %}
+            <div class="card-footer pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#studentinfo-{{ info.uuid }}-{{ lesson }}">
             <span class="me-auto align-self-center">
                 <i class="fas fa-info-circle"></i> {{ 'absences.teachers.comment.students'|trans }}
             </span>
-            <i class="fa indicator align-self-center fa-chevron-down"></i>
-        </div>
-        <div class="card-footer collapse border-top-0" id="studentinfo-{{ absenceLesson.uuid }}">
-            {{ absenceLesson.commentStudents|markdown }}
-        </div>
-    {% endif %}
-    {% if absenceLesson.commentTeacher is not empty and app.user.isTeacher %}
-        <div class="card-footer pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#teacherinfo-{{ absenceLesson.uuid }}">
+                <i class="fa indicator align-self-center fa-chevron-down"></i>
+            </div>
+            <div class="card-footer collapse border-top-0" id="studentinfo-{{ info.uuid }}-{{ lesson }}">
+                <div class="d-flex">
+                    <div class="flex-fill">
+                        {{ info.commentStudents|markdown }}
+                    </div>
+
+                    <div class="buttons">
+                        {% if is_granted('edit', info) %}
+                            <a href="{{ path('edit_timetable_lesson_additional_information', { uuid: info.uuid }) }}" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        {% endif %}
+
+                        {% if is_granted('remove', info) %}
+                            <a href="{{ path('remove_timetable_lesson_additional_information', { uuid: info.uuid }) }}" class="btn btn-outline-danger btn-sm ms-1">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        {% if info.commentTeacher is not empty and app.user.isTeacher %}
+            <div class="card-footer pointer d-flex align-items-center" data-toggle="table-collapse" data-target="#teacherinfo-{{ info.uuid }}-{{ lesson }}">
             <span class="me-auto align-self-center">
                 <i class="fas fa-info-circle"></i> {{ 'absences.teachers.comment.teacher'|trans }}
             </span>
-            <i class="fa indicator align-self-center fa-chevron-down"></i>
-        </div>
-        <div class="card-footer collapse border-top-0" id="teacherinfo-{{ absenceLesson.uuid }}">
-            {{ absenceLesson.commentTeacher|markdown }}
-        </div>
-    {% endif %}
+                <i class="fa indicator align-self-center fa-chevron-down"></i>
+            </div>
+            <div class="card-footer collapse border-top-0" id="teacherinfo-{{ info.uuid }}-{{ lesson }}">
+                <div class="d-flex">
+                    <div class="flex-fill">
+                        {{ info.commentTeacher|markdown }}
+                    </div>
+
+                    <div class="buttons">
+                        {% if is_granted('edit', info) %}
+                            <a href="{{ path('edit_timetable_lesson_additional_information', { uuid: info.uuid }) }}" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        {% endif %}
+
+                        {% if is_granted('remove', info) %}
+                            <a href="{{ path('remove_timetable_lesson_additional_information', { uuid: info.uuid }) }}" class="btn btn-outline-danger btn-sm ms-1">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
 {% endmacro %}
 
 {% macro appointment(appointment) %}

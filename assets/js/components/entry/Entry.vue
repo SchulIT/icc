@@ -120,7 +120,7 @@
                               :possible-absences="absences"
                               :suggested-removals="removals"
                               :students="students"
-                              :step="1"
+                              field-name="lesson_entry"
                               :list-students-url="studentsUrl"
                               :list-study-groups-url="studyGroupsUrl"
                               :start="entry.start"
@@ -199,6 +199,8 @@
 
             <input type="hidden" name="date" v-if="lesson.date !== null" :value="lesson.date.toJSON()">
             <input type="hidden" :name="'lesson_entry_cancel[' + csrfname + ']'" :value="csrftoken">
+            <input type="hidden" name="lesson_entry_cancel[lessonStart]" :value="entry.start">
+            <input type="hidden" name="lesson_entry_cancel[lessonEnd]" :value="entry.end">
             <input type="hidden" name="_ref" :value="ref">
 
           </form>
@@ -472,7 +474,11 @@ export default {
         }
       }
 
-      this.show();
+      // Ensure the updates are populated to the child component
+      // before showing the modal (see https://stackoverflow.com/questions/75123131/vuejs-delay-on-update-props)
+      this.$nextTick(() => {
+        this.show();
+      });
     },
 
     cancel(start, end) {
@@ -487,7 +493,11 @@ export default {
         });
       }
 
-      this.modal.cancel.show();
+      // Ensure the updates are populated to the child component
+      // before showing the modal (see https://stackoverflow.com/questions/75123131/vuejs-delay-on-update-props)
+      this.$nextTick(() => {
+        this.modal.cancel.show();
+      });
     },
   }
 }

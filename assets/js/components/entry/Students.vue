@@ -148,12 +148,12 @@
              v-for="attendance in attendances"
              :class="{ 'bg-selected': selectedAttendances.indexOf(attendance) >= 0, 'd-none': attendance.isHidden || false }">
 
-          <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][lesson]'" :value="attendance.lesson">
-          <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][isZeroAbsentLesson]'" :value="attendance.zero_absent_lesson ? 1 : 0">
-          <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][type]'" :value="attendance.type">
-          <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][excuseStatus]'" :value="attendance.excuse_status">
-          <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][lateMinutes]'" :value="attendance.minutes">
-          <input type="hidden" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][student]'" :value="attendance.student.uuid">
+          <input type="hidden" :name="fieldName + '[attendances][' + attendances.indexOf(attendance) + '][lesson]'" :value="attendance.lesson">
+          <input type="hidden" :name="fieldName + '[attendances][' + attendances.indexOf(attendance) + '][isZeroAbsentLesson]'" :value="attendance.zero_absent_lesson ? 1 : 0">
+          <input type="hidden" :name="fieldName + '[attendances][' + attendances.indexOf(attendance) + '][type]'" :value="attendance.type">
+          <input type="hidden" :name="fieldName + '[attendances][' + attendances.indexOf(attendance) + '][excuseStatus]'" :value="attendance.excuse_status">
+          <input type="hidden" :name="fieldName + '[attendances][' + attendances.indexOf(attendance) + '][lateMinutes]'" :value="attendance.minutes">
+          <input type="hidden" :name="fieldName + '[attendances][' + attendances.indexOf(attendance) + '][student]'" :value="attendance.student.uuid">
 
           <div class="d-flex flex-wrap">
             <div class="flex-fill p-3 pointer"
@@ -165,7 +165,7 @@
             <div class="d-flex align-self-center text-right my-2 me-3 flex-fill justify-content-end">
               <div class="btn-group" v-if="flags.length > 0">
                 <template v-for="flag in flags">
-                  <input type="checkbox" class="btn-check" autocomplete="off" :checked="attendance.flags.includes(flag.id)" :id="uniquePrefix + '_' + attendance.student.uuid + '_' + flag.id" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][flags][]'" :value="flag.id">
+                  <input type="checkbox" class="btn-check" autocomplete="off" :checked="attendance.flags.includes(flag.id)" :id="uniquePrefix + '_' + attendance.student.uuid + '_' + flag.id" :name="fieldName + '[attendances][' + attendances.indexOf(attendance) + '][flags][]'" :value="flag.id">
                   <label class="btn btn-outline-primary btn-sm" :title="flag.description" :for="uniquePrefix + '_' + attendance.student.uuid + '_' + flag.id">
                     <span class="fa-stack fa-1x m-n2">
                       <i :class="flag.icon + ' fa-stack-1x'"></i>
@@ -176,7 +176,7 @@
               </div>
 
               <button class="btn btn-outline-primary btn-sm ms-1 d-inline-block"
-                      @click.prevent="attendance.showComment !== true ? attendance.showComment = true : attendance.showComment = false"
+                      @click.prevent="attendance.showComment !== true ? attendance.showComment = true : attendance.showComment = false; this.updateIfStandalone();"
                       :title="$trans('label.comment')">
                 <i class="far fa-comment-alt"></i>
               </button>
@@ -258,7 +258,7 @@
             <div class="w-100">
               <div class="input-group">
                 <span class="input-group-text"><i class="far fa-comment-alt"></i></span>
-                <input type="text" maxlength="255" v-model="attendance.comment" class="form-control" :name="'lesson_entry[attendances][' + attendances.indexOf(attendance) + '][comment]'">
+                <input type="text" maxlength="255" v-model="attendance.comment" class="form-control" :name="fieldName + '[attendances][' + attendances.indexOf(attendance) + '][comment]'">
               </div>
             </div>
           </div>
@@ -271,22 +271,24 @@
 import Choices from "choices.js";
 
 export default {
-  name: 'attendances',
+  name: 'students',
   props: {
+    fieldName: String,
     students: Array,
     possibleAbsences: Array,
     suggestedRemovals: Array,
     attendances: Array,
-    step: Number,
     start: Number,
     end: Number,
     listStudentsUrl: String,
     listStudyGroupsUrl: String,
     showSaveButton: Boolean,
-    flags: Array
+    flags: Array,
+    standalone: Boolean
   },
   data() {
     return {
+      step: 1,
       isDirty: false,
       selectedAttendances: [ ],
       absences: [ ],
@@ -314,6 +316,11 @@ export default {
       let studentB = b.student.lastname + ", " + b.student.firstname;
       return studentA.localeCompare(studentB, 'de', { sensitivity: 'base', numeric: true });
     });
+
+    if(this.standalone === true) {
+      this.load();
+      //this.attendances = ref(this.attendances);
+    }
   },
   beforeUnmount() {
     window.removeEventListener('beforeunload', this.preventReload);
@@ -321,11 +328,6 @@ export default {
   mounted() {
     this.studentChoice = new Choices(this.$el.querySelector('#add_student'));
     this.studyGroupChoice = new Choices(this.$el.querySelector('#add_studygroup'));
-  },
-  computed: {
-    allPresent() {
-      return this.numPresent === this.attendances.length;
-    }
   },
   methods: {
     numPresent(lesson) {
@@ -374,6 +376,11 @@ export default {
     },
     late(attendance) {
       this.setType(attendance, 2);
+    },
+    updateIfStandalone() {
+      if(this.standalone === true) {
+        this.$forceUpdate();
+      }
     },
     applyAbsence(absence) {
       let $this = this;
@@ -445,6 +452,8 @@ export default {
       } else {
         callback(attendanceOrAttendances);
       }
+
+      this.updateIfStandalone();
     },
     plusMinute(attendanceOrAttendances) {
       let step = this.step;
@@ -476,6 +485,7 @@ export default {
     remove(attendance) {
       if(this.attendances.indexOf(attendance) !== -1) {
         this.attendances.splice(this.attendances.indexOf(attendance), 1);
+        this.updateIfStandalone();
       }
     },
     removeBySuggestion(suggestion) {
@@ -526,6 +536,8 @@ export default {
 
         this.attendances.push(attendance);
       }
+
+      this.updateIfStandalone();
     },
     onAddStudent() {
       let student = this.studentChoice.getValue();
@@ -565,7 +577,6 @@ export default {
     },
     load() {
       let $this = this;
-      //let students = { };
 
       this.students.forEach(function(student) {
         if($this.attendances.filter(x => x.student.uuid === student.uuid).length === 0) {
@@ -577,21 +588,35 @@ export default {
 
       for(let absence of this.possibleAbsences) {
         // check if attendance is already applied
+        let notAppliedForLessons = [ ];
+
         for(let attendance of this.attendances) {
           if(attendance.student.uuid !== absence.student.uuid) {
             continue;
           }
 
-          let areFlagsAlreadyApplied = true;
-          for(let flag of absence.flags) {
-            if(!attendance.flags.includes(flag)) {
-              areFlagsAlreadyApplied = false;
+          for(let lessonNumber of absence.lessons) {
+            if(attendance.lesson !== lessonNumber) {
+              continue;
+            }
+
+            let areFlagsAlreadyApplied = true;
+            for (let flag of absence.flags) {
+              if (!attendance.flags.includes(flag)) {
+                areFlagsAlreadyApplied = false;
+              }
+            }
+
+            if (attendance.type !== absence.attendance_type || (absence.flags.length === 0 && attendance.comment !== absence.label) || (absence.flags.length > 0 && areFlagsAlreadyApplied === false)) {
+              notAppliedForLessons.push(lessonNumber);
+              //this.absences.push(absence);
             }
           }
+        }
 
-          if(attendance.type !== absence.attendance_type || (absence.flags.length === 0 && attendance.comment !== absence.label) || (absence.flags.length > 0 && areFlagsAlreadyApplied === false)) {
-            this.absences.push(absence);
-          }
+        if(notAppliedForLessons.length > 0) {
+          absence.lessons = notAppliedForLessons;
+          this.absences.push(absence);
         }
       }
 

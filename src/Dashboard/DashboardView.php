@@ -44,6 +44,9 @@ class DashboardView {
     /** @var SubstitutionViewItem[] */
     private array $substitutionMentions = [ ];
 
+    /** @var DashboardLesson[] */
+    private array $additionalLessons = [ ];
+
     /** @var ExamViewItem[] */
     private array $exams = [ ];
 
@@ -58,7 +61,7 @@ class DashboardView {
 
     private ?ExercisesView $exercises = null;
 
-    public function __construct(private DateTime $dateTime)
+    public function __construct(private readonly DateTime $dateTime)
     {
     }
 
@@ -209,6 +212,22 @@ class DashboardView {
         $this->substitutionMentions = [ ];
     }
 
+    public function addAdditionalItem(int $lesson, AbstractViewItem $item): void {
+        if(!isset($this->additionalLessons[$lesson])) {
+            $this->additionalLessons[$lesson] = new DashboardLesson($lesson, false);
+        }
+
+        $this->additionalLessons[$lesson]->addItem($item);
+    }
+
+    public function getAdditionalLesson(int $lesson): ?DashboardLesson {
+        return $this->additionalLessons[$lesson] ?? null;
+    }
+
+    public function hasAdditionalItems(): bool {
+        return count($this->additionalLessons) > 0;
+    }
+
     public function getNumberOfCollisions(): int {
         $collisions = 0;
 
@@ -320,6 +339,7 @@ class DashboardView {
             && count($this->appointments) === 0
             && count($this->teacherBirthdays) === 0
             && count($this->studentBirthdays) === 0
-            && count($this->parentsDayAppointments) === 0;
+            && count($this->parentsDayAppointments) === 0
+            && count($this->additionalLessons) === 0;
     }
 }

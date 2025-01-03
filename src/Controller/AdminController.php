@@ -13,10 +13,12 @@ class AdminController extends AbstractController {
     public function index(AdminDataMenuBuilder $menuBuilder): Response {
         $adminMenu = $menuBuilder->dataMenu([]);
 
-        if($adminMenu->hasChildren() === false) {
-            throw new AccessDeniedHttpException();
+        foreach($adminMenu->getChildren() as $child) {
+            if(!empty($child->getUri())) {
+                return $this->redirect($child->getUri());
+            }
         }
 
-        return $this->redirect($adminMenu->getFirstChild()->getUri());
+        throw new AccessDeniedHttpException();
     }
 }

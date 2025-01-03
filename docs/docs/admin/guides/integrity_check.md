@@ -23,7 +23,7 @@ abgearbeitet werden, wird der Symfony Messenger genutzt. Folgender systemd-Diens
 
 ```
 [Unit]
-Description=Integritätscheck
+Description=ICC Integritätscheck
 
 [Service]
 WorkingDirectory=/path/to/icc/

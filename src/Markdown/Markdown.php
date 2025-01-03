@@ -2,11 +2,11 @@
 
 namespace App\Markdown;
 
-use League\CommonMark\MarkdownConverterInterface;
+use League\CommonMark\ConverterInterface;
 use Psr\Cache\CacheItemPoolInterface;
 
 class Markdown {
-    public function __construct(private MarkdownConverterInterface $converter, private CacheItemPoolInterface $cache)
+    public function __construct(private readonly ConverterInterface $converter, private readonly CacheItemPoolInterface $cache)
     {
     }
 
@@ -17,7 +17,7 @@ class Markdown {
         $item = $this->cache->getItem($key);
 
         if(!$item->isHit()) {
-            $html = $this->converter->convertToHtml($markdown);
+            $html = $this->converter->convert($markdown)->getContent();
             $item->set($html);
             $this->cache->save($item);
         }

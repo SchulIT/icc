@@ -21,6 +21,10 @@ class DateInActiveSectionValidator extends ConstraintValidator {
      * @inheritDoc
      */
     public function validate($value, Constraint $constraint): void {
+        if($value === null) {
+            return;
+        }
+
         if(!$value instanceof DateTime) {
             throw new UnexpectedTypeException($value, DateTime::class);
         }

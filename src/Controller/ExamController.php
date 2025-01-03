@@ -15,6 +15,7 @@ use App\Entity\Student;
 use App\Entity\User;
 use App\Export\ExamIcsExporter;
 use App\Form\IcsAccessTokenType as DeviceTokenTypeForm;
+use App\Grouping\ExamDateStrategy;
 use App\Grouping\ExamStudentTuitionStrategy;
 use App\Grouping\ExamWeekStrategy;
 use App\Grouping\Grouper;
@@ -192,7 +193,7 @@ class ExamController extends AbstractControllerWithMessages {
     }
 
     #[Route(path: '/{uuid}', name: 'show_exam', requirements: ['id' => '\d+'])]
-    public function show(Exam $exam, AbsenceResolver $absenceResolver, ): Response {
+    public function show(Exam $exam, AbsenceResolver $absenceResolver, ExamRepositoryInterface $repository): Response {
         $this->denyAccessUnlessGranted(ExamVoter::Show, $exam);
 
         /** @var Student[] $students */
@@ -217,10 +218,21 @@ class ExamController extends AbstractControllerWithMessages {
         $this->sorter->sort($groups, ExamStudentTuitionGroupStrategy::class);
         $this->sorter->sortGroupItems($groups, ExamStudentStrategy::class);
 
+        $relatedExams = [ ];
+
+        if($exam->getRoom() !== null) {
+            for ($lesson = $exam->getLessonStart(); $lesson <= $exam->getLessonEnd(); $lesson++) {
+                $relatedExams = array_merge($relatedExams, $repository->findAllByRoomAndDateAndLesson($exam->getRoom(), $exam->getDate(), $lesson));
+            }
+        }
+
+        $relatedExams = array_filter($relatedExams, fn(Exam $e) => $e->getId() !== $exam->getId());
+
         return $this->renderWithMessages('exams/details.html.twig', [
             'exam' => $exam,
             'groups' => $groups,
             'absentStudents' => $absentStudents,
+            'relatedExams' => ArrayUtils::unique($relatedExams),
             'last_import' => $this->importDateTypeRepository->findOneByEntityClass(Exam::class)
         ]);
     }

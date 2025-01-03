@@ -72,6 +72,14 @@ class BookSettings extends AbstractSettings {
         $this->setValue('book.attendance.visible_for_students_and_parents', $isEnabled);
     }
 
+    public function isLessonTopicsVisibleForStudentsAndParentsEnabled(): bool {
+        return $this->getValue('book.lesson_topics.visible_for_students_and_parents', false);
+    }
+
+    public function setLessonTopicsVisibleForStudentsAndParentsEnabled(bool $isEnabled): void {
+        $this->setValue('book.lesson_topics.visible_for_students_and_parents', $isEnabled);
+    }
+
     public function isIntegrityCheckEnabled(string $check): bool {
         return $this->getValue(sprintf('book.integrity_check.%s.enabled', $check), true);
     }
@@ -110,6 +118,14 @@ class BookSettings extends AbstractSettings {
 
     public function setSuggestionPriorityForExcuseNote(int $priority): void {
         $this->setValue('book.attendance_suggestion.priority.excuse_note', $priority);
+    }
+
+    public function getSuggestionPriorityForBookEvent(): int {
+        return $this->getValue('book.attendance_suggestion.priority.book_event', 120);
+    }
+
+    public function setSuggestionPriorityForBookEvent(int $priority): void {
+        $this->setValue('book.attendance_suggestion.priority.book_event', $priority);
     }
 
     public function getSuggestionPriorityForRemoval(): int {

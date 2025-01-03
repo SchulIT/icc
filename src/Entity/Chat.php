@@ -15,10 +15,10 @@ class Chat {
     use IdTrait;
     use UuidTrait;
 
-    #[ORM\Column(type: 'string')]
+    #[ORM\Column(type: 'text')]
     #[Assert\NotBlank]
     #[Assert\Length(max: 255)]
-    private ?string $topic;
+    private ?string $topic = null;
 
     #[Gedmo\Blameable(on: 'create')]
     #[ORM\ManyToOne(targetEntity: User::class)]
@@ -38,14 +38,22 @@ class Chat {
     /**
      * @var Collection<ChatMessage>
      */
-    #[ORM\OneToMany(mappedBy: 'chat', targetEntity: ChatMessage::class, cascade: ['persist'])]
+    #[ORM\OneToMany(mappedBy: 'chat', targetEntity: ChatMessage::class, cascade: ['persist'], fetch: 'EXTRA_LAZY')]
     #[ORM\OrderBy(['createdAt' => 'ASC'])]
+    #[Assert\Valid]
     private Collection $messages;
+
+    /**
+     * @var Collection<ChatUserTag>
+     */
+    #[ORM\OneToMany(mappedBy: 'chat', targetEntity: ChatUserTag::class, cascade: ['persist'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    private Collection $userTags;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
         $this->participants = new ArrayCollection();
         $this->messages = new ArrayCollection();
+        $this->userTags = new ArrayCollection();
     }
 
     public function getTopic(): ?string {
@@ -84,6 +92,21 @@ class Chat {
         return $this->messages;
     }
 
+    public function addUserTag(ChatUserTag $tag): void {
+        $this->userTags->add($tag);
+    }
+
+    public function removeUserTag(ChatUserTag $tag): void {
+        $this->userTags->removeElement($tag);
+    }
+
+    /**
+     * @return Collection<ChatUserTag>
+     */
+    public function getUserTags(): Collection {
+        return $this->userTags;
+    }
+
     public function getCreatedBy(): ?User {
         return $this->createdBy;
     }
@@ -91,15 +114,5 @@ class Chat {
     public function setCreatedBy(?User $createdBy): Chat {
         $this->createdBy = $createdBy;
         return $this;
-    }
-
-    public function countAttachments(): int {
-        $result = 0;
-
-        foreach($this->messages as $message) {
-            $result += count($message->getAttachments());
-        }
-
-        return $result;
     }
 }

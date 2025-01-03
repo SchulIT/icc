@@ -17,6 +17,19 @@ class AdminToolsMenuBuilder extends AbstractMenuBuilder {
             $root->addChild('tools.tuition_report.label', [
                 'route' => 'tuition_report_tool'
             ]);
+
+            $root->addChild('tools.untis.timetable.label',  [
+                'route' => 'untis_timetable_export'
+            ]);
+
+            $root->addChild('tools.missing_users.label', [
+                'route' => 'missing_users_tool'
+            ])
+                ->setExtra('icon', 'fas fa-user-times');
+
+            $root->addChild('tools.substitution_report.label', [
+                'route' => 'substitution_report_tool'
+            ]);
         }
 
         return $root;

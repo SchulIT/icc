@@ -4,27 +4,24 @@ namespace App\Controller;
 
 use App\Entity\ParentsDay;
 use App\Entity\ParentsDayAppointment;
+use App\Entity\Student;
 use App\Entity\User;
 use App\Form\AppointmentsCreatorParamsType;
 use App\Form\BookParentsDayAppointmentType;
 use App\Form\CancelParentsDayAppointmentType;
 use App\Form\ParentsDayAppointmentType;
 use App\Form\ParentsDayParentalInformationType;
-use App\Grouping\Grouper;
-use App\Grouping\TeacherTuitionsStrategy;
 use App\ParentsDay\AppointmentsCreator;
 use App\ParentsDay\AppointmentsCreatorParams;
 use App\ParentsDay\ParentsDayParentalInformationResolver;
+use App\ParentsDay\TeacherOverviewHelper;
 use App\Repository\ParentsDayAppointmentRepositoryInterface;
 use App\Repository\ParentsDayParentalInformationRepositoryInterface;
 use App\Repository\ParentsDayRepositoryInterface;
-use App\Repository\TuitionRepositoryInterface;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\ParentsDayAppointmentVoter;
 use App\Sorting\ParentsDayAppointmentStrategy;
 use App\Sorting\Sorter;
-use App\Sorting\TeacherTuitionsGroupStrategy;
-use App\Sorting\TuitionStrategy;
 use App\View\Filter\ParentsDayFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\StudentFilterView;
@@ -50,8 +47,9 @@ class ParentsDayController extends AbstractController {
     #[Route('', name: 'parents_day')]
     public function index(DateHelper $dateHelper, TeacherFilter $teacherFilter,
                           StudentFilter $studentFilter, ParentsDayFilter $parentsDayFilter,
+                          TeacherOverviewHelper $teacherOverviewHelper,
                           SectionResolverInterface $sectionResolver, Request $request, ParentsDayParentalInformationRepositoryInterface $parentalInformationRepository,
-                          TuitionRepositoryInterface $tuitionRepository, Sorter $sorter, Grouper $grouper): Response {
+                          Sorter $sorter): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -64,12 +62,13 @@ class ParentsDayController extends AbstractController {
         }
 
         $appointments = [ ];
-        $tuitions = [ ];
+        $teachers = [ ];
 
         if($parentsDayFilterView->getCurrentParentsDay() !== null) {
             if($user->isTeacher() && $teacherFilterView->getCurrentTeacher() !== null) {
                 $appointments = $this->appointmentRepository->findForTeacher($teacherFilterView->getCurrentTeacher(), $parentsDayFilterView->getCurrentParentsDay());
             } else if($user->isStudentOrParent() || $studentFilterView->getCurrentStudent() !== null) {
+                /** @var Student[] $students */
                 $students = $user->getStudents()->toArray();
 
                 if($studentFilterView->getCurrentStudent() !== null) {
@@ -79,42 +78,7 @@ class ParentsDayController extends AbstractController {
                 $appointments = $this->appointmentRepository->findForStudents($students, $parentsDayFilterView->getCurrentParentsDay());
 
                 foreach($students as $student) {
-                    $tuitionsForStudent = $tuitionRepository->findAllByStudents([$student], $sectionResolver->getCurrentSection());
-                    $groups = $grouper->group($tuitionsForStudent, TeacherTuitionsStrategy::class);
-
-                    $sorter->sort($groups, TeacherTuitionsGroupStrategy::class);
-                    $sorter->sortGroupItems($groups, TuitionStrategy::class);
-
-                    $bookedTeachers = [ ];
-
-                    foreach($appointments as $appointment) {
-                        if($appointment->getStudents()->contains($student)) {
-                            foreach($appointment->getTeachers() as $teacher) {
-                                $bookedTeachers[] = $teacher;
-                            }
-                        }
-                    }
-
-                    $teachersWithRequest = [ ];
-                    $teachersNotNecessary = [ ];
-
-                    foreach($parentalInformationRepository->findForStudent($parentsDayFilterView->getCurrentParentsDay(), $student) as $information) {
-                        if($information->isAppointmentNotNecessary()) {
-                            $teachersNotNecessary[] = $information->getTeacher();
-                        }
-
-                        if($information->isAppointmentRequested()) {
-                            $teachersWithRequest[] = $information->getTeacher();
-                        }
-                    }
-
-                    $tuitions[] = [
-                        'student' => $student,
-                        'groups' => $groups,
-                        'bookedTeachers' => $bookedTeachers,
-                        'teachersWithRequest' => $teachersWithRequest,
-                        'teachersNotNecessary' => $teachersNotNecessary
-                    ];
+                    $teachers[] = $teacherOverviewHelper->collectTeachersForStudent($student, $parentsDayFilterView->getCurrentParentsDay());
                 }
             }
         }
@@ -127,7 +91,7 @@ class ParentsDayController extends AbstractController {
             'teacherFilter' => $teacherFilterView,
             'studentFilter' => $studentFilterView,
             'parentsDayFilter' => $parentsDayFilterView,
-            'tuitions' => $tuitions
+            'teacherOverviews' => $teachers
         ]);
     }
 
@@ -240,20 +204,28 @@ class ParentsDayController extends AbstractController {
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            if($request->request->has('removeOldAppointments') && $request->request->getBoolean('removeOldAppointments')) {
-                /** @var User $user */
-                $user = $this->getUser();
+            /** @var User $user */
+            $user = $this->getUser();
 
-                foreach($this->appointmentRepository->findForStudents($user->getStudents()->toArray(), $appointment->getParentsDay()) as $existingAppointment) {
-                    if($existingAppointment->getTeachers()->count() === 1 && $appointment->getTeachers()->count() === 1) {
-                        if($existingAppointment->getTeachers()->first()->getId() === $appointment->getTeachers()->first()->getId()) {
-                            $this->appointmentRepository->remove($existingAppointment);
+            $preventCreation = false;
+
+            foreach($this->appointmentRepository->findForStudents($user->getStudents()->toArray(), $appointment->getParentsDay()) as $existingAppointment) {
+                if($existingAppointment->getTeachers()->count() === 1 && $appointment->getTeachers()->count() === 1) {
+                    if($existingAppointment->getTeachers()->first()->getId() === $appointment->getTeachers()->first()->getId()) {
+                        foreach($appointment->getStudents() as $student) {
+                            $existingAppointment->removeStudent($student);
                         }
+
+                        $this->appointmentRepository->persist($existingAppointment);
                     }
+                } else {
+                    $preventCreation = true;
                 }
             }
 
-            $this->appointmentRepository->persist($appointment);
+            if($preventCreation === false) {
+                $this->appointmentRepository->persist($appointment);
+            }
 
             $this->addFlash('success', 'parents_day.appointments.book.success');
             return $this->redirectToRoute('parents_day');
@@ -321,9 +293,45 @@ class ParentsDayController extends AbstractController {
         ]);
     }
 
+    #[Route('/a/{uuid}/unassign', name: 'unassign_parents_day_appointment')]
+    public function unassignAppointment(ParentsDayAppointment $appointment, Request $request): Response {
+        $this->denyAccessUnlessGranted(ParentsDayAppointmentVoter::EDIT, $appointment);
+
+        $form = $this->createForm(ConfirmType::class, null, [
+            'message' => 'parents_day.appointments.unassign.confirm'
+        ]);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            /** @var User $user */
+            $user = $this->getUser();
+            $appointment->getStudents()->clear();
+
+            $teachers = $appointment->getTeachers()->toArray(); // create a clone to prevent changing collection during iteration
+            foreach($teachers as $teacher) {
+                if($teacher->getId() !== $user->getTeacher()?->getId()) {
+                    $appointment->removeTeacher($teacher);
+                }
+            }
+
+            $this->appointmentRepository->persist($appointment);
+
+            $this->addFlash('success', 'parents_day.appointments.unassign.success');
+            return $this->redirectToRoute('parents_day');
+        }
+
+        return $this->render('parents_days/unassign.html.twig', [
+            'form' => $form->createView(),
+            'appointment' => $appointment
+        ]);
+    }
+
     #[Route('/a/{uuid}/block', name: 'block_parents_day_appointment')]
     public function blockAppointment(ParentsDayAppointment $appointment, Request $request): Response {
         $this->denyAccessUnlessGranted(ParentsDayAppointmentVoter::EDIT, $appointment);
+
+        /** @var User $user */
+        $user = $this->getUser();
 
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'parents_day.appointments.block.confirm',
@@ -482,7 +490,7 @@ class ParentsDayController extends AbstractController {
                 }
                 $repository->commit();
 
-                $this->addFlash('success', 'parents_day.plan.success');
+                $this->addFlash('success', 'parents_day.prepare.success');
                 return $this->redirectToRoute('prepare_parents_day', [
                     'uuid' => $parentsDay->getUuid(),
                     'tuition' => $tuitionFilterView->getCurrentTuition()->getUuid()
@@ -499,8 +507,13 @@ class ParentsDayController extends AbstractController {
     }
 
     #[Route('/{uuid}/cancel_all', name: 'cancel_all_parents_day_appointments')]
-    public function cancelAllAppointments(ParentsDay $parentsDay, TuitionFilter $tuitionFilter, Request $request): Response {
+    public function cancelAllAppointments(ParentsDay $parentsDay, TuitionFilter $tuitionFilter, Request $request, DateHelper $dateHelper): Response {
         $this->denyAccessUnlessGranted(ParentsDayAppointmentVoter::CREATE);
+
+        if($parentsDay->getBookingAllowedUntil() >= $dateHelper->getToday()) {
+            $this->addFlash('error', 'parents_day.appointments.cancel_all.invalid');
+            return $this->redirectToRoute('parents_day');
+        }
 
         /** @var User $user */
         $user = $this->getUser();

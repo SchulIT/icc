@@ -15,7 +15,7 @@ class AttendanceStrategy implements SortingStrategyInterface {
      * @param Attendance $objectB
      */
     public function compare($objectA, $objectB): int {
-        $dateCmp = $this->dateStrategy->compare($objectA->getEntry()->getLesson()->getDate(), $objectB->getEntry()->getLesson()->getDate());
+        $dateCmp = $this->dateStrategy->compare($objectA->getDate(), $objectB->getDate());
 
         if($dateCmp === 0) {
             return $objectA->getLesson() - $objectB->getLesson();

@@ -11,10 +11,6 @@ if [ ! -e $CONTAINER_ALREADY_STARTED ]; then
     npm run build
     php bin/console assets:install
 
-    # Grant write permissions to the storage and bootstrap/cache directories
-    chown -R www-data:www-data /var/www/html/var
-    chown -R www-data:www-data /var/www/html/files
-
     # Check if the SAML certificate does not exist
     if [ ! -f /var/www/html/saml/sp.crt ] || [ ! -f /var/www/html/saml/sp.key ]; then
         echo "Creating SAML certificate..."
@@ -34,6 +30,10 @@ if [ ! -e $CONTAINER_ALREADY_STARTED ]; then
 
     # Register cron jobs
     php bin/console shapecode:cron:scan
+
+    # Grant write permissions to the storage and bootstrap/cache directories
+    chown -R www-data:www-data /var/www/html/var
+    chown -R www-data:www-data /var/www/html/files
 fi
 
 # Start PHP-FPM

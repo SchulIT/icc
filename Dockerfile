@@ -74,16 +74,8 @@ RUN rm -rf ./docker-compose.yml
 RUN rm -rf ./Dockerfile
 RUN rm -rf ./.gitignore
 
-# Install Node.js dependencies
-RUN apt-get update && apt-get install -y \
-    curl \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
 # Install Node.js and npm
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
-    && apt-get install -y nodejs \
-    && npm install -g npm@latest
+RUN apt-get update && apt-get install -y nodejs npm
 
 RUN npm install
 

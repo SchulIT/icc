@@ -128,6 +128,14 @@ class BookSettings extends AbstractSettings {
         $this->setValue('book.attendance_suggestion.priority.book_event', $priority);
     }
 
+    public function getSuggestionPriorityForAbsentStudyGroup(): int {
+        return $this->getValue('book.attendance_suggestion.priority.absent_study_group', 70);
+    }
+
+    public function setSuggestionPriorityForAbsentStudyGroup(int $priority): void {
+        $this->setValue('book.attendance_suggestion.priority.absent_study_group', $priority);
+    }
+
     public function getSuggestionPriorityForRemoval(): int {
         return $this->getValue('book.attendance_suggestion.priority.removal', 20);
     }

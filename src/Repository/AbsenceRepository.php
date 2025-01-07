@@ -74,10 +74,40 @@ class AbsenceRepository extends AbstractTransactionalRepository implements Absen
         return $qb->getQuery()->getResult();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function findAllStudentsByDateAndLesson(DateTime $dateTime, array $students, int $lesson) {
+    public function findAllByStudentAndDateAndLesson(Student $student, DateTime $dateTime, int $lesson): array {
+        $qb = $this->em->createQueryBuilder();
+        $qbInner = $this->em->createQueryBuilder();
+
+        $qbInner
+            ->select('aInner.id')
+            ->from(Absence::class, 'aInner')
+            ->leftJoin('aInner.studyGroup', 'sgInner')
+            ->leftJoin('sgInner.memberships', 'mInner')
+            ->leftJoin('mInner.student', 'sInner')
+            ->where('aInner.date = :date')
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->isNull('aInner.lessonStart'),
+                    $qb->expr()->andX(
+                        'aInner.lessonStart <= :lesson',
+                        'aInner.lessonEnd >= :lesson'
+                    )
+                )
+            )
+            ->andWhere('sInner.id = :student');
+
+        $qb
+            ->select('a')
+            ->from(Absence::class, 'a')
+            ->where($qb->expr()->in('a.id', $qbInner->getDQL()))
+            ->setParameter('date', $dateTime)
+            ->setParameter('lesson', $lesson)
+            ->setParameter('student', $student->getId());
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findAllStudentsByDateAndLesson(DateTime $dateTime, array $students, int $lesson): array {
         $studentIds = array_map(fn(Student $student) => $student->getId(), $students);
 
         $qb = $this->em->createQueryBuilder();
@@ -143,5 +173,6 @@ class AbsenceRepository extends AbstractTransactionalRepository implements Absen
             ->getQuery()
             ->execute();
     }
+
 
 }

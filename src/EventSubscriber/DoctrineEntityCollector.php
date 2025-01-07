@@ -35,6 +35,16 @@ class DoctrineEntityCollector implements EventSubscriberInterface {
     }
 
     private function persistRemoveAndFlush(): void {
+        if(empty($this->collectedForPersist) && empty($this->collectedForRemoval)) {
+            /*
+             * Prevent calling flush (at the bottom of this method) due to a
+             * possible bug. Maybe there is a problem with the tree hydration mode
+             * (gedmo/doctrine-extensions) which is causing a change in
+             * WikiArticle::parent property (?)
+             */
+            return;
+        }
+
         foreach($this->collectedForPersist as $entity) {
             $this->em->persist($entity);
         }

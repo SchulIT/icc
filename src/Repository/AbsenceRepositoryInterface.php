@@ -40,10 +40,18 @@ interface AbsenceRepositoryInterface extends TransactionalRepositoryInterface {
     public function findAllByRoomAndDate(Room $room, DateTime $dateTime): array;
 
     /**
+     * @param Student $student
+     * @param DateTime $dateTime
+     * @param int $lesson
+     * @return Absence[]
+     */
+    public function findAllByStudentAndDateAndLesson(Student $student, DateTime $dateTime, int $lesson): array;
+
+    /**
      * @param Student[] $students
      * @return Student[]
      */
-    public function findAllStudentsByDateAndLesson(DateTime $dateTime, array $students, int $lesson);
+    public function findAllStudentsByDateAndLesson(DateTime $dateTime, array $students, int $lesson): array;
 
     public function persist(Absence $person): void;
 

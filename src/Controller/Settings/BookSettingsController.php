@@ -101,6 +101,11 @@ class BookSettingsController extends AbstractController {
                 'required' => true,
                 'label' => 'admin.settings.book.attendance_suggestion.priority.book_event',
                 'data' => $settings->getSuggestionPriorityForBookEvent()
+            ])
+            ->add('suggestion_priority_absent_study_group', IntegerType::class, [
+                'required' => true,
+                'label' => 'admin.settings.book.attendance_suggestion.priority.absent_study_group',
+                'data' => $settings->getSuggestionPriorityForAbsentStudyGroup()
             ]);
 
         $types = $typeRepository->findAll();
@@ -147,6 +152,9 @@ class BookSettingsController extends AbstractController {
                 },
                 'suggestion_priority_book_event' => function(int $priority) use ($settings) {
                     $settings->setSuggestionPriorityForBookEvent($priority);
+                },
+                'suggestion_priority_absent_study_group' => function(int $priority) use ($settings) {
+                    $settings->setSuggestionPriorityForAbsentStudyGroup($priority);
                 }
             ];
 

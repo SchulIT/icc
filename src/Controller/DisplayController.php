@@ -20,7 +20,7 @@ use App\Sorting\AppointmentStrategy;
 use App\Sorting\Sorter;
 use DateTime;
 use SchulIT\CommonBundle\Helper\DateHelper;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route(path: '/display')]
 class DisplayController extends AbstractController {

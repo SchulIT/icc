@@ -1071,6 +1071,7 @@ admin:
                     excuse_note: Entschuldigung liegt vor
                     absence_note: Abwesenheitsart %type%
                     book_event: Veranstaltung
+                    absent_study_group: Klasse/Jgst. abwesend (laut Vertretungsplan)
 
         tuition_grades:
             label: Notenmodul-Einstellungen
@@ -2046,6 +2047,7 @@ book:
             exam: Klausur (%tuition%)
             absent_before: Abwesenheit in vorheriger Stunde
             excuse: Entschuldigung liegt vor
+            absent_study_group: "%grade% abwesend"
         remove_reason:
             timetable: '%student% besucht %tuition% bei %teacher%'
 

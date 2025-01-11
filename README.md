@@ -1,7 +1,7 @@
 # Information & Communication Center
 
 ![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/schulit/icc/php.yml?style=flat-square)
-![PHP 8.2](https://img.shields.io/badge/PHP-8.2-success.svg?style=flat-square) 
+![PHP 8.3](https://img.shields.io/badge/PHP-8.3-success.svg?style=flat-square) 
 ![AGPL3.0 License](https://img.shields.io/github/license/schulit/icc.svg?style=flat-square)
 
 

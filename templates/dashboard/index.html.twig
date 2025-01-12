@@ -691,7 +691,7 @@
 
 {% block notifications %}
     {% if unreadNotificationsCount > 0 %}
-        <div class="bs-callout bs-callout-warning">
+        <div class="bs-callout bs-callout-warning mt-0 mb-2">
             <div class="d-flex align-items-center">
                 <p class="me-auto mb-0">{{ 'dashboard.notifications.unread'|trans({'%count%': unreadNotificationsCount}) }}</p>
                 <div>
@@ -705,7 +705,7 @@
 
     {% if app.user.isStudentOrParent and is_granted('parentsdayappointments') and upcomingParentsDays|length > 0 %}
         {% for parentsDay in upcomingParentsDays %}
-            <div class="bs-callout bs-callout-warning">
+            <div class="bs-callout bs-callout-warning mt-0 mb-2">
                 <div class="d-flex align-items-center">
                     <p class="me-auto mb-0">
                         <i class="fa-solid fa-people-arrows"></i> {{ 'dashboard.parents_day.header'|trans({'%date%': parentsDay.date|format_date }) }}
@@ -719,6 +719,32 @@
             </div>
         {% endfor %}
     {% endif %}
+{% endblock %}
+
+{% block checklists %}
+    {% for student in app.user.students %}
+        {% if checklists[student.id] is defined and checklists[student.id] is not empty %}
+            {% for checklistStudent in checklists[student.id] %}
+                {% set checklist = checklistStudent.checklist %}
+                <div class="bs-callout bs-callout-warning mt-0 mb-2">
+                    <div class="d-flex align-items-center">
+                        <p class="me-auto mb-0">
+                            <i class="fa-solid fa-list-check"></i> {{ checklist.title }}
+
+                            {% if app.user.students|length > 1 %}
+                            <i class="fas fa-user"></i> {{ checklistStudent.student|student }}
+                            {% endif %}
+                        </p>
+                        <div>
+                            <a href="{{ path('checklists') }}" class="btn btn-outline-primary btn-sm">
+                                {{ 'dashboard.checklists.link'|trans }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
 {% endblock %}
 
 {% block missingEntries %}

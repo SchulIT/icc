@@ -1,0 +1,72 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'checklists.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        {% for student in students %}
+            <div class="card">
+                <div class="card-header">{{ student|student }}</div>
+
+                {% if checklists[student.id] is not empty %}
+                <div class="list-group list-group-flush">
+                    {% for checklistStudent in checklists[student.id] %}
+                        {% set checklist = checklistStudent.checklist %}
+                        <div class="list-group-item {% if checklistStudent.isChecked %} list-group-item-success{% else %} list-group-item-danger{% endif %}">
+                            <div class="d-flex w-100">
+                                <div class="flex-fill">
+                                    {% if checklistStudent.isChecked %}
+                                        <span class="badge text-bg-success me-1">
+                                            <i class="fas fa-check"></i>
+                                        </span>
+                                    {% else %}
+                                        <span class="badge text-bg-danger me-1">
+                                            <i class="fas fa-times"></i>
+                                        </span>
+                                    {% endif %}
+
+                                    {{ checklist.title }}
+                                </div>
+
+                                <span class="text-muted ms-1">
+                                    <i class="fas fa-chalkboard-teacher"></i> {{ checklist.createdBy|user(false) }}
+                                </span>
+
+                                {% if checklist.dueDate != null %}
+                                    <span class="text-muted ms-1">
+                                        <i class="fas fa-calendar-alt"></i> {{ checklist.dueDate|format_date }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                            {% if checklistStudent.comment is not empty %}
+                                <p class="mb-0 mt-2">
+                                    <i class="fas fa-exclamation-triangle text-danger"></i> {{ checklistStudent.comment }}
+                                </p>
+                            {% endif %}
+
+                            {% if checklist.description is not empty %}
+                                <div class="text-muted mt-2 mb-n2">
+                                    {{ checklist.description|markdown }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                    <div class="card-body">
+                        <div class="bs-callout bs-callout-success m-0">
+                            <i class="fas fa-check"></i> {{ 'checklists.empty'|trans }}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor  %}
+    </div>
+{% endblock %}

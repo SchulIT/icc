@@ -10,6 +10,7 @@ use App\Entity\Substitution;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Repository\BookIntegrityCheckViolationRepositoryInterface;
+use App\Repository\ChecklistStudentRepositoryInterface;
 use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Repository\NotificationRepositoryInterface;
 use App\Repository\ParentsDayRepositoryInterface;
@@ -18,6 +19,7 @@ use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use App\Section\SectionResolverInterface;
+use App\Security\Voter\ChecklistStudentVoter;
 use App\Security\Voter\ParentsDayAppointmentVoter;
 use App\Settings\DashboardSettings;
 use App\Settings\TimetableSettings;
@@ -51,7 +53,8 @@ class DashboardController extends AbstractController {
                               UserRepositoryInterface $userRepository, ImportDateTypeRepositoryInterface $importDateTypeRepository,
                               NotificationRepositoryInterface $notificationRepository, TimetableLessonRepositoryInterface $lessonEntryRepository,
                               BookIntegrityCheckViolationRepositoryInterface $bookIntegrityCheckViolationRepository,
-                              SectionResolverInterface $sectionResolver, StudyGroupRepositoryInterface $studyGroupRepository, ParentsDayRepositoryInterface $parentsDayRepository,
+                              SectionResolverInterface $sectionResolver, StudyGroupRepositoryInterface $studyGroupRepository,
+                              ParentsDayRepositoryInterface $parentsDayRepository, ChecklistStudentRepositoryInterface $checklistStudentRepository,
                               Request $request): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -149,6 +152,16 @@ class DashboardController extends AbstractController {
             $missingBookEntries = $lessonEntryRepository->countMissingByTeacher($user->getTeacher(), $currentSection->getStart(), $dateHelper->getToday()->modify('-1 day'));
         }
 
+        $checklists = [ ];
+        foreach($user->getStudents() as $student) {
+            $checklists[$student->getId()] = [ ];
+            foreach($checklistStudentRepository->findAllByStudent($student, true) as $checklistStudent) {
+                if($this->isGranted(ChecklistStudentVoter::View, $checklistStudent)) {
+                    $checklists[$student->getId()][] = $checklistStudent;
+                }
+            }
+        }
+
         return $this->render($template, [
             'studentFilter' => $studentFilterView,
             'teacherFilter' => $teacherFilterView,
@@ -170,7 +183,8 @@ class DashboardController extends AbstractController {
             'dateHasSection' => $dateHasSection,
             'unreadNotificationsCount' => $notificationRepository->countUnreadForUser($user),
             'missingBookEntriesCount' => $missingBookEntries,
-            'upcomingParentsDays' => $parentsDayRepository->findUpcoming($dateHelper->getToday())
+            'upcomingParentsDays' => $parentsDayRepository->findUpcoming($dateHelper->getToday()),
+            'checklists' => $checklists
         ]);
     }
 

@@ -1086,6 +1086,12 @@ admin:
                     absence_note: Abwesenheitsart %type%
                     book_event: Veranstaltung
                     absent_study_group: Klasse/Jgst. abwesend (laut Vertretungsplan)
+            notify_parents_on_absent_student_without_note:
+                label: Eltern bei Fehlen benachrichtigen
+                help: Wenn diese Option aktiv ist, werden Eltern informiert, wenn Ihr Kind ohne bekannten Grund (Abwesenheitsmeldung, vorliegende Entschuldigung, absente Lerngruppen, Klausur) als abwesend eingetragen wird.
+            notify_grade_teachers_on_absent_student_without_note:
+                label: Klassenleitung bei Fehlen benachrichtigen
+                help: Wenn diese Option aktiv ist, wird die Klassenleitung informiert, wenn Lernende ohne bekannten Grund (Abwesenheitsmeldung, vorliegende Entschuldigung, absente Lerngruppen, Klausur) als abwesend eingetragen wird.
 
         tuition_grades:
             label: Notenmodul-Einstellungen

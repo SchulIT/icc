@@ -3,6 +3,7 @@
 namespace App\Book\AttendanceSuggestion;
 
 use App\Entity\Tuition;
+use App\Response\Book\AttendanceSuggestion;
 use DateTime;
 
 class SuggestionResolver {
@@ -18,7 +19,7 @@ class SuggestionResolver {
      * @param int $lessonStart
      * @param int $lessonEnd
      * @param class-string<SuggestionStrategyInterface>[] $excludeStrategies Strategies to ignore - defaults to [ ]
-     * @return array
+     * @return AttendanceSuggestion[]
      */
     public function resolve(Tuition $tuition, DateTime $date, int $lessonStart, int $lessonEnd, array $excludeStrategies = [ ]): array {
         /** @var PrioritizedSuggestion[] $suggestions */

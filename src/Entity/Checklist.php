@@ -25,7 +25,7 @@ class Checklist {
     #[Assert\Length(max: 255)]
     private string $title;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Assert\NotBlank(allowNull: true)]
     private ?string $description = null;
 

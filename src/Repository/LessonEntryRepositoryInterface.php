@@ -11,6 +11,8 @@ use DateTime;
 
 interface LessonEntryRepositoryInterface {
 
+    public function findLastByTuition(Tuition $tuition, DateTime $today): ?LessonEntry;
+
     /**
      * @param Tuition $tuition
      * @param DateTime $start
@@ -50,6 +52,14 @@ interface LessonEntryRepositoryInterface {
      * @return LessonEntry[]
      */
     public function findAllByStudentWithExercises(Student $student, DateTime $start, DateTime $end): array;
+
+    /**
+     * @param Student $student
+     * @param DateTime $start
+     * @param DateTime $end
+     * @return LessonEntry[]
+     */
+    public function findAllByStudents(Student $student, DateTime $start, DateTime $end): array;
 
     public function persist(LessonEntry $entry): void;
 

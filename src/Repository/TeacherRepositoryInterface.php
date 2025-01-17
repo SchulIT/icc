@@ -47,12 +47,6 @@ interface TeacherRepositoryInterface extends TransactionalRepositoryInterface {
     public function findAllByAcronym(array $acronyms): array;
 
     /**
-     * @param string[] $externalIds
-     * @return Teacher[]
-     */
-    public function findAllByExternalId(array $externalIds): array;
-
-    /**
      * Finds teachers with the given birthday (year is ignored) AND with the flag "showBirthday" set to true.
      *
      * @param DateTime $date

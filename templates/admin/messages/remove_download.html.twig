@@ -1,4 +1,4 @@
-{% extends "main.html.twig" %}
+{% extends "admin/_form.html.twig" %}
 
 {% block title %}{{ 'messages.downloads.remove.label'|trans }}{% endblock %}
 
@@ -13,9 +13,7 @@
     </ol>
 {% endblock %}
 
-{% block content %}
-    {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
-
+{% block inner %}
     {{ form_start(form) }}
 
     <div class="card border-danger">

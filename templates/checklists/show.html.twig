@@ -1,0 +1,188 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ checklist.title }}{% endblock %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/collection.js') }}"></script>
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('checklists') }}">{{ 'checklists.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ checklist.title }}</h5>
+                        {{ checklist.description|markdown }}
+                    </div>
+                </div>
+
+                {% if is_granted('edit', checklist) %}
+                    {{ form_start(form) }}
+                    <div class="card">
+                        <div class="card-header">
+                            {{ 'label.students_simple'|trans }}
+                        </div>
+
+                        <div class="bs-callout bs-callout-warning bs-callout-card">
+                            <h5>{{ 'caution'|trans }}</h5>
+                            <p>{{ 'checklists.show.students.save'|trans }}</p>
+                        </div>
+
+                        {% if form.students|length == 0 %}
+                            <div class="bs-callout bs-callout-info bs-callout-card border-bottom-0">
+                                <p>{{ 'checklists.show.students.empty'|trans }}</p>
+                            </div>
+                        {% endif %}
+
+                        <div class="list-group list-group-flush" data-collection="students">
+                            {% for student in form.students %}
+                                {{ form_widget(student) }}
+                            {% endfor %}
+                        </div>
+
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fas fa-save"></i> {{ 'actions.save'|trans }}
+                            </button>
+                        </div>
+                    </div>
+                    {% do form.students.setRendered %}
+                    {{ form_end(form) }}
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-user-plus"></i>
+                                {{ 'checklists.students.add.label'|trans }}
+                            </h5>
+
+                            {{ form_start(studentsForm) }}
+                            {{ form_widget(studentsForm) }}
+
+                            <button type="submit" class="btn btn-primary btn-sm mt-2">
+                                <i class="fas fa-user-plus"></i> {{ 'actions.add'|trans }}
+                            </button>
+
+                            {{ form_end(studentsForm) }}
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="card">
+                        <div class="card-header">
+                            {{ 'label.students_simple'|trans }}
+                        </div>
+
+                        <div class="list-group list-group-flush">
+                            {% for studentForm in form.students %}
+                                {% set student = studentForm.vars.value %}
+                                {% if is_granted('view', student) %}
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 align-items-baseline">
+                                        <div class="me-2">
+                                            {% if student.isChecked %}
+                                                <i class="fas fa-check text-success"></i>
+                                            {% else %}
+                                                <i class="fas fa-times text-danger"></i>
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="flex-fill">
+                                            {{ student.student|student }}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-md-3 sticky-sidebar">
+                {% if is_granted('edit', checklist) or is_granted('remove', checklist) %}
+                    <div class="card">
+                        <div class="list-group list-group-flush">
+                            {% if is_granted('edit', checklist) %}
+                                <a href="{{ path('edit_checklist', { uuid: checklist.uuid }) }}" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-edit"></i> {{ 'checklists.edit.label'|trans }}
+                                </a>
+                            {% endif %}
+
+                            {% if is_granted('remove', checklist) %}
+                                <a href="{{ path('remove_checklist', { uuid: checklist.uuid }) }}" class="list-group-item list-group-item-action list-group-item-danger">
+                                    <i class="fas fa-trash"></i> {{ 'checklists.remove.label'|trans }}
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ 'label.details'|trans }}</h5>
+
+                        <p>
+                            <span class="text-muted">{{ 'label.author'|trans }}</span>
+                            {{ checklist.createdBy|user }}
+                        </p>
+
+                        <p>
+                            <span class="text-muted">{{ 'label.due_date.label'|trans }}</span>
+
+                            {% if checklist.dueDate is not null %}
+                                {{ checklist.dueDate|format_date }}
+                            {% else %}
+                                <span class="badge text-bg-primary">N/A</span>
+                            {% endif %}
+                        </p>
+
+                        <p>
+                            <span class="text-muted">{{ 'label.can_students_view.label'|trans }}</span>
+
+                            <span class="badge text-bg-primary">
+                            {% if checklist.canStudentsView %}
+                                {{ 'yes'|trans }}
+                            {% else %}
+                                {{ 'yes'|trans }}
+                            {% endif %}
+                            </span>
+                        </p>
+
+                        <p>
+                            <span class="text-muted">{{ 'label.can_parents_view.label'|trans }}</span>
+
+                            <span class="badge text-bg-primary">
+                            {% if checklist.canParentsView %}
+                                {{ 'yes'|trans }}
+                            {% else %}
+                                {{ 'yes'|trans }}
+                            {% endif %}
+                            </span>
+                        </p>
+
+                        <p>
+                            <span class="text-muted">{{ 'label.shared_with.label'|trans }}</span>
+
+                            {% if checklist.sharedWith is empty %}
+                                <span class="badge text-bg-primary">N/A</span>
+                            {% else %}
+                                {% for user in checklist.sharedWith %}
+                                    {{ user|user }}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

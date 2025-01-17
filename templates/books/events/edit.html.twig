@@ -1,0 +1,71 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'book.entry.edit.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('book') }}">{{ 'book.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ event.title }}</li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script src="{{ asset('build/book.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+
+    <div class="container-fluid px-0" id="app">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        {{ 'label.general'|trans }}
+                    </div>
+
+                    <div class="card-body">
+                        {{ form_row(form.date) }}
+                        {{ form_row(form.lessonStart) }}
+                        {{ form_row(form.lessonEnd) }}
+                        {{ form_row(form.title) }}
+                        {{ form_row(form.description) }}
+                        {{ form_row(form.teacher) }}
+                    </div>
+                </div>
+
+                <div class="buttons">
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <i class="fa fa-save"></i> {{ 'actions.save'|trans }}
+                    </button>
+
+                    <a href="javascript:history.back()" class="btn btn-secondary btn-sm ms-1">
+                        <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <students :attendances="{{ event.attendances.toArray|json_encode }}"
+                          :possible-absences="{{ possibleAbsences }}"
+                          :suggested-removals="[]"
+                          :students="[]"
+                          :step="1"
+                          field-name="book_event"
+                          list-students-url="{{ path('xhr_students') }}"
+                          list-study-groups-url="{{ path('xhr_studygroups') }}"
+                          :start="{{ event.lessonStart }}"
+                          :end="{{ event.lessonEnd }}"
+                          :flags="[]"
+                          :show-save-button="false"
+                          :standalone="true"></students>
+            </div>
+        </div>
+    </div>
+
+    {% do form.attendances.setRendered(true) %}
+    {{ form_end(form) }}
+{% endblock %}

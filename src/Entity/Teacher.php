@@ -20,8 +20,9 @@ class Teacher implements Stringable {
     use IdTrait;
     use UuidTrait;
 
-    #[ORM\Column(type: 'string', unique: true)]
+    #[ORM\Column(type: 'string', unique: true, nullable: true)]
     #[Assert\Length(max: 255)]
+    #[Assert\NotBlank(allowNull: true)]
     private ?string $externalId = null;
 
     #[ORM\Column(type: 'string', unique: true)]

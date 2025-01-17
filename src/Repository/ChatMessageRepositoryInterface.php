@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Chat;
 use App\Entity\ChatMessage;
 use App\Entity\User;
+use DateTime;
 
 interface ChatMessageRepositoryInterface {
 
@@ -17,6 +18,10 @@ interface ChatMessageRepositoryInterface {
     public function findByChatAndRange(Chat $chat, int $numberOfMessages, ChatMessage|null $lastMessage = null): array;
 
     public function countUnreadMessages(User $user, Chat|null $chat = null): int;
+
+    public function countByChat(Chat $chat): int;
+
+    public function findLastMessageDate(Chat $chat): ?DateTime;
 
     public function persist(ChatMessage $message): void;
 

@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\ResourceEntity;
 use App\Entity\Room;
 use App\Entity\ResourceReservation;
+use App\Entity\Student;
 use App\Entity\Teacher;
 use DateTime;
 
@@ -29,6 +30,13 @@ interface ResourceReservationRepositoryInterface {
      * @return ResourceReservation[]
      */
     public function findAllByTeacherAndDate(Teacher $teacher, DateTime $date): array;
+
+    /**
+     * @param Student $student
+     * @param DateTime $date
+     * @return ResourceReservation[]
+     */
+    public function findAllByStudentAndDate(Student $student, DateTime $date): array;
 
     /**
      * @param DateTime $dateTime

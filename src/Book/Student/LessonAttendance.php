@@ -51,7 +51,8 @@ class LessonAttendance implements JsonSerializable {
             'date' => $this->date->format('c'),
             'lesson' => $this->getLesson(),
             'has_excuses' => count($this->excuses) > 0,
-            'entry' => $this->attendance->getEntry()->getUuid()->toString(),
+            'entry' => $this->attendance->getEntry()?->getUuid()->toString(),
+            'event' => $this->attendance->getEvent()?->getUuid()->toString(),
             'attendance' => [
                 'uuid' => $this->attendance->getUuid()->toString(),
                 'type' => $this->attendance->getType(),

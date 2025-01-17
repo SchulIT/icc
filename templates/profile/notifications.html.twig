@@ -27,6 +27,13 @@
         {% endfor %}
 
         {% if is_pushover_allowed %}
+
+            {% if app.user.pushoverToken is not empty %}
+                <button type="submit" class="btn btn-outline-primary btn-sm" name="test" value="pushover">
+                    {{ 'profile.notifications.pushover.test.label'|trans }}
+                </button>
+            {% endif %}
+
         <div class="bs-callout bs-callout-info">
             <h5 class="no-icon"><i class="fas fa-mobile-screen-button"></i> {{ 'profile.notifications.pushover.info.label'|trans }}</h5>
             <p>{{ 'profile.notifications.pushover.info.description'|trans }}</p>

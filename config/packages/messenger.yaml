@@ -19,9 +19,9 @@ framework:
 
         routing:
             'Symfony\Component\Mailer\Messenger\SendEmailMessage': mail
-            'App\Messenger\ResolveTimetableLessonsForAbsenceLessonMessage': async
             'App\Messenger\RunIntegrityCheckMessage': checks
             'App\Messenger\UpdateOrRemoveUserMessage': users
+            'App\Messenger\SendPushoverNotificationMessage': async
 
 # when@test:
 #    framework:

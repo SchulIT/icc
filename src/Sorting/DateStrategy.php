@@ -6,8 +6,8 @@ use DateTimeInterface;
 class DateStrategy implements SortingStrategyInterface {
 
     /**
-     * @param DateTimeInterface $objectA
-     * @param DateTimeInterface $objectB
+     * @param DateTimeInterface|null $objectA
+     * @param DateTimeInterface|null $objectB
      */
     public function compare($objectA, $objectB): int
     {

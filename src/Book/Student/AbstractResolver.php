@@ -38,8 +38,8 @@ abstract class AbstractResolver {
         $lessonAttendance = [ ];
 
         foreach($attendances as $attendance) {
-            $excuses = new ExcuseCollection($attendance->getEntry()->getLesson()->getDate(), $attendance->getEntry()->getLessonStart());
-            $lessonAttendance[] = new LessonAttendance($attendance->getEntry()->getLesson()->getDate(), $attendance->getLesson(), $attendance, $excuses);
+            $excuses = new ExcuseCollection($attendance->getDate(), $attendance->getLesson());
+            $lessonAttendance[] = new LessonAttendance($attendance->getDate(), $attendance->getLesson(), $attendance, $excuses);
         }
 
         return $lessonAttendance;
@@ -54,14 +54,14 @@ abstract class AbstractResolver {
         $lessonAttendance = [ ];
 
         foreach($attendances as $attendance) {
-            $key = sprintf('%s-%d', $attendance->getEntry()->getLesson()->getDate()->format('Y-m-d'), $attendance->getLesson());
-            $excuses = new ExcuseCollection($attendance->getEntry()->getLesson()->getDate(), $attendance->getLesson());
+            $key = sprintf('%s-%d', $attendance->getDate()->format('Y-m-d'), $attendance->getLesson());
+            $excuses = new ExcuseCollection($attendance->getDate(), $attendance->getLesson());
 
             if(isset($excuseCollection[$key])) {
                 $excuses = $excuseCollection[$key];
             }
 
-            $lessonAttendance[] = new LessonAttendance($attendance->getEntry()->getLesson()->getDate(), $attendance->getLesson(), $attendance, $excuses);
+            $lessonAttendance[] = new LessonAttendance($attendance->getDate(), $attendance->getLesson(), $attendance, $excuses);
         }
 
         return $lessonAttendance;

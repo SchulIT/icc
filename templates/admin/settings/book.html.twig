@@ -9,7 +9,8 @@
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
-        <li class="breadcrumb-item"><a href="{{ path('admin_settings') }}">{{ 'admin.settings.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ 'admin.settings.label'|trans }}</li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
 {% endblock %}
@@ -42,7 +43,11 @@
                 </div>
             </div>
 
+            {{ form_row(form.lesson_topics_visible_for_students_and_parents) }}
             {{ form_row(form.attendances_visible_for_students_and_parents) }}
+
+            {{ form_row(form.notify_parents_on_absent_student_without_note) }}
+            {{ form_row(form.notify_grade_teachers_on_absent_student_without_note) }}
 
             {{ form_row(form.regular_font) }}
             {{ form_row(form.bold_font) }}
@@ -57,6 +62,8 @@
             {{ form_row(form.suggestion_priority_exam) }}
             {{ form_row(form.suggestion_priority_previously_absent) }}
             {{ form_row(form.suggestion_priority_excuse_note) }}
+            {{ form_row(form.suggestion_priority_book_event) }}
+            {{ form_row(form.suggestion_priority_absent_study_group) }}
 
             {% for type in types %}
                 {{ form_row(form['suggestion_priority_' ~ type.uuid.toString ]) }}

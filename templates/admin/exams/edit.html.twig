@@ -1,4 +1,4 @@
-{% extends "main.html.twig" %}
+{% extends "admin/_form.html.twig" %}
 
 {% block title %}{{ 'admin.exams.edit.label'|trans }}{% endblock %}
 
@@ -15,14 +15,14 @@
     <script src="{{ asset('build/tuition-choice-filter.js') }}"></script>
 {% endblock %}
 
-{% block content %}
-    {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
-
+{% block inner %}
     {{ form_start(form) }}
 
     <div class="card">
         <div class="card-header">{{ 'label.general'|trans }}</div>
         <div class="card-body">
+            {{ form_errors(form) }}
+
             {{ form_row(form.date) }}
             {{ form_row(form.lessonStart) }}
             {{ form_row(form.lessonEnd) }}

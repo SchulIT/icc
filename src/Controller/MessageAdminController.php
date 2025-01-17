@@ -49,7 +49,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -222,7 +222,7 @@ class MessageAdminController extends AbstractController {
             }
         }
 
-        return $this->render('messages/confirmations.html.twig', [
+        return $this->render('admin/messages/confirmations.html.twig', [
             'message' => $message,
             'studentsRequired' => $studentsRequired,
             'parentsRequired' => $parentsRequired,

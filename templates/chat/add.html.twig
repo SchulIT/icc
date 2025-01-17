@@ -21,13 +21,16 @@
     <div class="card">
         <div class="card-header">{{ 'label.general'|trans }}</div>
         <div class="card-body">
-            <div class="bs-callout bs-callout-danger">
-                <h5>{{ 'caution'|trans }}</h5>
-                <p>{{ 'chat.add.caution'|trans }}</p>
-            </div>
-
             {{ form_row(form.participants) }}
             {{ form_row(form.topic) }}
+
+            {% if not canEditOrRemove %}
+                <div class="bs-callout bs-callout-danger">
+                    <h5>{{ 'caution'|trans }}</h5>
+                    <p>{{ 'chat.add.caution'|trans }}</p>
+                </div>
+            {% endif %}
+
             {{ form_row(form.messages[0].content) }}
         </div>
         <div class="card-body">

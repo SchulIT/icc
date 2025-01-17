@@ -2,7 +2,7 @@
 sidebar_position: 9
 ---
 
-# Notenmodul
+# Notenmodul-Einstellungen
 
 Um das Notenmodul nutzen zu können, muss zunächst ein Hauptschlüssel generiert werden. Mit diesem Schlüssel werden
 die Noten (im Browser) ver- und entschlüsselt. 

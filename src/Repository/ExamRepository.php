@@ -52,7 +52,7 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     }
 
     public function findOneById(int $id): ?Exam {
-        return $this->getDefaultQueryBuilder()
+        return $this->getDefaultQueryBuilder(null, false, false)
             ->andWhere('e.id = :id')
             ->setParameter('id', $id)
             ->leftJoin('e.students', 'students')
@@ -208,8 +208,9 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
             ->select('eInner.id')
             ->from(Exam::class, 'eInner')
             ->leftJoin('eInner.students', 'sInner')
+            ->leftJoin('sInner.student', 'stInner')
             ->where(
-                $qb->expr()->in('sInner.student', ':studentIds')
+                $qb->expr()->in('stInner.id', ':studentIds')
             );
 
         $qb
@@ -426,12 +427,12 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
 
         if($teacher !== null) {
             $qbInner
-                 ->leftJoin('eInner.supervisions', 'sInner')
+                 ->leftJoin('eInner.supervisions', 'suInner')
                  ->leftJoin('tInner.teachers', 'ttInner')
                  ->andWhere(
                      $qbInner->expr()->orX(
                          'ttInner.id = :teacher',
-                         'sInner.teacher = :teacher'
+                         'suInner.teacher = :teacher'
                      )
                  );
              $qb->setParameter('teacher', $teacher->getId());

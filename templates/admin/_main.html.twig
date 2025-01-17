@@ -1,0 +1,32 @@
+{% extends "main.html.twig" %}
+
+{% block content %}
+    <div class="container-flex px-0">
+        <div class="row">
+            {% set menu = knp_menu_get('dataMenu') %}
+            {% set showVerticalMenu = menu.children|length > 10 %}
+
+            {% if showVerticalMenu %}
+                <div class="col-xl-2 d-xl-grid d-md-none d-sm-none d-none sticky-sidebar">
+                    {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
+                </div>
+
+                <div class="d-xl-none">
+                    {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu_collapsed.html.twig' }) }}
+                </div>
+            {% else %}
+                <div class="d-block">
+                    {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu_horizontal.html.twig' }) }}
+                </div>
+            {% endif %}
+
+            <div class="{% if showVerticalMenu %}col-xl-8 {% endif %} col-md-9">
+                {% block inner %}{% endblock %}
+            </div>
+
+            <div class="{% if showVerticalMenu %}col-xl-2 {% endif %} col-md-3 sticky-sidebar">
+                {% block sidebar %}{% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

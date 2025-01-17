@@ -20,11 +20,15 @@ class ViolationsResolver {
             if($filterTeacher === null) {
                 $run->addViolation($violation);
             } else {
-                if ($violation->getLesson() === null) {
+                if ($violation->getLesson() === null && $violation->getEvent() === null) {
                     continue;
                 }
 
-                if ($violation->getLesson()->getTeachers()->contains($filterTeacher)) {
+                if ($violation->getLesson() !== null && $violation->getLesson()->getTeachers()->contains($filterTeacher)) {
+                    $run->addViolation($violation);
+                }
+
+                if($violation->getEvent() !== null && $violation->getEvent()->getTeacher()?->getId() === $filterTeacher->getId()) {
                     $run->addViolation($violation);
                 }
             }

@@ -19,6 +19,13 @@ class Day {
     private array $lessons = [ ];
 
     /**
+     * @var Event[]
+     */
+    #[Serializer\SerializedName('events')]
+    #[Serializer\Type('array<' . Event::class . '>')]
+    private array $events = [ ];
+
+    /**
      * @var Comment[]
      */
     #[Serializer\SerializedName('comments')]
@@ -43,6 +50,17 @@ class Day {
      */
     public function getLessons(): array {
         return $this->lessons;
+    }
+
+    public function addEvent(Event $event): void {
+        $this->events[] = $event;
+    }
+
+    /**
+     * @return Event[]
+     */
+    public function getEvents(): array {
+        return $this->events;
     }
 
     public function addComment(Comment $comment): void {

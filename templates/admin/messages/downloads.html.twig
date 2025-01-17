@@ -1,4 +1,4 @@
-{% extends "main.html.twig" %}
+{% extends "admin/_main.html.twig" %}
 
 {% block post_javascript %}
     <script src="{{ asset('build/message-downloads.js') }}"></script>
@@ -72,151 +72,144 @@
     {% endfor %}
 {% endmacro %}
 
-{% block content %}
-    {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
-
-    <div class="container-fluid px-0">
-        <div class="row">
-            <div class="col-md-9" id="explorer">
-                {# Students #}
-                {% for grade in grades %}
-                    <div class="card">
-                        <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#downloads-{{ grade.grade.uuid }}">
-                            <span class="me-auto align-self-center">{{ grade.grade.name }}</span>
-                            <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
-                        </div>
-
-                        <div id="downloads-{{ grade.grade.uuid }}">
-                            <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#downloads-students-{{ grade.grade.uuid }}">
-                                <span class="me-auto align-self-center">{{ 'user_type.student'|trans({}, 'enums') }}</span>
-                                <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
-                            </div>
-
-                            <div class="table table-striped table-bordered table-card collapse mb-0" id="downloads-students-{{ grade.grade.uuid }}">
-                                <div class="table-head table-row">
-                                    <div class="table-col fill">{{ 'label.file'|trans }}</div>
-                                    <div class="table-col column-md">{{ 'label.filesize'|trans }}</div>
-                                    <div class="table-col column-200">{{ 'label.date'|trans }}</div>
-                                </div>
-
-                                {% for student in grade.students %}
-                                    {% set users = view.studentUsers(student) %}
-                                    {{ _self.printUsers(view, message, users, student|student, csrf_token_id, csrf_token_name ) }}
-                                {% endfor %}
-                            </div>
-
-                            <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#downloads-parents-{{ grade.grade.uuid }}">
-                                <span class="me-auto align-self-center">{{ 'user_type.parent'|trans({}, 'enums') }}</span>
-                                <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
-                            </div>
-
-                            <div class="table table-striped table-bordered table-card collapse mb-0" id="downloads-parents-{{ grade.grade.uuid }}">
-                                <div class="table-head table-row">
-                                    <div class="table-col fill">{{ 'label.file'|trans }}</div>
-                                    <div class="table-col column-md">{{ 'label.filesize'|trans }}</div>
-                                    <div class="table-col column-200">{{ 'label.date'|trans }}</div>
-                                </div>
-
-                                {% for student in grade.students %}
-                                    {% set users = view.parentUsers(student) %}
-                                    {{ _self.printUsers(view, message, users, student|student, csrf_token_id, csrf_token_name ) }}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-                {# Teachers #}
-                {% if teachers|length > 0 %}
-                    <div class="card">
-                        <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#downloads-teachers">
-                            <span class="me-auto align-self-center">{{ 'user_type.teacher'|trans({}, 'enums') }}</span>
-                            <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
-                        </div>
-
-                        <div class="table table-striped table-bordered table-card collapse" id="downloads-teachers">
-                            <div class="table-head table-row">
-                                <div class="table-col fill">{{ 'label.file'|trans }}</div>
-                                <div class="table-col column-md">{{ 'label.filesize'|trans }}</div>
-                                <div class="table-col column-200">{{ 'label.date'|trans }}</div>
-                            </div>
-
-                            {% for teacher in teachers %}
-                                {% set users = view.teacherUsers(teacher) %}
-                                {{ _self.printUsers(view, message, users, teacher|teacher, csrf_token_id, csrf_token_name ) }}
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% endif %}
-
-                {# Users #}
-                {% for group in userGroups %}
-                    <div class="card">
-                        <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#downloads-users">
-                            <span class="me-auto align-self-center">{{ group.userType|enum }}</span>
-                            <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
-                        </div>
-
-                        <div class="table table-striped table-bordered table-card collapse" id="downloads-users">
-                            <div class="table-head table-row">
-                                <div class="table-col fill">{{ 'label.file'|trans }}</div>
-                                <div class="table-col column-md">{{ 'label.filesize'|trans }}</div>
-                                <div class="table-col column-200">{{ 'label.date'|trans }}</div>
-                            </div>
-
-                            {% for user in group.users %}
-                                {{ _self.printUsers(view, message, [ user ], user|user, csrf_token_id, csrf_token_name ) }}
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-
-            <div class="col-md-3">
-
-                <div class="card">
-                    <div class="card-header">{{ 'messages.downloads.statistics.label'|trans }}</div>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover table-striped card-table">
-                            <tbody>
-                            {% for num, count in statistics %}
-                                <tr>
-                                    <td>{{ 'messages.downloads.statistics.info'|trans({'%count%': num}) }}</td>
-                                    <td>{{ 'messages.downloads.statistics.user'|trans({'%count%': count}) }}</td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="card-footer">
-                        <i class="fa fa-exclamation-triangle"></i> {{ 'messages.downloads.statistics.caution'|trans }}
-                    </div>
+{% block inner %}
+    <div id="explorer">
+        {# Students #}
+        {% for grade in grades %}
+            <div class="card">
+                <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#downloads-{{ grade.grade.uuid }}">
+                    <span class="me-auto align-self-center">{{ grade.grade.name }}</span>
+                    <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
                 </div>
 
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title">{{ 'messages.downloads.dropzone.label'|trans }}</h4>
-                        <p>{{ 'messages.downloads.dropzone.help'|trans }}</p>
+                <div id="downloads-{{ grade.grade.uuid }}">
+                    <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#downloads-students-{{ grade.grade.uuid }}">
+                        <span class="me-auto align-self-center">{{ 'user_type.student'|trans({}, 'enums') }}</span>
+                        <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
+                    </div>
 
-                        <div id="dropzone" class="dropzone" data-area="dropzone" data-success="#dropzone-success" data-upload-folders="true" data-preview="#dropzone-preview" data-preview-container="#dropzone" data-csrf-token-name="{{ csrf_token_name }}" data-csrf-token="{{ csrf_token(csrf_token_id) }}" data-url="{{ path('upload_message_downloads', { uuid: message.uuid }) }}" style="min-height: 150px;">
-                            <div id="dropzone-files"></div>
+                    <div class="table table-striped table-bordered table-card collapse mb-0" id="downloads-students-{{ grade.grade.uuid }}">
+                        <div class="table-head table-row">
+                            <div class="table-col fill">{{ 'label.file'|trans }}</div>
+                            <div class="table-col column-md">{{ 'label.filesize'|trans }}</div>
+                            <div class="table-col column-200">{{ 'label.date'|trans }}</div>
                         </div>
 
-                        <span class="d-none" id="dropzone-success"><i class="fa fa-check"></i> {{ 'messages.downloads.dropzone.success'|trans }}</span>
+                        {% for student in grade.students %}
+                            {% set users = view.studentUsers(student) %}
+                            {{ _self.printUsers(view, message, users, student|student, csrf_token_id, csrf_token_name ) }}
+                        {% endfor %}
+                    </div>
 
-                        <template id="dropzone-preview">
-                            <div class="file">
-                                <div class="filename"><span data-dz-name></span></div>
-                                <div class="progress">
-                                    <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" data-dz-uploadprogress></div>
-                                </div>
-                                <div class="error-message">
-                                    <span data-dz-errormessage></span>
-                                </div>
-                            </div>
-                        </template>
+                    <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#downloads-parents-{{ grade.grade.uuid }}">
+                        <span class="me-auto align-self-center">{{ 'user_type.parent'|trans({}, 'enums') }}</span>
+                        <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
+                    </div>
+
+                    <div class="table table-striped table-bordered table-card collapse mb-0" id="downloads-parents-{{ grade.grade.uuid }}">
+                        <div class="table-head table-row">
+                            <div class="table-col fill">{{ 'label.file'|trans }}</div>
+                            <div class="table-col column-md">{{ 'label.filesize'|trans }}</div>
+                            <div class="table-col column-200">{{ 'label.date'|trans }}</div>
+                        </div>
+
+                        {% for student in grade.students %}
+                            {% set users = view.parentUsers(student) %}
+                            {{ _self.printUsers(view, message, users, student|student, csrf_token_id, csrf_token_name ) }}
+                        {% endfor %}
                     </div>
                 </div>
             </div>
+        {% endfor %}
+        {# Teachers #}
+        {% if teachers|length > 0 %}
+            <div class="card">
+                <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#downloads-teachers">
+                    <span class="me-auto align-self-center">{{ 'user_type.teacher'|trans({}, 'enums') }}</span>
+                    <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
+                </div>
+
+                <div class="table table-striped table-bordered table-card collapse" id="downloads-teachers">
+                    <div class="table-head table-row">
+                        <div class="table-col fill">{{ 'label.file'|trans }}</div>
+                        <div class="table-col column-md">{{ 'label.filesize'|trans }}</div>
+                        <div class="table-col column-200">{{ 'label.date'|trans }}</div>
+                    </div>
+
+                    {% for teacher in teachers %}
+                        {% set users = view.teacherUsers(teacher) %}
+                        {{ _self.printUsers(view, message, users, teacher|teacher, csrf_token_id, csrf_token_name ) }}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        {# Users #}
+        {% for group in userGroups %}
+            <div class="card">
+                <div class="pointer card-header d-flex" data-toggle="table-collapse" data-target="#downloads-users">
+                    <span class="me-auto align-self-center">{{ group.userType|enum }}</span>
+                    <i class="fa fa-chevron-down float-right indicator align-self-center"></i>
+                </div>
+
+                <div class="table table-striped table-bordered table-card collapse" id="downloads-users">
+                    <div class="table-head table-row">
+                        <div class="table-col fill">{{ 'label.file'|trans }}</div>
+                        <div class="table-col column-md">{{ 'label.filesize'|trans }}</div>
+                        <div class="table-col column-200">{{ 'label.date'|trans }}</div>
+                    </div>
+
+                    {% for user in group.users %}
+                        {{ _self.printUsers(view, message, [ user ], user|user, csrf_token_id, csrf_token_name ) }}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block sidebar %}
+    <div class="card">
+        <div class="card-header">{{ 'messages.downloads.statistics.label'|trans }}</div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped card-table">
+                <tbody>
+                {% for num, count in statistics %}
+                    <tr>
+                        <td>{{ 'messages.downloads.statistics.info'|trans({'%count%': num}) }}</td>
+                        <td>{{ 'messages.downloads.statistics.user'|trans({'%count%': count}) }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer">
+            <i class="fa fa-exclamation-triangle"></i> {{ 'messages.downloads.statistics.caution'|trans }}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">{{ 'messages.downloads.dropzone.label'|trans }}</h4>
+            <p>{{ 'messages.downloads.dropzone.help'|trans }}</p>
+
+            <div id="dropzone" class="dropzone" data-area="dropzone" data-success="#dropzone-success" data-upload-folders="true" data-preview="#dropzone-preview" data-preview-container="#dropzone" data-csrf-token-name="{{ csrf_token_name }}" data-csrf-token="{{ csrf_token(csrf_token_id) }}" data-url="{{ path('upload_message_downloads', { uuid: message.uuid }) }}" style="min-height: 150px;">
+                <div id="dropzone-files"></div>
+            </div>
+
+            <span class="d-none" id="dropzone-success"><i class="fa fa-check"></i> {{ 'messages.downloads.dropzone.success'|trans }}</span>
+
+            <template id="dropzone-preview">
+                <div class="file">
+                    <div class="filename"><span data-dz-name></span></div>
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" data-dz-uploadprogress></div>
+                    </div>
+                    <div class="error-message">
+                        <span data-dz-errormessage></span>
+                    </div>
+                </div>
+            </template>
         </div>
     </div>
 {% endblock %}

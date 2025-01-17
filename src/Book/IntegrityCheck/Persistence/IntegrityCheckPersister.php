@@ -36,7 +36,8 @@ class IntegrityCheckPersister {
                     ->setIsSuppressed(false)
                     ->setLessonNumber($violation->getLesson())
                     ->setMessage($violation->getMessage())
-                    ->setLesson($violation->getTimetableLesson());
+                    ->setLesson($violation->getTimetableLesson())
+                    ->setEvent($violation->getEvent());
             } else {
                 $violationEntity = $existingViolations[$referenceId];
             }

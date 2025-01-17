@@ -31,11 +31,11 @@ class Teacher {
     #[Serializer\SerializedName('title')]
     private ?string $title = null;
 
-    public function getId(): string {
+    public function getId(): ?string {
         return $this->id;
     }
 
-    public function setId(string $id): Teacher {
+    public function setId(?string $id): Teacher {
         $this->id = $id;
         return $this;
     }

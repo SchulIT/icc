@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Repository\TimetableWeekRepositoryInterface;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route(path: '/admin/timetable')]
 #[Security("is_granted('ROLE_ADMIN')")]

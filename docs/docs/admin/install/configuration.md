@@ -135,6 +135,21 @@ Empfohlener Wert: `30` Tage
 
 Mehr zur Aufbewahrungsrichtlinie gibt es Mehr unter [hier](../../features/audit#aufbewahrungsrichtlinie).
 
+#### PUSHOVER_TOKEN
+
+Für den Fall, dass [Benachrichtigungen via Pushover](../guides/pushover) gesendet werden sollen, muss das entsprechende Token hier hinterlegt
+werden.
+
+#### DB_SECRET
+
+Mit diesem Schlüssel werden Einträge in der Datenbank verschlüsselt (aktuell Titel und Inhalte von privaten Nachrichten). Es 
+wird ein 32 Byte langer hexadezimaler Schlüssel (`[0-9a-fA-F]`) benötigt. Die Erstellung gelingt zum Beispiel mittels
+OpenSSL:
+
+```bash
+$ openssl rand -hex 32
+```
+
 ### Datenbank
 
 #### DATABASE_URL

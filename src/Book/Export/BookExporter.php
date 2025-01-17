@@ -5,19 +5,18 @@ namespace App\Book\Export;
 use App\Book\EntryOverview;
 use App\Book\EntryOverviewHelper;
 use App\Book\Grade\GradeOverviewHelper;
-use App\Book\Student\AbsenceExcuseResolver;
 use App\Book\Student\LessonAttendance;
 use App\Book\Student\StudentInfo;
 use App\Book\Student\StudentInfoResolver;
 use App\Book\StudentsResolver;
+use App\Entity\Attendance as LessonAttendanceEntity;
+use App\Entity\AttendanceType;
 use App\Entity\BookComment as CommentEntity;
+use App\Entity\BookEvent;
 use App\Entity\Grade as GradeEntity;
 use App\Entity\GradeLimitedMembership;
 use App\Entity\GradeMembership;
 use App\Entity\GradeTeacher;
-use App\Entity\Attendance as LessonAttendanceEntity;
-use App\Entity\AttendanceType;
-use App\Entity\LessonEntry;
 use App\Entity\LessonEntry as LessonEntryEntity;
 use App\Entity\Section as SectionEntity;
 use App\Entity\Student as StudentEntity;
@@ -33,7 +32,6 @@ use App\Repository\TuitionRepositoryInterface;
 use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
 use App\Utils\ArrayUtils;
-use InvalidArgumentException;
 use JMS\Serializer\SerializerInterface;
 
 class BookExporter {
@@ -232,6 +230,10 @@ class BookExporter {
                 $exportDay->addLesson($lesson);
             }
 
+            foreach($overview->getEvents($day->getDate()) as $event) {
+                $exportDay->addEvent($this->castEvent($event, $section, $studentInfo));
+            }
+
             $weeks[$weekNumber]->addDay($exportDay);
         }
 
@@ -335,8 +337,22 @@ class BookExporter {
             ->setExercises($entry->getExercises())
             ->setIsMissing(false);
 
-        /** @var LessonAttendanceEntity $attendance */
-        foreach($entry->getAttendances() as $attendance) {
+        foreach($this->castAttendances($entry->getAttendances()->toArray(), $section, $entry, $studentInfo) as $exportAttendance) {
+            $lesson->addAttendance($exportAttendance);
+        }
+
+        return $lesson;
+    }
+
+    /**
+     * @param LessonAttendanceEntity[] $attendances
+     * @param StudentInfo[] $studentInfo
+     * @return Attendance[]
+     */
+    private function castAttendances(array $attendances, SectionEntity $section, LessonEntryEntity|BookEvent $entryOrEvent, array $studentInfo): array {
+        $result = [ ];
+
+        foreach($attendances as $attendance) {
             $exportAttendance = (new Attendance())
                 ->setComment($attendance->getComment())
                 ->setLateMinutesCount($attendance->getLateMinutes())
@@ -364,7 +380,7 @@ class BookExporter {
                 if($info !== null) {
                     /** @var LessonAttendance $possibleAttendance */
                     $possibleAttendance = ArrayUtils::first($info->getAbsentLessonAttendances(), fn(LessonAttendance $lessonAttendance) => $lessonAttendance->getAttendance()->getId() === $attendance->getId()
-                        && $lessonAttendance->getAttendance()->getEntry() === $entry);
+                        && ($lessonAttendance->getAttendance()->getEntry() === $entryOrEvent || $lessonAttendance->getAttendance()->getEvent() === $entryOrEvent));
 
                     if($possibleAttendance !== null) {
                         $exportAttendance->setIsExcused($possibleAttendance->isExcused());
@@ -372,10 +388,10 @@ class BookExporter {
                 }
             }
 
-            $lesson->addAttendance($exportAttendance);
+            $result[] = $exportAttendance;
         }
 
-        return $lesson;
+        return $result;
     }
 
     private function castAttendanceType(AttendanceType $type): string
@@ -406,6 +422,24 @@ class BookExporter {
         }
 
         return $grade;
+    }
+
+    /**
+     * @param StudentInfo[] $studentInfo
+     */
+    private function castEvent(BookEvent $bookEvent, SectionEntity $section, array $studentInfo): Event {
+        $event = (new Event())
+            ->setStart($bookEvent->getLessonStart())
+            ->setEnd($bookEvent->getLessonEnd())
+            ->setTeacher($this->castTeacher($bookEvent->getTeacher()))
+            ->setTitle($bookEvent->getTitle())
+            ->setDescription($bookEvent->getDescription());
+
+        foreach($this->castAttendances($bookEvent->getAttendances()->toArray(), $section, $bookEvent, $studentInfo) as $exportAttendance) {
+            $event->addAttendance($exportAttendance);
+        }
+
+        return $event;
     }
 
     private function castComment(CommentEntity $comment, SectionEntity $section): Comment {

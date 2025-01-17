@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Form\NotificationsType;
 use App\Grouping\Grouper;
 use App\Grouping\UserTypeAndGradeStrategy;
+use App\Messenger\SendPushoverNotificationMessage;
 use App\Repository\DeviceTokenRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use App\Section\SectionResolverInterface;
@@ -16,15 +17,22 @@ use App\Sorting\Sorter;
 use App\Sorting\StringGroupStrategy;
 use App\Sorting\UserUsernameStrategy;
 use App\Utils\ArrayUtils;
+use SchulIT\CommonBundle\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route(path: '/profile')]
 class ProfileController extends AbstractController {
 
     private const RemoveAppCrsfTokenKey = '_remove_app_csrf';
+
+    public function __construct(private readonly ?string $pushoverToken, RefererHelper $redirectHelper) {
+        parent::__construct($redirectHelper);
+    }
 
     #[Route(path: '', name: 'profile')]
     public function index(): Response {
@@ -32,13 +40,13 @@ class ProfileController extends AbstractController {
     }
 
     #[Route(path: '/notifications', name: 'profile_notifications')]
-    public function notifications(Request $request, UserRepositoryInterface $userRepository, NotificationSettings $notificationSettings): Response {
+    public function notifications(Request $request, UserRepositoryInterface $userRepository, NotificationSettings $notificationSettings, MessageBusInterface $messageBus, TranslatorInterface $translator): Response {
         /** @var User $user */
         $user = $this->getUser();
 
         $allowedEmailUserTypes = $notificationSettings->getEmailEnabledUserTypes();
         $isEmailAllowed = ArrayUtils::inArray($user->getUserType(), $allowedEmailUserTypes) !== false;
-        $isPushoverAllowed = ArrayUtils::inArray($user->getUserType(), $notificationSettings->getPushoverEnabledUserTypes()) !== false;
+        $isPushoverAllowed = !empty($this->pushoverToken) && ArrayUtils::inArray($user->getUserType(), $notificationSettings->getPushoverEnabledUserTypes()) !== false;
         $isAllowed = $isEmailAllowed || $isPushoverAllowed;
 
         $form = null;
@@ -49,6 +57,20 @@ class ProfileController extends AbstractController {
                 'allow_pushover' => $isPushoverAllowed
             ]);
             $form->handleRequest($request);
+
+            if($form->isSubmitted() && $request->request->get('test', null) === 'pushover' && !empty($user->getPushoverToken())) {
+                $messageBus->dispatch(
+                    new SendPushoverNotificationMessage(
+                        $user->getId(),
+                        $user->getUserIdentifier(),
+                        $translator->trans('test.content', [], 'push'),
+                        $translator->trans('test.title', [], 'push')
+                    )
+                );
+
+                $this->addFlash('success', 'profile.notifications.pushover.test.success');
+                return $this->redirectToRoute('profile_notifications');
+            }
 
             if($form->isSubmitted() && $form->isValid()) {
                 $userRepository->persist($user);

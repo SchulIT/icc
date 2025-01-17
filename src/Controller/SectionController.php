@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Repository\AbsenceRepositoryInterface;
 use App\Repository\AppointmentRepositoryInterface;
 use App\Repository\BookCommentRepositoryInterface;
+use App\Repository\BookStudentInformationRepositoryInterface;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\FreeTimespanRepositoryInterface;
@@ -25,7 +26,7 @@ use App\Repository\TimetableLessonRepositoryInterface;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route(path: '/admin/section')]
 class SectionController extends AbstractController {
@@ -86,7 +87,7 @@ class SectionController extends AbstractController {
                            AbsenceRepositoryInterface $absenceRepository, FreeTimespanRepositoryInterface $freeTimespanRepository,
                            InfotextRepositoryInterface $infotextRepository, AppointmentRepositoryInterface $appointmentRepository,
                            ExcuseNoteRepositoryInterface $excuseNoteRepository, BookCommentRepositoryInterface $bookCommentRepository,
-                           ParentsDayRepositoryInterface $parentsDayRepository): Response {
+                           ParentsDayRepositoryInterface $parentsDayRepository, BookStudentInformationRepositoryInterface $studentInformationRepository): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'admin.sections.remove.confirm',
             'message_parameters' => [
@@ -112,6 +113,7 @@ class SectionController extends AbstractController {
             $studentAbsenceRepository->removeRange($section->getStart(), $section->getEnd());
             $teacherAbsenceRepository->removeRange($section->getStart(), $section->getEnd());
             $parentsDayRepository->removeRange($section->getStart(), $section->getEnd());
+            $studentInformationRepository->removeExpired($section->getEnd());
 
             $this->repository->remove($section);
             $this->addFlash('success', 'admin.sections.remove.success');

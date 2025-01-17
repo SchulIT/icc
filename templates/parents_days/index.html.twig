@@ -115,6 +115,10 @@
                                             <i class="fas fa-user-check"></i> {{ 'parents_day.appointments.assign.label'|trans }}
                                         </a>
 
+                                        <a href="{{ path('unassign_parents_day_appointment', { uuid: appointment.uuid}) }}" class="dropdown-item">
+                                            <i class="fas fa-user-times"></i> {{ 'parents_day.appointments.unassign.label'|trans }}
+                                        </a>
+
                                         {% if not appointment.blocked %}
                                             <a href="{{ path('block_parents_day_appointment', { uuid: appointment.uuid}) }}" class="dropdown-item">
                                                 <i class="fas fa-lock"></i> {{ 'parents_day.appointments.block.label'|trans }}
@@ -147,44 +151,56 @@
                 </div>
                 {% endif %}
 
-                {% for studentGroup in tuitions %}
+                {% for overview in teacherOverviews %}
                     <div class="card">
-                        <div class="card-header">{{ 'lists.tuitions.heading.student'|trans({'%student%': studentGroup.student|student }) }}</div>
+                        <div class="card-header">{{ overview.student|student }}</div>
                         <div class="list-group list-group-flush">
-                            {% for teacherGroup in studentGroup.groups %}
-                                {% set alreadyBooked = teacherGroup.teacher in studentGroup.bookedTeachers %}
-                                {% set appointmentRequested = teacherGroup.teacher in studentGroup.teachersWithRequest %}
-                                {% set appointmentNotNecessary = teacherGroup.teacher in studentGroup.teachersNotNecessary %}
-
-                                <div class="list-group-item d-flex {% if alreadyBooked %}bg-success-subtle{% elseif appointmentRequested %}bg-danger-subtle{% endif %}">
+                            {% for item in overview.items %}
+                                <div class="list-group-item d-flex {% if item.alreadyBooked %}bg-success-subtle{% elseif item.appointmentRequested %}bg-danger-subtle{% endif %}">
                                     <div class="flex-fill align-self-center">
-                                        {{ teacherGroup.teacher|teacher }}
+                                        {{ item.teacher|teacher }}
 
-                                        {% for tuition in teacherGroup.tuitions %}
+                                        {% if item.isGradeTeacher %}
+                                            <span class="badge text-bg-primary">{{ 'lists.study_groups.grade_teacher'|trans }}</span>
+                                        {% endif %}
+
+                                        {% for tuition in item.tuitions %}
                                             <span class="badge text-bg-secondary">{{ tuition.subject.name }}</span>
                                         {% endfor %}
 
-                                        {% if appointmentRequested %}
+                                        {% if item.appointmentRequested %}
                                             <span class="badge text-bg-danger">{{ 'parents_day.prepare.requested.label'|trans }}</span>
-                                        {% elseif appointmentNotNecessary %}
+                                        {% elseif item.appointmentNotNecessary %}
                                             <span class="badge text-bg-success">{{ 'parents_day.prepare.not_necessary.label'|trans }}</span>
                                         {% endif %}
 
-                                        {% if alreadyBooked %}
+                                        {% if item.alreadyBooked %}
                                             <span class="badge text-bg-success">{{ 'parents_day.appointments.already_booked'|trans }}</span>
                                         {% endif %}
+
+                                        {% for comment in item.comments %}
+                                            <div>
+                                                <i class="fas fa-info-circle"></i> {{ comment }}
+                                            </div>
+                                        {% endfor %}
                                     </div>
 
                                     {% if is_granted('book-parentsdayappointment', parentsDayFilter.currentParentsDay) %}
-                                        <a href="{{ path('book_parents_day_appointment_overview', { uuid: parentsDayFilter.currentParentsDay.uuid, teacher: teacherGroup.teacher.uuid }) }}" class="btn btn-sm btn-outline-primary">
-                                            {% if not alreadyBooked %}
+                                        <a href="{{ path('book_parents_day_appointment_overview', { uuid: parentsDayFilter.currentParentsDay.uuid, teacher: item.teacher.uuid }) }}" class="btn btn-sm btn-outline-primary align-self-center">
+                                            {% if not item.alreadyBooked %}
                                                 {{ 'parents_day.appointments.book.label'|trans }}
                                             {% else %}
                                                 {{ 'parents_day.appointments.rebook.label'|trans }}
                                             {% endif %}
                                         </a>
                                     {% else %}
-                                        <span class="text-muted">{{ 'parents_day.appointments.booking_unavailable'|trans }}</span>
+                                        <span class="text-muted align-self-center">{{ 'parents_day.appointments.booking_unavailable'|trans }}</span>
+                                    {% endif %}
+
+                                    {% if is_granted('is-chat-enabled') and item.userUuid is not null %}
+                                        <a href="{{ path('new_chat', { recipients: [ item.userUuid ]}) }}" class="btn btn-outline-secondary btn-sm ms-2" title="{{ 'parents_day.chat'|trans }}">
+                                            <i class="fa-solid fa-comments"></i>
+                                        </a>
                                     {% endif %}
                                 </div>
                             {% endfor %}

@@ -42,7 +42,7 @@
             {% if gradeFilter.ownGrades|length > 0 %}
                 <div class="list-group list-group-flush mt-2">
                     {% for grade in gradeFilter.ownGrades %}
-                    <button type="submit" name="grade" id="grade" value="{{ grade.uuid }}" class="btn btn-outline-secondary w-100 text-start {% if gradeFilter.currentGrade != null and gradeFilter.currentGrade.id == grade.id %}active{% endif %}">
+                    <button type="submit" name="grade" id="grade" value="{{ grade.uuid }}" class="btn btn-outline-secondary w-100 text-start mb-1 {% if gradeFilter.currentGrade != null and gradeFilter.currentGrade.id == grade.id %}active{% endif %}">
                         {{ grade.name }}
 
                         {% set teachers = [] %}

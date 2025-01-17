@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\ResourceEntity;
 use App\Entity\ResourceReservation;
+use App\Entity\Student;
+use App\Entity\StudyGroup;
 use App\Entity\Teacher;
 use DateTime;
 
@@ -121,6 +123,30 @@ class ResourceReservationRepository extends AbstractRepository implements Resour
             $qb->andWhere('r.date = :date')
                 ->setParameter('date', $date);
         }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findAllByStudentAndDate(Student $student, DateTime $date): array {
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('sgInner.id')
+            ->from(StudyGroup::class, 'sgInner')
+            ->leftJoin('sgInner.memberships', 'mInner')
+            ->leftJoin('mInner.student', 'sInner')
+            ->where('sInner.id = :student');
+
+        $qb = $this->em->createQueryBuilder()
+            ->select('r')
+            ->from(ResourceReservation::class, 'r')
+            ->leftJoin('r.resource', 'rr')
+            ->leftJoin('r.teacher', 'rt');
+
+        $qb->where(
+            $qb->expr()->in('r.associatedStudyGroup', $qbInner->getDQL())
+        )
+            ->setParameter('student', $student->getId())
+            ->andWhere('r.date = :date')
+                ->setParameter('date', $date);
 
         return $qb->getQuery()->getResult();
     }

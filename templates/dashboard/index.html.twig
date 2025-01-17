@@ -166,6 +166,41 @@
     {% endif %}
 {% endblock %}
 
+{% block additionalItems %}
+    {% if view.hasAdditionalItems %}
+        <div class="spacer">
+            <span><a id="additionals"></a><i class="fas fa-square-plus"></i> {{ 'dashboard.additional_items'|trans }}</span>
+        </div>
+
+        {% for lessonNumber in view.lessonNumbers %}
+            {% set lesson = view.additionalLesson(lessonNumber) %}
+            {% if lesson is not null %}
+                {% for item in lesson.items %}
+                    {% set type = item.blockName %}
+
+                    {% if type == 'exam' %}
+                        {{ dashboard.exam(item, lessonNumber, startTimes[lessonNumber], lesson.warning, endTimes[lessonNumber]) }}
+                    {% elseif type == 'lesson' %}
+                        {{ dashboard.lesson(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, lesson.isCurrent, gradesWithCourseNames) }}
+                    {% elseif type == 'free_lesson' %}
+                        {{ dashboard.free_lesson(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, lesson.isCurrent) }}
+                    {% elseif type == 'supervision' %}
+                        {{ dashboard.supervision(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, false, supervisionLabels) }}
+                    {% elseif type == 'substitution' %}
+                        {{ dashboard.substitution(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, lesson.isCurrent) }}
+                    {% elseif type == 'appointment' %}
+                        {{ dashboard.appointment(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, lesson.isCurrent) }}
+                    {% elseif type == 'exam_supervision' %}
+                        {{ dashboard.exam_supervision(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber], lesson.warning, lesson.isCurrent) }}
+                    {% elseif type == 'reservation' %}
+                        {{ dashboard.reservation(item, lessonNumber, startTimes[lessonNumber], endTimes[lessonNumber]) }}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
 {% block daily_info %}
     {% if view.infotexts|length > 0 or view.absentStudyGroups|length > 0 or view.absentTeachers|length > 0 %}
         <div class="spacer">
@@ -356,8 +391,9 @@
                 {% set canCreateReservation = is_granted('new-reservation') %}
                 {% set canCreateExcuseNote = is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
                 {% set canCreateTeacherAbsence = is_granted('new-teacher-absence') %}
+                {% set canCreateAdditionalInformationForLesson = is_granted('new-timetablelesson-additionalinformation') %}
 
-                {% if canCreateMessage or canCreateAbsence or canCreateBulkAbsence or canCreateReservation or canCreateExcuseNote or canCreateTeacherAbsence %}
+                {% if canCreateMessage or canCreateAbsence or canCreateBulkAbsence or canCreateReservation or canCreateExcuseNote or canCreateTeacherAbsence or canCreateAdditionalInformationForLesson %}
                     <div class="card">
                         <div class="list-group list-group-flush">
                             {% if canCreateMessage %}
@@ -395,6 +431,11 @@
                             {% if canCreateExcuseNote %}
                                 <a href="{{ path('add_excuse') }}" class="list-group-item list-group-item-action">
                                     <i class="fas fa-plus"></i> {{ 'book.excuse_note.add.label'|trans }}
+                                </a>
+                            {% endif %}
+                            {% if canCreateAdditionalInformationForLesson %}
+                                <a href="{{ path('add_timetable_lesson_additional_information') }}" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-plus"></i> {{ 'dashboard.additional_information.label'|trans }}
                                 </a>
                             {% endif %}
                         </div>
@@ -650,7 +691,7 @@
 
 {% block notifications %}
     {% if unreadNotificationsCount > 0 %}
-        <div class="bs-callout bs-callout-warning">
+        <div class="bs-callout bs-callout-warning mt-0 mb-2">
             <div class="d-flex align-items-center">
                 <p class="me-auto mb-0">{{ 'dashboard.notifications.unread'|trans({'%count%': unreadNotificationsCount}) }}</p>
                 <div>
@@ -664,7 +705,7 @@
 
     {% if app.user.isStudentOrParent and is_granted('parentsdayappointments') and upcomingParentsDays|length > 0 %}
         {% for parentsDay in upcomingParentsDays %}
-            <div class="bs-callout bs-callout-warning">
+            <div class="bs-callout bs-callout-warning mt-0 mb-2">
                 <div class="d-flex align-items-center">
                     <p class="me-auto mb-0">
                         <i class="fa-solid fa-people-arrows"></i> {{ 'dashboard.parents_day.header'|trans({'%date%': parentsDay.date|format_date }) }}
@@ -678,6 +719,32 @@
             </div>
         {% endfor %}
     {% endif %}
+{% endblock %}
+
+{% block checklists %}
+    {% for student in app.user.students %}
+        {% if checklists[student.id] is defined and checklists[student.id] is not empty %}
+            {% for checklistStudent in checklists[student.id] %}
+                {% set checklist = checklistStudent.checklist %}
+                <div class="bs-callout bs-callout-warning mt-0 mb-2">
+                    <div class="d-flex align-items-center">
+                        <p class="me-auto mb-0">
+                            <i class="fa-solid fa-list-check"></i> {{ checklist.title }}
+
+                            {% if app.user.students|length > 1 %}
+                            <i class="fas fa-user"></i> {{ checklistStudent.student|student }}
+                            {% endif %}
+                        </p>
+                        <div>
+                            <a href="{{ path('checklists') }}" class="btn btn-outline-primary btn-sm">
+                                {{ 'dashboard.checklists.link'|trans }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
 {% endblock %}
 
 {% block missingEntries %}

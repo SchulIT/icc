@@ -37,7 +37,7 @@ class PresentDespiteAbsenceNoteCheck implements IntegrityCheckInterface {
                 $attendances,
                 fn(Attendance $attendance) => $attendance->getType() === AttendanceType::Present
             ),
-            fn(Attendance $attendance) => sprintf('%s-%s', $attendance->getEntry()->getLesson()->getDate()->format('Y-m-d'), $attendance->getLesson())
+            fn(Attendance $attendance) => sprintf('%s-%s', $attendance->getEntry() !== null ? $attendance->getEntry()->getLesson()->getDate()->format('Y-m-d') : $attendance->getEvent()->getDate()->format('Y-m-d'), $attendance->getLesson())
         );
 
         $absences = $this->absenceRepository->findByStudents([ $student ]);
@@ -65,7 +65,7 @@ class PresentDespiteAbsenceNoteCheck implements IntegrityCheckInterface {
 
                 if(!in_array($key, $alreadyCheckedLessons) && array_key_exists($key, $presentAttendances)) {
                     $attendance = $presentAttendances[$key];
-                    $violations[] = new IntegrityCheckViolation(clone $lesson->getDate(), $lesson->getLesson(), $attendance->getEntry()->getLesson(), $this->translator->trans('book.integrity_check.checks.present_despite_absence_note.violation'));
+                    $violations[] = new IntegrityCheckViolation(clone $lesson->getDate(), $lesson->getLesson(), $attendance->getEntry() !== null ? $attendance->getEntry()->getLesson() : $attendance->getEvent(), $this->translator->trans('book.integrity_check.checks.present_despite_absence_note.violation'));
                 }
 
                 $alreadyCheckedLessons[] = $key;

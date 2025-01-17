@@ -41,14 +41,14 @@ class DoctrineEventsCollector implements EventSubscriberInterface {
         $this->dispatchAllEvents();
     }
 
-    public function onConsoleTermine(ConsoleTerminateEvent $event): void {
+    public function onConsoleTerminate(ConsoleTerminateEvent $event): void {
         $this->dispatchAllEvents();
     }
 
     public static function getSubscribedEvents(): array {
         return [
-            TerminateEvent::class => 'onKernelTerminate',
-            ConsoleTerminateEvent::class => 'onConsoleTermine'
+            TerminateEvent::class => ['onKernelTerminate', 9 ],
+            ConsoleTerminateEvent::class => ['onConsoleTerminate', 9]
         ];
     }
 }

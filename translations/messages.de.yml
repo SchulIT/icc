@@ -53,6 +53,7 @@ label:
         lms: Lernplattform auswählen
         parents_day: Elternsprechtag auswählen
         user: Person auswählen
+        grade_category: Notenkategorie auswählen
     search:
         student: Lernenden suchen
     scope: Bereich
@@ -326,6 +327,24 @@ label:
     override_weeks:
         label: wird ersetzt durch
         help: mehrere Wochen durch Komma separieren
+    associated_study_group:
+        label: Zugehörige Lerngruppe
+        help: Wenn eine Lerngruppe angegeben wird, wird diese Reserveriung auch bei den Lernenden auf der Übersichtsseite angezeigt. Dazu muss der Zeitpunkt der Reservierung jedoch im angegebenen Abschnitt liegen.
+    substitution_types: Vertretungsarten
+    gradebook:
+        grade_category: Notenkategorie
+    due_date:
+        label: Fälligkeitsdatum
+        help: Wenn ein Fälligkeitsdatum angegeben ist, wird dieses prominent bei der Checkliste angezeigt. Es dient nur der Anzeige und hat ansonsten keine Funktion.
+    can_students_view:
+        label: Für Lernende sichtbar
+        help: Wenn diese Option aktiv ist, können Lernende (und ihre Eltern) den eigenen Status der Checkliste einsehen.
+    can_parents_view:
+        label: Für Eltern sichtbar
+        help: Wenn diese Option aktiv ist, können Eltern den Status ihres Kindes in der Checkliste einsehen.
+    shared_with:
+        label: Geteilt mit
+        help: Personen in dieser Liste können die Checkliste einsehen und bearbeiten (jedoch nicht löschen).
 
 markdown:
     label: Markdown
@@ -407,6 +426,7 @@ dashboard:
     substitution_mentions: Erwähnungen
     appointments: Termine
     exercises: Aufgaben
+    additional_items: Zusätzliche Einträge
     birthdays: Geburtstage
     collision:
         hint: Bitte überprüfen und den entsprechenden Ansprechpartner kontaktieren.
@@ -434,9 +454,25 @@ dashboard:
         tuition: Zur Lernendenübersicht
         book: Zum Unterrichtsbuch
         gradebook: Zur Notenübersicht
+        last_entry: Letzte Stunde
     parents_day:
         header: Es können Termine für den Elternsprechtag am %date% gebucht werden.
         link: jetzt buchen
+    checklists:
+        link: Checklisten anzeigen
+
+    additional_information:
+        label: Information zur Stunde
+        add:
+            label: Information zur Stunde hinzufügen
+            success: Information zur Stunde erfolgreich hinzugefügt
+        edit:
+            label: Information zur Stunde bearbeiten
+            success: Information zur Stunde erfolgreich aktualisiert
+        remove:
+            label: Information zur Stunde löschen
+            confirm: 'Soll die Information am %date% zur %lesson% (Kurs: %studygroup%) wirklich gelöscht werden?'
+            success: Information erfolgreich gelöscht
 
 plans:
     label: Pläne
@@ -608,6 +644,7 @@ lists:
         student_teachers_export:
             copy: E-Mail Adressen der Fachlehrkräfte kopieren
             mail: E-Mail an Fachlehrkräfte verfassen
+        chat: Private Nachricht an Fachlehrkräfte verfassen
 
     study_groups:
         label: Lerngruppen
@@ -808,10 +845,23 @@ date:
         12: Dezember
 
 admin:
-    label: Datenverwaltung
+    label: Verwaltung
 
     ea:
         label: EasyAdmin
+
+    headers:
+        information: Informationen
+        core: Stammdaten
+        appointments: Termine
+        exams: Klausuren
+        timetable: Stundenplan
+        substitutions: Vertretungsplan
+        features: Features
+        chat: Private Nachrichten
+        absence: Abwesenheiten
+        book: Unterrichtsbuch
+        imported: Importierte Daten
 
     settings:
         label: Einstellungen
@@ -824,7 +874,7 @@ admin:
                 help: Gibt den aktuellen Abschnitt im Schuljahr an.
 
         import:
-            label: Import
+            label: Import-Einstellungen
             exam_rules:
                 label: Regeln für Klausurschreibende
                 help: Mit diesen Regeln wird festgelegt, welche Lernende automatisch einer Klausur zugeordnet werden, wenn diese nicht beim Import angegeben werden.
@@ -996,8 +1046,7 @@ admin:
                     label: Pushover-Benachrichtigungen aktiviert für
                     help: Schaltet Benachrichtigungen über die Pushover-App für diese Benutzergruppen frei oder sperrt sie.
                 token:
-                    label: Pushover API-Token
-                    help: Das API-Token, um sich gegenüber der API zu authentifizieren. Dieses muss über die Pushover-Website ausgestellt werden.
+                    missing: Das Pushover-Token wurde in der Konfigurationsdatei nicht festgelegt. Pushover-Benachrichtigungen sind daher grundsätzlich deaktiviert.
             email:
                 label: E-Mail Benachrichtigungen aktiviert für
                 help: Schaltet E-Mail-Benachrichtigungen für diese Benutzergruppen frei oder sperrt sie.
@@ -1024,6 +1073,9 @@ admin:
             attendances_visible_for_students_and_parents:
                 label: Anwesenheit für Lernende und Eltern sichtbar machen
                 help: 'Wenn diese Option aktiv ist, erhalten Lernende und Eltern den Menüpunkt Anwesenheiten, in dem sie die eigene Anwesenheiten (inkl. Anzahl Fehlstunden und Entschuldigungsstatus) einsehen können. Wichtig: Anwesenheiten können erst ab dem Folgetag eingesehen werden.'
+            lesson_topics_visible_for_students_and_parents:
+                label: Stundenübersicht für Lernende und Eltern sichtbar machen
+                help: 'Wenn diese Option aktiv ist, können Lernende und Eltern über den Menüpunkt Unterrichtsthemen und Hausaufgaben einsehen. Wichtig: Die Informationen werden in Echtzeit angezeigt.'
             attendance_suggestion:
                 label: An- und Abwesenheitsvorschläge
                 priority:
@@ -1032,9 +1084,17 @@ admin:
                     previously_absent: Abwesenheit in vorheriger Stunde
                     excuse_note: Entschuldigung liegt vor
                     absence_note: Abwesenheitsart %type%
+                    book_event: Veranstaltung
+                    absent_study_group: Klasse/Jgst. abwesend (laut Vertretungsplan)
+            notify_parents_on_absent_student_without_note:
+                label: Eltern bei Fehlen benachrichtigen
+                help: Wenn diese Option aktiv ist, werden Eltern informiert, wenn Ihr Kind ohne bekannten Grund (Abwesenheitsmeldung, vorliegende Entschuldigung, absente Lerngruppen, Klausur) als abwesend eingetragen wird.
+            notify_grade_teachers_on_absent_student_without_note:
+                label: Klassenleitung bei Fehlen benachrichtigen
+                help: Wenn diese Option aktiv ist, wird die Klassenleitung informiert, wenn Lernende ohne bekannten Grund (Abwesenheitsmeldung, vorliegende Entschuldigung, absente Lerngruppen, Klausur) als abwesend eingetragen wird.
 
         tuition_grades:
-            label: Notenmodul
+            label: Notenmodul-Einstellungen
             confirm:
                 label: Schlüsseländerung bestätigen
                 help: Der obige Hinweis wurde zur Kenntnis genommen.
@@ -1060,6 +1120,12 @@ admin:
             recipients:
                 label: 'Empfänger (%type%)'
                 help: Legt die Benutzergruppen fest, mit denen Benutzer vom Typ %type% Gespräche beginnen können. Ist ein Gespräch begonnen, sind alle Benutzer gleichberechtigt und können Nachrichten verschicken bzw. Dateien austauschen.
+            view_read_confirmations:
+                label: Lesebestätigungen anzeigen
+                help: Legt die Benutzergruppen fest, die Lesebestätigungen einsehen können. Benutzer ausgewählter Gruppen sehen, wer eine Nachricht gesehen hat. Benutzer nicht ausgewählter Benutzergruppen können nicht sehen, wer eine Nachricht gesehen hat.
+            can_edit_or_remove:
+                label: Bearbeiten/Löschen erlaubt für
+                help: Legt die Benutzergruppen fest, die ihre eigenen Nachrichten bearbeiten bzw. löschen dürfen.
 
     timetable:
         label: Stundenplan
@@ -1091,24 +1157,6 @@ admin:
                 caution:
                     header: Achtung
                     message: Beim Löschen dieser Stundenplan-Woche wird der zugehörige Stundenplan ebenfalls gelöscht.
-
-        periods:
-            label: Stundenplan-Perioden
-            overview:
-                empty: Aktuell sind keine Stundenplan-Perioden hinterlegt.
-            add:
-                label: Neue Stundenplan-Periode
-                success: Stundenplan-Periode erfolgreich angelegt
-            edit:
-                label: Stundenplan-Periode bearbeiten
-                success: Stundenplan-Periode erfolgreich aktualisiert
-            remove:
-                label: Stundenplan-Periode löschen
-                confirm: 'Soll die Stundenplan-Periode "%name%" wirklich gelöscht werden?'
-                success: Stundenplan-Periode erfolgreich gelöscht
-                caution:
-                    header: Achtung
-                    message: Beim Löschen dieser Stundenplan-Periode wird der zugehörige Stundenplan ebenfalls gelöscht.
 
     messages:
         label: Mitteilungen
@@ -1465,6 +1513,7 @@ admin:
                 substitutions: Alle Vertretungen in diesem Abschnitt (inkl. Absenzen, unterrichtsfreie Zeiten und Tagestexte)
                 appointments: Alle Termine in diesem Abschnitt - es werden alle Termine gelöscht, deren Startdatum im Abschnitt liegt
                 parents_day: Alle Elternsprechtage in diesem Abschnitt (inkl. vergebener Termine)
+                student_information: Alle Lernendeninfos, die vor dem Endatum des Abschnittes abgelaufen sind. Hierbei werden - sofern vorhanden - auch Infos aus zeitlich vorherigen Abschnitten gelöscht.
 
             success: Abschnitt erfolgreich gelöscht
 
@@ -1553,23 +1602,66 @@ admin:
             label: Elternsprechtag löschen
             success: Elternsprechtag erfolgreich gelöscht
             confirm: 'Soll der Elternsprechtag %title% wirklich gelöscht werden? Alle bereits erstellten Termine werden gelöscht.'
-        appointments:
 
+    chat:
+        tags:
+            label: Tags (Private Nachrichten)
+            empty: Bisher wurden keine Tags angelegt
+            info: Mithilfe von Tags können Benutzer die privaten Nachrichten für sich kategorisieren (andere Beteiligte sehen nicht, welche Tags hinzugefügt wurden).
+            add:
+                label: Neuer Tag
+                success: Tag erfolgreich angelegt
+            edit:
+                label: Tag bearbeiten
+                success: Tag erfolgreich aktualisiert
+            remove:
+                label: Tag löschen
+                success: Tag erfolgreich gelöscht
+                confirm: 'Soll der Tag %title% wirklich gelöscht werden? Der Tag wird automatisch von allen Konversationen entfernt (sofern von Benutzern hinzugefügt).'
 
 tools:
     label: Tools
 
     grade_teacher_intersection:
         label: Fachlehrer-Schnittmenge
-        info: Mit diesem Tool kann die Schnittmenge der Fachlehrkräfte zwischen mehreren Klassen berechnet werden.
+        info: Mit diesem Tool kann die Schnittmenge der Fachlehrkräfte zwischen mehreren Klassen berechnet werden. Das kann beispielsweise bei der Planung paralleler Zeugniskonferenzen hilfreich sein.
         left_grades: Klassen (links)
         right_grades: Klassen (rechts)
         intersection: Gemeinsame Lehrkräfte
 
     tuition_report:
         label: Unterrichtsbericht
-        info: Mit diesem Tool können Statistiken über Unterrichte abgerufen werden
+        info: Mit diesem Tool können Statistiken über Unterrichte abgerufen werden, beispielsweise wie viele Kursteilnehmer mit welcher Kursart an einem Kurs bzw. Unterricht teilnehmen.
+        process: Es empfiehlt sich, den Bericht als CSV-Datei herunterzuladen und bspw. in Excel weiterzuverarbeiten.
         download: CSV-Datei herunterladen
+
+    untis:
+        timetable:
+            label: Untis GPU001.txt
+            info: Mit diesem Tool kann aus den Stundenplandaten vom ICC eine GPU001.txt erzeugt werden.
+            tuition_numbers:
+                label: Unterrichtsnummern
+                info: Da die Unterrichtsnummern aus Untis nicht bekannt sind, wird stattdessen die ID (vom ICC) für den Unterricht verwendet. Für gleiche Unterrichte ist die Unterrichtsnummer somit stets identisch (etwas, das Untis nicht kann).
+            caution: Ein Import nach Untis darf mit dieser Datei nicht getätigt werden.
+
+    missing_users:
+        label: Fehlende Benutzer
+        info: Mit diesem Tool lässt sich herausfinden, welcher Lernende oder welche Eltern sich noch nicht am ICC angemeldet haben.
+        start: Bitte rechts im Filter eine Lerngruppe auswählen.
+        students:
+            header: Lernende
+            empty: Alle Lernende sind mindestens einem Lernenden-Benutzer zugeordnet.
+        parents:
+            header: Eltern
+            empty: Alle Lernende sind mindestens einem Eltern-Benutzer zugeordnet.
+
+    substitution_report:
+        label: Vertretungsauswertung
+        info: Mit diesem Tool lässt sich die Anzahl an Vertretungsstunden und deren Ursacher auswerten.
+        empty: Bitte einen Filter rechts auswählen oder den Filter ändern.
+        num_substitutions: Anzahl Stunden, die Lehrkraft vertreten hat
+        num_was_substituted: Anzahl Stunden, die Lehrkraft vertreten wurde
+        difference: Differenz (hat vertreten - wurde vertreten)
 
 versions:
     label: Versionen
@@ -1622,6 +1714,9 @@ profile:
         pushover:
             label: Pushover Benutzer-Token
             help: Hier kann das Benutzertoken von Pushover eingetragen werden.
+            test:
+                label: Benachrichtigung testen
+                success: Benachrichtigung verschickt. Es kann einige Augenblicke dauern, bis die Benachrichtigung auf dem Smartphone ankommt.
             info:
                 label: Pushover-App
                 description: Pushover ist ein Dienst, um Pushbenachrichtigungen z.B. auf das Smartphone oder Tablet zu erhalten. Es handelt sich dabei um einen externen Anbieter.
@@ -1731,7 +1826,7 @@ absences:
             lessons:
                 header: Betroffene Unterrichtsstunden
                 unavailable: Aufgrund einer Stundenplanänderung muss diese Abwesenheitsinformation einer vorhandenen Stundenplanstunde zugewiesen werden. Bitte die Bearbeiten-Funktion verwenden, um die betroffene Stundenplanstunde auszuwählen.
-                todo: Für diese Stunde wurden noch keine Informationen hinterlegt. Bitte die Bearbeiten-Funktion verwenden, um Informationen für Vertretungsplaner, Vertretungslehrkraft und/oder Lernende zu hinterlegen.
+                todo: Für diese Stunde wurden noch keine Informationen hinterlegt. Bitte die Bearbeiten-Funktion verwenden, um Informationen für die Vertretungsplaner zu hinterlegen.
                 add_missing:
                     label: Fehlende Unterrichtsstunden ergänzen
                     help: Ergänzt Unterrichtstunden, die in den Abwesenheitsbereich fallen und noch nicht hier hinterlegt sind.
@@ -1900,7 +1995,10 @@ book:
         comment:
             label: Bemerkungen zur Lerngruppe
             help: Bitte hier keine Kommentare zu einzelnen Schülerinenn und Schülern hinterlassen. Stattdessen die Kommentar-Funktion verwenden.
-
+        redirect_to_last:
+            error:
+                not_found: Es wurde kein Eintrag gefunden.
+                invalid_date: Ungültiges Datum angegeben
 
     comment:
         label: Kommentare
@@ -1969,6 +2067,7 @@ book:
             exam: Klausur (%tuition%)
             absent_before: Abwesenheit in vorheriger Stunde
             excuse: Entschuldigung liegt vor
+            absent_study_group: "%grade% abwesend"
         remove_reason:
             timetable: '%student% besucht %tuition% bei %teacher%'
 
@@ -1996,6 +2095,7 @@ book:
             info: Da Noten verschlüssel abgespeichert werden, muss zunächst das Passwort eingegeben werden, damit diese im PDF Export aufgelistet werden. Wird kein Passwort eingegeben, bleibt die Notenübersicht leer. Im JSON- und XML-Export sind die Noten stets verschlüsselt.
             success: Passwort erfolgreich angewendet, der PDF-Export enthält Noten.
             pending: Es wurde noch kein Passwort für die Noten eingetragen. Der PDF-Export enthält keine Noten.
+
 
     excuse_note:
         label: Entschuldigungen
@@ -2049,6 +2149,18 @@ book:
             info: Die Excel-Datei ist mit demselben Passwort verschlüsselt, das auch hier eingegeben werden muss.
             download: Download
 
+            schild_leistungsdaten:
+                label: SchILD Leistungsdaten-Export
+                info: Hier kann eine SchILD Leistungsdaten.dat hochgeladen werden, sodass Noten und Fehlstunden automatisch eingetragen werden.
+                convert:
+                    label: Konvertiere Notenpunkte
+                    help: Wenn diese Option aktiv ist, werden Notenpunkte in die zugehörige Note umgewandelt. Also bspw. 15 →  1+, 14 →  1 usw.
+
+                include_absent_lessons:
+                    label: Fehlstunden exportieren
+                    help: Wenn diese Option aktiv ist, werden Fehlstunden (pro Unterricht) exportiert.
+                button: Export starten
+
     integrity_check:
         label: Plausibilitätscheck
         run:
@@ -2100,6 +2212,21 @@ book:
                 label: Information löschen
                 confirm: 'Soll die Information über %student% wirklich gelöscht werden?'
                 success: Information erfolgreich gelöscht
+
+    events:
+        label: Veranstaltungen
+        add:
+            label: Neue Veranstaltung
+            success: Veranstaltung erfolgreich erstellt
+        edit:
+            label: Veranstaltung bearbeiten
+            success: Veranstaltung erfolgreich aktualisiert
+        show:
+            label: Veranstaltung anzeigen oder bearbeiten
+        remove:
+            label: Veranstaltung löschen
+            success: Veranstaltung erfolgreich gelöscht
+            confirm: 'Soll die Veranstaltung %title% wirklich gelöscht werden?'
 
 export:
     caution: Ich bestätige, dass ich die Datei nur auf zugelassenen Endgeräten verarbeite. Die Datei darf nur lokal verarbeitet werden und nicht via E-Mail versendet oder auf Clouddiensten gespeichert werden.
@@ -2249,17 +2376,30 @@ attendance:
     delay: Anwesenheiten sind erst am Folgetag einsehbar.
     legend: Die einzelnen Farben spiegeln die Anwesenheit wieder. Ist eine Zelle weiß, so fand hier kein Unterricht statt (z.B. Freistunde in der Oberstufe) oder die Lehrkraft hat noch keine Eintragung vorgenommen.
 
+lesson_topics:
+    label: Unterrichtsthemen
+    empty: Diese Übersicht ist aktuell leer.
+
+reports:
+    label: Unterrichtsthemen & Anwesenheit
+
 parents_day:
     label: Elternsprechtag
     empty: In nächster Zeit ist kein Elternsprechtag.
+    chat: Private Nachricht
     prepare:
         label: Elternsprechtag vorbereiten
         introduction: Bitte zunächst über den Filter einen Unterricht auswählen.
         help: Hier können Informationen zu Lernenden hinterlegt werden, bspw. ob Termine erwünscht oder nicht notwendig sind.
+        info: Die hier hinterlegten Informationen beziehen sich auf alle Unterrichte. Kommentare sollten daher alle Unterrichte berücksichtigen.
+        success: Informationen erfolgreich aktualisiert
         cancelled:
             label: Termin abgesagt
         not_necessary:
             label: Kein Termin benötigt
+            all:
+                label: 'Setze "Kein Termin benötigt" bei allen Lernenden'
+                caution: Bitte anschließend alle Optionen kontrollieren, ob einzelne Lernende aufgrund eines zweiten Faches einen Termin benötigen, und mit Speichern bestätigen.
         requested:
             label: Termin erwünscht
     appointments:
@@ -2298,6 +2438,7 @@ parents_day:
             button: Termin absagen
         cancel_all:
             label: Alle Termine absagen
+            invalid: Termine können erst nach dem Buchungszeitraum abgesagt werden.
             help: Hier können (bspw. aufgrund von Krankheit) alle Termine abgesagt werden.
             confirm: Sollen alle Termine wirklich abgesagt werden?
             success: Alle Termine wurden abgesagt
@@ -2305,8 +2446,13 @@ parents_day:
             button: Alle Termine absagen
         assign:
             label: Termin zuweisen
-            info: Der Termin wird den ausgewählten Kindern zugewiesen.
+            info: Der Termin wird den ausgewählten Kindern zugewiesen. Eltern und volljährige Kinder werden benachrichtigt.
             success: Der Termin ist nun zugewiesen.
+        unassign:
+            label: Zuweisung löschen
+            info: Alle Kinder und Lehrkräfte werden von diesem Termin entfernt. Eltern und volljährige Kinder werden benachrichtigt.
+            success: Terminzuweisung gelöscht
+            confirm: Soll die Zuweisung wirklich gelöscht werden?
         block:
             label: Termin blockieren
             info: Durch das Blocken von Terminen werden diese nicht gelöscht, sodass sie zu einem späteren Zeitpunkt belegt werden können. In der Zwischenzeit ist das Buchen des Termins nicht möglich.
@@ -2347,6 +2493,7 @@ chat:
     add:
         label: Neue Nachricht
         success: Nachricht erfolgreich erstellt
+        caution: Das Bearbeiten und Löschen von Nachrichten ist nicht möglich. Bei Korrekturen kann eine neue Nachricht verfasst werden.
     rename:
         success: Gesprächsthema erfolgreich aktualisiert
     remove:
@@ -2381,7 +2528,15 @@ chat:
             error: Person ist bereits Teilnehmer
         remove:
             success: Person erfolgreich aus dem Gespräch entfernt
-        missing_rights: Teilnehmer können nur vom Ersteller des Gesprächs und Benutzern mit der Rolle ROLE_CHAT_MOD hinzugefügt werden.
+        missing_rights: Teilnehmer können nur von Benutzern mit der Rolle ROLE_CHAT_MOD hinzugefügt werden.
+        success:
+            added: "%users% zu diesem Gespräch hinzugefügt."
+            remove: "%users% aus diesem Gespräch entfernt."
+    tags:
+        label: Kategorien
+        filter: Kategorie
+        saved: Kategorien gespeichert
+        info: "Zur besseren Übersicht können Konversationen einer oder mehreren Kategorien zugeordnet werden. Wichtig: Die zugeordnete Kategorie ist nur für den aktuellen Benutzer und nicht für alle Teilnehmer der Konversation sichtbar."
 
 user_type:
     teacher: Lehrkraft
@@ -2390,3 +2545,37 @@ user_type:
     intern: Praktikant
     staff: Mitarbeiter
     user: Benutzer
+
+checklists:
+    label: Checklisten
+    empty: Bisher wurden keine Checklisten angelegt.
+    add:
+        label: Neue Checkliste
+        success: Checkliste erfolgreich angelegt
+        info_students: Lernende können zur Checkliste hinzugefügt werden, nachdem die Checkliste erstellt wurde.
+
+    edit:
+        label: Checkliste bearbeiten
+        success: Checkliste erfolgreich aktualisiert
+
+    show:
+        students:
+            empty: Bisher wurden noch keine Lernende zur Checkliste hinzugefügt.
+            save: Alle Änderungen werden erst durch Klicken auf den Speichern-Button (ganz unten) übernommen.
+
+    students:
+        label: Lernende
+        add:
+            label: Lernende hinzufügen
+            success: Lernende erfolgreich hinzugefügt
+        remove:
+            label: Lernenden entfernen
+            success: Lernenden erfolgreich entfernt
+
+    remove:
+        label: Checkliste löschen
+        success: Checkliste erfolgreich gelöscht
+        confirm: 'Soll die Checkliste %title% wirklich gelöscht werden?'
+
+yes: ja
+no: nein

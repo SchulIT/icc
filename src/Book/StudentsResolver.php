@@ -3,6 +3,7 @@
 namespace App\Book;
 
 use App\Entity\Student;
+use App\Entity\StudyGroupMembership;
 use App\Entity\Tuition;
 use App\Repository\StudentRepositoryInterface;
 use App\Settings\BookSettings;
@@ -21,13 +22,17 @@ class StudentsResolver {
      * @return Student[]
      */
     public function resolve(Tuition $tuition, bool $includeStudentsExcludedByStatus = false, bool $includeStudentsWithAttendance = false): array {
-        $exclude = $this->bookSettings->getExcludeStudentsStatus();
+        if($tuition->getId() === null) {
+            $students = $tuition->getStudyGroup()->getMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudent())->toArray();
+        } else {
+            $exclude = $this->bookSettings->getExcludeStudentsStatus();
 
-        if($includeStudentsExcludedByStatus === true) {
-            $exclude = [ ];
+            if ($includeStudentsExcludedByStatus === true) {
+                $exclude = [];
+            }
+
+            $students = $this->studentRepository->findAllByTuition($tuition, $exclude, $includeStudentsWithAttendance);
         }
-
-        $students = $this->studentRepository->findAllByTuition($tuition, $exclude, $includeStudentsWithAttendance);
         $this->sorter->sort($students, StudentStrategy::class);
 
         return $students;

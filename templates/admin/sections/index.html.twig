@@ -11,11 +11,13 @@
 {% endblock %}
 
 {% block content %}
-    {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
-
     <div class="container-fluid px-0">
         <div class="row">
-            <div class="col-md-9">
+            <div class="col-md-2 sticky-sidebar">
+                {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
+            </div>
+
+            <div class="col-md-8">
                 {% if sections|length == 0 %}
                     <div class="bs-callout bs-callout-info">
                         <h5>{{ 'info.label'|trans }}</h5>
@@ -80,7 +82,7 @@
                 {% endif %}
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <div class="card">
                     <div class="list-group list-group-flush">
                         <a href="{{ path('add_section') }}" class="list-group-item list-group-item-action">

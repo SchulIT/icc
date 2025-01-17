@@ -9,7 +9,7 @@ class Lesson {
     private int $lessonEnd;
     private int $day;
     private string $subject;
-    private string $teacher;
+    private ?string $teacher = null;
     private ?string $room = null;
     private ?string $grade = null;
 
@@ -61,11 +61,11 @@ class Lesson {
         return $this;
     }
 
-    public function getTeacher(): string {
+    public function getTeacher(): ?string {
         return $this->teacher;
     }
 
-    public function setTeacher(string $teacher): Lesson {
+    public function setTeacher(?string $teacher): Lesson {
         $this->teacher = $teacher;
         return $this;
     }

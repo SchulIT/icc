@@ -19,10 +19,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-#[Route(path: '/settings')]
+#[Route(path: '/admin/settings')]
 #[Security("is_granted('ROLE_ADMIN')")]
 class BookSettingsController extends AbstractController {
     #[Route(path: '/book', name: 'admin_settings_book')]
@@ -76,6 +76,12 @@ class BookSettingsController extends AbstractController {
                 'help' => 'admin.settings.book.attendances_visible_for_students_and_parents.help',
                 'data' => $settings->isAttendanceVisibleForStudentsAndParentsEnabled()
             ])
+            ->add('lesson_topics_visible_for_students_and_parents', CheckboxType::class, [
+                'required' => false,
+                'label' => 'admin.settings.book.lesson_topics_visible_for_students_and_parents.label',
+                'help' => 'admin.settings.book.lesson_topics_visible_for_students_and_parents.help',
+                'data' => $settings->isLessonTopicsVisibleForStudentsAndParentsEnabled()
+            ])
             ->add('suggestion_priority_exam', IntegerType::class, [
                 'required' => true,
                 'label' => 'admin.settings.book.attendance_suggestion.priority.exam',
@@ -90,6 +96,28 @@ class BookSettingsController extends AbstractController {
                 'required' => true,
                 'label' => 'admin.settings.book.attendance_suggestion.priority.excuse_note',
                 'data' => $settings->getSuggestionPriorityForExcuseNote()
+            ])
+            ->add('suggestion_priority_book_event', IntegerType::class, [
+                'required' => true,
+                'label' => 'admin.settings.book.attendance_suggestion.priority.book_event',
+                'data' => $settings->getSuggestionPriorityForBookEvent()
+            ])
+            ->add('suggestion_priority_absent_study_group', IntegerType::class, [
+                'required' => true,
+                'label' => 'admin.settings.book.attendance_suggestion.priority.absent_study_group',
+                'data' => $settings->getSuggestionPriorityForAbsentStudyGroup()
+            ])
+            ->add('notify_parents_on_absent_student_without_note', CheckboxType::class, [
+                'required' => false,
+                'label' => 'admin.settings.book.notify_parents_on_absent_student_without_note.label',
+                'help' => 'admin.settings.book.notify_parents_on_absent_student_without_note.help',
+                'data' => $settings->getNotifyParentsOnStudentAbsenceWithoutSuggestion()
+            ])
+            ->add('notify_grade_teachers_on_absent_student_without_note', CheckboxType::class, [
+                'required' => false,
+                'label' => 'admin.settings.book.notify_grade_teachers_on_absent_student_without_note.label',
+                'help' => 'admin.settings.book.notify_grade_teachers_on_absent_student_without_note.help',
+                'data' => $settings->getNotifyGradeTeachersOnStudentAbsenceWithoutSuggestion()
             ]);
 
         $types = $typeRepository->findAll();
@@ -122,6 +150,9 @@ class BookSettingsController extends AbstractController {
                 'attendances_visible_for_students_and_parents' => function(bool $isEnabled) use($settings) {
                     $settings->setAttendanceVisibleForStudentsAndParentsEnabled($isEnabled);
                 },
+                'lesson_topics_visible_for_students_and_parents' => function(bool $isEnabled) use ($settings) {
+                    $settings->setLessonTopicsVisibleForStudentsAndParentsEnabled($isEnabled);
+                },
                 'suggestion_priority_exam' => function(int $priority) use ($settings) {
                     $settings->setSuggestionPriorityForExams($priority);
                 },
@@ -130,6 +161,18 @@ class BookSettingsController extends AbstractController {
                 },
                 'suggestion_priority_excuse_note' => function(int $priority) use ($settings) {
                     $settings->setSuggestionPriorityForExcuseNote($priority);
+                },
+                'suggestion_priority_book_event' => function(int $priority) use ($settings) {
+                    $settings->setSuggestionPriorityForBookEvent($priority);
+                },
+                'suggestion_priority_absent_study_group' => function(int $priority) use ($settings) {
+                    $settings->setSuggestionPriorityForAbsentStudyGroup($priority);
+                },
+                'notify_parents_on_absent_student_without_note' => function(bool $notify) use($settings) {
+                    $settings->setNotifyParentsOnStudentAbsenceWithoutSuggestion($notify);
+                },
+                'notify_grade_teachers_on_absent_student_without_note' => function(bool $notify) use($settings) {
+                    $settings->setNotifyGradeTeachersOnStudentAbsenceWithoutSuggestion($notify);
                 }
             ];
 

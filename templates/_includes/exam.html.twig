@@ -1,5 +1,6 @@
 {% set showDate = showDate|default(false) %}
 {% set hideDetails = hideDetails|default(false) %}
+{% set relatedExams = relatedExams|default([]) %}
 <div class="card">
     {% if header|default("") is not empty %}
     <div class="card-header">
@@ -62,6 +63,23 @@
             {% for invigilator in exam.supervisions -%}
                 {{ invigilator.teacher|teacher }} ({{ 'label.exam_lessons'|trans({'%start%': invigilator.lesson, '%count%': 0}) }}) {%- if not loop.last -%}, {% endif %}
             {%- endfor -%}
+        </div>
+    {% endif %}
+    {% if relatedExams|length > 0 %}
+        <div class="card-footer d-print-none">
+            {% for relatedExam in relatedExams %}
+                {% for examTuition in relatedExam.tuitions %}
+                    <a href="{{ path('show_exam', { uuid: relatedExam.uuid }) }}" class="btn btn-outline-primary btn-sm">
+                        <span class="badge text-bg-primary">{{ examTuition.name }}</span>
+                        <span>
+                            <i class="fa fa-users"></i> {{ examTuition.studyGroup.grades|grades }}
+                        </span>
+                        <span>
+                            <i class="fa fa-graduation-cap"></i> {% for teacher in examTuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
+                        </span>
+                    </a>
+                {% endfor %}
+            {% endfor %}
         </div>
     {% endif %}
 </div>

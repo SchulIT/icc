@@ -1,0 +1,204 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'lesson_topics.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% macro subject(tuition) %}
+    {% if tuition.displayName is not empty %}
+        {{ tuition.displayName|upper }}
+    {% elseif show_coursename(tuition.studyGroup.grades) %}
+        {{ tuition.studyGroup.name|upper }}
+    {% else %}
+        {{ tuition.subject.abbreviation|upper }}
+    {% endif %}
+{% endmacro %}
+
+{% block content %}
+
+    {% set currentFilter = {
+        section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null,
+        student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString : null
+    } %}
+
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% if overview is null %}
+
+                {% else %}
+                    {% set currentWeek = selectedDate ? selectedDate.format('W') : null %}
+
+                <div class="card">
+                    <div class="card-header border-bottom-0">
+                        <ul class="nav nav-pills card-header-pills flex-fill" data-trigger="resize-hide">
+                            {% if selectedDate != null %}
+                                <li class="nav-item align-self-center" data-resize="show">
+                                    <a class="nav-link" href="{{ path('student_lessons_overview', currentFilter|merge({'date': (selectedDate|clone).modify('-7 days').format('Y-m-d')})) }}">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            {% for week, monday in weekStarts %}
+                                <li class="nav-item" {% if currentWeek == week %}data-resize="prevent"{% endif %}>
+                                    <a class="nav-link {% if currentWeek == week %}active{% endif %}" href="{{ path('student_lessons_overview', currentFilter|merge({'date': monday.format('Y-m-d')})) }}">
+                                        <div>
+                                            <i class="fas fa-calendar-alt"></i> {{ 'admin.exams.week'|trans({'%week%': week}) }}
+                                        </div>
+                                        <div class="{% if currentWeek != week %}text-muted{% endif %}">
+                                            {{ monday|format_date }}
+                                        </div>
+                                    </a>
+                                </li>
+                            {% endfor %}
+
+                            {% if selectedDate != null %}
+                                <li class="nav-item align-self-center" data-resize="show">
+                                    <a class="nav-link" href="{{ path('student_lessons_overview', currentFilter|merge({'date': (selectedDate|clone).modify('+7 days').format('Y-m-d')})) }}">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+
+                    {% for day in overview.days %}
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-calendar-alt"></i>
+                                {{ day.date|format_date }}
+                                <span class="text-muted">{{ day.date.format('N')|weekday }}</span>
+                            </div>
+
+                            <div class="list-group list-group-flush">
+                                {% for event in overview.events(day.date) %}
+                                    <div class="list-group-item d-flex align-items-center">
+                                        <div class="book-lesson m-0 p-0">
+                                            {{ 'label.substitution_lessons'|trans({'%start%': event.lessonStart, '%end%': event.lessonEnd, '%count%': event.lessonEnd - event.lessonStart}) }}
+                                        </div>
+
+                                        <div class="flex-fill">
+                                            <div class="d-flex align-items-center">
+                                                <div class="badge text-bg-primary">
+                                                    <i class="fas fa-calendar-alt"></i> {{ event.title|upper }}
+                                                </div>
+
+                                                <div class="ms-2">
+                                                    <i class="fas fa-chalkboard-teacher"></i>
+                                                    {{ event.teacher.acronym }}
+                                                </div>
+                                            </div>
+                                            {% if event.description is not empty %}
+                                                <div class="mt-1 d-flex align-items-baseline">
+                                                    <i class="fas fa-info-circle"></i>
+                                                    <p class="mb-0 ms-1">{{ event.description }}</p>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+
+                                {% for lesson in day.lessons %}
+                                    {% if lesson.entry is not empty and lesson.lessonNumber == lesson.entry.lessonStart %}
+                                        <div class="list-group-item d-flex align-items-center">
+                                            <div class="book-lesson m-0 p-0">
+                                                {% if lesson.entry is not null %}
+                                                    {% set last_id = lesson.entry.id %}
+                                                    {% set start = lesson.entry.lessonStart %}
+                                                    {% set end = lesson.entry.lessonEnd %}
+
+                                                    {% for lessonNumber in start..end %}
+                                                        {{ lessonNumber }}<br>
+                                                    {% endfor %}
+
+                                                {% else %}
+                                                    {{ lesson.lessonNumber }}
+                                                {% endif %}
+                                            </div>
+
+                                            <div>
+                                                <div class="d-flex align-items-center flex-fill">
+                                                    <div class="badge text-bg-primary">
+                                                        {{ _self.subject(lesson.entry.tuition) }}
+
+                                                        {% if lesson.entry.replacementSubject is not empty %}
+                                                            ⟶ {{ lesson.entry.replacementSubject|upper }}
+                                                        {% endif %}
+                                                    </div>
+
+                                                    <div class="ms-2">
+                                                        <i class="fas fa-users"></i>
+                                                        {% set grades = [ ] %}
+                                                        {% for grade in lesson.lesson.tuition.studyGroup.grades %}
+                                                            {% set grades = grades|merge([grade]) %}
+                                                        {% endfor %}
+
+                                                        {{ grades|grades }}
+                                                    </div>
+
+                                                    <div class="ms-2">
+                                                        <i class="fas fa-chalkboard-teacher"></i>
+                                                        {{ lesson.entry.teacher|teacher }}
+
+                                                        {% if lesson.entry.replacementTeacher is not null %}
+                                                            ⟶ {{ lesson.entry.replacementTeacher|teacher }}
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+
+                                                {% if lesson.entry.isCancelled %}
+                                                    <div class="mt-1 d-flex align-items-baseline">
+                                                        <i class="fas fa-times"></i>
+                                                        <p class="mb-0 ms-1">
+                                                            {{ 'book.entry.cancel_reason'|trans({ '%reason%': lesson.entry.cancelReason}) }}
+                                                        </p>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="mt-1 d-flex align-items-baseline">
+                                                        <i class="fas fa-info-circle"></i>
+                                                        <p class="mb-0 ms-1">
+                                                            {{ lesson.entry.topic }}
+                                                        </p>
+                                                    </div>
+                                                {% endif %}
+
+                                                {% if lesson.entry.exercises is not empty %}
+                                                    <div class="mt-1 d-flex align-items-baseline">
+                                                        <i class="fas fa-tasks"></i>
+                                                        <p class="mb-0 ms-1">
+                                                            {{ lesson.entry.exercises }}
+                                                        </p>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+
+
+
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="col-md-3 sticky-sidebar">
+                <div class="card">
+                    <div class="card-body">
+                        {% include "_filter/section.html.twig" %}
+
+                        {% include "_filter/student.html.twig" with { params: currentFilter|merge({student: null}) } %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

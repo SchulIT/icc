@@ -23,14 +23,7 @@ class GradeFilter extends AbstractGradeFilter {
 
         if($user->isTeacher() && $user->getTeacher() !== null && $section !== null) {
             $teacher = $user->getTeacher();
-
-            foreach($teacher->getGrades() as $gradeTeacher) {
-                if($gradeTeacher->getSection()->getId() === $section->getId()) {
-                    $ownGrades[] = $gradeTeacher->getGrade();
-                }
-            }
-
-            $this->sorter->sort($ownGrades, GradeNameStrategy::class);
+            $ownGrades = $this->getTeachedGradesForTeacher($teacher, $section);
         }
 
         return new GradeFilterView($grades, $grade, $ownGrades);

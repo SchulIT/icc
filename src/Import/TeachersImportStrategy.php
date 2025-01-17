@@ -30,7 +30,7 @@ class TeachersImportStrategy implements ImportStrategyInterface {
     public function getExistingEntities($requestData): array {
         return ArrayUtils::createArrayWithKeys(
             $this->teacherRepository->findAll(),
-            fn(Teacher $teacher) => $teacher->getExternalId()
+            fn(Teacher $teacher) => $teacher->getAcronym()
         );
     }
 

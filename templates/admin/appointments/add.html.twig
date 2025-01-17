@@ -1,4 +1,4 @@
-{% extends "main.html.twig" %}
+{% extends "admin/_form.html.twig" %}
 
 {% block post_javascript %}
     <script src="{{ asset('build/editor.js') }}"></script>
@@ -15,10 +15,7 @@
     </ol>
 {% endblock %}
 
-{% block content %}
-    {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
-
-
+{% block inner %}
     {% if not is_granted('ROLE_APPOINTMENTS_ADMIN') %}
         <div class="bs-callout bs-callout-warning">
             <h5>{{ 'important'|trans }}</h5>

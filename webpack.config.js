@@ -22,6 +22,7 @@ Encore
     .addEntry('export-book', './assets/js/export-book.js')
     .addEntry('close-confirm', './assets/js/close-confirm.js')
     .addEntry('gradebook', './assets/js/gradebook.js')
+    .addEntry('gradebook-schild-leistungsdaten', './assets/js/gradebook-schild-leistungsdaten.js')
     .addEntry('tuition-choice-filter', './assets/js/tuition-choice-filter.js')
     .addStyleEntry('email', './assets/css/email.scss')
     .addStyleEntry('simple', './assets/css/simple.scss')

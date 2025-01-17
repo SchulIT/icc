@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Book\AttendanceSuggestion\AbsenceSuggestionResolver;
 use App\Book\AttendanceSuggestion\RemoveSuggestionResolver;
 use App\Book\AttendanceSuggestion\SuggestionResolver;
 use App\Book\Lesson\LessonCancelHelper;
@@ -44,6 +43,7 @@ use App\Response\Book\Grade as GradeResponse;
 use App\Response\Book\StudyGroup as StudyGroupResponse;
 use App\Response\ViolationList;
 use App\Section\SectionResolverInterface;
+use App\Security\Voter\AttendanceVoter;
 use App\Security\Voter\LessonEntryVoter;
 use App\Settings\BookSettings;
 use App\Sorting\Sorter;
@@ -58,7 +58,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Route(path: '/book/xhr')]
@@ -170,19 +170,15 @@ class BookXhrController extends AbstractController {
         return $this->returnJson($students, $serializer);
     }
 
-    #[Route('/absence_note/{student}/{lesson}', name: 'xhr_student_absences')]
+    #[Route('/absence_note/{student}', name: 'xhr_student_absences')]
     #[ParamConverter('student', options: [ 'mapping' => ['student' => 'uuid']])]
-    #[ParamConverter('lesson', options: [ 'mapping' => ['lesson' => 'uuid']])]
-    public function absenceNote(Student $student, TimetableLesson $lesson, StudentAbsenceRepositoryInterface $absenceRepository, SerializerInterface $serializer, UrlGeneratorInterface $urlGenerator, Markdown $markdown): Response {
+    public function absenceNote(Request $request, Student $student, StudentAbsenceRepositoryInterface $absenceRepository, SerializerInterface $serializer, UrlGeneratorInterface $urlGenerator, Markdown $markdown): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
-        $absences = [ ];
-        for($lessonNumber = $lesson->getLessonStart(); $lessonNumber <= $lesson->getLessonEnd(); $lessonNumber++) {
-            $absences = array_merge(
-                $absences,
-                $absenceRepository->findByStudents([$student], null, $lesson->getDate(), $lessonNumber)
-            );
-        }
+        $date = new DateTime($request->query->get('date'));
+        $lesson = $request->query->getInt('lesson');
+
+        $absences = $absenceRepository->findByStudents([$student], null, $date, $lesson);
 
         $absences = ArrayUtils::unique($absences);
         $json = array_map(fn(StudentAbsence $absence) => [
@@ -244,7 +240,7 @@ class BookXhrController extends AbstractController {
             $attendances = [ ];
             /** @var Attendance $attendance */
             foreach($entry->getAttendances() as $attendance) {
-                $excuseInfo = $excuseResolver->resolve($attendance->getStudent(), [ $entry->getTuition() ]);
+                $excuseInfo = $excuseResolver->resolve($attendance->getStudent(), $lesson->getDate(), $lesson->getDate(), [ $entry->getTuition() ]);
                 $excuses = $excuseInfo->getExcuseCollectionForLesson($attendance);
 
                 $attendances[] = [
@@ -297,8 +293,8 @@ class BookXhrController extends AbstractController {
                 'lesson_end' => $lesson->getLessonEnd(),
                 'tuition' => $this->getTuition($lesson->getTuition())
             ],
-            'absences' => $this->possiblyAbsentStudents($lesson->getTuition(), $lesson->getDate(), $start, $lesson->getLessonEnd(), $suggestionResolver),
-            'removals' => $this->removeSuggestions($lesson->getTuition(), $lesson->getDate(), $start, $lesson->getLessonEnd(), $removeSuggestionResolver),
+            'absences' => $this->possiblyAbsentStudents($lesson->getTuition(), $lesson->getDate(), $lesson->getLessonStart(), $lesson->getLessonEnd(), $suggestionResolver),
+            'removals' => $this->removeSuggestions($lesson->getTuition(), $lesson->getDate(), $lesson->getLessonStart(), $lesson->getLessonEnd(), $removeSuggestionResolver),
             'entry' => $entryJson,
             'students' => $students,
             'has_other_entries' => count($lesson->getEntries()) > 0,
@@ -330,7 +326,7 @@ class BookXhrController extends AbstractController {
     #[OA\Response(response: '400', description: 'Fehlerhafte Anfrage.', content: new Model(type: ViolationList::class))]
     #[Route(path: '/attendance/{uuid}', name: 'xhr_update_attendance', methods: ['PUT'])]
     public function updateAttendance(Attendance $attendance, UpdateAttendanceRequest $request, LessonAttendanceRepositoryInterface $repository): Response {
-        $this->denyAccessUnlessGranted(LessonEntryVoter::Edit, $attendance->getEntry());
+        $this->denyAccessUnlessGranted(AttendanceVoter::Edit, $attendance);
 
         $attendance->setIsZeroAbsentLesson($request->isZeroAbsentLesson());
         $attendance->setLateMinutes($request->getLateMinutes());

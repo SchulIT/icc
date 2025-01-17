@@ -72,6 +72,14 @@ class BookSettings extends AbstractSettings {
         $this->setValue('book.attendance.visible_for_students_and_parents', $isEnabled);
     }
 
+    public function isLessonTopicsVisibleForStudentsAndParentsEnabled(): bool {
+        return $this->getValue('book.lesson_topics.visible_for_students_and_parents', false);
+    }
+
+    public function setLessonTopicsVisibleForStudentsAndParentsEnabled(bool $isEnabled): void {
+        $this->setValue('book.lesson_topics.visible_for_students_and_parents', $isEnabled);
+    }
+
     public function isIntegrityCheckEnabled(string $check): bool {
         return $this->getValue(sprintf('book.integrity_check.%s.enabled', $check), true);
     }
@@ -112,11 +120,43 @@ class BookSettings extends AbstractSettings {
         $this->setValue('book.attendance_suggestion.priority.excuse_note', $priority);
     }
 
+    public function getSuggestionPriorityForBookEvent(): int {
+        return $this->getValue('book.attendance_suggestion.priority.book_event', 120);
+    }
+
+    public function setSuggestionPriorityForBookEvent(int $priority): void {
+        $this->setValue('book.attendance_suggestion.priority.book_event', $priority);
+    }
+
+    public function getSuggestionPriorityForAbsentStudyGroup(): int {
+        return $this->getValue('book.attendance_suggestion.priority.absent_study_group', 70);
+    }
+
+    public function setSuggestionPriorityForAbsentStudyGroup(int $priority): void {
+        $this->setValue('book.attendance_suggestion.priority.absent_study_group', $priority);
+    }
+
     public function getSuggestionPriorityForRemoval(): int {
         return $this->getValue('book.attendance_suggestion.priority.removal', 20);
     }
 
     public function setSuggestionPriorityForRemoval(int $priority): void {
         $this->setValue('book.attendance_suggestion.priority.removal', $priority);
+    }
+
+    public function setNotifyParentsOnStudentAbsenceWithoutSuggestion(bool $notifiy): void {
+        $this->setValue('book.attendance.notify_parents_on_absence_without_suggestion', $notifiy);
+    }
+
+    public function getNotifyParentsOnStudentAbsenceWithoutSuggestion(): bool {
+        return $this->getValue('book.attendance.notify_parents_on_absence_without_suggestion', false);
+    }
+
+    public function setNotifyGradeTeachersOnStudentAbsenceWithoutSuggestion(bool $notify): void {
+        $this->setValue('book.attendance.notify_grade_teachers_on_absence_without_suggestion', $notify);
+    }
+
+    public function getNotifyGradeTeachersOnStudentAbsenceWithoutSuggestion(): bool {
+        return $this->getValue('book.attendance.notify_grade_teachers_on_absence_without_suggestion', false);
     }
 }

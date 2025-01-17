@@ -1,0 +1,117 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'book.grades.export.schild_leistungsdaten.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('book') }}">{{ 'book.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('gradebook') }}">{{ 'book.grades.label'|trans }}</a> </li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block post_javascript %}
+    <script src="{{ asset('build/gradebook-schild-leistungsdaten.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <label class="col-form-label col-sm-2" for="category">{{ 'label.gradebook.grade_category'|trans }}</label>
+                            <div class="col-sm-10">
+                                <select class="form-select" id="category">
+                                    <option value="">{{ 'label.select.grade_category'|trans }}</option>
+
+                                    {% for category in categories %}
+                                        <option value="{{ category.uuid }}">
+                                            {{ category.displayName }}
+
+                                            ({{ category.catalog.displayName }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label class="col-form-label col-sm-2" for="file">SchuelerLeistungsdaten.dat</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="file" id="file">
+
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label class="col-form-label col-sm-2" for="password">{{ 'label.password'|trans }}</label>
+                            <div class="col-sm-10">
+                                <input type="password" class="form-control" id="password">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-sm-2"></div>
+                            <div class="col-sm-10">
+                                <div class="form-check">
+                                    <input id="convert" class="form-check-input" type="checkbox" value="1">
+                                    <label class="form-check-label" for="convert">
+                                        {{ 'book.grades.export.schild_leistungsdaten.convert.label'|trans }}
+                                    </label>
+                                </div>
+                                <div class="form-text mb-0 help-text" style="font-size: 100%">
+                                    {{ 'book.grades.export.schild_leistungsdaten.convert.help'|trans }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-sm-2"></div>
+                            <div class="col-sm-10">
+                                <div class="form-check">
+                                    <input id="absent_lessons" class="form-check-input" type="checkbox" value="1" checked>
+                                    <label class="form-check-label" for="absent_lessons">
+                                        {{ 'book.grades.export.schild_leistungsdaten.include_absent_lessons.label'|trans }}
+                                    </label>
+                                </div>
+                                <div class="form-text mb-0 help-text" style="font-size: 100%">
+                                    {{ 'book.grades.export.schild_leistungsdaten.include_absent_lessons.help'|trans }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="key" value="{{ key }}" id="key">
+
+                        <button type="button" id="export" class="btn btn-primary btn-sm" data-endpoint="{{ path('nrw_schild_leistungsdaten_export_json') }}"><i class="fas fa-download"></i> {{ 'book.grades.export.schild_leistungsdaten.button'|trans }}</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div id="progress" class="progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                            <div class="progress-bar" style="width: 0%"></div>
+                        </div>
+
+                        <div id="output"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-info-circle"></i> {{ 'info.label'|trans }}
+                        </h5>
+
+                        <p>{{ 'book.grades.export.schild_leistungsdaten.info'|trans }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

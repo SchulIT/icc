@@ -34,7 +34,7 @@ class TeacherRepository extends AbstractTransactionalRepository implements Teach
             ->setParameter('id', $id)
             ->setMaxResults(1);
 
-        return $qb->getQuery()->getResult();
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     /**
@@ -47,7 +47,7 @@ class TeacherRepository extends AbstractTransactionalRepository implements Teach
             ->setParameter('uuid', $uuid)
             ->setMaxResults(1);
 
-        return $qb->getQuery()->getResult();
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     /**
@@ -95,19 +95,6 @@ class TeacherRepository extends AbstractTransactionalRepository implements Teach
         $qb
             ->where($qb->expr()->in('t.acronym', ':acronyms'))
             ->setParameter('acronyms', $acronyms);
-
-        return $qb->getQuery()->getResult();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function findAllByExternalId(array $externalIds): array {
-        $qb = $this->createDefaultQueryBuilder();
-
-        $qb
-            ->where($qb->expr()->in('t.externalId', ':externalIds'))
-            ->setParameter('externalIds', $externalIds);
 
         return $qb->getQuery()->getResult();
     }

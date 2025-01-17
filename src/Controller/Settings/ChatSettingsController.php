@@ -11,9 +11,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
-#[Route(path: '/settings')]
+#[Route(path: '/admin/settings')]
 #[Security("is_granted('ROLE_ADMIN')")]
 class ChatSettingsController extends AbstractController {
 
@@ -56,11 +56,35 @@ class ChatSettingsController extends AbstractController {
                 ]);
         }
 
+        $builder
+            ->add('view_read_confirmations', ChoiceType::class, [
+                'choices' => $userTypeChoices,
+                'choice_label' => $userTypeChoiceLabel,
+                'choice_value' => $userTypeChoiceValue,
+                'expanded' => true,
+                'multiple' => true,
+                'label' => 'admin.settings.chat.view_read_confirmations.label',
+                'help' => 'admin.settings.chat.view_read_confirmations.help',
+                'data' => $chatSettings->getUserTypesAllowedToSeeReadConfirmations()
+            ])
+            ->add('can_edit_or_remove', ChoiceType::class, [
+                'choices' => $userTypeChoices,
+                'choice_label' => $userTypeChoiceLabel,
+                'choice_value' => $userTypeChoiceValue,
+                'expanded' => true,
+                'multiple' => true,
+                'label' => 'admin.settings.chat.can_edit_or_remove.label',
+                'help' => 'admin.settings.chat.can_edit_or_remove.help',
+                'data' => $chatSettings->getUserTypesAllowedToEditOrRemoveMessages()
+            ]);
+
         $form = $builder->getForm();
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
             $chatSettings->setEnabledUserTypes($form->get('chat_enabled')->getData());
+            $chatSettings->setUserTypesAllowedToSeeReadConfirmations($form->get('view_read_confirmations')->getData());
+            $chatSettings->setUserTypesAllowedToEditOrRemoveMessages($form->get('can_edit_or_remove')->getData());
 
             foreach(UserType::cases() as $userType) {
                 $allowed = $form->get(sprintf('%s_recipients', $userType->value))->getData();

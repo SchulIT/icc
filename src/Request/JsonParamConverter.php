@@ -6,6 +6,8 @@ use JMS\Serializer\ContextFactory\DeserializationContextFactoryInterface;
 use JMS\Serializer\DeserializationContext;
 use JMS\Serializer\Exception\Exception as SerializerException;
 use JMS\Serializer\SerializerInterface;
+use ReflectionClass;
+use ReflectionException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -65,6 +67,7 @@ class JsonParamConverter implements ParamConverterInterface {
 
     /**
      * @inheritDoc
+     * @throws ReflectionException
      */
     public function supports(ParamConverter $configuration): bool {
         $class = $configuration->getClass();
@@ -73,6 +76,18 @@ class JsonParamConverter implements ParamConverterInterface {
             if (str_starts_with($class, $prefix)) {
                 return true;
             }
+        }
+
+        if(empty($class)) {
+            return false;
+        }
+
+        // Test for attribute
+        $reflectionClass = new ReflectionClass($class);
+        $attributes = $reflectionClass->getAttributes(JsonParam::class);
+
+        if(count($attributes) > 0) {
+            return true;
         }
 
         return false;

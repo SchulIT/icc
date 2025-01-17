@@ -41,10 +41,10 @@ class ChatVoter extends Voter {
                 return $this->canView($subject, $token);
 
             case self::Edit:
-                return $this->canEdit($subject, $token);
+                return $this->canEdit($token);
 
             case self::Remove:
-                return $this->canRemove($subject, $token);
+                return $this->canRemove($token);
         }
 
         throw new LogicException('This code should not be executed.');
@@ -80,25 +80,17 @@ class ChatVoter extends Voter {
         return false;
     }
 
-    private function canEdit(Chat $chat, TokenInterface $token): bool {
+    private function canEdit(TokenInterface $token): bool {
         $user = $token->getUser();
 
         if(!$user instanceof User) {
             return false;
         }
 
-        if($this->accessDecisionManager->decide($token, [ 'ROLE_CHAT_MOD' ])) {
-            return true;
-        }
-
-        if($chat->getCreatedBy()?->getId() === $user->getId()) {
-            return true;
-        }
-
-        return false;
+        return $this->accessDecisionManager->decide($token, [ 'ROLE_CHAT_MOD' ]);
     }
 
-    private function canRemove(Chat $chat, TokenInterface $token): bool {
-        return $this->canEdit($chat, $token);
+    private function canRemove(TokenInterface $token): bool {
+        return $this->canEdit($token);
     }
 }

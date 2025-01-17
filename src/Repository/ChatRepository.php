@@ -19,9 +19,11 @@ class ChatRepository extends AbstractRepository implements ChatRepositoryInterfa
         return $qb->select(['c', 'p'])
             ->from(Chat::class, 'c')
             ->leftJoin('c.participants', 'p')
+            ->leftJoin('c.messages', 'm')
             ->where(
                 $qb->expr()->in('c.id', $qbInner->getDQL())
             )
+            ->addOrderBy('m.createdAt', 'desc')
             ->setParameter('user', $user->getId())
             ->getQuery()
             ->getResult();

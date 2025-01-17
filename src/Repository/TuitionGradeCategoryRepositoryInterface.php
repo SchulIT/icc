@@ -7,6 +7,8 @@ use App\Entity\TuitionGradeCatalog;
 
 interface TuitionGradeCategoryRepositoryInterface {
 
+    public function findOneByUuid(string $uuid): ?TuitionGradeCategory;
+
     /**
      * @return TuitionGradeCategory[]
      */

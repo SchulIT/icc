@@ -124,6 +124,15 @@
     </div>
 {%- endblock -%}
 
+{%- block week_type_widget -%}
+    <div class="mb-3">
+        <div class="input-group">
+            {{ form_widget(form.week) }}
+            {{ form_widget(form.untisWeek) }}
+        </div>
+    </div>
+{%- endblock -%}
+
 {%- block color_widget -%}
     <div class="input-group mb-3">
         <span class="input-group-text color-rect h-100" style="width: 30px">&nbsp;</span>
@@ -292,7 +301,6 @@
             {{ form_row(form.room) }}
             {{ form_row(form.description) }}
         </div>
-
     </div>
 {% endblock %}
 
@@ -331,4 +339,20 @@
             <button type="button" class="btn btn-outline-primary">{{ 'absences.students.add_bulk.choice.apply'|trans }}</button>
         </div>
     {% endif %}
+{% endblock %}
+
+{% block checklist_student_widget %}
+    <div class="list-group-item">
+        <div class="d-flex w-100 align-items-baseline">
+            <div class="flex-fill flex-grow-1">
+                {{ form_widget(form.isChecked) }}
+            </div>
+            <div class="mx-1">
+                {{ form_widget(form.comment) }}
+            </div>
+            <button type="button" class="btn btn-outline-danger btn-sm btn-delete" data-selector=".list-group-item">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+    </div>
 {% endblock %}

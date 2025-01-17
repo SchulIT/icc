@@ -8,6 +8,10 @@
             </div>
 
             <div class="col-lg-12">
+                {{ block('checklists') }}
+            </div>
+
+            <div class="col-lg-12">
                 {{ block('missingEntries') }}
             </div>
 
@@ -20,6 +24,7 @@
                 {{ block('agenda') }}
                 {{ block('parentsDayAppointments') }}
                 {{ block('mentions') }}
+                {{ block('additionalItems') }}
                 {{ block('exams') }}
             </div>
 

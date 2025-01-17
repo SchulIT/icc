@@ -2,49 +2,42 @@
 
 namespace App\Markdown;
 
-use App\Markdown\Element\AlertBlock;
-use App\Markdown\Element\AnchorLink;
-use App\Markdown\Element\Icon;
-use App\Markdown\Parser\AlertBlockParser;
+use App\Markdown\Node\Block\Alert;
+use App\Markdown\Node\Inline\Anchor;
+use App\Markdown\Node\Inline\Icon;
+use App\Markdown\Parser\Block\AlertStartParser;
 use App\Markdown\Processor\HeadingAnchorProcessor;
 use App\Markdown\Processor\ImageProcessor;
 use App\Markdown\Processor\LinkProcessor;
-use App\Markdown\Renderer\AlertBlockRenderer;
-use App\Markdown\Renderer\HeadingRenderer;
-use App\Markdown\Renderer\IconRenderer;
-use App\Markdown\Renderer\TableRenderer;
-use League\CommonMark\Block\Element\Heading;
-use League\CommonMark\ConfigurableEnvironmentInterface;
+use App\Markdown\Renderer\Block\AlertRenderer;
+use App\Markdown\Renderer\Block\HeadingRenderer;
+use App\Markdown\Renderer\Inline\AnchorRenderer;
+use App\Markdown\Renderer\Inline\IconRenderer;
+use League\CommonMark\Environment\EnvironmentBuilderInterface;
 use League\CommonMark\Event\DocumentParsedEvent;
-use League\CommonMark\Extension\Table\Table;
-use League\CommonMark\Extension\Table\TableCell;
-use League\CommonMark\Extension\Table\TableCellRenderer;
-use League\CommonMark\Extension\Table\TableParser;
-use League\CommonMark\Extension\Table\TableRow;
-use League\CommonMark\Extension\Table\TableRowRenderer;
-use League\CommonMark\Extension\Table\TableSection;
-use League\CommonMark\Extension\Table\TableSectionRenderer;
+use League\CommonMark\Extension\CommonMark\Node\Block\Heading;
 use League\CommonMark\Extension\ExtensionInterface;
-use League\CommonMark\Inline\Renderer\LinkRenderer;
 
 class MarkdownExtension implements ExtensionInterface {
 
-    public function __construct(private AlertBlockParser $alertBlockParser, private HeadingAnchorProcessor $headingProcessor, private LinkProcessor $linkProcessor, private ImageProcessor $imageProcessor, private AlertBlockRenderer $alertBlockRenderer, private HeadingRenderer $headingRenderer, private TableRenderer $tableRenderer)
+    public function __construct(private readonly AlertStartParser $alertParser,
+                                private readonly AlertRenderer $alertRenderer,
+                                private readonly HeadingAnchorProcessor $headingProcessor,
+                                private readonly LinkProcessor $linkProcessor,
+                                private readonly ImageProcessor $imageProcessor,
+                                private readonly HeadingRenderer $headingRenderer,
+                                private readonly AnchorRenderer $anchorRenderer,
+                                private readonly IconRenderer $iconRenderer)
     {
     }
 
-    public function register(ConfigurableEnvironmentInterface $environment): void {
+    public function register(EnvironmentBuilderInterface $environment): void {
         $environment
-            ->addBlockParser(new TableParser())
-            ->addBlockRenderer(Heading::class, $this->headingRenderer, 100)
-            ->addBlockRenderer(Table::class, $this->tableRenderer)
-            ->addBlockRenderer(TableSection::class, new TableSectionRenderer())
-            ->addBlockRenderer(TableRow::class, new TableRowRenderer())
-            ->addBlockRenderer(TableCell::class, new TableCellRenderer())
-            ->addBlockParser($this->alertBlockParser)
-            ->addInlineRenderer(AnchorLink::class, new LinkRenderer())
-            ->addInlineRenderer(Icon::class, new IconRenderer())
-            ->addBlockRenderer(AlertBlock::class, $this->alertBlockRenderer)
+            ->addBlockStartParser($this->alertParser, 260)
+            ->addRenderer(Alert::class, $this->alertRenderer, 300)
+            ->addRenderer(Heading::class, $this->headingRenderer, 100)
+            ->addRenderer(Icon::class, $this->iconRenderer)
+            ->addRenderer(Anchor::class, $this->anchorRenderer)
             ->addEventListener(DocumentParsedEvent::class, [ $this->headingProcessor, 'onDocumentParsed' ] , 0)
             ->addEventListener(DocumentParsedEvent::class, [ $this->linkProcessor, 'onDocumentParsed' ] , 0)
             ->addEventListener(DocumentParsedEvent::class, [ $this->imageProcessor, 'onDocumentParsed'], 0);

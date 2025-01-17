@@ -31,6 +31,18 @@ class LessonEntryRepository extends AbstractRepository implements LessonEntryRep
             ->setParameter('end', $end);
     }
 
+    public function findLastByTuition(Tuition $tuition, DateTime $today): ?LessonEntry {
+        return $this->createDefaultQueryBuilder()
+            ->andWhere('tt.id = :tuition')
+            ->andWhere('l.date < :today')
+            ->setParameter('tuition', $tuition)
+            ->setParameter('today', $today)
+            ->setMaxResults(1)
+            ->orderBy('l.date', 'DESC')
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     /**
      * @inheritDoc
      */
@@ -119,6 +131,25 @@ class LessonEntryRepository extends AbstractRepository implements LessonEntryRep
         $qb->andWhere('e.exercises IS NOT NULL')
             ->orderBy('l.date', 'desc')
             ->addOrderBy('l.lessonStart', 'asc');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findAllByStudents(Student $student, DateTime $start, DateTime $end): array {
+        $qb = $this->createDefaultQueryBuilder();
+        $qb = $this->applyStartEnd($qb, $start, $end);
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('tInner.id')
+            ->from(Tuition::class, 'tInner')
+            ->leftJoin('tInner.studyGroup', 'sgInner')
+            ->leftJoin('sgInner.memberships', 'sgmInner')
+            ->where('sgmInner.student = :student');
+
+        $qb->andWhere(
+            $qb->expr()->in('tt.id', $qbInner->getDQL())
+        )
+            ->setParameter('student', $student->getId());
 
         return $qb->getQuery()->getResult();
     }

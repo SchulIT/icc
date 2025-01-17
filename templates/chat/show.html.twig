@@ -42,7 +42,7 @@
                                     <i class="fas fa-trash"></i>
                                 </button>
                             {% endif %}
-                            {% if message.createdBy == app.user %}
+                            {% if message.createdBy == app.user and is_granted('can-view-read-confirmations')%}
                                 {% if message.seenBy|length == 0 %}
                                     <div class="text-muted ms-2" title="{{ 'chat.show.seen_by_nobody'|trans }}">
                                         <i class="fas fa-user-times"></i>
@@ -113,6 +113,13 @@
                 <div class="card">
                     <div class="card-header">{{ 'chat.message.add.label'|trans }}</div>
                     <div class="card-body">
+                        {% if not canEditOrRemove %}
+                            <div class="bs-callout bs-callout-danger">
+                                <h5>{{ 'caution'|trans }}</h5>
+                                <p>{{ 'chat.add.caution'|trans }}</p>
+                            </div>
+                        {% endif %}
+
                         {{ form_widget(form.content) }}
                     </div>
                     <div class="card-body">
@@ -199,12 +206,11 @@
 
                         {{ form_start(participantsForm) }}
 
-                        <div class="input-group">
-                            {{ form_widget(participantsForm) }}
-                            <button class="btn btn-outline-secondary btn-sm">
-                                <i class="fas fa-plus"></i> {{ 'actions.add'|trans }}
-                            </button>
-                        </div>
+                        {{ form_widget(participantsForm) }}
+
+                        <button class="btn btn-outline-secondary btn-sm mt-1">
+                            <i class="fas fa-plus"></i> {{ 'actions.add'|trans }}
+                        </button>
 
                         {{ form_end(participantsForm) }}
                     </div>
@@ -244,6 +250,36 @@
                         {% endfor %}
                     </div>
                 </div>
+                {% endif %}
+
+                {% if tags|length > 0 %}
+                <form method="post">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('chat') }}">
+                    <div class="card">
+                        <div class="card-header">{{ 'chat.tags.label'|trans }}</div>
+                        <div class="card-body">
+                            {{ 'chat.tags.info'|trans }}
+                        </div>
+                        <div class="list-group list-group-flush">
+                            {% for tag in tags %}
+                                <div class="list-group-item">
+                                    <div class="form-check">
+                                        <input class="form-check-input" name="userTags[]" type="checkbox" value="{{ tag.uuid }}" id="tag_{{ tag.uuid }}" {% if tag in userTags %}checked{% endif %}>
+                                        <label class="form-check-label" for="tag_{{ tag.uuid }}">
+                                            <span class="badge" style="background: {{ tag.color }}; color: {{ foreground(tag.color) }}">{{ tag.name }}</span>
+                                        </label>
+                                    </div>
+
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fas fa-save"></i> {{ 'actions.save'|trans }}
+                            </button>
+                        </div>
+                    </div>
+                </form>
                 {% endif %}
             </div>
         </div>

@@ -1,4 +1,4 @@
-{% extends "main.html.twig" %}
+{% extends "admin/_form.html.twig" %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
@@ -7,14 +7,12 @@
     </ol>
 {% endblock %}
 
-{% block content %}
+{% block inner %}
     {% block form_start %}
         {% if form is defined %}
             {{ form_start(form) }}
         {% endif %}
     {% endblock %}
-
-    {{ knp_menu_render('settingsMenu', {'currentClass': 'active', 'template': 'admin/settings/_menu.html.twig' }) }}
 
     {% block settings_content %}{% endblock %}
 

@@ -3,8 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\LearningManagementSystem;
+use App\Entity\UserType;
 use App\Export\LearningManagementSystemInfoCsvExporter;
 use App\Repository\StudyGroupMembershipRepositoryInterface;
+use App\Repository\UserRepositoryInterface;
+use App\Settings\ChatSettings;
 use App\View\Filter\LearningManagementSystemFilter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -55,7 +58,7 @@ use App\View\Filter\TeacherTagFilter;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class ListController extends AbstractControllerWithMessages {
 
@@ -71,7 +74,7 @@ class ListController extends AbstractControllerWithMessages {
 
     #[Route(path: '/tuitions', name: 'list_tuitions')]
     public function tuitions(SectionFilter $sectionFilter, GradeFilter $gradeFilter, StudentFilter $studentFilter, TeacherFilter $teacherFilter, SubjectFilter $subjectFilter,
-                             TuitionRepositoryInterface $tuitionRepository, Request $request): Response {
+                             TuitionRepositoryInterface $tuitionRepository, ChatSettings $chatSettings, UserRepositoryInterface $userRepository, Request $request): Response {
         $this->denyAccessUnlessGranted(ListsVoter::Tuitions);
 
         /** @var User $user */
@@ -86,6 +89,7 @@ class ListController extends AbstractControllerWithMessages {
         $tuitions = [ ];
         $memberships = [ ];
         $teacherMailAddresses = [ ];
+        $teacherPrivateMessageLink = null;
 
         if($studentFilterView->getCurrentStudent() !== null && $sectionFilterView->getCurrentSection() !== null) {
             $tuitions = $tuitionRepository->findAllByStudents([$studentFilterView->getCurrentStudent()], $sectionFilterView->getCurrentSection());
@@ -105,8 +109,12 @@ class ListController extends AbstractControllerWithMessages {
         }
 
         if($studentFilterView->getCurrentStudent() !== null || $gradeFilterView->getCurrentGrade() !== null) {
+            $teachers = [ ];
+
             foreach($tuitions as $tuition) {
                 foreach($tuition->getTeachers() as $teacher) {
+                    $teachers[] = $teacher;
+
                     if($teacher->getEmail() !== null) {
                         $teacherMailAddresses[] = $teacher->getEmail();
                     }
@@ -114,6 +122,15 @@ class ListController extends AbstractControllerWithMessages {
             }
 
             $teacherMailAddresses = array_unique($teacherMailAddresses);
+
+            if(in_array(UserType::Teacher, $chatSettings->getAllowedRecipients($user->getUserType())) && in_array($user->getUserType(), $chatSettings->getEnabledUserTypes())) {
+                $users = $userRepository->findAllTeachers($teachers);
+                $uuids = array_map(fn(User $user) => $user->getUuid(), $users);
+
+                $teacherPrivateMessageLink = $this->generateUrl('new_chat', [
+                    'recipients' => $uuids,
+                ]);
+            }
         }
 
         $tuitions = array_filter($tuitions, fn(Tuition $tuition) => $tuition->getSection() === $sectionFilterView->getCurrentSection());
@@ -129,6 +146,7 @@ class ListController extends AbstractControllerWithMessages {
             'tuitions' => $tuitions,
             'memberships' => $memberships,
             'teacherMailAddresses' => $teacherMailAddresses,
+            'teacherPrivateMessageLink' => $teacherPrivateMessageLink,
             'last_import' => $this->importDateTimeRepository->findOneByEntityClass(Tuition::class)
         ]);
     }

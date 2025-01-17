@@ -17,7 +17,7 @@ class ChatType extends AbstractType {
             ])
             ->add('topic', TextType::class, [
                 'label' => 'label.topic',
-                'required' => false
+                'required' => true
             ])
             ->add('messages', CollectionType::class, [
                 'allow_add' => false,

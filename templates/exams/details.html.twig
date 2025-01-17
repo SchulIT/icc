@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block content %}
-    {% include "_includes/exam.html.twig" with { exam: exam, hideDetails: true, showDate: true, header: 'plans.exam.label' } %}
+    {% include "_includes/exam.html.twig" with { exam: exam, hideDetails: true, showDate: true, header: 'plans.exam.label', related: relatedExams } %}
 
     {% if is_granted('details', exam) %}
         {% for group in groups %}

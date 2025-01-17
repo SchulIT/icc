@@ -72,11 +72,30 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
 
     private function getDefaultQueryBuilder(): QueryBuilder {
         return $this->em->createQueryBuilder()
-            ->select(['a', 'e', 'l'])
+            ->select(['a', 'e', 'l', 'ev'])
             ->from(Attendance::class, 'a')
             ->leftJoin('a.entry', 'e')
             ->leftJoin('a.student', 's')
-            ->leftJoin('e.lesson', 'l');
+            ->leftJoin('e.lesson', 'l')
+            ->leftJoin('a.event', 'ev');
+    }
+
+    private function applyDateRange(QueryBuilder $queryBuilder, DateTime $start, DateTime $end): QueryBuilder {
+        return $queryBuilder
+            ->andWhere(
+                $queryBuilder->expr()->orX(
+                    $queryBuilder->expr()->andX(
+                        'l.date >= :start',
+                        'l.date <= :end'
+                    ),
+                    $queryBuilder->expr()->andX(
+                        'ev.date >= :start',
+                        'ev.date <= :end'
+                    )
+                )
+            )
+            ->setParameter('start', $start)
+            ->setParameter('end', $end);
     }
 
     private function applyTuition(QueryBuilder $queryBuilder, array $tuitions): QueryBuilder {
@@ -93,49 +112,65 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
 
         $ids = array_map(fn(Tuition $tuition) => $tuition->getId(), $tuitions);
 
-        $queryBuilder
-            ->andWhere(
-                $queryBuilder->expr()->in(
-                    'a.id', $qbInner->getDQL()
+        if(count($tuitions) !== 1) {
+            $queryBuilder
+                ->andWhere(
+                    $queryBuilder->expr()->orX(
+                        $queryBuilder->expr()->in(
+                            'a.id', $qbInner->getDQL()
+                        ),
+                        $qbInner->expr()->isNotNull('a.event')
+                    )
                 )
-            )
-            ->setParameter('tuitions', $ids);
+                ->setParameter('tuitions', $ids);
+        } else {
+            $queryBuilder
+                ->andWhere(
+                    $queryBuilder->expr()->in(
+                        'a.id', $qbInner->getDQL()
+                    )
+                )
+                ->setParameter('tuitions', $ids);
+        }
 
         return $queryBuilder;
     }
 
-    public function findByStudent(Student $student, array $tuitions): array {
+    public function findByStudent(Student $student, DateTime $start, DateTime $end, array $tuitions = [ ]): array {
         $qb = $this->getDefaultQueryBuilder()
             ->where('s.id = :student')
             ->setParameter('student', $student->getId());
         $this->applyTuition($qb, $tuitions);
+        $this->applyDateRange($qb, $start, $end);
 
         return $qb->getQuery()->getResult();
     }
 
-    public function findLateByStudent(Student $student, array $tuitions): array {
+    public function findLateByStudent(Student $student, DateTime $start, DateTime $end, array $tuitions = [ ]): array {
         $qb = $this->getDefaultQueryBuilder()
             ->where('s.id = :student')
             ->andWhere('a.type = :type')
             ->setParameter('student', $student->getId())
             ->setParameter('type', AttendanceType::Late);
         $this->applyTuition($qb, $tuitions);
+        $this->applyDateRange($qb, $start, $end);
 
         return $qb->getQuery()->getResult();
     }
 
-    public function findAbsentByStudent(Student $student, array $tuitions): array {
+    public function findAbsentByStudent(Student $student, DateTime $start, DateTime $end, array $tuitions = [ ]): array {
         $qb = $this->getDefaultQueryBuilder()
             ->where('s.id = :student')
             ->andWhere('a.type = :type')
             ->setParameter('student', $student)
             ->setParameter('type', AttendanceType::Absent);
         $this->applyTuition($qb, $tuitions);
+        $this->applyDateRange($qb, $start, $end);
 
         return $qb->getQuery()->getResult();
     }
 
-    public function findAbsentByStudents(array $students, array $tuitions): array {
+    public function findAbsentByStudents(array $students, DateTime $start, DateTime $end, array $tuitions = [ ]): array {
         $studentIds = array_map(fn(Student $student) => $student->getId(), $students);
 
         $qb = $this->getDefaultQueryBuilder();
@@ -146,20 +181,12 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
             ->setParameter('students', $studentIds)
             ->setParameter('type', AttendanceType::Absent);
         $this->applyTuition($qb, $tuitions);
+        $this->applyDateRange($qb, $start, $end);
 
         return $qb->getQuery()->getResult();
     }
 
     public function findByStudentAndDateRange(Student $student, DateTime $start, DateTime $end): array {
-        $qb = $this->getDefaultQueryBuilder();
-
-        $qb->andWhere('s.id = :student')
-            ->setParameter('student', $student->getId())
-            ->andWhere('l.date >= :start')
-            ->setParameter('start', $start)
-            ->andWhere('l.date <= :end')
-            ->setParameter('end', $end);
-
-        return $qb->getQuery()->getResult();
+        return $this->findByStudent($student, $start, $end);
     }
 }

@@ -20,6 +20,17 @@ parameters:
         use_underscore: true,
         html_input: 'escape'
         allow_unsafe_links: false
+        default_attributes:
+            League\CommonMark\Extension\Table\Table:
+                class: 'table table-striped table-hover align-td-middle'
+            League\CommonMark\Extension\CommonMark\Node\Block\BlockQuote:
+                class: 'blockquote'
+        table:
+            wrap:
+                enabled: true
+                tag: div
+                attributes:
+                    class: 'table-responsive'
 
 services:
     # default configuration for services in *this* file
@@ -64,7 +75,7 @@ services:
         resource: '../src/Doctrine/*Subscriber.php'
         tags: ['doctrine.event_subscriber']
 
-    App\Doctrine\LessonAttendanceUpdateSubscriber:
+    App\Doctrine\AttendanceUpdateSubscriber:
         arguments:
             $isEnabled: '%env(ASYNC_CHECKS)%'
 
@@ -168,10 +179,6 @@ services:
         tags:
             - { name: knp_menu.menu_builder, method: dataMenu, alias: dataMenu }
 
-    App\Menu\AdminSettingsMenuBuilder:
-        tags:
-            - { name: knp_menu.menu_builder, method: settingsMenu, alias: settingsMenu }
-
     App\Menu\AdminToolsMenuBuilder:
         tags:
             - { name: knp_menu.menu_builder, method: toolsMenu, alias: toolsMenu }
@@ -232,24 +239,38 @@ services:
         arguments:
             $isAsyncChecksEnabled: '%env(ASYNC_CHECKS)%'
 
+    App\Controller\Settings\NotificationSettingsController:
+        arguments:
+            $pushoverToken: '%env(PUSHOVER_TOKEN)%'
+
+    App\Controller\ProfileController:
+        arguments:
+            $pushoverToken: '%env(PUSHOVER_TOKEN)%'
+
     # MARKDOWN
-    League\CommonMark\Extension\CommonMarkCoreExtension: ~
+    League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension: ~
 
     League\CommonMark\Extension\Autolink\AutolinkExtension: ~
 
-    League\CommonMark\EnvironmentInterface:
-        class: League\CommonMark\Environment
+    League\CommonMark\Extension\Table\TableExtension: ~
+
+    League\CommonMark\Extension\DefaultAttributes\DefaultAttributesExtension: ~
+
+    League\CommonMark\Environment\EnvironmentInterface:
+        class: League\CommonMark\Environment\Environment
         arguments:
             $config: "%commonmark.config%"
         calls:
-            - [ addExtension, [ "@League\\CommonMark\\Extension\\CommonMarkCoreExtension" ]]
+            - [ addExtension, [ "@League\\CommonMark\\Extension\\CommonMark\\CommonMarkCoreExtension" ]]
             - [ addExtension, [ "@League\\CommonMark\\Extension\\Autolink\\AutolinkExtension"]]
+            - [ addExtension, [ "@League\\CommonMark\\Extension\\Table\\TableExtension"]]
+            - [ addExtension, [ "@League\\CommonMark\\Extension\\DefaultAttributes\\DefaultAttributesExtension"]]
             - [ addExtension, [ "@App\\Markdown\\MarkdownExtension" ]]
 
-    League\CommonMark\MarkdownConverterInterface:
+    League\CommonMark\ConverterInterface:
         class: League\CommonMark\MarkdownConverter
         arguments:
-            $environment: "@League\\CommonMark\\EnvironmentInterface"
+            $environment: "@League\\CommonMark\\Environment\\EnvironmentInterface"
 
     EasySlugger\SluggerInterface:
         class: EasySlugger\Utf8Slugger
@@ -310,7 +331,7 @@ services:
 
     App\Notification\Pushover\PushoverNotificationHandler:
         arguments:
-            $logger: '@monolog.logger.notifications'
+            $pushoverToken: '%env(PUSHOVER_TOKEN)%'
 
     App\Notification\Email\DefaultEmailStrategy:
         arguments:
@@ -443,6 +464,11 @@ services:
         arguments:
             $client: '@eight_points_guzzle.client.sso'
             $isDebug: '%kernel.debug%'
+
+    App\Messenger\SendPushoverNotificationHandler:
+        arguments:
+            $pushoverToken: '%env(PUSHOVER_TOKEN)%'
+            $logger: '@monolog.logger.notifications'
 
 when@test:
     # See https://github.com/DamienHarper/auditor/issues/141#issuecomment-1397949309

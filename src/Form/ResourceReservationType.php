@@ -46,6 +46,11 @@ class ResourceReservationType extends AbstractType {
             ])
             ->add('teacher', TeacherChoiceType::class, [
                 'label' => 'label.teacher'
+            ])
+            ->add('associatedStudyGroup', StudyGroupType::class, [
+                'label' => 'label.associated_study_group.label',
+                'help' => 'label.associated_study_group.help',
+                'required' => false
             ]);
     }
 }

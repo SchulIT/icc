@@ -224,7 +224,7 @@
 
             <div class="col-md-3">
                 {% set canEdit = is_granted('edit', absence) %}
-                {% set canCreateExcuseNote = is_granted('new-excuse') and not absence.type.bookExcuseStatus == 1 and not excuseStatus.completelyExcused %}
+                {% set canCreateExcuseNote = is_granted('new-excuse') and not absence.type.bookExcuseStatus.value == 1 and not excuseStatus.completelyExcused %}
                 {% set canDelete = is_granted('remove', absence) %}
 
                 {% if canEdit or canCreateExcuseNote or canDelete %}
@@ -366,11 +366,16 @@
                                     <div class="me-auto">
                                         {{ item.dateLesson.date|format_date }} {{ 'label.substitution_lessons'|trans({'%start%': item.dateLesson.lesson, '%end%': item.dateLesson.lesson, '%count%': 0}) }}
                                     </div>
-                                    {% if item.attendance is not null %}
-                                    <div class="ms-2">
-                                        {{ item.attendance.entry.tuition.name }}
-                                        <i class="fas fa-chalkboard-teacher"></i> {{ item.attendance.entry.teacher.acronym }}
-                                    </div>
+                                    {% if item.attendance is not null and item.attendance.entry is not null %}
+                                        <div class="ms-2">
+                                            {{ item.attendance.entry.tuition.name }}
+                                            <i class="fas fa-chalkboard-teacher"></i> {{ item.attendance.entry.teacher.acronym }}
+                                        </div>
+                                    {% elseif item.attendance is not null and item.attendance.event is not null %}
+                                        <div class="ms-2">
+                                            {{ item.attendance.event.title }}
+                                            <i class="fas fa-chalkboard-teacher"></i> {{ item.attendance.event.teacher.acronym }}
+                                        </div>
                                     {% elseif item.entry is not null %}
                                         <div class="ms-2">
                                             {{ item.entry.tuition.name }}

@@ -24,33 +24,41 @@
                         {% endif %}
                     </div>
                 {% else %}
-                    <div class="row" data-masonry='{"percentPosition": true }'>
                         {% for group in categories %}
-                            <div class="col-sm-6 col-lg-4 col-xl-3">
-                                <div class="card">
-                                    <div class="card-header d-flex">
-                                        <div class="flex-fill">
-                                            {% if group.category.icon is not empty %}
-                                                <i class="{{ group.category.icon }}"></i>
-                                            {% else %}
-                                                <i class="far fa-folder"></i>
-                                            {% endif %}{{ group.category.name }}
-                                        </div>
-
-                                        <div class="flex-shrink-0">
-                                            <i class="far fa-copy"></i> {{ group.documents|length }}
-                                        </div>
+                            <div class="card">
+                                <div class="card-header d-flex">
+                                    <div class="flex-fill">
+                                        {% if group.category.icon is not empty %}
+                                            <i class="{{ group.category.icon }}"></i>
+                                        {% else %}
+                                            <i class="far fa-folder"></i>
+                                        {% endif %}{{ group.category.name }}
                                     </div>
 
-                                    <div class="list-group list-group-flush">
-                                        {% for document in group.documents %}
-                                            <a href="{{ path('show_document', { uuid: document.uuid }) }}" class="list-group-item list-group-item-action"><i class="far fa-file"></i> {{ document.title }}</a>
-                                        {% endfor %}
+                                    <div class="flex-shrink-0">
+                                        <i class="far fa-copy"></i> {{ group.documents|length }}
                                     </div>
+                                </div>
+
+                                <div class="list-group list-group-flush">
+                                    {% for document in group.documents %}
+                                        <a href="{{ path('show_document', { uuid: document.uuid }) }}" class="list-group-item list-group-item-action d-flex align-items-center">
+                                            <div class="flex-fill">
+                                                 <i class="far fa-file"></i> {{ document.title }}
+                                            </div>
+
+                                            {% if document.attachments|length > 0 %}
+                                                <div class="flex-shrink-0">
+                                                    <button class="btn btn-outline-secondary btn-sm" type="button">
+                                                        <i class="fa fa-download"></i> {{ document.attachments|length }}
+                                                    </button>
+                                                </div>
+                                            {% endif %}
+                                        </a>
+                                    {% endfor %}
                                 </div>
                             </div>
                         {% endfor %}
-                    </div>
                 {% endif %}
             </div>
             <div class="col-md-3 sticky-sidebar">

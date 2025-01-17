@@ -21,7 +21,7 @@ class TimetableWeek implements Stringable {
 
     #[Assert\NotBlank]
     #[Assert\Length(max: 255)]
-    #[ORM\Column(type: 'string', unique: true)]
+    #[ORM\Column(name: '`key`', type: 'string', unique: true)]
     private string $key;
 
     #[Assert\NotBlank]

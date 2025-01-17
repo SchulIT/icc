@@ -12,6 +12,13 @@ substitution:
   sender: Vertretungsplaner
   link: Vertretungsplan anzeigen
 
+  mention:
+    create:
+      title: Erwähnung im Vertretungsplan
+      content: Es wurde eine Vertretung (%date%, %lesson%, %studygroup%, %subject%) hochgeladen, in der das Kürzel %acronym% vorkommt.
+      empty_studygroup: keine Lerngruppe
+      empty_subject: kein Fach
+
 exam:
   title: Neuer Klausurplan
   content: es wurde ein neuer Klausurplan hochgeladen.
@@ -102,3 +109,9 @@ chat:
       title: Neue private Nachricht
       content: Es wurde eine neue private Nachricht erstellt.
     link: Zum Chat
+
+attendance:
+  absent_without_note:
+    title: "%student% hat unangekündigt gefehlt"
+    content: "%student% hat am %date% in der %lesson%. Stunde ohne Abwesenheitsmeldung gefehlt."
+    link: Zur Anwesenheitsübersicht

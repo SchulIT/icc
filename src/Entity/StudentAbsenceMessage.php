@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Ambta\DoctrineEncryptBundle\Configuration\Encrypted;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -26,6 +27,7 @@ class StudentAbsenceMessage {
      */
     #[Assert\NotBlank]
     #[ORM\Column(type: 'text')]
+    #[Encrypted]
     private ?string $message = null;
 
     #[Gedmo\Blameable(on: 'create')]

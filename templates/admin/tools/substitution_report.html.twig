@@ -1,0 +1,80 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'tools.substitution_report.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('tools') }}">{{ 'tools.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {{ knp_menu_render('toolsMenu', {'currentClass': 'active', 'template': 'admin/tools/_menu.html.twig' }) }}
+
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% if result|length == 0 %}
+                    <div class="bs-callout bs-callout-info">
+                        <h5>{{ 'info.label'|trans }}</h5>
+                        <p>{{ 'tools.substitution_report.empty'|trans }}</p>
+                    </div>
+                {% else %}
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="table table-striped card-table border-top-0" data-table="true">
+                                <thead>
+                                <tr>
+                                    <th>{{ 'label.teacher'|trans }}</th>
+                                    <th>{{ 'tools.substitution_report.num_was_substituted'|trans }}</th>
+                                    <th>{{ 'tools.substitution_report.num_substitutions'|trans }}</th>
+                                    <th>{{ 'tools.substitution_report.difference'|trans }}</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                {% for row in result %}
+                                    <tr>
+                                        <td>{{ row.teacher.acronym }}</td>
+                                        <td>{{ row.numWasSubstituted }}</td>
+                                        <td>{{ row.numSubstitute }}</td>
+                                        <td>{{ row.numSubstitute - row.numWasSubstituted }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ 'info.label'|trans }}</h5>
+                        <p>{{ 'tools.substitution_report.info'|trans }}</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        {{ form_start(form) }}
+                        {% form_theme form 'bootstrap_5_layout.html.twig' %}
+                        {{ form_widget(form) }}
+
+                        <div class="buttons">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fa fa-play"></i> {{ 'actions.submit'|trans }}
+                            </button>
+                        </div>
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

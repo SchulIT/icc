@@ -30,7 +30,7 @@ use App\View\Parameter\ViewParameter;
 use DateTime;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class SubstitutionController extends AbstractControllerWithMessages {
 

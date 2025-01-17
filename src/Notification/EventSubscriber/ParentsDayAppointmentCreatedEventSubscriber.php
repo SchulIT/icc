@@ -24,7 +24,8 @@ class ParentsDayAppointmentCreatedEventSubscriber implements EventSubscriberInte
                                 private readonly NotificationService $notificationService,
                                 private readonly TeacherStringConverter $teacherStringConverter,
                                 private readonly StudentStringConverter $studentStringConverter,
-                                private readonly InvolvedUsersResolver $usersResolver) {
+                                private readonly InvolvedUsersResolver $usersResolver,
+                                private readonly DateHelper $dateHelper) {
 
     }
 
@@ -32,6 +33,11 @@ class ParentsDayAppointmentCreatedEventSubscriber implements EventSubscriberInte
         foreach($this->usersResolver->resolveUsers($event->getStudent(), $event->getAppointment()->getTeachers()->toArray(), $event->getInitiator()) as $recipient) {
             // no notifications to teachers if student/parents made an appointment
             if($event->getInitiator()->isStudentOrParent() && $recipient->isTeacher()) {
+                continue;
+            }
+
+            if($event->getAppointment()->getParentsDay()->getBookingAllowedFrom() > $this->dateHelper->getToday()) {
+                // do not notify before booking window starts
                 continue;
             }
 

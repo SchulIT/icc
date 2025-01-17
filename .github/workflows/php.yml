@@ -19,7 +19,6 @@ jobs:
       fail-fast: true
       matrix:
         php-versions:
-          - 8.2
           - 8.3
     services:
       mariadb:
@@ -95,7 +94,7 @@ jobs:
 
       - name: Save log to artifacts
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
-          name: log
+          name: log-${{ matrix.php-versions }}
           path: var/log/*.log

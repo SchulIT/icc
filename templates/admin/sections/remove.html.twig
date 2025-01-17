@@ -1,4 +1,4 @@
-{% extends "main.html.twig" %}
+{% extends "admin/_form.html.twig" %}
 
 {% block title %}{{ 'admin.sections.edit.label'|trans }}{% endblock %}
 
@@ -11,7 +11,7 @@
     </ol>
 {% endblock %}
 
-{% block content %}
+{% block inner %}
     {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
 
     {{ form_start(form) }}
@@ -39,6 +39,7 @@
                     <li>{{ 'admin.sections.remove.caution.substitutions'|trans }}</li>
                     <li>{{ 'admin.sections.remove.caution.appointments'|trans }}</li>
                     <li>{{ 'admin.sections.remove.caution.parents_day'|trans }}</li>
+                    <li>{{ 'admin.sections.remove.caution.student_information'|trans }}</li>
                 </ul>
 
                 <p>

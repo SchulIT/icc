@@ -19,12 +19,4 @@ class NotificationSettings extends AbstractSettings {
     public function setPushoverEnabledUserTypes(array $userTypes): void {
         $this->setValue('notifications.pushover.user_types', $userTypes);
     }
-
-    public function getPushoverApiToken(): ?string {
-        return $this->getValue('notifications.pushover.token', null);
-    }
-
-    public function setPushoverApiToken(?string $apiToken): void {
-        $this->setValue('notifications.pushover.token', $apiToken);
-    }
 }

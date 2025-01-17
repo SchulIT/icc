@@ -9,6 +9,8 @@ class TeacherTuitionsGroup implements GroupInterface, SortableGroupInterface {
 
     private Teacher $teacher;
 
+    private bool $isGradeTeacher = false;
+
     /** @var Tuition[] */
     private array $tuitions = [ ];
 
@@ -25,6 +27,15 @@ class TeacherTuitionsGroup implements GroupInterface, SortableGroupInterface {
      */
     public function getTuitions(): array {
         return $this->tuitions;
+    }
+
+    public function isGradeTeacher(): bool {
+        return $this->isGradeTeacher;
+    }
+
+    public function setIsGradeTeacher(bool $isGradeTeacher): TeacherTuitionsGroup {
+        $this->isGradeTeacher = $isGradeTeacher;
+        return $this;
     }
 
     public function getKey() {

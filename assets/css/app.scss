@@ -543,3 +543,12 @@ blockquote.blockquote {
   font-size: inherit;
   border-radius: var(--bs-card-border-radius);
 }
+
+.bs-callout {
+  &.bs-callout-card {
+    border-top: none;
+    border-right: none;
+    border-radius: 0;
+    margin: 0;
+  }
+}

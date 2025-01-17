@@ -24,7 +24,8 @@ class TeacherType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
             ->add('externalId', TextType::class, [
-                'label' => 'label.external_id'
+                'label' => 'label.external_id',
+                'required' => false
             ])
             ->add('acronym', TextType::class, [
                 'label' => 'label.acronym'
@@ -76,7 +77,8 @@ class TeacherType extends AbstractType {
                 'expanded' => true,
                 'label_attr' => [
                     'class' => 'checkbox-custom'
-                ]
+                ],
+                'required' => false
             ]);
     }
 }

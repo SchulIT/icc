@@ -2552,11 +2552,16 @@ checklists:
     add:
         label: Neue Checkliste
         success: Checkliste erfolgreich angelegt
-        info: Lernende können zur Checkliste hinzugefügt werden, nachdem die Checkliste erstellt wurde
+        info_students: Lernende können zur Checkliste hinzugefügt werden, nachdem die Checkliste erstellt wurde.
 
     edit:
         label: Checkliste bearbeiten
         success: Checkliste erfolgreich aktualisiert
+
+    show:
+        students:
+            empty: Bisher wurden noch keine Lernende zur Checkliste hinzugefügt.
+            save: Alle Änderungen werden erst durch Klicken auf den Speichern-Button (ganz unten) übernommen.
 
     students:
         label: Lernende
@@ -2571,3 +2576,6 @@ checklists:
         label: Checkliste löschen
         success: Checkliste erfolgreich gelöscht
         confirm: 'Soll die Checkliste %title% wirklich gelöscht werden?'
+
+yes: ja
+no: nein

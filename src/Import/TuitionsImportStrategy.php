@@ -185,7 +185,7 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
      * @throws ImportException
      */
     private function throwTeacherIsMissing(array $teachers, array $foundTeachers, string $tuitionExternalId) {
-        $foundTeacherAcronyms = array_map(fn(Teacher $teacher) => $teacher->getExternalId(), $foundTeachers);
+        $foundTeacherAcronyms = array_map(fn(Teacher $teacher) => $teacher->getAcronym(), $foundTeachers);
 
         foreach($teachers as $teacher) {
             if(!in_array($teachers, $foundTeacherAcronyms)) {

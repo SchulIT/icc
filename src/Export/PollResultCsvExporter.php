@@ -97,7 +97,7 @@ class PollResultCsvExporter {
 
         foreach($view->getTeachers() as $teacher) {
             $row = [
-                $teacher->getExternalId(),
+                $teacher->getAcronym(),
                 $teacher->getFirstname(),
                 $teacher->getLastname(),
                 null,

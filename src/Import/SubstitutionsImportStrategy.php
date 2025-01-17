@@ -92,7 +92,7 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
     public function updateEntity($entity, $data, $requestData): void {
         $teacherIdSelector = fn(Teacher $teacher) => $teacher->getId();
 
-        $teachers = $this->teacherRepository->findAllByExternalId($data->getTeachers());
+        $teachers = $this->teacherRepository->findAllByAcronym($data->getTeachers());
 
         if(count($teachers) !== count($data->getTeachers())) {
             $this->throwMissingTeacher($data->getTeachers(), $teachers, $data->getId());
@@ -100,7 +100,7 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
 
         CollectionUtils::synchronize($entity->getTeachers(), $teachers, $teacherIdSelector);
 
-        $replacementTeachers = $this->teacherRepository->findAllByExternalId($data->getReplacementTeachers());
+        $replacementTeachers = $this->teacherRepository->findAllByAcronym($data->getReplacementTeachers());
 
         if(count($replacementTeachers) !== count($data->getReplacementTeachers())) {
             $this->throwMissingTeacher($data->getReplacementTeachers(), $replacementTeachers, $data->getId());
@@ -260,7 +260,7 @@ class SubstitutionsImportStrategy implements ImportStrategyInterface, PostAction
      * @throws ImportException
      */
     private function throwMissingTeacher(array $teachers, array $foundTeachers, string $substitutionId) {
-        $foundTeacherExternalIds = array_map(fn(Teacher $teacher) => $teacher->getExternalId(), $foundTeachers);
+        $foundTeacherExternalIds = array_map(fn(Teacher $teacher) => $teacher->getAcronym(), $foundTeachers);
 
         foreach($teachers as $teacher) {
             if(!in_array($teacher, $foundTeacherExternalIds)) {

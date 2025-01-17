@@ -46,7 +46,7 @@ class TimetableLessonsImportStrategy implements ReplaceImportStrategyInterface, 
 
         $this->teacherCache = ArrayUtils::createArrayWithKeys(
             $this->teacherRepository->findAll(),
-            fn(Teacher $teacher) => $teacher->getExternalId()
+            fn(Teacher $teacher) => $teacher->getAcronym()
         );
 
         $this->subjectCache = ArrayUtils::createArrayWithKeys(

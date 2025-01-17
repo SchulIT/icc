@@ -22,7 +22,7 @@ class StudentInfoResolver extends AbstractResolver {
     }
 
     public function resolveStudentInfo(Student $student, ?Section $section, array $tuitions = []): StudentInfo {
-        $attendances = $this->getAttendanceRepository()->findByStudent($student, $tuitions);
+        $attendances = $this->getAttendanceRepository()->findByStudent($student, $section->getStart(), $section->getEnd(), $tuitions);
 
         $late = array_filter($attendances, fn(Attendance $a) => $a->getType() === AttendanceType::Late);
         $absent = array_filter($attendances, fn(Attendance $a) => $a->getType() === AttendanceType::Absent);

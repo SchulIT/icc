@@ -1,0 +1,63 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'checklists.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% if checklists|length == 0 %}
+                    <div class="bs-callout bs-callout-info">
+                        <h5>{{ 'info.label'|trans }}</h5>
+                        <p>{{ 'checklists.empty'|trans }}</p>
+                    </div>
+                {% else %}
+                    <div class="card">
+                        <div class="list-group list-group-flush">
+                            {% for checklist in checklists %}
+                                <a class="list-group-item list-group-item-action" href="{{ path('show_checklist', { uuid: checklist.uuid }) }}">
+                                    <div class="d-flex w-100 align-items-baseline">
+                                        <div class="flex-fill">{{ checklist.title }}</div>
+
+                                        {% if checklist.dueDate is not null %}
+                                        <span class="text-muted ms-1">
+                                            <i class="fas fa-calendar-alt"></i> {{ checklist.dueDate|format_date }}
+                                        </span>
+                                        {% endif %}
+
+                                        <span class="badge text-bg-success ms-2">
+                                            <i class="fas fa-check"></i> {{ checkedCount[checklist.id] }}
+                                        </span>
+
+                                        <span class="badge text-bg-danger ms-1">
+                                            <i class="fas fa-times"></i> {{ notCheckedCount[checklist.id] }}
+                                        </span>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-md-3 sticky-sidebar">
+                {% if is_granted('new-checklist') %}
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ path('add_checklist') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-plus"></i> {{ 'checklists.add.label'|trans }}
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

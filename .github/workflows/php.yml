@@ -19,7 +19,6 @@ jobs:
       fail-fast: true
       matrix:
         php-versions:
-          - 8.2
           - 8.3
     services:
       mariadb:

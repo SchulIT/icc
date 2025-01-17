@@ -95,6 +95,13 @@ class Builder {
             $this->bookMenu($menu);
         }
 
+        if($user instanceof User && ($user->isStudentOrParent() || $user->isTeacher())) {
+            $menu->addChild('checklists.label', [
+                'route' => 'checklists'
+            ])
+                ->setExtra('icon', 'fa-solid fa-list-check');
+        }
+
         return $menu;
     }
 

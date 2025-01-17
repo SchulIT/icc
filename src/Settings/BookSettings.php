@@ -143,4 +143,20 @@ class BookSettings extends AbstractSettings {
     public function setSuggestionPriorityForRemoval(int $priority): void {
         $this->setValue('book.attendance_suggestion.priority.removal', $priority);
     }
+
+    public function setNotifyParentsOnStudentAbsenceWithoutSuggestion(bool $notifiy): void {
+        $this->setValue('book.attendance.notify_parents_on_absence_without_suggestion', $notifiy);
+    }
+
+    public function getNotifyParentsOnStudentAbsenceWithoutSuggestion(): bool {
+        return $this->getValue('book.attendance.notify_parents_on_absence_without_suggestion', false);
+    }
+
+    public function setNotifyGradeTeachersOnStudentAbsenceWithoutSuggestion(bool $notify): void {
+        $this->setValue('book.attendance.notify_grade_teachers_on_absence_without_suggestion', $notify);
+    }
+
+    public function getNotifyGradeTeachersOnStudentAbsenceWithoutSuggestion(): bool {
+        return $this->getValue('book.attendance.notify_grade_teachers_on_absence_without_suggestion', false);
+    }
 }

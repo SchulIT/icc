@@ -109,3 +109,9 @@ chat:
       title: Neue private Nachricht
       content: Es wurde eine neue private Nachricht erstellt.
     link: Zum Chat
+
+attendance:
+  absent_without_note:
+    title: "%student% hat unangekündigt gefehlt"
+    content: "%student% hat am %date% in der %lesson%. Stunde ohne Abwesenheitsmeldung gefehlt."
+    link: Zur Anwesenheitsübersicht

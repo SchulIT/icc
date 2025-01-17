@@ -158,7 +158,7 @@ class MessageFilesystem implements DirectoryNamerInterface {
     /**
      * Returns a list of user specific downloads
      *
-     * @return string[]
+     * @return array<string[]>
      * @throws FilesystemException
      */
     public function getUserDownloads(Message $message, User $user): array {

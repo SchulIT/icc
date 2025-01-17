@@ -20,7 +20,7 @@ aber selbstverständlich auch auf demselben Server betrieben werden.
 * Webserver
   * Apache 2.4+ oder
   * nginx
-* PHP 8.2+ mit folgenden Erweiterungen
+* PHP 8.3+ mit folgenden Erweiterungen
   * ctype
   * curl
   * dom

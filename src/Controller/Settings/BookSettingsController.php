@@ -106,6 +106,18 @@ class BookSettingsController extends AbstractController {
                 'required' => true,
                 'label' => 'admin.settings.book.attendance_suggestion.priority.absent_study_group',
                 'data' => $settings->getSuggestionPriorityForAbsentStudyGroup()
+            ])
+            ->add('notify_parents_on_absent_student_without_note', CheckboxType::class, [
+                'required' => false,
+                'label' => 'admin.settings.book.notify_parents_on_absent_student_without_note.label',
+                'help' => 'admin.settings.book.notify_parents_on_absent_student_without_note.help',
+                'data' => $settings->getNotifyParentsOnStudentAbsenceWithoutSuggestion()
+            ])
+            ->add('notify_grade_teachers_on_absent_student_without_note', CheckboxType::class, [
+                'required' => false,
+                'label' => 'admin.settings.book.notify_grade_teachers_on_absent_student_without_note.label',
+                'help' => 'admin.settings.book.notify_grade_teachers_on_absent_student_without_note.help',
+                'data' => $settings->getNotifyGradeTeachersOnStudentAbsenceWithoutSuggestion()
             ]);
 
         $types = $typeRepository->findAll();
@@ -155,6 +167,12 @@ class BookSettingsController extends AbstractController {
                 },
                 'suggestion_priority_absent_study_group' => function(int $priority) use ($settings) {
                     $settings->setSuggestionPriorityForAbsentStudyGroup($priority);
+                },
+                'notify_parents_on_absent_student_without_note' => function(bool $notify) use($settings) {
+                    $settings->setNotifyParentsOnStudentAbsenceWithoutSuggestion($notify);
+                },
+                'notify_grade_teachers_on_absent_student_without_note' => function(bool $notify) use($settings) {
+                    $settings->setNotifyGradeTeachersOnStudentAbsenceWithoutSuggestion($notify);
                 }
             ];
 

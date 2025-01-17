@@ -17,6 +17,7 @@ doctrine:
                     charset: utf8mb4
                     collate: utf8mb4_unicode_ci
                 schema_filter: ~^(?!(sessions))~
+                use_savepoints: true
             logger:
                 url: '%env(resolve:DATABASE_URL)%'
                 charset: utf8mb4
@@ -24,6 +25,7 @@ doctrine:
                 default_table_options:
                     charset: utf8mb4
                     collate: utf8mb4_unicode_ci
+                use_savepoints: true
     orm:
         auto_generate_proxy_classes: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware

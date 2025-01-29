@@ -40,7 +40,7 @@ readonly class AppointmentConfirmedEventSubscriber implements EventSubscriberInt
             $event->getConfirmedBy()
         );
 
-        $this->notificationService->notify($notification, self::getKey());
+        $this->notificationService->notify($notification);
     }
 
     public static function getSubscribedEvents(): array {

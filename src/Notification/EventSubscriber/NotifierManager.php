@@ -5,7 +5,6 @@ namespace App\Notification\EventSubscriber;
 use App\Entity\User;
 use App\Entity\UserType;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
-use Symfony\Component\Form\FormBuilder;
 
 readonly class NotifierManager {
 
@@ -51,9 +50,5 @@ readonly class NotifierManager {
         }
 
         return $result;
-    }
-
-    public function getFormBuilderForUser(UserType $userType): FormBuilder {
-
     }
 }

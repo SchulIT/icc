@@ -38,8 +38,7 @@ readonly class BookCommentEventSubscriber implements EventSubscriberInterface, N
                 $this->translator->trans($subjectKey, [], 'email'),
                 $this->translator->trans($contentKey, [], 'email'),
                 $this->urlGenerator->generate('show_book_comment', [ 'uuid' => $event->getComment()->getUuid() ]),
-                $this->translator->trans('book_comment.link', [], 'email'),
-                true
+                $this->translator->trans('book_comment.link', [], 'email')
             );
 
             $this->notificationService->notify($notification);

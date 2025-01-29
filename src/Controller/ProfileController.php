@@ -50,8 +50,7 @@ class ProfileController extends AbstractController {
 
     #[Route(path: '/notifications', name: 'profile_notifications')]
     public function notifications(Request $request, NotificationSettings $notificationSettings, UserNotificationSettingSaver $notificationSettingSaver,
-                                  UserNotificationSettingRepositoryInterface $notificationSettingRepository, DeliveryDecider $deliveryDecider,
-                                  UserRepositoryInterface $userRepository,
+                                  DeliveryDecider $deliveryDecider, UserRepositoryInterface $userRepository,
                                   NotifierManager $notifierManager, MessageBusInterface $messageBus, TranslatorInterface $translator): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -98,7 +97,7 @@ class ProfileController extends AbstractController {
             if(($target === NotificationDeliveryTarget::Email && $isEmailEnabled) || ($target === NotificationDeliveryTarget::Pushover && $isPushoverEnabled)) {
                 $formBuilder->add($target->value, FieldsetType::class, [
                     'legend' => $target->trans($translator),
-                    'fields' => function(FormBuilderInterface $builder) use ($notifierManager, $user, $notificationSettings, $notificationSettingRepository, $deliveryDecider, $target) {
+                    'fields' => function(FormBuilderInterface $builder) use ($notifierManager, $user, $notificationSettings, $deliveryDecider, $target) {
                         foreach ($notifierManager->getNotifiersForUserType($user->getUserType()) as $notifier) {
                             $strategy = $notificationSettings->getDeliveryStrategy($user->getUserType(), $notifier::getKey(), $target);
                             $isEnabled = in_array($strategy, [DeliverStrategyType::OptIn, DeliverStrategyType::OptOut]);

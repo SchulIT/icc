@@ -30,8 +30,7 @@ readonly class ChatMessageCreatedEventSubscriber implements EventSubscriberInter
                 $this->translator->trans('chat.message.create.title', [], 'email'),
                 $this->translator->trans('chat.message.create.content', [], 'email'),
                 $this->urlGenerator->generate('show_chat', ['uuid' => $event->getMessage()->getChat()->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL),
-                $this->translator->trans('chat.message.link', [], 'email'),
-                true
+                $this->translator->trans('chat.message.link', [], 'email')
             );
 
             $this->notificationService->notify($notification);

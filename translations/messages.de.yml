@@ -1910,6 +1910,7 @@ absences:
         message:
             label: Neue Mitteilung
             submit: abschicken
+            notification: Alle an dieser Meldung beteiligten Personen (Eltern, volljährige Kinder, Klassenleitung und Ersteller dieser Abwesenheitsmeldung) werden benachrichtigt.
         approval:
             label: Genehmigungsstatus
             approve: genehmigen
@@ -2007,6 +2008,7 @@ book:
         add:
             label: Neuer Kommentar
             success: Kommentar erfolgreich angelegt
+            notification: Die Klassenleitungen der beteiligten Lernenden wird automatisch über diesen Kommentar benachrichtigt.
         show:
             label: Kommentar anzeigen
             header: Kommentar

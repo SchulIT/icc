@@ -30,6 +30,7 @@ readonly class StudentAbsenceMessageCreatedEventSubscriber implements EventSubsc
         $emails = array_map(fn(User $user) => $user->getEmail(), $recipients);
         if(!empty($event->getAbsence()->getEmail()) && !in_array($event->getAbsence()->getEmail(), $emails) && $event->getAbsence()->getCreatedBy()->getId() !== $event->getMessage()->getCreatedBy()->getId()) {
             $recipients[] = (new User())
+                ->setUserType(UserType::Parent)
                 ->setEmail($event->getAbsence()->getEmail())
                 ->setUsername($event->getAbsence()->getEmail());
         }

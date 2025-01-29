@@ -3,7 +3,9 @@
 namespace App\Notification\Email;
 
 use App\Notification\Notification;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
+#[AutoconfigureTag('app.notifications.email_strategy')]
 interface EmailStrategyInterface {
 
     /**

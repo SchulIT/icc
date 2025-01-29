@@ -82,9 +82,6 @@ class User implements UserInterface, Stringable {
     #[ORM\Column(type: 'boolean')]
     private bool $isMessageNotificationsEnabled = false;
 
-    #[ORM\Column(type: 'boolean')]
-    private bool $isEmailNotificationsEnabled = false;
-
     #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $pushoverToken = null;
@@ -237,15 +234,6 @@ class User implements UserInterface, Stringable {
 
     public function setIsMessageNotificationsEnabled(bool $isMessageNotificationsEnabled): User {
         $this->isMessageNotificationsEnabled = $isMessageNotificationsEnabled;
-        return $this;
-    }
-
-    public function isEmailNotificationsEnabled(): bool {
-        return $this->isEmailNotificationsEnabled;
-    }
-
-    public function setIsEmailNotificationsEnabled(bool $isEmailNotificationsEnabled): User {
-        $this->isEmailNotificationsEnabled = $isEmailNotificationsEnabled;
         return $this;
     }
 

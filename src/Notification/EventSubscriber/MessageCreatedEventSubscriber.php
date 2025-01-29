@@ -2,6 +2,7 @@
 
 namespace App\Notification\EventSubscriber;
 
+use App\Entity\UserType;
 use App\Event\MessageCreatedEvent;
 use App\Message\MessageRecipientResolver;
 use App\Notification\MessageNotification;
@@ -15,14 +16,14 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * Notifies user when a new message is created
  */
-class MessageCreatedEventSubscriber implements EventSubscriberInterface {
+readonly class MessageCreatedEventSubscriber implements EventSubscriberInterface, NotifierInterface {
 
-    public function __construct(private readonly MessageRecipientResolver $recipientResolver,
-                                private readonly TranslatorInterface $translator,
-                                private readonly UrlGeneratorInterface $urlGenerator,
-                                private readonly NotificationService $notificationService,
-                                private readonly DateHelper $dateHelper,
-                                private readonly MessageRepositoryInterface $messageRepository) {    }
+    public function __construct(private MessageRecipientResolver $recipientResolver,
+                                private TranslatorInterface $translator,
+                                private UrlGeneratorInterface $urlGenerator,
+                                private NotificationService $notificationService,
+                                private DateHelper $dateHelper,
+                                private MessageRepositoryInterface $messageRepository) {    }
 
     public function onMessageCreated(MessageCreatedEvent $event): void {
         if($event->preventDatabaseActions() === true) {
@@ -43,6 +44,7 @@ class MessageCreatedEventSubscriber implements EventSubscriberInterface {
             }
 
             $notification = new MessageNotification(
+                self::getKey(),
                 $recipient,
                 $this->translator->trans('message.create.title', [
                     '%title%' => $event->getMessage()->getTitle()
@@ -67,5 +69,21 @@ class MessageCreatedEventSubscriber implements EventSubscriberInterface {
         return [
             MessageCreatedEvent::class => 'onMessageCreated'
         ];
+    }
+
+    public static function getSupportedRecipientUserTypes(): array {
+        return UserType::cases();
+    }
+
+    public static function getKey(): string {
+        return 'message_created';
+    }
+
+    public static function getLabelKey(): string {
+        return 'notifications.message_created.label';
+    }
+
+    public static function getHelpKey(): string {
+        return 'notifications.message_created.help';
     }
 }

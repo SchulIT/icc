@@ -9,9 +9,16 @@ class Notification {
 
     private DateTime $createdAt;
 
-    public function __construct(private readonly User $recipient, private readonly string $subject, private readonly string $content,
+    public function __construct(private readonly string $type, private readonly User $recipient, private readonly string $subject, private readonly string $content,
                                 private ?string $link, private readonly ?string $linkText, private readonly bool $enforceDelivery = false) {
         $this->createdAt = new DateTime();
+    }
+
+    /**
+     * @return string
+     */
+    public function getType(): string {
+        return $this->type;
     }
 
     public function getRecipient(): User {

@@ -5,7 +5,7 @@ namespace App\Notification\Email;
 use App\Notification\Notification;
 use App\Notification\StudentAbsenceNotification;
 
-class StudentAbsenceStrategy implements EmailStrategyInterface {
+readonly class StudentAbsenceStrategy implements EmailStrategyInterface {
 
 
     public function supports(Notification $notification): bool {

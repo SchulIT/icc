@@ -1,51 +1,69 @@
 {% extends "profile/_profile.twig" %}
 
-{% use "bootstrap_4_layout.html.twig" %}
+{% use "bootstrap_5_layout.html.twig" %}
 
 {% block title %}{{ 'profile.overview.label'|trans }}{% endblock %}
 
 {% block notifications_active %}active{% endblock %}
 
 {% block profile_content %}
-    {% if is_allowed %}
+    {% if isEnabled %}
         {{ form_start(form) }}
 
-        {% for child in form %}
-            {% if loop.first %}
-                <div class="mb-3 row">
-                    <div class="col-sm-2">
-                        {{ 'profile.notifications.select_elements'|trans }}
-                    </div>
-                    <div class="col-sm-10">
-                        {{ form_widget(child) }}
-                        {{ form_help(child) }}
-                    </div>
+        <div class="card">
+            <div class="card-header">{{ 'label.general'|trans }}</div>
+            <div class="card-body">
+                <div class="bs-callout bs-callout-info">
+                    <h5>{{ 'info.label'|trans }}</h5>
+                    <p>{{ 'profile.notifications.general'|trans }}</p>
                 </div>
-            {% else %}
-                {{ form_row(child) }}
-            {% endif %}
-        {% endfor %}
 
-        {% if is_pushover_allowed %}
 
-            {% if app.user.pushoverToken is not empty %}
-                <button type="submit" class="btn btn-outline-primary btn-sm" name="test" value="pushover">
-                    {{ 'profile.notifications.pushover.test.label'|trans }}
-                </button>
-            {% endif %}
+                {{ form_row(form.isSubstitutionNotificationsEnabled) }}
+                {{ form_row(form.isExamNotificationsEnabled) }}
+                {{ form_row(form.isMessageNotificationsEnabled) }}
+            </div>
+        </div>
 
         <div class="bs-callout bs-callout-info">
-            <h5 class="no-icon"><i class="fas fa-mobile-screen-button"></i> {{ 'profile.notifications.pushover.info.label'|trans }}</h5>
-            <p>{{ 'profile.notifications.pushover.info.description'|trans }}</p>
-            <a href="{{ 'profile.notifications.pushover.info.link.url'|trans }}" class="btn btn-outline-primary btn-sm" target="_blank">
-                <i class="fas fa-external-link-alt"></i> {{ 'profile.notifications.pushover.info.link.label'|trans }}
-            </a>
-
-            <div class="mb-4"></div>
-
-            <h5 class="no-icon"><i class="fas fa-user-shield"></i> {{ 'profile.notifications.pushover.info.privacy.label'|trans }}</h5>
-            <p>{{ 'profile.notifications.pushover.info.privacy.description'|trans }}</p>
+            <h5>{{ 'info.label'|trans }}</h5>
+            <p>{{ 'profile.notifications.disabled'|trans }}</p>
         </div>
+
+        {% if isEmailEnabled %}
+            {{ form_row(form.email) }}
+        {% endif %}
+
+        {% if isPushoverEnabled %}
+            <div class="card">
+                <div class="card-header">{{ 'notifications.target.pushover'|trans }}</div>
+                <div class="card-body">
+                    <div class="bs-callout bs-callout-info">
+                        <h5 class="no-icon"><i class="fas fa-mobile-screen-button"></i> {{ 'profile.notifications.pushover.info.label'|trans }}</h5>
+                        <p>{{ 'profile.notifications.pushover.info.description'|trans }}</p>
+                        <a href="{{ 'profile.notifications.pushover.info.link.url'|trans }}" class="btn btn-outline-primary btn-sm" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> {{ 'profile.notifications.pushover.info.link.label'|trans }}
+                        </a>
+
+                        <div class="mb-4"></div>
+
+                        <h5 class="no-icon"><i class="fas fa-user-shield"></i> {{ 'profile.notifications.pushover.info.privacy.label'|trans }}</h5>
+                        <p>{{ 'profile.notifications.pushover.info.privacy.description'|trans }}</p>
+                    </div>
+
+                    {{ form_row(form.pushoverToken) }}
+
+                    {% if app.user.pushoverToken is not empty %}
+                        <button type="submit" class="btn btn-outline-primary btn-sm" name="test" value="pushover">
+                            {{ 'profile.notifications.pushover.test.label'|trans }}
+                        </button>
+                    {% endif %}
+
+                    {{ form_widget(form.pushover) }}
+
+
+                </div>
+            </div>
         {% endif %}
 
         <button type="submit" class="btn btn-primary btn-sm">

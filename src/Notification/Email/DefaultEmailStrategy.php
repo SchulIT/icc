@@ -3,10 +3,11 @@
 namespace App\Notification\Email;
 
 use App\Notification\Notification;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-class DefaultEmailStrategy implements EmailStrategyInterface {
+readonly class DefaultEmailStrategy implements EmailStrategyInterface {
 
-    public function __construct(private readonly string $sender) { }
+    public function __construct(#[Autowire(env: 'MAILER_FROM')] private string $sender) { }
 
     public function supports(Notification $notification): bool {
         return get_class($notification) === Notification::class;

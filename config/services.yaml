@@ -49,10 +49,6 @@ services:
             tags: [ 'app.grouping_strategy' ]
         App\Sorting\SortingStrategyInterface:
             tags: [ 'app.sorting_strategy' ]
-        App\Notification\Email\EmailStrategyInterface:
-            tags: [ 'app.notifications.email_strategy' ]
-        App\Notification\NotificationHandlerInterface:
-            tags: [ 'app.notifications.handler']
         App\Untis\Html\Substitution\InfotextReaderInterface:
             tags: [ 'app.untis.import.infotext_reader' ]
         App\Untis\StudentId\StudentIdGeneratorInterface:
@@ -315,32 +311,6 @@ services:
         class: App\DarkMode\DarkModeManager
 
     # NOTIFICATIONS
-    App\Notification\Email\:
-        resource: '../src/Notification/Email/*Strategy.php'
-
-    App\Notification\NotificationService:
-        arguments:
-            $handler: !tagged app.notifications.handler
-
-    App\Notification\Email\EmailNotificationHandler:
-        arguments:
-            $strategies: !tagged app.notifications.email_strategy
-            $appName: '%env(APP_NAME)%'
-            $sender: '%env(MAILER_FROM)%'
-            $logger: '@monolog.logger.notifications'
-
-    App\Notification\Pushover\PushoverNotificationHandler:
-        arguments:
-            $pushoverToken: '%env(PUSHOVER_TOKEN)%'
-
-    App\Notification\Email\DefaultEmailStrategy:
-        arguments:
-            $sender: '%env(MAILER_FROM)%'
-
-    App\Notification\Email\ImportStrategy:
-        arguments:
-            $appName: '%env(APP_NAME)%'
-
     App\TeacherAbsence\TeacherAbsenceNotifier:
         arguments:
             $appName: '%env(APP_NAME)%'

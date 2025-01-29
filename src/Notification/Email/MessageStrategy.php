@@ -7,9 +7,9 @@ use App\Notification\Notification;
 use App\Settings\NotificationSettings;
 use App\Utils\ArrayUtils;
 
-class MessageStrategy implements EmailStrategyInterface {
+readonly class MessageStrategy implements EmailStrategyInterface {
 
-    public function __construct(private readonly NotificationSettings $notificationSettings) { }
+    public function __construct(private NotificationSettings $notificationSettings) { }
 
     public function supports(Notification $notification): bool {
         return $notification instanceof MessageNotification

@@ -356,3 +356,12 @@
         </div>
     </div>
 {% endblock %}
+
+{% block delivery_option_compound_widget %}
+    <div class="input-group mb-3">
+        {% for item in form.children %}
+            <span class="input-group-text">{{ item.vars.label }}</span>
+            {{ form_widget(item) }}
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -3,6 +3,7 @@
 namespace App\Notification\EventSubscriber;
 
 use App\Converter\StudentStringConverter;
+use App\Entity\UserType;
 use App\Event\StudentAbsentWithoutAnyNoteEvent;
 use App\Notification\Notification;
 use App\Notification\NotificationService;
@@ -12,7 +13,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-readonly class StudentAbsentWithoutAnyNoteParentsEventSubscriber implements EventSubscriberInterface {
+readonly class StudentAbsentWithoutAnyNoteParentsEventSubscriber implements EventSubscriberInterface, NotifierInterface {
 
     public function __construct(private NotificationService $notificationService, private UserRepositoryInterface $userRepository,
                                 private TranslatorInterface $translator, private StudentStringConverter $studentStringConverter,
@@ -43,6 +44,7 @@ readonly class StudentAbsentWithoutAnyNoteParentsEventSubscriber implements Even
 
         foreach($recipients as $recipient) {
             $notification = new Notification(
+                self::getKey(),
                 $recipient,
                 $this->translator->trans('attendance.absent_without_note.title', ['%student%' => $student], 'email'),
                 $this->translator->trans('attendance.absent_without_note.content', ['%student%' => $student, '%date%' => $date, '%lesson%' => $lessonNumber ], 'email'),
@@ -58,5 +60,23 @@ readonly class StudentAbsentWithoutAnyNoteParentsEventSubscriber implements Even
         return [
             StudentAbsentWithoutAnyNoteEvent::class => 'onStudentAbsentWithoutAnyNote'
         ];
+    }
+
+    public static function getSupportedRecipientUserTypes(): array {
+        return [
+            UserType::Parent
+        ];
+    }
+
+    public static function getKey(): string {
+        return 'student_absent_without_note_parents';
+    }
+
+    public static function getLabelKey(): string {
+        return 'notifications.student_absent_without_note.label';
+    }
+
+    public static function getHelpKey(): string {
+        return 'notifications.student_absent_without_note.help';
     }
 }

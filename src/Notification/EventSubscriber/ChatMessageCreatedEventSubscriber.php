@@ -2,6 +2,7 @@
 
 namespace App\Notification\EventSubscriber;
 
+use App\Entity\UserType;
 use App\Event\ChatMessageCreatedEvent;
 use App\Notification\Notification;
 use App\Notification\NotificationService;
@@ -9,11 +10,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ChatMessageCreatedEventSubscriber implements EventSubscriberInterface {
+readonly class ChatMessageCreatedEventSubscriber implements EventSubscriberInterface, NotifierInterface {
 
-    public function __construct(private readonly NotificationService $notificationService,
-                                private readonly TranslatorInterface $translator,
-                                private readonly UrlGeneratorInterface $urlGenerator) {
+    public function __construct(private NotificationService $notificationService,
+                                private TranslatorInterface $translator,
+                                private UrlGeneratorInterface $urlGenerator) {
 
     }
 
@@ -24,6 +25,7 @@ class ChatMessageCreatedEventSubscriber implements EventSubscriberInterface {
             }
 
             $notification = new Notification(
+                self::getKey(),
                 $participant,
                 $this->translator->trans('chat.message.create.title', [], 'email'),
                 $this->translator->trans('chat.message.create.content', [], 'email'),
@@ -40,5 +42,21 @@ class ChatMessageCreatedEventSubscriber implements EventSubscriberInterface {
         return [
             ChatMessageCreatedEvent::class => 'onChatMessageCreated'
         ];
+    }
+
+    public static function getSupportedRecipientUserTypes(): array {
+        return UserType::cases(); // all users are supported
+    }
+
+    public static function getKey(): string {
+        return 'new_chat_message';
+    }
+
+    public static function getLabelKey(): string {
+        return 'notifications.new_chat_message.label';
+    }
+
+    public static function getHelpKey(): string {
+        return 'notifications.new_chat_message.help';
     }
 }

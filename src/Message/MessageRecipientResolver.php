@@ -11,17 +11,15 @@ use App\Entity\UserTypeEntity;
 use App\Repository\UserRepositoryInterface;
 use App\Utils\ArrayUtils;
 
-class MessageRecipientResolver {
+readonly class MessageRecipientResolver {
 
     public function __construct(private UserRepositoryInterface $userRepository)
     {
     }
 
-    public function resolveRecipients(Message $message) {
-        // Get users that have email notifications enabled and an email address
-        $users = array_filter(
-            $this->userRepository->findAllByNotifyMessages($message),
-            fn(User $user) => $user->getEmail() !== null && $user->isEmailNotificationsEnabled());
+    public function resolveRecipients(Message $message): array {
+        // Get users that have message notifications enabled
+        $users = $this->userRepository->findAllByNotifyMessages();
 
         $userTypes = $message->getVisibilities()->map(fn(UserTypeEntity $entity) => $entity->getUserType())->toArray();
 

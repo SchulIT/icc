@@ -7,6 +7,7 @@ use App\Entity\ResourceReservation;
 use App\Entity\Substitution;
 use App\Entity\Teacher;
 use App\Entity\Tuition;
+use App\Entity\UserType;
 use App\Event\SubstitutionImportEvent;
 use App\Notification\Notification;
 use App\Notification\NotificationService;
@@ -29,13 +30,13 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
-class ReservationCheckerEventSubscriber implements EventSubscriberInterface {
+readonly class ReservationCheckerEventSubscriber implements EventSubscriberInterface, NotifierInterface {
 
-    public function __construct(private readonly ValidatorInterface $validator, private readonly ResourceReservationRepositoryInterface $reservationRepository,
-                                private readonly ExamRepositoryInterface $examRepository, private readonly TranslatorInterface $translator,
-                                private readonly DateHelper $dateHelper, private readonly ResourceAvailabilityHelper $availabilityHelper,
-                                private readonly UserRepositoryInterface $userRepository, private readonly NotificationService $notificationService,
-                                private readonly UrlGeneratorInterface $urlGenerator)
+    public function __construct(private ValidatorInterface $validator, private ResourceReservationRepositoryInterface $reservationRepository,
+                                private ExamRepositoryInterface $examRepository, private TranslatorInterface $translator,
+                                private DateHelper $dateHelper, private ResourceAvailabilityHelper $availabilityHelper,
+                                private UserRepositoryInterface $userRepository, private NotificationService $notificationService,
+                                private UrlGeneratorInterface $urlGenerator)
     {
     }
 
@@ -146,6 +147,7 @@ class ReservationCheckerEventSubscriber implements EventSubscriberInterface {
 
         foreach($this->userRepository->findAllTeachers([$reservation->getTeacher()]) as $recipient) {
             $notification = new Notification(
+                self::getKey(),
                 $recipient,
                 $this->translator->trans('reservation_removed.title', [], 'email'),
                 $this->translator->trans('reservation_removed.content', [
@@ -172,6 +174,7 @@ class ReservationCheckerEventSubscriber implements EventSubscriberInterface {
 
         foreach($this->userRepository->findAllTeachers([$reservation->getTeacher()]) as $recipient) {
             $notification = new Notification(
+                self::getKey(),
                 $recipient,
                 $this->translator->trans('reservation.title', [], 'email'),
                 $this->translator->trans('reservation.content', [
@@ -208,6 +211,7 @@ class ReservationCheckerEventSubscriber implements EventSubscriberInterface {
 
         foreach($this->userRepository->findAllTeachers($teachers) as $recipient) {
             $notification = new Notification(
+                self::getKey(),
                 $recipient,
                 $this->translator->trans('reservation.title', [], 'email'),
                 $this->translator->trans('reservation.content_exam', [
@@ -234,5 +238,23 @@ class ReservationCheckerEventSubscriber implements EventSubscriberInterface {
         return [
             SubstitutionImportEvent::class => 'onSubstitutionImportEvent'
         ];
+    }
+
+    public static function getSupportedRecipientUserTypes(): array {
+        return [
+            UserType::Teacher
+        ];
+    }
+
+    public static function getKey(): string {
+        return 'reservation_checker';
+    }
+
+    public static function getLabelKey(): string {
+        return 'notifications.reservation_checker.label';
+    }
+
+    public static function getHelpKey(): string {
+        return 'notifications.reservation_checker.help';
     }
 }

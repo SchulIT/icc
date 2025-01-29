@@ -2,24 +2,16 @@
 
 namespace App\Notification;
 
-use App\Event\AppointmentConfirmedEvent;
-use App\Event\ExamImportEvent;
-use App\Event\MessageCreatedEvent;
-use App\Event\MessageUpdatedEvent;
-use App\Event\SubstitutionImportEvent;
-use App\Notification\Email\EmailNotificationService;
-use App\Notification\Email\EmailStrategyInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use App\Settings\NotificationSettings;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
-class NotificationService {
-    private readonly iterable $handler;
+readonly class NotificationService {
 
     /**
      * @param NotificationHandlerInterface[] $handler
      */
-    public function __construct(iterable $handler) {
-        $this->handler = $handler;
-    }
+    public function __construct(#[AutowireIterator('app.notifications.handler')] private iterable $handler,
+                                private NotificationSettings $settings) {    }
 
     /**
      * @param Notification $notification
@@ -27,6 +19,10 @@ class NotificationService {
      * @return void
      */
     public function notify(Notification $notification, array $handlersToBeExecuted = [ ]): void {
+        if($this->settings->isNotificationsEnabled() !== true) {
+            return;
+        }
+
         foreach($this->handler as $handler) {
             if((empty($handlersToBeExecuted) || in_array($handler->getName(), $handlersToBeExecuted)) && $handler->canHandle($notification)) {
                 $handler->handle($notification);

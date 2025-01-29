@@ -2,14 +2,10 @@
 
 namespace App\Notification\Email;
 
-use App\Converter\UserStringConverter;
-use App\Event\AppointmentConfirmedEvent;
 use App\Notification\AppointmentConfirmedNotification;
-use App\Notification\AppointmentNotification;
 use App\Notification\Notification;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
-class AppointmentConfirmedStrategy implements EmailStrategyInterface {
+readonly class AppointmentConfirmedStrategy implements EmailStrategyInterface {
 
     public function supports(Notification $notification): bool {
         return $notification instanceof AppointmentConfirmedNotification;

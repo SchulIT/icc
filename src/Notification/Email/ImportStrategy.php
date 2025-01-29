@@ -6,10 +6,12 @@ use App\Notification\ImportNotification;
 use App\Notification\Notification;
 use App\Settings\NotificationSettings;
 use App\Utils\ArrayUtils;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-class ImportStrategy implements EmailStrategyInterface {
+readonly class ImportStrategy implements EmailStrategyInterface {
 
-    public function __construct(private readonly string $appName, private readonly NotificationSettings $notificationSettings) { }
+    public function __construct(#[Autowire(env: 'APP_NAME')] private string $appName,
+                                private NotificationSettings $notificationSettings) { }
 
     public function supports(Notification $notification): bool {
         return $notification instanceof ImportNotification

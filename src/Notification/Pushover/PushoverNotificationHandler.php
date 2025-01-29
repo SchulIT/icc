@@ -27,7 +27,7 @@ readonly class PushoverNotificationHandler implements NotificationHandlerInterfa
 
     public function handle(Notification $notification): void {
         // Check delivery options
-        if($notification->isDeliveryEnforced() === false ||  $this->deliveryDecider->decide($notification->getRecipient(), $notification->getType(), NotificationDeliveryTarget::Pushover) !== true) {
+        if($this->deliveryDecider->decide($notification->getRecipient(), $notification->getType(), NotificationDeliveryTarget::Pushover) !== true) {
             return;
         }
 

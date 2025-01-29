@@ -35,8 +35,8 @@ readonly class PushoverNotificationHandler implements NotificationHandlerInterfa
             new SendPushoverNotificationMessage(
                 $notification->getRecipient()->getId(),
                 $notification->getRecipient()->getUserIdentifier(),
-                $notification->getContent(),
-                $notification->getSubject(),
+                $notification->getSafeContent(),
+                $notification->getSafeSubject(),
                 $notification->getLink(),
                 $notification->getLinkText()
             )

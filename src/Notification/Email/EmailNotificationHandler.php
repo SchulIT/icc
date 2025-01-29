@@ -71,7 +71,7 @@ readonly class EmailNotificationHandler implements NotificationHandlerInterface 
             );
 
             $mail = (new Email())
-                ->subject($notification->getSubject())
+                ->subject($notification->getSafeSubject())
                 ->from(new Address($this->sender, $this->appName))
                 ->sender(new Address($this->sender, $this->appName))
                 ->text($content)

@@ -49,7 +49,10 @@ readonly class StudentAbsentWithoutAnyNoteParentsEventSubscriber implements Even
                 $this->translator->trans('attendance.absent_without_note.title', ['%student%' => $student], 'email'),
                 $this->translator->trans('attendance.absent_without_note.content', ['%student%' => $student, '%date%' => $date, '%lesson%' => $lessonNumber ], 'email'),
                 $link,
-                $linkText
+                $linkText,
+                namesToErase: [
+                    $student => $this->translator->trans('attendance.absent_without_note.child', domain: 'email')
+                ]
             );
 
             $this->notificationService->notify($notification);

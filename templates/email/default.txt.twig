@@ -1,6 +1,6 @@
 {{ 'greeting'|trans({}, 'email') }}
 
-{{ notification.content }}
+{{ notification.safeContent }}
 
 {% if notification.link is not empty -%}
     {%- set text = notification.linkText -%}

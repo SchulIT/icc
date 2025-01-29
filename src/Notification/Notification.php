@@ -10,7 +10,7 @@ class Notification {
     private DateTime $createdAt;
 
     public function __construct(private readonly string $type, private readonly User $recipient, private readonly string $subject, private readonly string $content,
-                                private ?string $link, private readonly ?string $linkText, private readonly bool $enforceDelivery = false) {
+                                private ?string $link, private readonly ?string $linkText, private readonly bool $enforceDelivery = false, private readonly array $namesToErase = [ ]) {
         $this->createdAt = new DateTime();
     }
 
@@ -55,5 +55,25 @@ class Notification {
      */
     public function isDeliveryEnforced(): bool {
         return $this->enforceDelivery;
+    }
+
+    public function getSafeSubject(): string {
+        $subject = $this->getSubject();
+
+        foreach($this->namesToErase as $name => $replacement) {
+            $subject = str_replace($name, $replacement, $subject);
+        }
+
+        return $subject;
+    }
+
+    public function getSafeContent(): string {
+        $content = $this->getContent();
+
+        foreach($this->namesToErase as $name => $replacement) {
+            $content = str_replace($name, $replacement, $content);
+        }
+
+        return $content;
     }
 }

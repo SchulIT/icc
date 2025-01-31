@@ -1,0 +1,11 @@
+docs/
+.github/
+.gitignore
+
+Dockerfile
+docker-compose.yml
+
+README.md
+CHANGELOG-*.md
+UPGRADE-*.md
+rector.php

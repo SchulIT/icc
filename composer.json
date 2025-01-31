@@ -36,7 +36,7 @@
         "nelmio/api-doc-bundle": "^4.2",
         "oneup/flysystem-bundle": "^4.0",
         "ramsey/uuid-doctrine": "^2.0",
-        "schulit/common-bundle": "^4.5",
+        "schulit/common-bundle": "^5.0",
         "scienta/doctrine-json-functions": "^6.0",
         "sensio/framework-extra-bundle": "^6.0",
         "sensiolabs/ansi-to-html": "^1.2",

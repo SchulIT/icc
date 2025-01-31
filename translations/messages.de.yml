@@ -872,6 +872,9 @@ admin:
             current_section:
                 label: Aktueller Abschnitt
                 help: Gibt den aktuellen Abschnitt im Schuljahr an.
+            custom_css:
+                label: Benutzerdefiniertes CSS
+                help: Hier kann benutzerdefiniertes CSS eingebunden werden, um die Software nach eigenen Wünschen einzufärben.
 
         import:
             label: Import-Einstellungen

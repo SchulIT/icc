@@ -10,6 +10,7 @@ use SchulIT\CommonBundle\Helper\DateHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -39,6 +40,16 @@ class GeneralSettingsController extends AbstractController {
                 'attr' => [
                     'data-choice' => 'true'
                 ]
+            ])
+            ->add('custom_css', TextareaType::class, [
+                'label' => 'admin.settings.general.custom_css.label',
+                'help' => 'admin.settings.general.custom_css.help',
+                'attr' => [
+                    'rows' => 30,
+                    'class' => 'font-monospace'
+                ],
+                'required' => false,
+                'data' => $settings->getCustomCss(),
             ]);
         $form = $builder->getForm();
         $form->handleRequest($request);
@@ -47,6 +58,9 @@ class GeneralSettingsController extends AbstractController {
             $map = [
                 'current_section' => function($sectionId) use ($settings) {
                     $settings->setCurrentSectionId($sectionId);
+                },
+                'custom_css' => function($customCss) use ($settings) {
+                    $settings->setCustomCss($customCss);
                 }
             ];
 

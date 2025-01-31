@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "15264685367f1fb95d5c35f945973c50",
+    "content-hash": "ed49e552848bca6e9db2a03e867fb134",
     "packages": [
         {
             "name": "beberlei/doctrineextensions",
@@ -6146,16 +6146,16 @@
         },
         {
             "name": "schulit/common-bundle",
-            "version": "4.5.4",
+            "version": "5.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SchulIT/common-bundle.git",
-                "reference": "9fa1296e69d61663e71901fbf8fbf434e908c836"
+                "reference": "e3d5f87437bbc1c36e83df97e3ba43827e3e19ad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SchulIT/common-bundle/zipball/9fa1296e69d61663e71901fbf8fbf434e908c836",
-                "reference": "9fa1296e69d61663e71901fbf8fbf434e908c836",
+                "url": "https://api.github.com/repos/SchulIT/common-bundle/zipball/e3d5f87437bbc1c36e83df97e3ba43827e3e19ad",
+                "reference": "e3d5f87437bbc1c36e83df97e3ba43827e3e19ad",
                 "shasum": ""
             },
             "require": {
@@ -6194,11 +6194,12 @@
             "license": [
                 "MIT"
             ],
+            "description": "Commonly used bundle for SchulIT software suite.",
             "support": {
                 "issues": "https://github.com/SchulIT/common-bundle/issues",
-                "source": "https://github.com/SchulIT/common-bundle/tree/4.5.4"
+                "source": "https://github.com/SchulIT/common-bundle/tree/5.0.1"
             },
-            "time": "2025-01-05T14:13:58+00:00"
+            "time": "2025-01-31T12:08:19+00:00"
         },
         {
             "name": "scienta/doctrine-json-functions",

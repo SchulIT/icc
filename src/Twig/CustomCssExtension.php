@@ -16,7 +16,7 @@ class CustomCssExtension extends AbstractExtension {
         ];
     }
 
-    public function getCustomCSS(): string {
+    public function getCustomCSS(): ?string {
         return $this->settings->getCustomCSS();
     }
 }

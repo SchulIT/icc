@@ -17,17 +17,21 @@ class StringStrategy implements SortingStrategyInterface {
         'ß' => 'ss'
     ];
 
+    private function transliterate(string $string): string {
+        return iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+    }
+
     public function compare($objectA, $objectB): int {
         $objectA = str_replace(
             array_keys(self::TransliterationMap),
             array_values(self::TransliterationMap),
-            (string)$objectA
+            $this->transliterate((string)$objectA)
         );
 
         $objectB = str_replace(
             array_keys(self::TransliterationMap),
             array_values(self::TransliterationMap),
-            (string)$objectB
+            $this->transliterate((string)$objectB)
         );
 
         return strnatcasecmp($objectA, $objectB);

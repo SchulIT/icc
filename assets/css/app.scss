@@ -104,7 +104,7 @@
 
   .text-secondary {
     a {
-      color: $secondary !important;
+      color: var(--bs-secondary) !important;
     }
   }
 }

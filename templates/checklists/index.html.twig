@@ -24,10 +24,18 @@
                             {% for checklist in checklists %}
                                 <a class="list-group-item list-group-item-action" href="{{ path('show_checklist', { uuid: checklist.uuid }) }}">
                                     <div class="d-flex w-100 align-items-baseline">
-                                        <div class="flex-fill">{{ checklist.title }}</div>
+                                        <div class="flex-fill">
+                                            {{ checklist.title }}
 
+                                            {% if checklist.createdBy != app.user %}
+                                                <span class="text-muted ms-1" title="{{ 'checklists.shared'|trans }}">
+                                                <i class="fa-solid fa-share-nodes"></i>
+                                            </span>
+                                            {% endif %}
+                                        </div>
+                                        
                                         {% if checklist.dueDate is not null %}
-                                        <span class="text-muted ms-1">
+                                        <span class="text-muted ms-2">
                                             <i class="fas fa-calendar-alt"></i> {{ checklist.dueDate|format_date }}
                                         </span>
                                         {% endif %}

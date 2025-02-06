@@ -2544,6 +2544,7 @@ user_type:
 checklists:
     label: Checklisten
     empty: Bisher wurden keine Checklisten angelegt.
+    shared: von einem anderen Benutzer geteilte Checkliste
     add:
         label: Neue Checkliste
         success: Checkliste erfolgreich angelegt

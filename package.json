@@ -41,7 +41,6 @@
         "jszip": "^3.6",
         "jszip-utils": "^0.1.0",
         "node-polyfill-webpack-plugin": "^2.0.1",
-        "node-sass-glob-importer": "^5.3.2",
         "papaparse": "^5.4.1",
         "postcss-loader": "^7.0",
         "sass": "^1.63.4",

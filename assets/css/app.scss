@@ -1,4 +1,4 @@
-$enable-negative-margins: true;
+@import '../../vendor/schulit/common-bundle/Resources/assets/css/bootstrap.scss';
 
 // Import Bootstrap
 @import '~bootstrap/scss/bootstrap';
@@ -320,7 +320,7 @@ $enable-negative-margins: true;
   &:before,
   &:after {
     content: "";
-    border-bottom: 1px solid var(--bs-card-border-color);
+    border-bottom: 1px solid var(--bs-border-color);
     flex: 1 1;
     margin:auto;
   }

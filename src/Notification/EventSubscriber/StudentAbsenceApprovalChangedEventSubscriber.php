@@ -3,6 +3,7 @@
 namespace App\Notification\EventSubscriber;
 
 use App\Entity\User;
+use App\Entity\UserType;
 use App\Event\StudentAbsenceApprovalChangedEvent;
 use App\Notification\NotificationService;
 use App\Notification\StudentAbsenceNotification;
@@ -11,10 +12,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class StudentAbsenceApprovalChangedEventSubscriber implements EventSubscriberInterface {
+readonly class StudentAbsenceApprovalChangedEventSubscriber implements EventSubscriberInterface, NotifierInterface {
 
-    public function __construct(private readonly InvolvedUsersResolver $involvedUsersResolver, private readonly NotificationService $notificationService,
-                                private readonly UrlGeneratorInterface $urlGenerator, private readonly TranslatorInterface $translator) {
+    public function __construct(private InvolvedUsersResolver $involvedUsersResolver, private NotificationService $notificationService,
+                                private UrlGeneratorInterface $urlGenerator, private TranslatorInterface $translator) {
 
     }
 
@@ -39,6 +40,7 @@ class StudentAbsenceApprovalChangedEventSubscriber implements EventSubscriberInt
 
         foreach($recipients as $recipient) {
             $notification = new StudentAbsenceNotification(
+                self::getKey(),
                 $recipient,
                 $this->translator->trans('student_absence.approval.title', [], 'email'),
                 $this->translator->trans('student_absence.approval.content', ['%type%' => $event->getAbsence()->getType()->getName()], 'email'),
@@ -55,5 +57,25 @@ class StudentAbsenceApprovalChangedEventSubscriber implements EventSubscriberInt
         return [
             StudentAbsenceApprovalChangedEvent::class => 'onStudentAbsenceApprovalChanged'
         ];
+    }
+
+    public static function getSupportedRecipientUserTypes(): array {
+        return [
+            UserType::Student,
+            UserType::Parent,
+            UserType::Student
+        ];
+    }
+
+    public static function getKey(): string {
+        return 'student_absence_approval_changed';
+    }
+
+    public static function getLabelKey(): string {
+        return 'notifications.student_absence_approval_changed.label';
+    }
+
+    public static function getHelpKey(): string {
+        return 'notifications.student_absence_approval_changed.help';
     }
 }

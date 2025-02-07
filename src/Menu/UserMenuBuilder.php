@@ -3,8 +3,8 @@
 namespace App\Menu;
 
 use App\Entity\User;
+use App\Feature\FeatureManager;
 use App\Repository\NotificationRepositoryInterface;
-use ContainerCBwteQM\getDoctrine_Orm_DefaultEntityManager_PropertyInfoExtractorService;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use SchulIT\CommonBundle\DarkMode\DarkModeManagerInterface;
@@ -17,8 +17,8 @@ class UserMenuBuilder extends AbstractMenuBuilder {
     public function __construct(private readonly string $idpProfileUrl, private readonly DarkModeManagerInterface $darkModeManager,
                                 private readonly NotificationRepositoryInterface $notificationRepository,
                                 FactoryInterface $factory, TokenStorageInterface $tokenStorage,
-                                AuthorizationCheckerInterface $authorizationChecker, TranslatorInterface $translator) {
-        parent::__construct($factory, $tokenStorage, $authorizationChecker, $translator);
+                                AuthorizationCheckerInterface $authorizationChecker, TranslatorInterface $translator, FeatureManager $featureManager) {
+        parent::__construct($factory, $tokenStorage, $authorizationChecker, $translator, $featureManager);
     }
 
     public function userMenu(array $options): ItemInterface {

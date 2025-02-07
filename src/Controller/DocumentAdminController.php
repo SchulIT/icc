@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Document;
 use App\Form\DocumentType;
@@ -23,6 +25,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route(path: '/admin/documents')]
+#[IsFeatureEnabled(Feature::Documents)]
 class DocumentAdminController extends AbstractController {
 
     private const VersionParam = '_version';

@@ -9,6 +9,8 @@ use App\Entity\UserType;
 use App\Entity\UserTypeEntity;
 use App\Event\MessageUpdatedEvent;
 use App\Export\PollResultCsvExporter;
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use App\Filesystem\FileNotFoundException;
 use App\Filesystem\MessageFilesystem;
 use App\Form\MessageType;
@@ -54,6 +56,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route(path: '/admin/messages')]
+#[IsFeatureEnabled(Feature::Messages)]
 class MessageAdminController extends AbstractController {
 
     private const CsrfTokenName = '_csrf_token';

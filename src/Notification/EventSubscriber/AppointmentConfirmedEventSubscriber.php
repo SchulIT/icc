@@ -3,6 +3,7 @@
 namespace App\Notification\EventSubscriber;
 
 use App\Converter\UserStringConverter;
+use App\Entity\UserType;
 use App\Event\AppointmentConfirmedEvent;
 use App\Notification\AppointmentConfirmedNotification;
 use App\Notification\NotificationService;
@@ -13,12 +14,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * Notifies when an appointment is confirmed (e.g. by an administrator)
  */
-class AppointmentConfirmedEventSubscriber implements EventSubscriberInterface {
+readonly class AppointmentConfirmedEventSubscriber implements EventSubscriberInterface, NotifierInterface {
 
-    public function __construct(private readonly NotificationService $notificationService,
-                                private readonly TranslatorInterface $translator,
-                                private readonly UserStringConverter $userStringConverter,
-                                private readonly UrlGeneratorInterface $urlGenerator) {    }
+    public function __construct(private NotificationService $notificationService,
+                                private TranslatorInterface $translator,
+                                private UserStringConverter $userStringConverter,
+                                private UrlGeneratorInterface $urlGenerator) {    }
 
     public function onAppointmentConfirmed(AppointmentConfirmedEvent $event): void {
         if($event->getAppointment()->getCreatedBy() === null) {
@@ -26,6 +27,7 @@ class AppointmentConfirmedEventSubscriber implements EventSubscriberInterface {
         }
 
         $notification = new AppointmentConfirmedNotification(
+            self::getKey(),
             $event->getAppointment()->getCreatedBy(),
             $this->translator->trans('appointment.title', [], 'email'),
             $this->translator->trans('appointment.content', [
@@ -45,5 +47,21 @@ class AppointmentConfirmedEventSubscriber implements EventSubscriberInterface {
         return [
             AppointmentConfirmedEvent::class => 'onAppointmentConfirmed'
         ];
+    }
+
+    public static function getSupportedRecipientUserTypes(): array {
+        return UserType::cases();
+    }
+
+    public static function getKey(): string {
+        return 'appointment_confirmed';
+    }
+
+    public static function getLabelKey(): string {
+        return 'notifications.appointment_confirmed.label';
+    }
+
+    public static function getHelpKey(): string {
+        return 'notifications.appointment_confirmed.help';
     }
 }

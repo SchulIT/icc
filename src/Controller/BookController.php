@@ -31,6 +31,8 @@ use App\Entity\Teacher;
 use App\Entity\TimetableLesson;
 use App\Entity\Tuition;
 use App\Entity\User;
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use App\Grouping\DateWeekOfYearStrategy;
 use App\Grouping\Grouper;
 use App\Grouping\LessonDayStrategy;
@@ -83,6 +85,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route(path: '/book')]
+#[IsFeatureEnabled(Feature::Book)]
 class BookController extends AbstractController {
 
     use CalendarWeeksTrait;

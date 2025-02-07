@@ -2,17 +2,8 @@
 
 namespace App\Settings;
 
-use App\Markdown\Processor\HeadingAnchorProcessor;
 
 class StudentAbsenceSettings extends AbstractSettings {
-
-    public function isEnabled(): bool {
-        return $this->getValue('student_absences.enabled', false);
-    }
-
-    public function setEnabled(bool $enabled): void {
-        $this->setValue('student_absences.enabled', $enabled);
-    }
 
     public function getPrivacyUrl(): ?string {
         return $this->getValue('student_absences.privacy_url', null);

@@ -4,18 +4,21 @@ namespace App\Controller\Settings;
 
 use App\Converter\EnumStringConverter;
 use App\Entity\UserType;
+use App\Form\DeliveryOptionCompoundType;
+use App\Notification\EventSubscriber\NotifierManager;
+use App\Notification\NotificationDeliveryTarget;
 use App\Settings\NotificationSettings;
-use App\Utils\ArrayUtils;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use SchulIT\CommonBundle\Form\FieldsetType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(path: '/admin/settings')]
-#[Security("is_granted('ROLE_ADMIN')")]
+#[IsGranted('ROLE_ADMIN')]
 class NotificationSettingsController extends AbstractController {
 
     public function __construct(private readonly ?string $pushoverToken) {
@@ -23,53 +26,71 @@ class NotificationSettingsController extends AbstractController {
     }
 
     #[Route(path: '/notifications', name: 'admin_settings_notifications')]
-    public function notifications(Request $request, NotificationSettings $notificationSettings, EnumStringConverter $enumStringConverter): Response {
+    public function notifications(Request $request, NotificationSettings $notificationSettings, NotifierManager $notifierManager,
+                                  EnumStringConverter $enumStringConverter): Response {
         $builder = $this->createFormBuilder();
+
         $builder
-            ->add('email_enabled', ChoiceType::class, [
-                'choices' => ArrayUtils::createArray(array_map(fn(UserType $case) => $case->name, UserType::cases()), UserType::cases()),
-                'choice_label' => fn(UserType $userType) => $enumStringConverter->convert($userType),
-                'choice_value' => fn(UserType $userType) => $userType->value,
-                'expanded' => true,
-                'multiple' => true,
-                'label' => 'admin.settings.notifications.email.label',
-                'help' => 'admin.settings.notifications.email.help',
-                'data' => $notificationSettings->getEmailEnabledUserTypes(),
-                'label_attr' => [
-                    'class' => 'checkbox-custom'
-                ]
+            ->add('enabled', CheckboxType::class, [
+                'label' => 'notifications.enabled.label',
+                'help' => 'notifications.enabled.help',
+                'required' => false,
+                'data' => $notificationSettings->isNotificationsEnabled()
             ])
-            ->add('pushover_enabled', ChoiceType::class, [
-                'choices' => ArrayUtils::createArray(array_map(fn(UserType $case) => $case->name, UserType::cases()), UserType::cases()),
-                'choice_label' => fn(UserType $userType) => $enumStringConverter->convert($userType),
-                'choice_value' => fn(UserType $userType) => $userType->value,
-                'expanded' => true,
-                'multiple' => true,
-                'label' => 'admin.settings.notifications.pushover.user_types.label',
-                'help' => 'admin.settings.notifications.pushover.user_types.help',
-                'data' => $notificationSettings->getPushoverEnabledUserTypes(),
-                'label_attr' => [
-                    'class' => 'checkbox-custom'
-                ],
-                'disabled' => empty($this->pushoverToken)
+            ->add('emailEnabled', CheckboxType::class, [
+                'label' => 'notifications.email_enabled.label',
+                'help' => 'notifications.email_enabled.help',
+                'required' => false,
+                'data' => $notificationSettings->isEmailEnabled()
+            ])
+            ->add('pushoverEnabled', CheckboxType::class, [
+                'label' => 'notifications.pushover_enabled.label',
+                'help' => 'notifications.pushover_enabled.help',
+                'required' => false,
+                'disabled' => empty($this->pushoverToken),
+                'data' => $notificationSettings->isPushoverEnabled()
             ]);
+
+        foreach(UserType::cases() as $userType) {
+            $builder->add(sprintf('%s', $userType->value), FieldsetType::class, [
+                'legend' => $enumStringConverter->convert($userType),
+                'fields' => function(FormBuilderInterface $builder) use ($userType, $notifierManager, $notificationSettings) {
+                    foreach($notifierManager->getNotifiersForUserType($userType) as $notifier) {
+                        $key = sprintf('%s_%s', $userType->value, $notifier->getKey());
+                        $data = [ ];
+
+                        foreach(NotificationDeliveryTarget::cases() as $target) {
+                            $data[$target->value] = $notificationSettings->getDeliveryStrategy($userType, $notifier->getKey(), $target);
+                        }
+
+                        $builder
+                            ->add($key, DeliveryOptionCompoundType::class, [
+                                'label' => $notifier::getLabelKey(),
+                                'help' => $notifier::getHelpKey(),
+                                'required' => false,
+                                'data' => $data
+                            ]);
+                    }
+                }
+            ]);
+        }
 
         $form = $builder->getForm();
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            $map = [
-                'email_enabled' => function($types) use ($notificationSettings) {
-                    $notificationSettings->setEmailEnabledUserTypes($types);
-                },
-                'pushover_enabled' => function($types) use($notificationSettings) {
-                    $notificationSettings->setPushoverEnabledUserTypes($types);
-                }
-            ];
+            $notificationSettings->setNotificationsEnabled($form->get('enabled')->getData());
+            $notificationSettings->setEmailEnabled($form->get('emailEnabled')->getData());
+            $notificationSettings->setPushoverEnabled($form->get('pushoverEnabled')->getData());
 
-            foreach($map as $formKey => $callable) {
-                $value = $form->get($formKey)->getData();
-                $callable($value);
+            foreach(UserType::cases() as $userType) {
+                foreach($notifierManager->getNotifiersForUserType($userType) as $notifier) {
+                    $key = sprintf('%s_%s', $userType->value, $notifier->getKey());
+
+                    foreach(NotificationDeliveryTarget::cases() as $target) {
+                        $notificationSettings->setDeliveryStrategy($userType, $notifier->getKey(), $target, $form->getData()[$key][$target->value]);
+                    }
+                }
             }
 
             $this->addFlash('success', 'admin.settings.success');

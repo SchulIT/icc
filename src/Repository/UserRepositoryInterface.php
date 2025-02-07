@@ -55,18 +55,17 @@ interface UserRepositoryInterface extends TransactionalRepositoryInterface {
     /**
      * @return User[]
      */
-    public function findAllByNotifyExams();
+    public function findAllByNotifyExams(): array;
 
     /**
      * @return User[]
      */
-    public function findAllByNotifySubstitutions();
+    public function findAllByNotifySubstitutions(): array;
 
     /**
-     * @param Message $message Restrict users to only those who are in the message recipients.
      * @return User[]
      */
-    public function findAllByNotifyMessages(Message $message);
+    public function findAllByNotifyMessages(): array;
 
     /**
      * @param UserType[] $types
@@ -77,7 +76,7 @@ interface UserRepositoryInterface extends TransactionalRepositoryInterface {
     /**
      * @return User[]
      */
-    public function findAll();
+    public function findAll(): array;
 
     /**
      * @param User $user

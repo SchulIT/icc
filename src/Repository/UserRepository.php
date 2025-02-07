@@ -131,7 +131,7 @@ class UserRepository extends AbstractTransactionalRepository implements UserRepo
     /**
      * @inheritDoc
      */
-    public function findAll() {
+    public function findAll(): array {
         return $this->em->getRepository(User::class)
             ->findBy([], [
                 'username' => 'asc'
@@ -157,7 +157,7 @@ class UserRepository extends AbstractTransactionalRepository implements UserRepo
     /**
      * @inheritDoc
      */
-    public function findAllByNotifyExams() {
+    public function findAllByNotifyExams(): array {
         return $this->em->getRepository(User::class)
             ->findBy([
                 'isExamNotificationsEnabled' => true
@@ -167,7 +167,7 @@ class UserRepository extends AbstractTransactionalRepository implements UserRepo
     /**
      * @inheritDoc
      */
-    public function findAllByNotifySubstitutions() {
+    public function findAllByNotifySubstitutions(): array {
         return $this->em->getRepository(User::class)
             ->findBy([
                 'isSubstitutionNotificationsEnabled' => true
@@ -177,7 +177,7 @@ class UserRepository extends AbstractTransactionalRepository implements UserRepo
     /**
      * @inheritDoc
      */
-    public function findAllByNotifyMessages(Message $message) {
+    public function findAllByNotifyMessages(): array {
         return $this->em->getRepository(User::class)
             ->findBy([
                 'isMessageNotificationsEnabled' => true

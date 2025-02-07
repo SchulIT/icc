@@ -9,6 +9,8 @@ use App\Entity\StudyGroupMembership;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Entity\UserTypeEntity;
+use App\Feature\Feature;
+use App\Feature\FeatureManager;
 use App\Message\MessageConfirmationHelper;
 use App\Utils\ArrayUtils;
 use Doctrine\Common\Collections\Collection;
@@ -31,7 +33,7 @@ class MessageVoter extends Voter {
     public const Priority = 'message-priority';
     public const Poll = 'poll';
 
-    public function __construct(private AccessDecisionManagerInterface $accessDecisionManager, private MessageConfirmationHelper $confirmationHelper, private DateHelper $dateHelper)
+    public function __construct(private AccessDecisionManagerInterface $accessDecisionManager, private MessageConfirmationHelper $confirmationHelper, private DateHelper $dateHelper, private readonly FeatureManager $featureManager)
     {
     }
 
@@ -58,6 +60,10 @@ class MessageVoter extends Voter {
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
+        if($this->featureManager->isFeatureEnabled(Feature::Messages) !== true) {
+            return false;
+        }
+
         return match ($attribute) {
             self::New => $this->canCreate($token),
             self::View => $this->canView($subject, $token),

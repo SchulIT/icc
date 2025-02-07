@@ -7,6 +7,8 @@ use App\Entity\StudentAbsence;
 use App\Entity\Student;
 use App\Entity\User;
 use App\Entity\UserType;
+use App\Feature\Feature;
+use App\Feature\FeatureManager;
 use App\Repository\SectionRepositoryInterface;
 use App\Section\SectionResolverInterface;
 use App\Settings\StudentAbsenceSettings;
@@ -29,7 +31,7 @@ class StudentAbsenceVoter extends Voter {
 
     public const Remove = 'remove';
 
-    public function __construct(private readonly DateHelper $dateHelper, private readonly SectionResolverInterface $sectionResolver, private readonly AccessDecisionManagerInterface $accessDecisionManager, private readonly StudentAbsenceSettings $settings)
+    public function __construct(private readonly DateHelper $dateHelper, private readonly SectionResolverInterface $sectionResolver, private readonly AccessDecisionManagerInterface $accessDecisionManager, private readonly FeatureManager $featureManager)
     {
     }
 
@@ -48,7 +50,7 @@ class StudentAbsenceVoter extends Voter {
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
-        if($this->settings->isEnabled() !== true) {
+        if($this->featureManager->isFeatureEnabled(Feature::StudentAbsence) !== true) {
             return false;
         }
 

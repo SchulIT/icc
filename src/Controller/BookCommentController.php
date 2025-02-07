@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\BookComment;
 use App\Entity\Student;
 use App\Entity\User;
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use App\Form\BookCommentType;
 use App\Repository\BookCommentRepositoryInterface;
 use App\Section\SectionResolverInterface;
@@ -19,6 +21,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route(path: '/book/comment')]
 #[IsGranted('ROLE_BOOK_ENTRY_CREATOR')]
+#[IsFeatureEnabled(Feature::Book)]
 class BookCommentController extends AbstractController {
 
     public function __construct(private BookCommentRepositoryInterface $repository, private SectionResolverInterface $sectionResolver, RefererHelper $redirectHelper) {

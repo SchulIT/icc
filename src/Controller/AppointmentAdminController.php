@@ -2,10 +2,8 @@
 
 namespace App\Controller;
 
-use Symfony\Component\HttpFoundation\Response;
 use App\Converter\UserStringConverter;
 use App\Entity\Appointment;
-use App\Entity\AppointmentCategory;
 use App\Entity\User;
 use App\Event\AppointmentConfirmedEvent;
 use App\Form\AppointmentType;
@@ -14,20 +12,20 @@ use App\Grouping\Grouper;
 use App\Repository\AppointmentRepositoryInterface;
 use App\Security\Voter\AppointmentVoter;
 use App\Sorting\AppointmentDateGroupStrategy;
+use App\Sorting\AppointmentDateStrategy as AppointmentSortingStrategy;
 use App\Sorting\Sorter;
-use App\View\Filter\AppointmentCategoriesFilter;
 use App\View\Filter\AppointmentCategoryFilter;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Sorting\AppointmentDateStrategy as AppointmentSortingStrategy;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route(path: '/admin/appointments')]
-#[Security("is_granted('ROLE_APPOINTMENT_CREATOR')")]
+#[IsGranted('ROLE_APPOINTMENT_CREATOR')]
 class AppointmentAdminController extends AbstractController {
 
     private const NumberOfAppointments = 25;

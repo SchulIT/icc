@@ -5,6 +5,7 @@ namespace App\Notification\EventSubscriber;
 use App\Converter\StudentStringConverter;
 use App\Converter\TeacherStringConverter;
 use App\Entity\Teacher;
+use App\Entity\UserType;
 use App\Event\ParentsDayAppointmentCancelledEvent;
 use App\Notification\Notification;
 use App\Notification\NotificationService;
@@ -16,15 +17,15 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ParentsDayAppointmentCancelledEventSubscriber implements EventSubscriberInterface {
+readonly class ParentsDayAppointmentCancelledEventSubscriber implements EventSubscriberInterface, NotifierInterface {
 
-    public function __construct(private readonly TranslatorInterface $translator,
-                                private readonly UrlGeneratorInterface $urlGenerator,
-                                private readonly NotificationService $notificationService,
-                                private readonly TeacherStringConverter $teacherStringConverter,
-                                private readonly StudentStringConverter $studentStringConverter,
-                                private readonly InvolvedUsersResolver $usersResolver,
-                                private readonly DateHelper $dateHelper) {
+    public function __construct(private TranslatorInterface $translator,
+                                private UrlGeneratorInterface $urlGenerator,
+                                private NotificationService $notificationService,
+                                private TeacherStringConverter $teacherStringConverter,
+                                private StudentStringConverter $studentStringConverter,
+                                private InvolvedUsersResolver $usersResolver,
+                                private DateHelper $dateHelper) {
 
     }
 
@@ -41,6 +42,7 @@ class ParentsDayAppointmentCancelledEventSubscriber implements EventSubscriberIn
             }
 
             $notification = new Notification(
+                self::getKey(),
                 $recipient,
                 $this->translator->trans('parents_day.appointment.cancelled.title', [], 'email'),
                 $this->translator->trans('parents_day.appointment.cancelled.content', [
@@ -76,5 +78,25 @@ class ParentsDayAppointmentCancelledEventSubscriber implements EventSubscriberIn
         return [
             ParentsDayAppointmentCancelledEvent::class => 'onParentsDayAppointmentCancelled'
         ];
+    }
+
+    public static function getSupportedRecipientUserTypes(): array {
+        return [
+            UserType::Teacher,
+            UserType::Student,
+            UserType::Parent
+        ];
+    }
+
+    public static function getKey(): string {
+        return 'parents_day_appointment_cancelled';
+    }
+
+    public static function getLabelKey(): string {
+        return 'notifications.parents_day_appointment_cancelled.label';
+    }
+
+    public static function getHelpKey(): string {
+        return 'notifications.parents_day_appointment_cancelled.help';
     }
 }

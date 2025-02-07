@@ -3,6 +3,7 @@
 namespace App\Notification\EventSubscriber;
 
 use App\Entity\StudyGroup;
+use App\Entity\UserType;
 use App\Event\SubstitutionMentionCreatedEvent;
 use App\Notification\Notification;
 use App\Notification\NotificationService;
@@ -13,13 +14,13 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class SubstitutionMentionCreatedEventSubscriber implements EventSubscriberInterface {
+readonly class SubstitutionMentionCreatedEventSubscriber implements EventSubscriberInterface, NotifierInterface {
 
-    public function __construct(private readonly UserRepositoryInterface $userRepository,
-                                private readonly NotificationService $notificationService,
-                                private readonly UrlGeneratorInterface $urlGenerator,
-                                private readonly TranslatorInterface $translator,
-                                private readonly Sorter $sorter) {
+    public function __construct(private UserRepositoryInterface $userRepository,
+                                private NotificationService $notificationService,
+                                private UrlGeneratorInterface $urlGenerator,
+                                private TranslatorInterface $translator,
+                                private Sorter $sorter) {
 
     }
 
@@ -45,6 +46,7 @@ class SubstitutionMentionCreatedEventSubscriber implements EventSubscriberInterf
 
         foreach($this->userRepository->findAllTeachers([$event->getTeacher()]) as $recipient) {
             $notification = new Notification(
+                self::getKey(),
                 $recipient,
                 $this->translator->trans('substitution.mention.create.title', domain: 'email'),
                 $this->translator->trans(
@@ -73,5 +75,23 @@ class SubstitutionMentionCreatedEventSubscriber implements EventSubscriberInterf
         return [
             SubstitutionMentionCreatedEvent::class => 'onSubstitutionMentionCreated'
         ];
+    }
+
+    public static function getSupportedRecipientUserTypes(): array {
+        return [
+            UserType::Teacher
+        ];
+    }
+
+    public static function getKey(): string {
+        return 'substitution_mention';
+    }
+
+    public static function getLabelKey(): string {
+        return 'notifications.substitution_mention.label';
+    }
+
+    public static function getHelpKey(): string {
+        return 'notifications.substitution_mention.help';
     }
 }

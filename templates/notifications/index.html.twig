@@ -22,12 +22,18 @@
                     {% for notification in notifications %}
                         <div class="card">
                             <div class="card-body">
-                                <h4 class="card-title">
-                                    {% if not notification.isRead %}<i class="fas fa-dot-circle" title="{{ 'notifications.unread'|trans }}"></i>{% endif %}
-                                    <a href="{{ path('notification_redirect', { uuid: notification.uuid }) }}">
-                                        {{ notification.subject }}
-                                    </a>
-                                </h4>
+                                <div class="d-flex flex-wrap">
+                                    <h4 class="card-title flex-fill me-2">
+                                        {% if not notification.isRead %}<i class="fas fa-dot-circle" title="{{ 'notifications.unread'|trans }}"></i>{% endif %}
+                                        <a href="{{ path('notification_redirect', { uuid: notification.uuid }) }}">
+                                            {{ notification.subject }}
+                                        </a>
+                                    </h4>
+
+                                    <span class="text-muted align-self-baseline" title="{{ notification.createdAt|format_datetime }}">
+                                        {{ notification.createdAt|time_diff }}
+                                    </span>
+                                </div>
 
                                 <p>
                                     {{ notification.content }}

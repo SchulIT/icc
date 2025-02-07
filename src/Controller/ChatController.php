@@ -9,6 +9,8 @@ use App\Entity\ChatMessage;
 use App\Entity\ChatMessageAttachment;
 use App\Entity\User;
 use App\Event\ChatMessageCreatedEvent;
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use App\Filesystem\ChatFilesystem;
 use App\Filesystem\FileNotFoundException;
 use App\Form\ChatMessageType;
@@ -35,6 +37,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/chat')]
+#[IsFeatureEnabled(Feature::Chat)]
 #[IsGranted(ChatVoter::ChatEnabled)]
 #[IsGrantedIfNotImpersonated]
 class ChatController extends AbstractController {

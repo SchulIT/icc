@@ -3,6 +3,8 @@
 namespace App\Menu;
 
 use App\Entity\User;
+use App\Feature\Feature;
+use App\Feature\FeatureManager;
 use App\Repository\ChatMessageRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\WikiArticleRepositoryInterface;
@@ -33,7 +35,8 @@ class Builder {
                                 private readonly DateHelper $dateHelper,
                                 private readonly SectionResolverInterface $sectionResolver,
                                 private readonly BookSettings $bookSettings,
-                                private readonly ChatMessageRepositoryInterface $chatMessageRepository)
+                                private readonly ChatMessageRepositoryInterface $chatMessageRepository,
+                                private readonly FeatureManager $featureManager)
     {
     }
 
@@ -48,12 +51,14 @@ class Builder {
         ])
             ->setExtra('icon', 'fa fa-home');
 
-        $menu->addChild('messages.overview.label', [
-            'route' => 'messages'
-        ])
-            ->setExtra('icon', 'fas fa-envelope-open-text');
+        if($this->featureManager->isFeatureEnabled(Feature::Messages)) {
+            $menu->addChild('messages.overview.label', [
+                'route' => 'messages'
+            ])
+                ->setExtra('icon', 'fas fa-envelope-open-text');
+        }
 
-        if($user instanceof User && $this->authorizationChecker->isGranted(ChatVoter::ChatEnabled)) {
+        if($this->featureManager->isFeatureEnabled(Feature::Chat) && $user instanceof User && $this->authorizationChecker->isGranted(ChatVoter::ChatEnabled)) {
             $menu->addChild('chat.label', [
                 'route' => 'chats'
             ])
@@ -64,38 +69,41 @@ class Builder {
         $this->plansMenu($menu);
         $this->listsMenu($menu);
 
+        if($this->featureManager->isFeatureEnabled(Feature::Documents)) {
+            $menu->addChild('documents.label', [
+                'route' => 'documents'
+            ])
+                ->setExtra('icon', 'fas fa-file-alt');
+        }
 
-        $menu->addChild('documents.label', [
-            'route' => 'documents'
-        ])
-            ->setExtra('icon', 'fas fa-file-alt');
+        if($this->featureManager->isFeatureEnabled(Feature::Wiki)) {
+            $this->wikiMenu($menu);
+        }
 
-        $this->wikiMenu($menu);
-
-        if($this->authorizationChecker->isGranted('ROLE_SICK_NOTE_VIEWER')
+        if(($this->featureManager->isFeatureEnabled(Feature::StudentAbsence) || $this->featureManager->isFeatureEnabled(Feature::TeacherAbsence)) && ($this->authorizationChecker->isGranted('ROLE_SICK_NOTE_VIEWER')
             || $this->authorizationChecker->isGranted('ROLE_SICK_NOTE_CREATOR')
             || $this->authorizationChecker->isGranted(StudentAbsenceVoter::New)
             || $this->authorizationChecker->isGranted(TeacherAbsenceVoter::NewAbsence)
-            || $this->authorizationChecker->isGranted(TeacherAbsenceVoter::CanViewAny)) {
+            || $this->authorizationChecker->isGranted(TeacherAbsenceVoter::CanViewAny))) {
             $this->absencesMenu($menu);
         }
 
-        if($user instanceof User) {
+        if($this->featureManager->isFeatureEnabled(Feature::Book) && $user instanceof User) {
             $this->reportMenu($menu, $user);
         }
 
-        if($this->authorizationChecker->isGranted(ParentsDayAppointmentVoter::VIEW)) {
+        if($this->featureManager->isFeatureEnabled(Feature::ParentsDay) && $this->authorizationChecker->isGranted(ParentsDayAppointmentVoter::VIEW)) {
             $menu->addChild('parents_day.label', [
                 'route' => 'parents_day'
             ])
                 ->setExtra('icon', 'fa-solid fa-people-arrows');
         }
 
-        if($this->authorizationChecker->isGranted('ROLE_BOOK_VIEWER')) {
+        if($this->featureManager->isFeatureEnabled(Feature::Book) && $this->authorizationChecker->isGranted('ROLE_BOOK_VIEWER')) {
             $this->bookMenu($menu);
         }
 
-        if($user instanceof User && ($user->isStudentOrParent() || $user->isTeacher())) {
+        if($this->featureManager->isFeatureEnabled(Feature::Checklists) && $user instanceof User && ($user->isStudentOrParent() || $user->isTeacher())) {
             $menu->addChild('checklists.label', [
                 'route' => 'checklists'
             ])
@@ -200,14 +208,14 @@ class Builder {
                 ->setExtra('icon', 'fas fa-user-tie');
         }
 
-        if($this->authorizationChecker->isGranted(ListsVoter::Privacy)) {
+        if($this->featureManager->isFeatureEnabled(Feature::Privacy) && $this->authorizationChecker->isGranted(ListsVoter::Privacy)) {
             $lists->addChild('lists.privacy.label', [
                 'route' => 'list_privacy'
             ])
                 ->setExtra('icon', 'fas fa-user-shield');
         }
 
-        if($this->authorizationChecker->isGranted(ListsVoter::LearningManagementSystems)) {
+        if($this->featureManager->isFeatureEnabled(Feature::LMS) && $this->authorizationChecker->isGranted(ListsVoter::LearningManagementSystems)) {
             $lists->addChild('lists.lms.label', [
                 'route' => 'list_lms'
             ])
@@ -283,10 +291,12 @@ class Builder {
         ])
             ->setExtra('icon', 'fa-solid fa-circle-info');
 
-        $book->addChild('book.grades.label', [
-            'route' => 'gradebook'
-        ])
-            ->setExtra('icon', 'fas fa-user-graduate');
+        if($this->featureManager->isFeatureEnabled(Feature::GradeBook)) {
+            $book->addChild('book.grades.label', [
+                'route' => 'gradebook'
+            ])
+                ->setExtra('icon', 'fas fa-user-graduate');
+        }
 
         $book->addChild('book.excuse_note.label', [
             'route' => 'excuse_notes'
@@ -312,23 +322,25 @@ class Builder {
             ->setExtra('menu-container', '#submenu')
             ->setExtra('icon', 'fas fa-user-times');
 
-        if($this->authorizationChecker->isGranted('ROLE_SICK_NOTE_VIEWER')
-            || $this->authorizationChecker->isGranted('ROLE_SICK_NOTE_CREATOR')
-            || $this->authorizationChecker->isGranted(StudentAbsenceVoter::New)) {
-            $plans->addChild('absences.students.label', [
-                'route' => 'student_absences'
-            ])
-                ->setExtra('icon', 'fas fa-user-graduate');
+        if($this->featureManager->isFeatureEnabled(Feature::StudentAbsence)) {
+            if ($this->authorizationChecker->isGranted('ROLE_SICK_NOTE_VIEWER')
+                || $this->authorizationChecker->isGranted('ROLE_SICK_NOTE_CREATOR')
+                || $this->authorizationChecker->isGranted(StudentAbsenceVoter::New)) {
+                $plans->addChild('absences.students.label', [
+                    'route' => 'student_absences'
+                ])
+                    ->setExtra('icon', 'fas fa-user-graduate');
+            }
+
+            if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+                $plans->addChild('absences.students.export.label', [
+                    'route' => 'export_student_absences'
+                ])
+                    ->setExtra('icon', 'fas fa-download');
+            }
         }
 
-        if($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
-            $plans->addChild('absences.students.export.label', [
-                'route' => 'export_student_absences'
-            ])
-                ->setExtra('icon', 'fas fa-download');
-        }
-
-        if($this->authorizationChecker->isGranted(TeacherAbsenceVoter::NewAbsence) || $this->authorizationChecker->isGranted(TeacherAbsenceVoter::CanViewAny)) {
+        if($this->featureManager->isFeatureEnabled(Feature::TeacherAbsence) && ($this->authorizationChecker->isGranted(TeacherAbsenceVoter::NewAbsence) || $this->authorizationChecker->isGranted(TeacherAbsenceVoter::CanViewAny))) {
             $plans->addChild('absences.teachers.label', [
                 'route' => 'teacher_absences'
             ])

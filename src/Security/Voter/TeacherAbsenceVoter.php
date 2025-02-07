@@ -4,6 +4,9 @@ namespace App\Security\Voter;
 
 use App\Entity\TeacherAbsence;
 use App\Entity\User;
+use App\Feature\Feature;
+use App\Feature\FeatureManager;
+use App\Settings\FeatureSettings;
 use App\Settings\TeacherAbsenceSettings;
 use LogicException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -22,7 +25,7 @@ class TeacherAbsenceVoter extends Voter {
 
     public const Process = 'process';
 
-    public function __construct(private readonly AccessDecisionManagerInterface $accessDecisionManager, private readonly TeacherAbsenceSettings $settings) { }
+    public function __construct(private readonly AccessDecisionManagerInterface $accessDecisionManager, private readonly FeatureManager $featureManager) { }
 
     protected function supports(string $attribute, mixed $subject): bool {
         return $attribute === self::NewAbsence
@@ -32,7 +35,7 @@ class TeacherAbsenceVoter extends Voter {
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool {
-        if($this->settings->isEnabled() !== true) {
+        if($this->featureManager->isFeatureEnabled(Feature::TeacherAbsence) !== true) {
             return false;
         }
 

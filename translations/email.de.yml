@@ -114,4 +114,5 @@ attendance:
   absent_without_note:
     title: "%student% hat unangekündigt gefehlt"
     content: "%student% hat am %date% in der %lesson%. Stunde ohne Abwesenheitsmeldung gefehlt."
+    child: Kind
     link: Zur Anwesenheitsübersicht

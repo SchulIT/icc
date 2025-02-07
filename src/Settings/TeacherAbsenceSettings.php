@@ -3,13 +3,6 @@
 namespace App\Settings;
 
 class TeacherAbsenceSettings extends AbstractSettings {
-    public function isEnabled(): bool {
-        return $this->getValue('teacher_absences.enabled', false);
-    }
-
-    public function setEnabled(bool $enabled): void {
-        $this->setValue('teacher_absences.enabled', $enabled);
-    }
 
     public function getOnCreateRecipients(): array {
         return $this->getValue('teacher_absences.recipients.on_create', []);

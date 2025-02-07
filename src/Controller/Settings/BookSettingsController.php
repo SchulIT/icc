@@ -8,22 +8,21 @@ use App\Repository\GradeRepositoryInterface;
 use App\Repository\StudentAbsenceTypeRepositoryInterface;
 use App\Settings\BookSettings;
 use App\Utils\ArrayUtils;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[Route(path: '/admin/settings')]
-#[Security("is_granted('ROLE_ADMIN')")]
+#[IsGranted('ROLE_ADMIN')]
 class BookSettingsController extends AbstractController {
     #[Route(path: '/book', name: 'admin_settings_book')]
     public function book(Request $request, BookSettings $settings, GradeRepositoryInterface $gradeRepository, StudentAbsenceTypeRepositoryInterface $typeRepository): Response {

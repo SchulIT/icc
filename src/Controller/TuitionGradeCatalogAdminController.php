@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\TuitionGradeCatalog;
 use App\Entity\TuitionGradeCatalogGrade;
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use App\Form\TuitionGradeCatalogType;
 use App\Repository\TuitionGradeCategoryRepositoryInterface;
 use App\Repository\TuitionGradeCatalogRepositoryInterface;
@@ -15,6 +17,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/admin/gradebook/catalogs')]
+#[IsFeatureEnabled(Feature::Book)]
+#[IsFeatureEnabled(Feature::GradeBook)]
 class TuitionGradeCatalogAdminController extends AbstractController {
 
     public function __construct(private readonly TuitionGradeCatalogRepositoryInterface $repository, RefererHelper $redirectHelper) {

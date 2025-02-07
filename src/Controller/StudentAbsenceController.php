@@ -3,16 +3,18 @@
 namespace App\Controller;
 
 use App\Converter\StudyGroupStringConverter;
+use App\Entity\AttendanceExcuseStatus;
 use App\Entity\DateLesson;
 use App\Entity\Exam;
 use App\Entity\ExcuseNote;
-use App\Entity\AttendanceExcuseStatus;
 use App\Entity\Student;
 use App\Entity\StudentAbsence;
 use App\Entity\StudentAbsenceAttachment;
 use App\Entity\StudentAbsenceMessage;
 use App\Entity\StudyGroupMembership;
 use App\Entity\User;
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use App\Form\Model\BulkStudentAbsence;
 use App\Form\StudentAbsenceBulkType;
 use App\Form\StudentAbsenceMessageType;
@@ -52,14 +54,16 @@ use League\Flysystem\FilesystemOperator;
 use Mimey\MimeTypes;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Helper\DateHelper;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(path: '/absence/students')]
-#[Security("is_granted('ROLE_STUDENT_ABSENCE_CREATOR') or is_granted('ROLE_STUDENT_ABSENCE_VIEWER') or is_granted('new-absence')")]
+#[IsFeatureEnabled(Feature::StudentAbsence)]
+#[IsGranted(new Expression("is_granted('ROLE_STUDENT_ABSENCE_CREATOR') or is_granted('ROLE_STUDENT_ABSENCE_VIEWER') or is_granted('new-absence')"))]
 class StudentAbsenceController extends AbstractController {
 
     public const ITEMS_PER_PAGE = 25;
@@ -73,10 +77,6 @@ class StudentAbsenceController extends AbstractController {
                         StudentAbsenceRepositoryInterface $repository, StudentRepositoryInterface $studentRepository,
                         TimetableTimeHelper $timeHelper, TimetableSettings $timetableSettings, DateHelper $dateHelper): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::New);
-
-        if($settings->isEnabled() !== true) {
-            throw new NotFoundHttpException();
-        }
 
         $students = [ ];
 
@@ -108,10 +108,6 @@ class StudentAbsenceController extends AbstractController {
                             TimetableTimeHelper $timeHelper, TimetableSettings $timetableSettings, DateHelper $dateHelper,
                             Sorter $sorter, StudyGroupStringConverter $studyGroupStringConverter): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::Bulk);
-
-        if($settings->isEnabled() !== true) {
-            throw new NotFoundHttpException();
-        }
 
         $students = [ ];
 
@@ -166,10 +162,6 @@ class StudentAbsenceController extends AbstractController {
     public function edit(StudentAbsence $absence, Request $request, StudentAbsenceSettings $settings, StudentAbsenceRepositoryInterface $repository): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::New);
 
-        if($settings->isEnabled() !== true) {
-            throw new NotFoundHttpException();
-        }
-
         $form = $this->createForm(StudentAbsenceType::class, $absence);
         $form->handleRequest($request);
 
@@ -194,10 +186,6 @@ class StudentAbsenceController extends AbstractController {
                           StudentAbsenceRepositoryInterface $absenceRepository, TuitionRepositoryInterface $tuitionRepository,
                           SectionResolverInterface          $sectionResolver, DateHelper $dateHelper, Sorter $sorter, StudentAbsenceSettings $settings, ExcuseStatusResolver $excuseNoteStatusResolver): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::CanViewAny);
-
-        if($settings->isEnabled() !== true) {
-            throw new NotFoundHttpException();
-        }
 
         /** @var User $user */
         $user = $this->getUser();
@@ -323,10 +311,6 @@ class StudentAbsenceController extends AbstractController {
                          AppointmentRepositoryInterface $appointmentRepository, Sorter $sorter, ExcuseStatusResolver $excuseNoteStatusResolver, SectionResolverInterface $sectionResolver): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::View, $absence);
 
-        if($settings->isEnabled() !== true) {
-            throw new NotFoundHttpException();
-        }
-
         $message = new StudentAbsenceMessage();
         $message->setAbsence($absence);
         $form = $this->createForm(StudentAbsenceMessageType::class, $message);
@@ -448,10 +432,6 @@ class StudentAbsenceController extends AbstractController {
     #[Route(path: '/attachments/{uuid}', name: 'download_student_absence_attachment', priority: 10)]
     public function downloadAttachment(StudentAbsenceAttachment $attachment, FilesystemOperator $studentAbsencesFilesystem, MimeTypes $mimeTypes, StudentAbsenceSettings $settings): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::View, $attachment->getAbsence());
-
-        if($settings->isEnabled() !== true) {
-            throw new NotFoundHttpException();
-        }
 
         if($studentAbsencesFilesystem->fileExists($attachment->getPath()) !== true) {
             throw new NotFoundHttpException();

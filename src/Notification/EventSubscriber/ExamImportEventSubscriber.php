@@ -3,6 +3,7 @@
 namespace App\Notification\EventSubscriber;
 
 use App\Entity\User;
+use App\Entity\UserType;
 use App\Event\ExamImportEvent;
 use App\Notification\ImportNotification;
 use App\Notification\NotificationService;
@@ -12,13 +13,13 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ExamImportEventSubscriber implements EventSubscriberInterface {
+readonly class ExamImportEventSubscriber implements EventSubscriberInterface, NotifierInterface {
 
-    public function __construct(private readonly TranslatorInterface     $translator, private readonly ExamSettings $examSettings,
-                                private readonly UserRepositoryInterface $userRepository, private readonly UrlGeneratorInterface $urlGenerator,
-                                private readonly NotificationService     $notificationService) { }
+    public function __construct(private TranslatorInterface     $translator, private ExamSettings $examSettings,
+                                private UserRepositoryInterface $userRepository, private UrlGeneratorInterface $urlGenerator,
+                                private NotificationService     $notificationService) { }
 
-    public function onExamsImported(ExamImportEvent $event) {
+    public function onExamsImported(ExamImportEvent $event): void {
         if($this->examSettings->isNotificationsEnabled() !== true) {
             return;
         }
@@ -27,6 +28,7 @@ class ExamImportEventSubscriber implements EventSubscriberInterface {
 
         foreach($recipients as $recipient) {
             $notification = new ImportNotification(
+                self::getKey(),
                 $recipient,
                 $this->translator->trans('exam.title', [], 'email'),
                 $this->translator->trans('exam.content', [], 'email'),
@@ -44,5 +46,21 @@ class ExamImportEventSubscriber implements EventSubscriberInterface {
         return [
             ExamImportEvent::class => 'onExamsImported'
         ];
+    }
+
+    public static function getSupportedRecipientUserTypes(): array {
+        return UserType::cases();
+    }
+
+    public static function getKey(): string {
+        return 'exam_import';
+    }
+
+    public static function getLabelKey(): string {
+        return 'notifications.exam_import.label';
+    }
+
+    public static function getHelpKey(): string {
+        return 'notifications.exam_import.help';
     }
 }

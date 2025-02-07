@@ -12,4 +12,12 @@ class GeneralSettings extends AbstractSettings {
         $this->setValue('general.current_section', $sectionId);
     }
 
+    public function getCustomCSS(): ?string {
+        return $this->getValue('general.custom_css', null);
+    }
+
+    public function setCustomCSS(string $customCSS): void {
+        $this->setValue('general.custom_css', $customCSS);
+    }
+
 }

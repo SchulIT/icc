@@ -13,6 +13,8 @@ use App\Entity\StudyGroupMembership;
 use App\Entity\StudyGroupType;
 use App\Entity\Tuition;
 use App\Entity\User;
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use App\Form\BookEventCreateType;
 use App\Form\BookEventType;
 use App\Repository\BookEventRepositoryInterface;
@@ -27,6 +29,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 #[Route('/book/entry/event')]
+#[IsFeatureEnabled(Feature::Book)]
 class BookEventController extends AbstractController {
     public function __construct(RefererHelper $redirectHelper, private readonly BookEventRepositoryInterface $repository) {
         parent::__construct($redirectHelper);

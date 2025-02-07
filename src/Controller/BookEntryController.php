@@ -11,6 +11,8 @@ use App\Entity\StudyGroupMembership;
 use App\Entity\TimetableLesson;
 use App\Entity\Tuition;
 use App\Entity\User;
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use App\Form\LessonAttendanceExcuseType;
 use App\Form\LessonEntryAddStudent;
 use App\Form\LessonEntryCancelType;
@@ -30,6 +32,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route(path: '/book/entry')]
+#[IsFeatureEnabled(Feature::Book)]
 class BookEntryController extends AbstractController {
 
     use DateRequestTrait;

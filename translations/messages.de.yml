@@ -872,6 +872,53 @@ admin:
             current_section:
                 label: Aktueller Abschnitt
                 help: Gibt den aktuellen Abschnitt im Schuljahr an.
+            custom_css:
+                label: Benutzerdefiniertes CSS
+                help: Hier kann benutzerdefiniertes CSS eingebunden werden, um die Software nach eigenen Wünschen einzufärben.
+
+        features:
+            label: Features
+            success: Features erfolgreich aktiviert bzw. deaktiviert. Aktivierte Features können jetzt konfiguriert werden.
+
+            info: Das Deaktivieren von Features führt nicht zu Datenverlust. Es sorgt lediglich dafür, dass Menüpunkte ausgeblendet werden und die entsprechenden Seiten (inkl. Unterseiten) nicht mehr abrufbar sind.
+
+            wiki:
+                label: Wiki
+                help: Ein Wiki für Artikel, bspw. für Anleitungen zur Benutzung der schulischen IT, eingesetzter Software etc.
+            documents:
+                label: Dokumente
+                help: Aktiviert die Dokumentenablage. Unter Dokumente können nach Kategorien sortiert Dokumente und Informationen abgelegt werden.
+            privacy:
+                label: Datenschutzeinwilligungen (SchILD NRW)
+                help: Aktiviert die Anzeige der Datenschutzeinwilligungen. Diese Funktion setzt einen Import aus SchILD NRW voraus.
+            lms:
+                label: Lernplattformen (SchILD NRW)
+                help: Aktiviert die Lernplattform-Anzeige. Diese Funktion setzt einen Import aus SchILD NRW voraus.
+            chat:
+                label: Private Nachrichten
+                help: Aktiviert private Nachrichten. Über private Nachrichten können E-Mail-artige Nachrichten innerhalb des ICCs versendet werden.
+            parents_day:
+                label: Elternsprechtag
+                help: Aktiviert die digitale Organisation des Elternsprechtages.
+            student_absence:
+                label: Abwesenheitsmeldungen (Lernende)
+                help: Aktiviert Abwesenheitsmeldungen für Lernende. Über diese Funktion können Abwesenheiten von Eltern, volljährigen Kindern, Lehrkräften oder dem Sekretariat eingetragen werden.
+            teacher_absence:
+                label: Abwesenheitsmeldungen (Lehrkräfte)
+                help: Aktiviert Abwesenheitsmeldungen für Lehrkräfte. Über diese Funktion können Lehrkräfte sich krank melden.
+            checklists:
+                label: Checklisten
+                help: Aktiviert Checklisten für Lehrkräfte. Damit können Lehrkräfte Checklisten (bspw. für Rücklauf von Elternbriefen etc.) erstellen.
+            book:
+                label: Unterrichtsbuch
+                help: Aktiviert das Unterrichtsbuch. Das Unterrichtsbuch ersetzt das analoge Klassenbuch und Kurshefte.
+            grade_book:
+                label: Notenmodul
+                help: Aktiviert das Notenmodul im Unterrichtsbuch zur Erfassung von Noten. Dazu muss das Unterrichtsbuch auch aktiviert sein.
+            messages:
+                label: Mitteilungen
+                help: Aktiviert die Mitteilungenfunktion. Ein digitales schwarzes Brett für wichtige Mitteilungen an die Schulgemeinde oder Teile der Schulgemeinde (bspw. einzelne Lerngruppen).
+
 
         import:
             label: Import-Einstellungen
@@ -1698,6 +1745,10 @@ profile:
         select_elements: Elemente auswählen
         success: Benachrichtigungseinstellungen erfolgreich aktualisiert
         not_allowed: Es sind keine Benachrichtigungsmöglichkeiten freigeschaltet.
+        disabled: Ausgegraute Benachrichtigungsoptionen werden durch den Administrator festgelegt und können nicht geändert werden.
+
+        general: Benachrichtigungen immer durch das System ausgelöst, wenn man von etwas betroffen ist. Eine Ausnahme bilden Vertretungsplan, Klausurplan und Mitteilungen. Unabhängig von den unten ausgewählten Auslieferungspotionen mussen Benachrichtigungen für diese drei Benachrichtigungsoptionen explizit hier oben aktiviert werden.
+
         substitutions:
             label: Neuer Vertretungsplan
             help: Wenn diese Option aktiv ist, wird eine Benachrichtigung versendet, sobald ein neuer Vertretungsplan bereitgestellt wurde.
@@ -1707,10 +1758,6 @@ profile:
         messages:
             label: Neue Mitteilung
             help: Wenn diese Option aktiv ist, wird eine Benachrichtigung versendet, sobald eine neue Mitteilung erstellt wurde.
-        email:
-            label_short: E-Mail Benachrichtigungen
-            label: E-Mail Benachrichtigungen aktiviert
-            help: Wenn diese Option aktiv ist, werden Benachrichtigungen per E-Mail versendet.
         pushover:
             label: Pushover Benutzer-Token
             help: Hier kann das Benutzertoken von Pushover eingetragen werden.
@@ -1910,6 +1957,7 @@ absences:
         message:
             label: Neue Mitteilung
             submit: abschicken
+            notification: Alle an dieser Meldung beteiligten Personen (Eltern, volljährige Kinder, Klassenleitung und Ersteller dieser Abwesenheitsmeldung) werden benachrichtigt.
         approval:
             label: Genehmigungsstatus
             approve: genehmigen
@@ -2007,6 +2055,7 @@ book:
         add:
             label: Neuer Kommentar
             success: Kommentar erfolgreich angelegt
+            notification: Die Klassenleitungen der beteiligten Lernenden wird automatisch über diesen Kommentar benachrichtigt.
         show:
             label: Kommentar anzeigen
             header: Kommentar
@@ -2359,16 +2408,6 @@ experimental:
     title: Feature experimentell
     info: Dieses Feature funktioniert möglicherweise noch nicht so, wie erwartet. Es darf jedoch getestet werden. Zukünftig können sich Aussehen und Funktionsweise ändern.
 
-notifications:
-    label: Benachrichtigungen
-    link: Details
-    unread: ungelesen
-    empty: Es gibt keine Benachrichtigungen.
-    mark_read:
-        label: Alle Benachrichtigungen als gelesen markieren
-        success: Alle Benachrichtigungen als gelesen markiert
-    settings: Benachrichtigungseinstellungen
-
 attendance:
     label: Anwesenheit
     empty: Diese Übersicht ist aktuell leer.
@@ -2549,6 +2588,7 @@ user_type:
 checklists:
     label: Checklisten
     empty: Bisher wurden keine Checklisten angelegt.
+    shared: von einem anderen Benutzer geteilte Checkliste
     add:
         label: Neue Checkliste
         success: Checkliste erfolgreich angelegt
@@ -2579,3 +2619,84 @@ checklists:
 
 yes: ja
 no: nein
+
+notifications:
+    label: Benachrichtigungen
+    link: Details
+    unread: ungelesen
+    empty: Es gibt keine Benachrichtigungen.
+    mark_read:
+        label: Alle Benachrichtigungen als gelesen markieren
+        success: Alle Benachrichtigungen als gelesen markiert
+    settings: Benachrichtigungseinstellungen
+
+    strategy:
+        never: nie
+        always: immer
+        opt_in: Opt-In
+        opt_out: Opt-Out
+
+    target:
+        email: E-Mail
+        pushover: Pushover
+
+    information:
+        general: Auf dieser Seite kann eingestellt werden, für welche Ereignisse entsprechende Benachrichtigungen über die angebotenen Dienste verschickt werden sollen.
+
+    important: Benachrichtigungen bei einem neuen Vertretungsplan, Klausurplan oder neuen Mitteilungen müssen explizit vom Benutzer aktiviert werden. Anderenfalls erfolgt grundsätzlich keine Benachrichtigung, unabhängig von der ausgewählten Auslieferungsstrategie. Alle anderen Benachrichtigungen werden automatisch erstellt und erzeugen mindestens eine Benachrichtigung auf dem ICC. Je nach ausgewählter Benachrichtigungsoption, erhalten Benutzer auch auf anderen Wegen eine Benachrichtigung. Die Strategien *Opt-In* und *Opt-Out* können von den Benutzern überschrieben werden. *Immer* und *nie* können nicht überschrieben werden. Bereits in der Vergangenheit durch Benutzer eingestellte Optionen werden automatisch überschrieben.
+
+    enabled:
+        label: Benachrichtigungen aktiviert
+        help: Wenn diese Option aktiv ist, werden Benachrichtigungen zu verschiedenen Ereignissen (siehe unten) verschickt. Ist diese Option deaktiviert, werden keine Benachrichtigungen versendet.
+    email_enabled:
+        label: E-Mail Benachrichtigungen aktiviert
+        help: Wenn diese Option aktiv ist, werden Benachrichtigungen entsprechend der ausgewählten Strategie (siehe unten) per E-Mail verschickt. Ist diese Option deaktiviert, werden keine E-Mail Benachrichtigungen versendet.
+    pushover_enabled:
+        label: Pushover Benachrichtigungen aktiviert
+        help: Wenn diese Option aktiv ist, werden Benachrichtigungen entsprechend der ausgewählten Strategie (siehe unten) per Pushover verschickt. Ist diese Option deaktiviert, werden keine Pushover Benachrichtigungen versendet.
+
+    appointment_confirmed:
+        label: Termin bestätigt
+        help: Verschickt eine Benachrichtigung an den Ersteller eines Termins, wenn dieser bestätigt wurde. Um Termine erstellen zu können, bedarf es der Rolle `ROLE_APPOINTMENT_CREATOR`.
+    book_comment:
+        label: Neuer Kommentar (Unterrichtsbuch)
+        help: Verschickt Benachrichtigungen, sobald ein neuer Kommentar im Unterrichtsbuch erstellt wird.
+    new_chat_message:
+        label: Neue private Nachricht
+        help: Verschickt eine Benachrichtigung, sobald eine neue private Nachricht erstellt wird.
+    exam_import:
+        label: Neuer Klausurplan
+        help: Verschickt eine Benachrichtigung, sobald ein neuer Klausurplan hochgeladen wurde.
+    message_created:
+        label: Neue Mitteilung
+        help: Verschickt eine Benachrichtigung, sobald eine neue Mitteilung erstellt wurde.
+    message_updated:
+        label: Mitteilung aktualisiert
+        help: Verschickt eine Benachrichtigung, sobald eine Mitteilung aktualisiert wurde.
+    substitution_import:
+        label: Neuer Vertretungsplan
+        help: Verschickt eine Benachrichtigung, sobald ein neuer Vertretugnsplan hochgeladen wurde.
+    parents_day_appointment_cancelled:
+        label: Elternsprechtagstermin abgesagt
+        help: Verschickt eine Benachrichtigung, sobald ein Elternsprechtagstermin abgesagt wurde.
+    parents_day_appointment_created:
+        label: Elternsprechtagstermin erstellt
+        help: Verschickt eine Benachrichtigung, sobald ein Elternsprechtagstermin erstellt wurde.
+    reservation_checker:
+        label: Reservierungskollision
+        help: Verschickt eine Benachrichtigung, falls beim Import des Vertretungsplans eine Kollision mit einer Raumreservierung festgestellt wurde.
+    substitution_mention:
+        label: Erwähnung im Vertretungsplan
+        help: Verschickt eine Benachrichtigung an Lehrkräfte, falls sie im Vertretungsplan durch ihr Kürzel in einem Vertretungstext erwähnt werden.
+    student_absence_created:
+        label: Abwesenheitsmeldung erstellt
+        help: Verschickt eine Benachrichtigung (an alle betroffenen Personen, d.h. Eltern, volljährige Kinder und Klassenleitung), sofern eine neue Abwesenheitsmeldung erstellt wurde.
+    student_absence_message_created:
+        label: Mitteilung zu Abwesenheitsmeldung
+        help: Verschickt eine Benachrichtigung (an alle betroffenen Personen, d.h. Eltern, volljährige Kinder und Klassenleitung), sofern eine neue Mitteilung zu einer Abwesenheitsmeldung erstellt wurde.
+    student_absence_approval_changed:
+        label: Genehmigungsstatus geändert
+        help: Verschickt eine Benachrichtigung (an alle betroffenen Personen, d.h. Eltern, volljährige Kinder und Klassenleitung), wenn der Genehmigungsstatus einer Abwesenheitsmeldung geändert wurde.
+    student_absent_without_note:
+        label: Abwesenheit ohne Meldung
+        help: Verschickt eine Benachrichtigung (je nach Einstellung an Klassenleitung und/oder an Eltern), wenn ein Kind ohne Abwesenheitsmeldung als fehlend eingetragen wurde.

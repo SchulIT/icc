@@ -11,9 +11,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 /**
  * Stores notifications in the database, so they can be shown in the web GUI.
  */
-class DatabaseNotificationHandler implements NotificationHandlerInterface {
+readonly class DatabaseNotificationHandler implements NotificationHandlerInterface {
 
-    public function __construct(private readonly NotificationRepositoryInterface $notificationRepository, private readonly UrlGeneratorInterface $urlGenerator) {
+    public function __construct(private NotificationRepositoryInterface $notificationRepository, private UrlGeneratorInterface $urlGenerator) {
 
     }
 

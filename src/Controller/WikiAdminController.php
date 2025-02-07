@@ -2,8 +2,9 @@
 
 namespace App\Controller;
 
-use Symfony\Component\HttpFoundation\Response;
 use App\Entity\WikiArticle;
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use App\Form\WikiArticleType;
 use App\Repository\LogRepositoryInterface;
 use App\Repository\WikiArticleRepositoryInterface;
@@ -15,17 +16,19 @@ use EasySlugger\SluggerInterface;
 use League\Flysystem\Filesystem;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route(path: '/admin/wiki')]
-#[Security("is_granted('ROLE_WIKI_ADMIN')")]
+#[IsGranted('ROLE_WIKI_ADMIN')]
+#[IsFeatureEnabled(Feature::Wiki)]
 class WikiAdminController extends AbstractController {
 
     private const VersionParam = '_version';

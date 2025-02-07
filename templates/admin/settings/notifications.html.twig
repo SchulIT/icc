@@ -12,11 +12,14 @@
 {% endblock %}
 
 {% block settings_content %}
+
     <div class="card">
         <div class="card-header">{{ 'label.general'|trans }}</div>
 
         <div class="card-body">
-            {{ form_row(form.email_enabled) }}
+            {{ form_row(form.enabled) }}
+            {{ form_row(form.emailEnabled) }}
+            {{ form_row(form.pushoverEnabled) }}
 
             {% if isPushoverTokenMissing %}
                 <div class="bs-callout bs-callout-danger">
@@ -24,9 +27,14 @@
                     <p>{{ 'admin.settings.notifications.pushover.token.missing'|trans }}</p>
                 </div>
             {% endif %}
-
-            {{ form_row(form.pushover_enabled) }}
         </div>
     </div>
+
+    <div class="bs-callout bs-callout-warning">
+        <h5>{{ 'caution'|trans }}</h5>
+        {{ 'notifications.important'|trans|markdown }}
+    </div>
+
+    {{ form_widget(form) }}
 
 {% endblock %}

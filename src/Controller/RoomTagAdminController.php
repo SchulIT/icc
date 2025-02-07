@@ -2,18 +2,18 @@
 
 namespace App\Controller;
 
-use Symfony\Component\HttpFoundation\Response;
 use App\Entity\RoomTag;
 use App\Form\RoomTagType;
 use App\Repository\RoomTagRepositoryInterface;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(path: '/admin/resources/tags')]
-#[Security("is_granted('ROLE_APPOINTMENTS_ADMIN')")]
+#[IsGranted('ROLE_APPOINTMENTS_ADMIN')]
 class RoomTagAdminController extends AbstractController {
 
     public function __construct(private RoomTagRepositoryInterface $repository, RefererHelper $redirectHelper) {

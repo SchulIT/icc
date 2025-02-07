@@ -2,36 +2,52 @@
 
 namespace App\Notification\Email;
 
+use App\Notification\Delivery\DeliveryDecider;
 use App\Notification\Notification;
+use App\Notification\NotificationDeliveryTarget;
 use App\Notification\NotificationHandlerInterface;
+use App\Settings\NotificationSettings;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Twig\Environment;
 
-class EmailNotificationHandler implements NotificationHandlerInterface {
+readonly class EmailNotificationHandler implements NotificationHandlerInterface {
 
     /**
      * @param EmailStrategyInterface[] $strategies
      */
-    public function __construct(private readonly iterable $strategies, private readonly string $appName, private readonly string $sender,
-                                private readonly MailerInterface  $mailer, private readonly Environment $twig, private readonly LoggerInterface $logger) {
+    public function __construct(#[AutowireIterator('app.notifications.email_strategy')] private iterable $strategies,
+                                #[Autowire(env: 'APP_NAME')] private string $appName,
+                                #[Autowire(env: 'MAILER_FROM')] private string $sender,
+                                private MailerInterface  $mailer,
+                                private Environment $twig,
+                                private NotificationSettings $notificationSettings,
+                                private DeliveryDecider $deliveryDecider,
+                                #[Autowire(service: 'monolog.logger.notifications')] private LoggerInterface $logger) {
 
     }
 
     public function canHandle(Notification $notification): bool {
-        return true;
+        return $this->notificationSettings->isNotificationsEnabled();
     }
 
     public function handle(Notification $notification): void {
-        if($notification->getRecipient()->isEmailNotificationsEnabled() === false && $notification->isDeliveryEnforced() === false) {
+        /*if($notification->getRecipient()->isEmailNotificationsEnabled() === false && $notification->isDeliveryEnforced() === false) {
             $this->logger->debug(sprintf('Empfänger %s hat E-Mail Benachrichtigungen deaktiviert, überspringe.', $notification->getRecipient()->getUsername()));
             return;
-        }
+        }*/
 
         if(empty($notification->getRecipient()->getEmail())) {
             $this->logger->debug(sprintf('Empfänger %s hat keine E-Mail-Adresse hinterlegt, überspringe.', $notification->getRecipient()->getUsername()));
+            return;
+        }
+
+        // Check delivery options
+        if($this->deliveryDecider->decide($notification->getRecipient(), $notification->getType(), NotificationDeliveryTarget::Email) !== true) {
             return;
         }
 
@@ -55,7 +71,7 @@ class EmailNotificationHandler implements NotificationHandlerInterface {
             );
 
             $mail = (new Email())
-                ->subject($notification->getSubject())
+                ->subject($notification->getSafeSubject())
                 ->from(new Address($this->sender, $this->appName))
                 ->sender(new Address($this->sender, $this->appName))
                 ->text($content)

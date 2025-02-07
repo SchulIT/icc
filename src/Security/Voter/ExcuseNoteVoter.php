@@ -4,6 +4,8 @@ namespace App\Security\Voter;
 
 use App\Entity\ExcuseNote;
 use App\Entity\User;
+use App\Feature\Feature;
+use App\Feature\FeatureManager;
 use LogicException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
@@ -16,7 +18,7 @@ class ExcuseNoteVoter extends Voter {
     public const Edit = 'edit';
     public const Remove = 'remove';
 
-    public function __construct(private readonly AccessDecisionManagerInterface $accessDecisionManager) { }
+    public function __construct(private readonly AccessDecisionManagerInterface $accessDecisionManager, private readonly FeatureManager $featureManager) { }
 
     protected function supports(string $attribute, mixed $subject): bool {
         return $attribute === self::New
@@ -24,6 +26,10 @@ class ExcuseNoteVoter extends Voter {
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool {
+        if($this->featureManager->isFeatureEnabled(Feature::Book) !== true) {
+            return false;
+        }
+
         $user = $token->getUser();
 
         if(!$user instanceof User) {
@@ -34,7 +40,7 @@ class ExcuseNoteVoter extends Voter {
             case self::New:
             case self::Edit:
             case self::Remove:
-                return $this->accessDecisionManager->decide($token, [ 'ROLE_BOOK_VIEWER']) && $user->getTeacher() !== null;
+                return $this->accessDecisionManager->decide($token, [ 'ROLE_BOOK_ENTRY_CREATOR']) && $user->getTeacher() !== null;
         }
 
         throw new LogicException('This code should not be reached.');

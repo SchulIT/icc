@@ -17,24 +17,24 @@
 {% endblock %}
 
 {% block settings_content %}
+    {% if feature_enabled('student_absence') %}
     <div class="card">
         <div class="card-header">{{ 'admin.settings.student_absences.header'|trans }}</div>
 
         <div class="card-body">
-            {{ form_row(form.enabled) }}
             {{ form_row(form.introduction_text) }}
             {{ form_row(form.privacy_url) }}
             {{ form_row(form.retention_days) }}
             {{ form_row(form.next_day_threshold) }}
         </div>
     </div>
+    {% endif %}
 
+    {% if feature_enabled('teacher_absence') %}
     <div class="card">
         <div class="card-header">{{ 'admin.settings.teacher_absences.header'|trans }}</div>
 
         <div class="card-body">
-            {{ form_row(form.teacher_enabled) }}
-
             <div class="mb-3 row">
                 {{ form_label(form.teacher_create_recipients) }}
                 <div class="col-md-10">
@@ -76,4 +76,5 @@
             </div>
         </div>
     </div>
+    {% endif %}
 {% endblock %}

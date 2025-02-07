@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use Symfony\Component\HttpFoundation\Response;
 use App\Entity\ResourceEntity;
 use App\Entity\ResourceReservation;
 use App\Entity\Room;
@@ -31,13 +30,14 @@ use Exception;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use SchulIT\CommonBundle\Utils\RefererHelper;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route(path: '/reservations')]
-#[Security("is_granted('view-reservations')")]
+#[IsGranted(ResourceReservationVoter::View)]
 class ResourceReservationController extends AbstractController {
 
     public function __construct(private ResourceReservationRepositoryInterface $repository, RefererHelper $redirectHelper) {

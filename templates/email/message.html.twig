@@ -15,14 +15,14 @@
             <columns>
                 <spacer size="16"></spacer>
 
-                <h1>{{ notification.subject }}</h1>
+                <h1>{{ notification.safeSubject }}</h1>
 
                 <spacer size="16"></spacer>
 
                 <p>{{ 'greeting'|trans({}, 'email') }}</p>
 
                 <p>
-                    {{ notification.content }}
+                    {{ notification.safeContent }}
                 </p>
 
                 <p>
@@ -44,7 +44,7 @@
 
                 <hr/>
 
-                {{ notification.message.content|markdown|raw }}
+                {{ notification.message.safeContent|markdown|raw }}
 
                 {% if notification.message.mustConfirm %}
                     <p>❗ {{ 'message.must_confirm'|trans({}, 'email') }}</p>

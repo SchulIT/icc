@@ -1,12 +1,10 @@
-// Import SCSS from custom
-@import "custom/*.scss";
-
-@import '../../vendor/schulit/common-bundle/Resources/assets/css/variables.scss';
-
-$enable-negative-margins: true;
+@import '../../vendor/schulit/common-bundle/Resources/assets/css/bootstrap.scss';
 
 // Import Bootstrap
 @import '~bootstrap/scss/bootstrap';
+
+// Import (and override) variables
+@import '../../vendor/schulit/common-bundle/Resources/assets/css/variables.scss';
 
 // Import FontAwesome
 @import '../../node_modules/@fortawesome/fontawesome-free/scss/fontawesome';
@@ -40,9 +38,6 @@ $enable-negative-margins: true;
 // Import datatables
 @import '../../node_modules/simple-datatables/dist/style.css';
 
-// Import SCSS from overrides
-@import "overrides/*.scss";
-
 /* Editor fixes to make it work with FontAwesome (see https://stackoverflow.com/a/26638216) */
 .md-container {
   .btn-group {
@@ -70,7 +65,7 @@ $enable-negative-margins: true;
 
   .editor-preview {
     font-size: 100%;
-    font-family: $font-family-base;
+    font-family: var(--bs-body-font-family);
   }
 }
 
@@ -109,7 +104,7 @@ $enable-negative-margins: true;
 
   .text-secondary {
     a {
-      color: $secondary !important;
+      color: var(--bs-secondary) !important;
     }
   }
 }
@@ -139,8 +134,8 @@ $enable-negative-margins: true;
   }
 
   &.dz-drag-hover {
-    border-color: $primary;
-    background: $breadcrumb-bg;
+    border-color: var(--bs-primary);
+    background: var(--bs-breadcrumb-bg);
   }
 
   &.no-min-height {
@@ -241,7 +236,7 @@ $enable-negative-margins: true;
 
 [data-theme=dark] {
   .border-primary {
-    border-color: $border-color !important;
+    border-color: var(--bs-border-color) !important;
   }
 
   .text-black-50 {
@@ -268,7 +263,7 @@ $enable-negative-margins: true;
 }
 
 .gray-300 {
-  color: $gray-300;
+  color: var(--bs-gray-300);
 }
 
 .hide {
@@ -285,8 +280,8 @@ $enable-negative-margins: true;
 }
 
 .link-hover:hover {
-  background: $nav-pills-link-active-bg;
-  color: $nav-pills-link-active-color;
+  background: var(--bs-nav-pills-link-active-bg);
+  color: var(--bs-nav-pills-link-active-color);
 }
 
 // Data table fixes
@@ -325,7 +320,7 @@ $enable-negative-margins: true;
   &:before,
   &:after {
     content: "";
-    border-bottom: 1px solid $card-border-color;
+    border-bottom: 1px solid var(--bs-border-color);
     flex: 1 1;
     margin:auto;
   }
@@ -367,14 +362,6 @@ table.align-td-middle {
   }
 }
 
-.card {
-  .card-footer {
-    p:last-child {
-      margin-bottom: 0;
-    }
-  }
-}
-
 th.rotate-90 {
   > div {
     transform: rotate(180deg);
@@ -395,12 +382,6 @@ table {
         border-right: 0;
       }
     }
-  }
-}
-
-.card-body {
-  > .bs-callout:first-child {
-    margin-top: 0;
   }
 }
 
@@ -535,20 +516,5 @@ table.sticky-header thead th {
   top: 0;
 }
 
-blockquote.blockquote {
-  background: var(--bs-secondary-bg);
-  padding: var(--bs-card-cap-padding-x);
-  border: 1px solid var(--bs-secondary-border-subtle);
-  border-left: 0.3rem solid var(--bs-secondary-border-subtle);
-  font-size: inherit;
-  border-radius: var(--bs-card-border-radius);
-}
 
-.bs-callout {
-  &.bs-callout-card {
-    border-top: none;
-    border-right: none;
-    border-radius: 0;
-    margin: 0;
-  }
-}
+

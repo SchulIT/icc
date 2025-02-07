@@ -17,6 +17,8 @@ use App\Entity\Student;
 use App\Entity\StudyGroup;
 use App\Entity\Teacher;
 use App\Entity\User;
+use App\Feature\Feature;
+use App\Feature\FeatureManager;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -24,6 +26,7 @@ use MyCLabs\Enum\Enum;
 use ReflectionClass;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
+use Twig\TwigFunction;
 use Twig\TwigTest;
 
 class AppExtension extends AbstractExtension {
@@ -32,7 +35,8 @@ class AppExtension extends AbstractExtension {
                                 private readonly UserStringConverter $userConverter, private readonly StudyGroupStringConverter $studyGroupConverter,
                                 private readonly StudyGroupsGradeStringConverter $studyGroupsConverter, private readonly FilesizeStringConverter $filesizeConverter,
                                 private readonly TimestampDateTimeConverter $timestampConverter, private readonly EnumStringConverter $enumStringConverter,
-                                private readonly GradesStringConverter $gradeStringConverter, private readonly FancyUserStringConverter $fancyUserStringConverter)
+                                private readonly GradesStringConverter $gradeStringConverter, private readonly FancyUserStringConverter $fancyUserStringConverter,
+                                private readonly FeatureManager $featureManager)
     {
     }
 
@@ -52,10 +56,20 @@ class AppExtension extends AbstractExtension {
         ];
     }
 
+    public function getFunctions(): array {
+        return [
+            new TwigFunction('feature_enabled', [ $this, 'isFeatureEnabled' ])
+        ];
+    }
+
     public function getTests(): array {
         return [
             new TwigTest('instanceof', [ $this, 'isInstanceOf' ])
         ];
+    }
+
+    public function isFeatureEnabled(string $feature): bool {
+        return $this->featureManager->isFeatureEnabled(Feature::from($feature));
     }
 
     public function teacher(?Teacher $teacher, bool $includeAcronym = false): ?string {

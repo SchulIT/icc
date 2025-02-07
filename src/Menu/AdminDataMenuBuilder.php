@@ -2,10 +2,12 @@
 
 namespace App\Menu;
 
+use App\Feature\Feature;
 use App\Security\Voter\ExamVoter;
 use Knp\Menu\ItemInterface;
 
 class AdminDataMenuBuilder extends AbstractMenuBuilder {
+
     public function dataMenu(array $options = []): ItemInterface {
         $root = $this->factory->createItem('root');
 
@@ -15,32 +17,37 @@ class AdminDataMenuBuilder extends AbstractMenuBuilder {
             ])
                 ->setExtra('icon', 'fas fa-wrench');
 
+            $root->addChild('admin.settings.features.label', [
+                'route' => 'admin_settings_features'
+            ])
+                ->setExtra('icon', 'fa-solid fa-puzzle-piece');
+
             $root->addChild('admin.settings.import.label', [
                 'route' => 'admin_settings_import'
             ])
                 ->setExtra('icon', 'fas fa-upload');
         }
 
-        if($this->authorizationChecker->isGranted('ROLE_DOCUMENTS_ADMIN') || $this->authorizationChecker->isGranted('ROLE_MESSAGE_CREATOR') || $this->authorizationChecker->isGranted('ROLE_WIKI_ADMIN')) {
+        if(($this->featureManager->isFeatureEnabled(Feature::Documents) || $this->featureManager->isFeatureEnabled(Feature::Wiki) || $this->featureManager->isFeatureEnabled(Feature::Messages)) && ($this->authorizationChecker->isGranted('ROLE_DOCUMENTS_ADMIN') || $this->authorizationChecker->isGranted('ROLE_MESSAGE_CREATOR') || $this->authorizationChecker->isGranted('ROLE_WIKI_ADMIN'))) {
             $root->addChild('admin.headers.information', [])
                 ->setExtra('isHeader', true);
         }
 
-        if($this->authorizationChecker->isGranted('ROLE_DOCUMENTS_ADMIN')) {
+        if($this->featureManager->isFeatureEnabled(Feature::Documents) && $this->authorizationChecker->isGranted('ROLE_DOCUMENTS_ADMIN')) {
             $root->addChild('admin.documents.label', [
                 'route' => 'admin_documents'
             ])
                 ->setExtra('icon', 'fas fa-file-alt');
         }
 
-        if($this->authorizationChecker->isGranted('ROLE_MESSAGE_CREATOR')) {
+        if($this->featureManager->isFeatureEnabled(Feature::Messages) &&$this->authorizationChecker->isGranted('ROLE_MESSAGE_CREATOR')) {
             $root->addChild('admin.messages.label', [
                 'route' => 'admin_messages'
             ])
                 ->setExtra('icon', 'fas fa-envelope-open-text');
         }
 
-        if($this->authorizationChecker->isGranted('ROLE_WIKI_ADMIN')) {
+        if($this->featureManager->isFeatureEnabled(Feature::Wiki) &&$this->authorizationChecker->isGranted('ROLE_WIKI_ADMIN')) {
             $root->addChild('admin.wiki.label', [
                 'route' => 'admin_wiki'
             ])
@@ -155,75 +162,87 @@ class AdminDataMenuBuilder extends AbstractMenuBuilder {
             ])
                 ->setExtra('icon', 'fas fa-tv');
 
-            $root->addChild('admin.parents_day.label', [
-                'route' => 'admin_parents_days'
-            ])
-                ->setExtra('icon', 'fa-solid fa-people-arrows');
+            if($this->featureManager->isFeatureEnabled(Feature::ParentsDay)) {
+                $root->addChild('admin.parents_day.label', [
+                    'route' => 'admin_parents_days'
+                ])
+                    ->setExtra('icon', 'fa-solid fa-people-arrows');
+            }
 
-            $root->addChild('admin.headers.absence', [])
-                ->setExtra('isHeader', true);
+            if($this->featureManager->isFeatureEnabled(Feature::StudentAbsence) || $this->featureManager->isFeatureEnabled(Feature::TeacherAbsence)) {
+                $root->addChild('admin.headers.absence', [])
+                    ->setExtra('isHeader', true);
 
-            $root->addChild('admin.settings.student_absences.label', [
-                'route' => 'admin_settings_absences',
-                'label' => 'admin.settings.label'
-            ])
-                ->setExtra('icon', 'fa-solid fa-sliders');
+                if($this->featureManager->isFeatureEnabled(Feature::StudentAbsence)) {
+                    $root->addChild('admin.settings.student_absences.label', [
+                        'route' => 'admin_settings_absences',
+                        'label' => 'admin.settings.label'
+                    ])
+                        ->setExtra('icon', 'fa-solid fa-sliders');
 
-            $root->addChild('admin.absence_types.label_students', [
-                'route' => 'admin_absence_types',
-                'label' => 'admin.absence_types.label'
-            ])
-                ->setExtra('icon', 'fas fa-user-times')
-                ->setExtra('badge', 'label.students_simple');
+                    $root->addChild('admin.absence_types.label_students', [
+                        'route' => 'admin_absence_types',
+                        'label' => 'admin.absence_types.label'
+                    ])
+                        ->setExtra('icon', 'fas fa-user-times')
+                        ->setExtra('badge', 'label.students_simple');
+                }
 
-            $root->addChild('admin.absence_types.label_teachers', [
-                'route' => 'admin_teacher_absence_types',
-                'label' => 'admin.absence_types.label'
-            ])
-                ->setExtra('icon', 'fas fa-user-times')
-                ->setExtra('badge', 'label.teachers_simple');
+                if($this->featureManager->isFeatureEnabled(Feature::TeacherAbsence)) {
+                    $root->addChild('admin.absence_types.label_teachers', [
+                        'route' => 'admin_teacher_absence_types',
+                        'label' => 'admin.absence_types.label'
+                    ])
+                        ->setExtra('icon', 'fas fa-user-times')
+                        ->setExtra('badge', 'label.teachers_simple');
+                }
+            }
         }
 
         if($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
-            $root->addChild('admin.headers.book', [])
-                ->setExtra('isHeader', true);
+            if($this->featureManager->isFeatureEnabled(Feature::Book)) {
+                $root->addChild('admin.headers.book', [])
+                    ->setExtra('isHeader', true);
 
-            $root->addChild('book_settings', [
-                'route' => 'admin_settings_book',
-                'label' => 'admin.settings.label'
-            ])
-                ->setExtra('icon', 'fa-solid fa-sliders');
+                $root->addChild('book_settings', [
+                    'route' => 'admin_settings_book',
+                    'label' => 'admin.settings.label'
+                ])
+                    ->setExtra('icon', 'fa-solid fa-sliders');
 
-            $root->addChild('admin.tuition_grades.label', [
-                'route' => 'admin_tuition_grades'
-            ])
-                ->setExtra('icon', 'fas fa-user-graduate');
+                if($this->featureManager->isFeatureEnabled(Feature::GradeBook)) {
+                    $root->addChild('admin.tuition_grades.label', [
+                        'route' => 'admin_tuition_grades'
+                    ])
+                        ->setExtra('icon', 'fas fa-user-graduate');
 
-            $root->addChild('admin.settings.tuition_grades.label', [
-                'route' => 'admin_settings_gradebook'
-            ])
-                ->setExtra('icon', 'fa-solid fa-sliders');
+                    $root->addChild('admin.settings.tuition_grades.label', [
+                        'route' => 'admin_settings_gradebook'
+                    ])
+                        ->setExtra('icon', 'fa-solid fa-sliders');
+                }
 
-            $root->addChild('admin.attendance_flags.label', [
-                'route' => 'admin_attendance_flags'
-            ])
-                ->setExtra('icon', 'fas fa-list-check');
+                $root->addChild('admin.attendance_flags.label', [
+                    'route' => 'admin_attendance_flags'
+                ])
+                    ->setExtra('icon', 'fas fa-list-check');
+            }
 
-            $root->addChild('admin.headers.chat', [])
-                ->setExtra('isHeader', true);
+            if($this->featureManager->isFeatureEnabled(Feature::Chat)) {
+                $root->addChild('admin.headers.chat', [])
+                    ->setExtra('isHeader', true);
 
-            $root->addChild('chat_settings', [
-                'route' => 'admin_settings_chat',
-                'label' => 'admin.settings.label'
-            ])
-                ->setExtra('icon', 'fa-solid fa-sliders');
+                $root->addChild('chat_settings', [
+                    'route' => 'admin_settings_chat',
+                    'label' => 'admin.settings.label'
+                ])
+                    ->setExtra('icon', 'fa-solid fa-sliders');
 
-            $root->addChild('admin.chat.tags.label', [
-                'route' => 'admin_chat_tags'
-            ])
-                ->setExtra('icon', 'fa-solid fa-user-tag');
-
-
+                $root->addChild('admin.chat.tags.label', [
+                    'route' => 'admin_chat_tags'
+                ])
+                    ->setExtra('icon', 'fa-solid fa-user-tag');
+            }
         }
 
         if($this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN')) {

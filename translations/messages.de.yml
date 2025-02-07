@@ -876,6 +876,50 @@ admin:
                 label: Benutzerdefiniertes CSS
                 help: Hier kann benutzerdefiniertes CSS eingebunden werden, um die Software nach eigenen Wünschen einzufärben.
 
+        features:
+            label: Features
+            success: Features erfolgreich aktiviert bzw. deaktiviert. Aktivierte Features können jetzt konfiguriert werden.
+
+            info: Das Deaktivieren von Features führt nicht zu Datenverlust. Es sorgt lediglich dafür, dass Menüpunkte ausgeblendet werden und die entsprechenden Seiten (inkl. Unterseiten) nicht mehr abrufbar sind.
+
+            wiki:
+                label: Wiki
+                help: Ein Wiki für Artikel, bspw. für Anleitungen zur Benutzung der schulischen IT, eingesetzter Software etc.
+            documents:
+                label: Dokumente
+                help: Aktiviert die Dokumentenablage. Unter Dokumente können nach Kategorien sortiert Dokumente und Informationen abgelegt werden.
+            privacy:
+                label: Datenschutzeinwilligungen (SchILD NRW)
+                help: Aktiviert die Anzeige der Datenschutzeinwilligungen. Diese Funktion setzt einen Import aus SchILD NRW voraus.
+            lms:
+                label: Lernplattformen (SchILD NRW)
+                help: Aktiviert die Lernplattform-Anzeige. Diese Funktion setzt einen Import aus SchILD NRW voraus.
+            chat:
+                label: Private Nachrichten
+                help: Aktiviert private Nachrichten. Über private Nachrichten können E-Mail-artige Nachrichten innerhalb des ICCs versendet werden.
+            parents_day:
+                label: Elternsprechtag
+                help: Aktiviert die digitale Organisation des Elternsprechtages.
+            student_absence:
+                label: Abwesenheitsmeldungen (Lernende)
+                help: Aktiviert Abwesenheitsmeldungen für Lernende. Über diese Funktion können Abwesenheiten von Eltern, volljährigen Kindern, Lehrkräften oder dem Sekretariat eingetragen werden.
+            teacher_absence:
+                label: Abwesenheitsmeldungen (Lehrkräfte)
+                help: Aktiviert Abwesenheitsmeldungen für Lehrkräfte. Über diese Funktion können Lehrkräfte sich krank melden.
+            checklists:
+                label: Checklisten
+                help: Aktiviert Checklisten für Lehrkräfte. Damit können Lehrkräfte Checklisten (bspw. für Rücklauf von Elternbriefen etc.) erstellen.
+            book:
+                label: Unterrichtsbuch
+                help: Aktiviert das Unterrichtsbuch. Das Unterrichtsbuch ersetzt das analoge Klassenbuch und Kurshefte.
+            grade_book:
+                label: Notenmodul
+                help: Aktiviert das Notenmodul im Unterrichtsbuch zur Erfassung von Noten. Dazu muss das Unterrichtsbuch auch aktiviert sein.
+            messages:
+                label: Mitteilungen
+                help: Aktiviert die Mitteilungenfunktion. Ein digitales schwarzes Brett für wichtige Mitteilungen an die Schulgemeinde oder Teile der Schulgemeinde (bspw. einzelne Lerngruppen).
+
+
         import:
             label: Import-Einstellungen
             exam_rules:

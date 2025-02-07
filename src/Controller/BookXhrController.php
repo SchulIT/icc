@@ -22,6 +22,8 @@ use App\Entity\Subject;
 use App\Entity\Teacher;
 use App\Entity\TimetableLesson;
 use App\Entity\Tuition;
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use App\Markdown\Markdown;
 use App\Repository\LessonAttendanceFlagRepositoryInterface;
 use App\Repository\LessonAttendanceRepositoryInterface;
@@ -62,6 +64,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Route(path: '/book/xhr')]
+#[IsFeatureEnabled(Feature::Book)]
 class BookXhrController extends AbstractController {
 
     use DateRequestTrait;

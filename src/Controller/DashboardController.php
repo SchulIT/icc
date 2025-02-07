@@ -9,6 +9,8 @@ use App\Entity\Section;
 use App\Entity\Substitution;
 use App\Entity\User;
 use App\Entity\UserType;
+use App\Feature\Feature;
+use App\Feature\FeatureManager;
 use App\Repository\BookIntegrityCheckViolationRepositoryInterface;
 use App\Repository\ChecklistStudentRepositoryInterface;
 use App\Repository\ImportDateTypeRepositoryInterface;
@@ -55,7 +57,7 @@ class DashboardController extends AbstractController {
                               BookIntegrityCheckViolationRepositoryInterface $bookIntegrityCheckViolationRepository,
                               SectionResolverInterface $sectionResolver, StudyGroupRepositoryInterface $studyGroupRepository,
                               ParentsDayRepositoryInterface $parentsDayRepository, ChecklistStudentRepositoryInterface $checklistStudentRepository,
-                              Request $request): Response {
+                              FeatureManager $featureManager, Request $request): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -147,17 +149,20 @@ class DashboardController extends AbstractController {
 
         $missingBookEntries = 0;
 
-        if($user->isTeacher()) {
+        if($featureManager->isFeatureEnabled(Feature::Book) && $user->isTeacher() ) {
             $currentSection = $sectionResolver->getCurrentSection();
             $missingBookEntries = $lessonEntryRepository->countMissingByTeacher($user->getTeacher(), $currentSection->getStart(), $dateHelper->getToday()->modify('-1 day'));
         }
 
         $checklists = [ ];
-        foreach($user->getStudents() as $student) {
-            $checklists[$student->getId()] = [ ];
-            foreach($checklistStudentRepository->findAllByStudent($student, true) as $checklistStudent) {
-                if($this->isGranted(ChecklistStudentVoter::View, $checklistStudent)) {
-                    $checklists[$student->getId()][] = $checklistStudent;
+
+        if($featureManager->isFeatureEnabled(Feature::Checklists)) {
+            foreach ($user->getStudents() as $student) {
+                $checklists[$student->getId()] = [];
+                foreach ($checklistStudentRepository->findAllByStudent($student, true) as $checklistStudent) {
+                    if ($this->isGranted(ChecklistStudentVoter::View, $checklistStudent)) {
+                        $checklists[$student->getId()][] = $checklistStudent;
+                    }
                 }
             }
         }

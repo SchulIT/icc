@@ -727,9 +727,11 @@
                             <i class="fas fa-plus"></i> {{ 'book.comment.add.label'|trans }}
                         </a>
 
+                        {% if is_granted('new-excuse') %}
                         <a href="{{ path('add_excuse') }}" class="list-group-item list-group-item-action">
                             <i class="fas fa-plus"></i> {{ 'book.excuse_note.add.label'|trans }}
                         </a>
+                        {% endif %}
 
                         {% if is_granted('new-bookevent') %}
                         <a href="{{ path('create_book_event_entry') }}" class="list-group-item list-group-item-action">

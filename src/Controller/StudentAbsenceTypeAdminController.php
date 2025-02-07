@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\StudentAbsenceType;
 use App\Form\StudentAbsenceTypeType;
@@ -15,6 +17,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 #[Route(path: '/admin/absence_types/students')]
 #[Security("is_granted('ROLE_ADMIN')")]
+#[IsFeatureEnabled(Feature::StudentAbsence)]
 class StudentAbsenceTypeAdminController extends AbstractController {
     public function __construct(private readonly StudentAbsenceTypeRepositoryInterface $repository)
     {

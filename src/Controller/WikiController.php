@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\WikiArticle;
 use App\Http\FlysystemFileResponse;
@@ -16,6 +18,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route(path: '/wiki')]
+#[IsFeatureEnabled(Feature::Wiki)]
 class WikiController extends AbstractController {
 
     private const ResultsPerPage = 20;

@@ -6,6 +6,8 @@ use App\Entity\ParentsDay;
 use App\Entity\ParentsDayAppointment;
 use App\Entity\Student;
 use App\Entity\User;
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use App\Form\AppointmentsCreatorParamsType;
 use App\Form\BookParentsDayAppointmentType;
 use App\Form\CancelParentsDayAppointmentType;
@@ -37,6 +39,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/parents_day')]
+#[IsFeatureEnabled(Feature::ParentsDay)]
 #[Security('is_granted("parentsdayappointments")')]
 class ParentsDayController extends AbstractController {
 

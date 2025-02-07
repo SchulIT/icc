@@ -31,6 +31,14 @@ eines opt-in bzw. opt-out Verfahrens Benachrichtigungen per E-Mail bzw. Pushover
 
 Benutzer haben die Möglichkeit, bei Opt-In bzw. Opt-Out Ereignissen entsprechend die Benachrichtigung ein- oder auszuschalten.
 
+### Features aktivieren/deaktivieren
+
+Es ist nun möglich, einzelne Funktionen des ICCs zu aktivieren bzw. zu deaktivieren (allerdings nicht alle). Sobald eine Funktion
+deaktiviert ist, werden alle Menüeinträge ausgeblendet und entsprechende URLs sind nicht mehr erreichbar. 
+
+Deaktivieren einer Funktion führt nicht zu Datenverlust. Alle bereits eingetragenen Daten bleiben in der Datenbank
+erhalten und werden nur an den entsprechenden Stellen ausgeblendet.
+
 ### Allgemeine Verbesserungen & Bugfixes
 
 ## Upgrade TODO
@@ -44,3 +52,4 @@ Konfigurationsdatei.
 
 * Benachrichtigungsstrategien unter *Einstellungen ➜ Benachrichtigungen* festlegen. Anderenfalls werden keine Benachrichtigungen
   verschickt.
+* Gewünschte Funktionen wieder unter *Einstellungen ➜ Features* aktivieren. Standardmäßig sind die Funktionen deaktiviert.

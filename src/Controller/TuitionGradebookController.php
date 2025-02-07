@@ -15,6 +15,8 @@ use App\Entity\StudyGroupMembership;
 use App\Entity\Tuition;
 use App\Entity\TuitionGradeCategory;
 use App\Entity\User;
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use App\Repository\TuitionRepositoryInterface;
 use App\Settings\TuitionGradebookSettings;
 use App\Sorting\Sorter;
@@ -30,6 +32,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/book/gradebook')]
+#[IsFeatureEnabled(Feature::Book)]
+#[IsFeatureEnabled(Feature::GradeBook)]
 class TuitionGradebookController extends AbstractController {
 
     public const NumberOfStudentsPerPage = 25;

@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\WikiArticle;
 use App\Form\WikiArticleType;
@@ -26,6 +28,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route(path: '/admin/wiki')]
 #[Security("is_granted('ROLE_WIKI_ADMIN')")]
+#[IsFeatureEnabled(Feature::Wiki)]
 class WikiAdminController extends AbstractController {
 
     private const VersionParam = '_version';

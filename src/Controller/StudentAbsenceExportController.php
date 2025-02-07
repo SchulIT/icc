@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\StudentAbsence;
 use App\Entity\StudentAbsenceAttachment;
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use App\Http\FlysystemFileResponse;
 use App\Repository\StudentAbsenceRepositoryInterface;
 use App\Section\SectionResolverInterface;
@@ -19,6 +21,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Twig\Environment;
 
 #[Route('/absence/export')]
+#[IsFeatureEnabled(Feature::StudentAbsence)]
 class StudentAbsenceExportController extends AbstractController {
 
     #[Route('', name: 'export_student_absences')]

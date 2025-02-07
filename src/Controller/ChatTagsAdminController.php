@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\ChatTag;
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use App\Form\ChatTagType;
 use App\Repository\ChatTagRepositoryInterface;
 use SchulIT\CommonBundle\Form\ConfirmType;
@@ -13,6 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/admin/chat/tags')]
+#[IsFeatureEnabled(Feature::Chat)]
 class ChatTagsAdminController extends AbstractController {
 
     public function __construct(private readonly ChatTagRepositoryInterface $repository, RefererHelper $redirectHelper) {

@@ -5,6 +5,8 @@ namespace App\Dashboard\Absence;
 use App\Dashboard\AbsentStudentWithAbsenceNote;
 use App\Entity\AttendanceType;
 use App\Entity\StudentAbsence;
+use App\Feature\Feature;
+use App\Feature\FeatureManager;
 use App\Repository\StudentAbsenceRepositoryInterface;
 use App\Utils\ArrayUtils;
 use DateTime;
@@ -14,7 +16,7 @@ use DateTime;
  */
 class AbsentStudentsResolver implements AbsenceResolveStrategyInterface {
 
-    public function __construct(private StudentAbsenceRepositoryInterface $repository)
+    public function __construct(private StudentAbsenceRepositoryInterface $repository, private readonly FeatureManager $featureManager)
     {
     }
 
@@ -22,6 +24,10 @@ class AbsentStudentsResolver implements AbsenceResolveStrategyInterface {
      * @inheritDoc
      */
     public function resolveAbsentStudents(DateTime $dateTime, int $lesson, iterable $students): array {
+        if($this->featureManager->isFeatureEnabled(Feature::StudentAbsence) !== true) {
+            return [ ];
+        }
+
         $students = ArrayUtils::iterableToArray($students);
         $absences = $this->repository->findByStudents($students, null, $dateTime, $lesson);
 

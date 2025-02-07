@@ -25,6 +25,8 @@ use App\Entity\TimetableSupervision;
 use App\Entity\Tuition;
 use App\Entity\User;
 use App\Entity\UserType;
+use App\Feature\Feature;
+use App\Feature\FeatureManager;
 use App\Grouping\AbsentStudentGroup;
 use App\Grouping\AbsentStudentStrategy as AbstentStudentGroupStrategy;
 use App\Grouping\Grouper;
@@ -87,7 +89,7 @@ class DashboardViewHelper {
                                 private readonly BookSettings $bookSettings, private readonly LessonEntryRepositoryInterface $lessonEntryRepository, private readonly TeacherRepositoryInterface $teacherRepository,
                                 private readonly StudentRepositoryInterface $studentRepository, private readonly TokenStorageInterface $tokenStorage,
                                 private readonly ParentsDayRepositoryInterface $parentsDayRepository, private readonly ParentsDayAppointmentRepositoryInterface $parentsDayAppointmentRepository,
-                                private readonly BookStudentInformationRepositoryInterface $bookStudentInformationRepository)
+                                private readonly BookStudentInformationRepositoryInterface $bookStudentInformationRepository, private readonly FeatureManager $featureManager)
     {
     }
 
@@ -173,8 +175,8 @@ class DashboardViewHelper {
         $this->setCurrentLesson($view);
         $this->addBirthdays($view, $dateTime);
 
-        $appointments = [ ];
-        foreach($this->parentsDayRepository->findByDate($dateTime) as $parentsDay) {
+        $appointments = [];
+        foreach ($this->parentsDayRepository->findByDate($dateTime) as $parentsDay) {
             $appointments = array_merge($appointments, $this->parentsDayAppointmentRepository->findForTeacher($teacher, $parentsDay));
         }
 
@@ -266,6 +268,10 @@ class DashboardViewHelper {
     }
 
     private function addParentsDayAppointments(DashboardView $view, array $appointments): void {
+        if($this->featureManager->isFeatureEnabled(Feature::ParentsDay) !== true) {
+            return;
+        }
+
         if(count($appointments) === 0) {
             return;
         }
@@ -277,6 +283,10 @@ class DashboardViewHelper {
     }
 
     private function addExercises(DashboardView $view, Student $student, DateTime $date) {
+        if($this->featureManager->isFeatureEnabled(Feature::Book)) {
+            return;
+        }
+
         $start = (clone $date)->modify(sprintf('-%d days', $this->bookSettings->getExercisesDays()));
         $end = clone $date;
         $section = $this->sectionResolver->getSectionForDate($date);
@@ -448,6 +458,10 @@ class DashboardViewHelper {
      * @param Message[] $messages
      */
     private function addMessages(iterable $messages, DashboardView $dashboardView): void {
+        if($this->featureManager->isFeatureEnabled(Feature::Messages) !== true) {
+            return;
+        }
+
         $this->sorter->sort($messages, MessageStrategy::class);
 
         foreach($messages as $message) {

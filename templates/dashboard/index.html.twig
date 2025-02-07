@@ -389,7 +389,7 @@
                 {% set canCreateAbsence = is_granted('new-absence') %}
                 {% set canCreateBulkAbsence = is_granted('new-absence-bulk') %}
                 {% set canCreateReservation = is_granted('new-reservation') %}
-                {% set canCreateExcuseNote = is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
+                {% set canCreateExcuseNote = is_granted('new-excuse') %}
                 {% set canCreateTeacherAbsence = is_granted('new-teacher-absence') %}
                 {% set canCreateAdditionalInformationForLesson = is_granted('new-timetablelesson-additionalinformation') %}
 

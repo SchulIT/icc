@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\DocumentCategory;
 use App\Form\DocumentCategoryType;
@@ -16,6 +18,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route(path: '/admin/documents/categories')]
+#[IsFeatureEnabled(Feature::Documents)]
 #[Security("is_granted('ROLE_DOCUMENTS_ADMIN')")]
 class DocumentCategoryAdminController extends AbstractController {
 

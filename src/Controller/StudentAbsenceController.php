@@ -13,6 +13,8 @@ use App\Entity\StudentAbsenceAttachment;
 use App\Entity\StudentAbsenceMessage;
 use App\Entity\StudyGroupMembership;
 use App\Entity\User;
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use App\Form\Model\BulkStudentAbsence;
 use App\Form\StudentAbsenceBulkType;
 use App\Form\StudentAbsenceMessageType;
@@ -59,6 +61,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route(path: '/absence/students')]
+#[IsFeatureEnabled(Feature::StudentAbsence)]
 #[Security("is_granted('ROLE_STUDENT_ABSENCE_CREATOR') or is_granted('ROLE_STUDENT_ABSENCE_VIEWER') or is_granted('new-absence')")]
 class StudentAbsenceController extends AbstractController {
 
@@ -73,10 +76,6 @@ class StudentAbsenceController extends AbstractController {
                         StudentAbsenceRepositoryInterface $repository, StudentRepositoryInterface $studentRepository,
                         TimetableTimeHelper $timeHelper, TimetableSettings $timetableSettings, DateHelper $dateHelper): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::New);
-
-        if($settings->isEnabled() !== true) {
-            throw new NotFoundHttpException();
-        }
 
         $students = [ ];
 
@@ -108,10 +107,6 @@ class StudentAbsenceController extends AbstractController {
                             TimetableTimeHelper $timeHelper, TimetableSettings $timetableSettings, DateHelper $dateHelper,
                             Sorter $sorter, StudyGroupStringConverter $studyGroupStringConverter): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::Bulk);
-
-        if($settings->isEnabled() !== true) {
-            throw new NotFoundHttpException();
-        }
 
         $students = [ ];
 
@@ -166,10 +161,6 @@ class StudentAbsenceController extends AbstractController {
     public function edit(StudentAbsence $absence, Request $request, StudentAbsenceSettings $settings, StudentAbsenceRepositoryInterface $repository): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::New);
 
-        if($settings->isEnabled() !== true) {
-            throw new NotFoundHttpException();
-        }
-
         $form = $this->createForm(StudentAbsenceType::class, $absence);
         $form->handleRequest($request);
 
@@ -194,10 +185,6 @@ class StudentAbsenceController extends AbstractController {
                           StudentAbsenceRepositoryInterface $absenceRepository, TuitionRepositoryInterface $tuitionRepository,
                           SectionResolverInterface          $sectionResolver, DateHelper $dateHelper, Sorter $sorter, StudentAbsenceSettings $settings, ExcuseStatusResolver $excuseNoteStatusResolver): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::CanViewAny);
-
-        if($settings->isEnabled() !== true) {
-            throw new NotFoundHttpException();
-        }
 
         /** @var User $user */
         $user = $this->getUser();
@@ -323,10 +310,6 @@ class StudentAbsenceController extends AbstractController {
                          AppointmentRepositoryInterface $appointmentRepository, Sorter $sorter, ExcuseStatusResolver $excuseNoteStatusResolver, SectionResolverInterface $sectionResolver): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::View, $absence);
 
-        if($settings->isEnabled() !== true) {
-            throw new NotFoundHttpException();
-        }
-
         $message = new StudentAbsenceMessage();
         $message->setAbsence($absence);
         $form = $this->createForm(StudentAbsenceMessageType::class, $message);
@@ -448,10 +431,6 @@ class StudentAbsenceController extends AbstractController {
     #[Route(path: '/attachments/{uuid}', name: 'download_student_absence_attachment', priority: 10)]
     public function downloadAttachment(StudentAbsenceAttachment $attachment, FilesystemOperator $studentAbsencesFilesystem, MimeTypes $mimeTypes, StudentAbsenceSettings $settings): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::View, $attachment->getAbsence());
-
-        if($settings->isEnabled() !== true) {
-            throw new NotFoundHttpException();
-        }
 
         if($studentAbsencesFilesystem->fileExists($attachment->getPath()) !== true) {
             throw new NotFoundHttpException();

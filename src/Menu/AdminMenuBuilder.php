@@ -2,6 +2,7 @@
 
 namespace App\Menu;
 
+use App\Feature\FeatureManager;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -11,8 +12,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class AdminMenuBuilder extends AbstractMenuBuilder {
 
     public function __construct(private readonly AdminDataMenuBuilder $dataMenuBuilder, private readonly AdminToolsMenuBuilder $toolsMenuBuilder,
-                                FactoryInterface $factory, TokenStorageInterface $tokenStorage, AuthorizationCheckerInterface $authorizationChecker, TranslatorInterface $translator) {
-        parent::__construct($factory, $tokenStorage, $authorizationChecker, $translator);
+                                FactoryInterface $factory, TokenStorageInterface $tokenStorage, AuthorizationCheckerInterface $authorizationChecker,
+                                TranslatorInterface $translator, FeatureManager $featureManager) {
+        parent::__construct($factory, $tokenStorage, $authorizationChecker, $translator, $featureManager);
     }
 
     public function adminMenu(array $options): ItemInterface {

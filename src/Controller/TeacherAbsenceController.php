@@ -7,6 +7,8 @@ use App\Entity\TeacherAbsence;
 use App\Entity\TeacherAbsenceComment;
 use App\Entity\TimetableLesson;
 use App\Entity\User;
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use App\Form\TeacherAbsenceCommentType;
 use App\Form\TeacherAbsenceType;
 use App\Repository\TeacherAbsenceRepositoryInterface;
@@ -29,6 +31,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/absence/teachers')]
+#[IsFeatureEnabled(Feature::TeacherAbsence)]
 class TeacherAbsenceController extends AbstractController {
 
     public const ItemsPerPage = 25;

@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Converter\StudentStringConverter;
 use App\Entity\BookStudentInformation;
 use App\Entity\User;
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use App\Form\BookStudentInformationType;
 use App\Repository\BookStudentInformationRepositoryInterface;
 use App\Section\SectionResolverInterface;
@@ -21,6 +23,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/book/extra/students')]
+#[IsFeatureEnabled(Feature::Book)]
 class BookStudentInformationController extends AbstractController {
     public function __construct(private readonly BookStudentInformationRepositoryInterface $repository, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);

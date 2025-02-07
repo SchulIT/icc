@@ -8,6 +8,8 @@ use App\Entity\BookEvent;
 use App\Entity\LessonEntry;
 use App\Entity\Teacher;
 use App\Entity\User;
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use App\Grouping\DateWeekOfYearStrategy;
 use App\Grouping\Grouper;
 use App\Repository\BookEventRepositoryInterface;
@@ -31,6 +33,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/report')]
+#[IsFeatureEnabled(Feature::Book)]
 class BookStudentsParentsReportController extends AbstractController {
 
     use CalendarWeeksTrait;

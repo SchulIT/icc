@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Checklist;
 use App\Entity\ChecklistStudent;
 use App\Entity\User;
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use App\Form\ChecklistStudentsType;
 use App\Form\ChecklistType;
 use App\Form\StudentsType;
@@ -22,6 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/checklist')]
+#[IsFeatureEnabled(Feature::Checklists)]
 class ChecklistController extends AbstractController {
     public function __construct(private readonly ChecklistRepositoryInterface $repository, RefererHelper $redirectHelper, private readonly Sorter $sorter) {
         parent::__construct($redirectHelper);

@@ -11,6 +11,8 @@ use App\Entity\MessageScope;
 use App\Entity\StudyGroupMembership;
 use App\Entity\User;
 use App\Entity\UserType;
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use App\Filesystem\FileNotFoundException;
 use App\Filesystem\MessageFilesystem;
 use App\Form\MessagePollVoteType;
@@ -40,6 +42,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route(path: '/messages')]
+#[IsFeatureEnabled(Feature::Messages)]
 class MessageController extends AbstractController {
 
     private const MessagesPerPage = 25;

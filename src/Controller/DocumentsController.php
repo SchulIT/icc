@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Document;
 use App\Entity\DocumentAttachment;
@@ -26,6 +28,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route(path: '/documents')]
+#[IsFeatureEnabled(Feature::Documents)]
 class DocumentsController extends AbstractController {
 
     public function __construct(private Grouper $grouper, private Sorter $sorter, RefererHelper $refererHelper) {

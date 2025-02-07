@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\TeacherAbsenceType;
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use App\Form\TeacherAbsenceTypeType;
 use App\Repository\TeacherAbsenceTypeRepositoryInterface;
 use SchulIT\CommonBundle\Form\ConfirmType;
@@ -14,6 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 #[Route(path: '/admin/absence_types/teachers')]
 #[Security("is_granted('ROLE_ADMIN')")]
+#[IsFeatureEnabled(Feature::TeacherAbsence)]
 class TeacherAbsenceTypeAdminController extends AbstractController {
     public function __construct(private readonly TeacherAbsenceTypeRepositoryInterface $repository)
     {

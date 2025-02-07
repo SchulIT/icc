@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\ParentsDay;
 use App\Entity\ParentsDayAppointment;
+use App\Feature\Feature;
+use App\Feature\IsFeatureEnabled;
 use App\Form\ParentsDayType;
 use App\Repository\ParentsDayRepositoryInterface;
 use App\Security\Voter\AppointmentVoter;
@@ -16,6 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/admin/parents_day')]
+#[IsFeatureEnabled(Feature::ParentsDay)]
 class ParentsDayAdminController extends AbstractController {
     public function __construct(RefererHelper $redirectHelper, private readonly ParentsDayRepositoryInterface $repository) {
         parent::__construct($redirectHelper);

@@ -8,22 +8,20 @@ use App\Form\EmailCollectionEntryType;
 use App\Form\MarkdownType;
 use App\Settings\StudentAbsenceSettings;
 use App\Settings\TeacherAbsenceSettings;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 
 #[Route(path: '/admin/settings')]
-#[Security("is_granted('ROLE_ADMIN')")]
+#[IsGranted('ROLE_ADMIN')]
 class AbsenceSettingsController extends AbstractController {
     #[Route(path: '/absences', name: 'admin_settings_absences')]
     public function absences(Request $request, StudentAbsenceSettings $studentAbsenceSettings, TeacherAbsenceSettings $teacherAbsenceSettings, FeatureManager $featureManager): Response {

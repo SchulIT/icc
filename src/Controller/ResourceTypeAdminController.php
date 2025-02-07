@@ -2,22 +2,21 @@
 
 namespace App\Controller;
 
-use Symfony\Component\HttpFoundation\Response;
 use App\Entity\ResourceType;
 use App\Form\ResourceTypeType;
-use App\Form\RoomTagType;
 use App\Repository\ResourceTypeRepositoryInterface;
 use App\Security\Voter\ResourceTypeVoter;
 use App\Sorting\ResourceTypeStrategy;
 use App\Sorting\Sorter;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(path: '/admin/resources/types')]
-#[Security("is_granted('ROLE_ADMIN')")]
+#[IsGranted('ROLE_ADMIN')]
 class ResourceTypeAdminController extends AbstractController {
 
     public function __construct(private ResourceTypeRepositoryInterface $repository, RefererHelper $redirectHelper) {

@@ -2,8 +2,6 @@
 
 namespace App\Controller;
 
-use Symfony\Component\HttpFoundation\Response;
-use App\Entity\Appointment;
 use App\Entity\AppointmentCategory;
 use App\Form\AppointmentCategoryType;
 use App\Repository\AppointmentCategoryRepositoryInterface;
@@ -11,13 +9,14 @@ use App\Sorting\AppointmentCategoryStrategy;
 use App\Sorting\Sorter;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route(path: '/admin/appointments/categories')]
-#[Security("is_granted('ROLE_APPOINTMENTS_ADMIN')")]
+#[IsGranted('ROLE_APPOINTMENTS_ADMIN')]
 class AppointmentCategoryAdminController extends AbstractController {
 
     public function __construct(private AppointmentCategoryRepositoryInterface $repository, private Sorter $sorter, RefererHelper $refererHelper) {

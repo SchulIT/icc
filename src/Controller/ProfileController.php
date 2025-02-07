@@ -31,6 +31,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -198,7 +199,7 @@ class ProfileController extends AbstractController {
     }
 
     #[Route(path: '/switch', name: 'switch_user')]
-    #[Security("is_granted('ROLE_ALLOWED_TO_SWITCH')")]
+    #[IsGranted('ROLE_ALLOWED_TO_SWITCH')]
     public function switchUser(Grouper $grouper, Sorter $sorter, UserRepositoryInterface $userRepository, SectionResolverInterface $sectionResolver): Response {
         $users = $userRepository->findAll();
         $groups = $grouper->group($users, UserTypeAndGradeStrategy::class, ['section' => $sectionResolver->getCurrentSection()]);

@@ -5,25 +5,20 @@ namespace App\Controller\Settings;
 use App\Converter\EnumStringConverter;
 use App\Entity\UserType;
 use App\Form\DeliveryOptionCompoundType;
-use App\Notification\Delivery\DeliverStrategyType;
 use App\Notification\EventSubscriber\NotifierManager;
 use App\Notification\NotificationDeliveryTarget;
 use App\Settings\NotificationSettings;
-use App\Utils\ArrayUtils;
 use SchulIT\CommonBundle\Form\FieldsetType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(path: '/admin/settings')]
-#[Security("is_granted('ROLE_ADMIN')")]
+#[IsGranted('ROLE_ADMIN')]
 class NotificationSettingsController extends AbstractController {
 
     public function __construct(private readonly ?string $pushoverToken) {

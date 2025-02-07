@@ -4,21 +4,20 @@ namespace App\Controller\Settings;
 
 use App\Form\TextCollectionEntryType;
 use App\Settings\DashboardSettings;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[Route(path: '/admin/settings')]
-#[Security("is_granted('ROLE_ADMIN')")]
+#[IsGranted('ROLE_ADMIN')]
 class DashboardSettingsController extends AbstractController {
     #[Route(path: '/dashboard', name: 'admin_settings_dashboard')]
     public function dashboard(Request $request, DashboardSettings $dashboardSettings): Response {

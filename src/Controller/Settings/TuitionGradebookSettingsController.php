@@ -11,9 +11,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/settings')]
-#[Security("is_granted('ROLE_ADMIN')")]
+#[IsGranted('ROLE_ADMIN')]
 class TuitionGradebookSettingsController extends AbstractController {
 
     #[Route('/gradebook', name: 'admin_settings_gradebook')]

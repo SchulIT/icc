@@ -13,10 +13,11 @@ use SchulIT\CommonBundle\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route(path: '/admin/timetable/weeks')]
-#[Security("is_granted('ROLE_ADMIN')")]
+#[IsGranted('ROLE_ADMIN')]
 class TimetableWeekAdminController extends AbstractController {
 
     public function __construct(private TimetableWeekRepositoryInterface $repository, RefererHelper $refererHelper) {

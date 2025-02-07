@@ -8,17 +8,17 @@ use App\Form\TextCollectionEntryType;
 use App\Repository\SectionRepositoryInterface;
 use App\Settings\ImportSettings;
 use App\Utils\ArrayUtils;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[Route(path: '/admin/settings')]
-#[Security("is_granted('ROLE_ADMIN')")]
+#[IsGranted('ROLE_ADMIN')]
 class ImportSettingsController extends AbstractController {
     #[Route(path: '/import', name: 'admin_settings_import')]
     public function import(Request $request, ImportSettings $settings, SectionRepositoryInterface $sectionRepository): Response {

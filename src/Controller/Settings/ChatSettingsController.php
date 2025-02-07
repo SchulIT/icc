@@ -6,15 +6,15 @@ use App\Converter\EnumStringConverter;
 use App\Entity\UserType;
 use App\Settings\ChatSettings;
 use App\Utils\ArrayUtils;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(path: '/admin/settings')]
-#[Security("is_granted('ROLE_ADMIN')")]
+#[IsGranted('ROLE_ADMIN')]
 class ChatSettingsController extends AbstractController {
 
     #[Route(path: '/chat', name: 'admin_settings_chat')]

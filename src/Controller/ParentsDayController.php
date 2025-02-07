@@ -32,15 +32,15 @@ use App\View\Filter\TuitionFilter;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use SchulIT\CommonBundle\Utils\RefererHelper;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/parents_day')]
 #[IsFeatureEnabled(Feature::ParentsDay)]
-#[Security('is_granted("parentsdayappointments")')]
+#[IsGranted(ParentsDayAppointmentVoter::VIEW)]
 class ParentsDayController extends AbstractController {
 
     public function __construct(RefererHelper $redirectHelper, private readonly ParentsDayRepositoryInterface $parentsDayRepository, private readonly ParentsDayAppointmentRepositoryInterface $appointmentRepository) {

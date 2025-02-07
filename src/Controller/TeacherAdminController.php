@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use Symfony\Component\HttpFoundation\Response;
 use App\Converter\TeacherStringConverter;
 use App\Entity\Teacher;
 use App\Form\TeacherType;
@@ -11,13 +10,14 @@ use App\Sorting\Sorter;
 use App\Sorting\TeacherStrategy;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route(path: '/admin/teachers')]
-#[Security("is_granted('ROLE_ADMIN')")]
+#[IsGranted('ROLE_ADMIN')]
 class TeacherAdminController extends AbstractController {
 
     public function __construct(private Sorter $sorter, private TeacherRepositoryInterface $repository, RefererHelper $redirectHelper) {

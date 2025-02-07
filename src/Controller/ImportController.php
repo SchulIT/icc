@@ -55,12 +55,12 @@ use JMS\Serializer\SerializerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 use SchulIT\CommonBundle\Utils\RefererHelper;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(path: '/api/import')]
-#[Security("is_granted('ROLE_IMPORT')")]
+#[IsGranted('ROLE_IMPORT')]
 class ImportController extends AbstractController {
 
     public function __construct(private readonly Importer $importer, private readonly SerializerInterface $serializer, RefererHelper $refererHelper) {

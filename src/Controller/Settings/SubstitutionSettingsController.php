@@ -16,11 +16,12 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\Type;
 
 #[Route(path: '/admin/settings')]
-#[Security("is_granted('ROLE_ADMIN')")]
+#[IsGranted('ROLE_ADMIN')]
 class SubstitutionSettingsController extends AbstractController {
     #[Route(path: '/substitutions', name: 'admin_settings_substitutions')]
     public function substitutions(Request $request, SubstitutionSettings $substitutionSettings, EnumStringConverter $enumStringConverter): Response {

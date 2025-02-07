@@ -2,19 +2,19 @@
 
 namespace App\Controller;
 
-use Symfony\Component\HttpFoundation\Response;
 use App\Entity\TeacherTag;
 use App\Form\TeacherTagType;
 use App\Repository\TeacherTagRepositoryInterface;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route(path: '/admin/teachers/tags')]
-#[Security("is_granted('ROLE_ADMIN')")]
+#[IsGranted('ROLE_ADMIN')]
 class TeacherTagAdminController extends AbstractController {
 
     public function __construct(private TeacherTagRepositoryInterface $repository, RefererHelper $redirectHelper) {

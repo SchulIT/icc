@@ -189,6 +189,12 @@
                                 {{ counter }}× {{ type }}{% if not loop.last %}, {% endif %}
                             {% endfor %}
                         </p>
+
+                        <p>
+                            {% for type, counter in genders %}
+                                {{ counter }}× {{ ('gender.' ~type)|trans({}, 'enums') }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
                     </div>
                 </div>
 

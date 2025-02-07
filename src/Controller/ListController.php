@@ -165,13 +165,19 @@ class ListController extends AbstractControllerWithMessages {
         $exams = array_filter($exams, fn(Exam $exam) => $this->isGranted(ExamVoter::Show, $exam));
 
         $types = [ ];
+        $genders = [ ];
 
         foreach($memberships as $membership) {
             if(!array_key_exists($membership->getType(), $types)) {
                 $types[$membership->getType()] = 0;
             }
 
+            if(!array_key_exists($membership->getStudent()->getGender()->value, $genders)) {
+                $genders[$membership->getStudent()->getGender()->value] = 0;
+            }
+
             $types[$membership->getType()]++;
+            $genders[$membership->getStudent()->getGender()->value]++;
         }
 
         return $this->renderWithMessages('lists/tuition.html.twig', [
@@ -180,7 +186,8 @@ class ListController extends AbstractControllerWithMessages {
             'exams' => $exams,
             'today' => $this->dateHelper->getToday(),
             'last_import' => $this->importDateTimeRepository->findOneByEntityClass(Tuition::class),
-            'types' => $types
+            'types' => $types,
+            'genders' => $genders
         ]);
     }
 

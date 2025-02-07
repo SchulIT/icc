@@ -129,7 +129,7 @@ class SickNoteControllerTest extends AbstractControllerTest {
         $this->em->persist($this->viewerUser);
         $this->em->persist($this->creatorUser);
 
-        $this->em->persist((new Setting())->setKey('student_absences.enabled')->setValue(serialize(true)));
+        $this->em->persist((new Setting())->setKey('feature.student_absence.enabled')->setValue(serialize(true)));
 
         $this->em->flush();
     }

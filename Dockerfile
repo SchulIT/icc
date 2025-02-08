@@ -6,8 +6,7 @@ RUN apk add icu-dev  \
     libxslt-dev \
     libgcrypt-dev \
     supervisor \
-    nginx \
-    cron
+    nginx
 
 RUN apk add --no-cache --virtual .build-deps \
     autoconf \
@@ -83,8 +82,7 @@ COPY .docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 EXPOSE 80
 
 # Install cronjob
-RUN touch /var/log/cron.log
-RUN (crontab -l ; echo "*/2 * * * * php /var/www/html/bin/console shapecode:cron:run" >> /var/log/cron.log) | crontab
+RUN crontab -l | { cat; echo "*/2 * * * * php /var/www/html/bin/console shapecode:cron:run"; } | crontab -
 
 # Copy startup.sh
 COPY .docker/startup.sh startup.sh

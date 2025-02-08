@@ -25,4 +25,4 @@ php-fpm &
 nginx -g 'daemon off;'
 
 # Start cron
-cron
+crond &

@@ -21,8 +21,21 @@ RUN apk add --no-cache --virtual .build-deps \
     && docker-php-source delete \
     && docker-php-ext-enable pdo_mysql pcntl intl zip imagick apcu
 
+# Copy php.ini
+RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php.ini
+
 # Set memory limit
 RUN echo "memory_limit=512M" > /usr/local/etc/php/conf.d/memory-limit.ini
+
+# Set settings for uploading files
+RUN echo "upload_max_filesize = 128M" >> /usr/local/etc/php/conf.d/uploads.ini
+RUN echo "post_max_size = 128M" >> /usr/local/etc/php/conf.d/uploads.ini
+
+# Set maximum execution time
+RUN echo "max_execution_time = 90" > /usr/local/etc/php/conf.d/execution-time.ini
+
+# Do not expose PHP
+RUN echo "expose_php = Off" > /usr/local/etc/php/conf.d/expose-php.ini
 
 # Install composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer

@@ -2,7 +2,7 @@
 php bin/console cache:clear
 
 # Migrate database
-php bin/console doctrine:migrations:migrate --no-interaction
+php bin/console doctrine:migrations:migrate --no-interaction -v
 
 # Check if the SAML certificate does not exist
 if [ ! -f /var/www/html/saml/sp.crt ] || [ ! -f /var/www/html/saml/sp.key ]; then

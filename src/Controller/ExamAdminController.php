@@ -143,7 +143,8 @@ class ExamAdminController extends AbstractController {
         $defaultData = [
             'number' => 3,
             'tuitions' => [ ],
-            'add_students' => true
+            'add_students' => true,
+            'can_edit' => true
         ];
 
         $form = $this->createForm(ExamBulkType::class, $defaultData);
@@ -152,7 +153,7 @@ class ExamAdminController extends AbstractController {
         if($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
-            $this->bulkCreateExams($data['number'], $data['tuitions'], $data['add_students']);
+            $this->bulkCreateExams($data['number'], $data['tuitions'], $data['add_students'], $data['can_edit']);
 
             $this->addFlash('success', 'admin.exams.bulk.success');
             return $this->redirectToRoute('admin_exams');
@@ -376,7 +377,7 @@ class ExamAdminController extends AbstractController {
     /**
      * @param Tuition[] $tuitions
      */
-    private function bulkCreateExams(int $number, array $tuitions, bool $addStudents): void {
+    private function bulkCreateExams(int $number, array $tuitions, bool $addStudents, bool $canEdit): void {
         $this->repository->beginTransaction();
 
         foreach($tuitions as $tuition) {
@@ -384,6 +385,7 @@ class ExamAdminController extends AbstractController {
 
             for($i = 0; $i < $number; $i++) {
                 $exam = new Exam();
+                $exam->setTuitionTeachersCanEditExam($canEdit);
                 $exam->addTuition($tuition);
 
                 if($addStudents === true) {

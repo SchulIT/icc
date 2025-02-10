@@ -62,6 +62,11 @@ class ExamBulkType extends AbstractType {
                 'label_attr' => [
                     'class' => 'checkbox-custom'
                 ]
+            ])
+            ->add('can_edit', CheckboxType::class, [
+                'label' => 'admin.exams.tuition_teachers_can_edit.label',
+                'help' => 'admin.exams.tuition_teachers_can_edit.help',
+                'required' => false
             ]);
     }
 }

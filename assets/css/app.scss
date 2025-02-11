@@ -353,7 +353,7 @@
 }
 
 .bg-selected {
-  background: lighten($primary, 80%);
+  background: var(--bs-primary-bg-subtle);
 }
 
 table.align-td-middle {

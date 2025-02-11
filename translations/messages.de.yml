@@ -2391,6 +2391,7 @@ import:
         html:
             label: Stundenplan
             info: Hier können die HTML-Stundenpläne importiert werden. Diese können über den Drucken-Dialog > "HTML-Ausg." erzeugt werden. Dazu muss vorab das entsprechende Format (Ex-F-HTML für Fächerpläne oder Ex-K-HTML für Klassenpläne) ausgewählt werden.
+            caution: Einträge im Unterrichtsbuch, die in den zu importierenden Zeitraum fallen, werden kommentarlos gelöscht. Stundenpläne können immer erst ab dem Folgetag importiert werden.
             label_subjects: Fächerpläne
             label_grades: Klassenpläne
             zip: Die HTML-Dateien müssen in eine ZIP-Datei gepackt werden.

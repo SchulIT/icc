@@ -11,7 +11,7 @@ doctrine:
         connections:
             default:
                 url: '%env(resolve:DATABASE_URL)%'
-                server_version: 11.4.4-MariaDB
+                server_version: '%env(resolve:DATABASE_SERVER_VERSION)%'
                 charset: utf8mb4
                 driver: 'pdo_mysql'
                 default_table_options:
@@ -21,7 +21,7 @@ doctrine:
                 use_savepoints: true
             logger:
                 url: '%env(resolve:DATABASE_URL)%'
-                server_version: 11.4.4-MariaDB
+                server_version: '%env(resolve:DATABASE_SERVER_VERSION)%'
                 charset: utf8mb4
                 driver: 'pdo_mysql'
                 default_table_options:

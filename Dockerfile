@@ -91,6 +91,8 @@ RUN composer install --no-dev --classmap-authoritative --no-scripts
 #     && mysql -u myuser --socket=/var/run/mysqld/mysqld.sock -e "SHOW DATABASES;" \
 #    # && php bin/console doctrine:database:create --if-not-exists \
 
+ENV DATABASE_SERVER_VERSION=11.4.4-MariaDB
+
 RUN php bin/console bazinga:js-translation:dump assets/js/ --merge-domains
     # && mysqladmin -u root shutdown
 

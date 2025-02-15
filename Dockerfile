@@ -17,12 +17,21 @@ RUN apk add --no-cache --virtual .build-deps \
     g++ \
     make \
     && docker-php-ext-install -j$(nproc) pdo_mysql pcntl intl zip xsl \
-    && pecl install imagick \
+    # && pecl install imagick \
     && pecl install apcu \
     && pecl clear-cache \
     && apk del .build-deps \
     && docker-php-source delete \
-    && docker-php-ext-enable pdo_mysql pcntl intl zip imagick apcu
+    && docker-php-ext-enable pdo_mysql pcntl intl zip apcu
+
+RUN curl -L -o /tmp/imagick.tar.gz https://github.com/Imagick/imagick/archive/7088edc353f53c4bc644573a79cdcd67a726ae16.tar.gz \
+    && tar --strip-components=1 -xf /tmp/imagick.tar.gz \
+    && phpize \
+    && ./configure \
+    && make \
+    && make install \
+    && echo "extension=imagick.so" > /usr/local/etc/php/conf.d/ext-imagick.ini \
+    && rm -rf /tmp/*
 
 # Copy php.ini
 RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php.ini

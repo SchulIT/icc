@@ -60,11 +60,10 @@ RUN composer install --no-dev --classmap-authoritative --no-scripts
 RUN php bin/console bazinga:js-translation:dump assets/js/ --merge-domains
 
 # --- Third stage: Install Assets --- #
-FROM node:22-alpine as assets
+FROM node:22-alpine AS assets
 
 # Set workdir and copy files
 WORKDIR /var/www/html
-COPY --from=base /var/www/html /var/www/html
 COPY --from=composer /var/www/html/vendor /var/www/html/vendor
 
 # Install dependencies
@@ -73,11 +72,10 @@ RUN npm install \
     && rm -rf node_modules
 
 # --- Fourth Stage: Runner --- #
-FROM base as runner
+FROM base AS runner
 
 # Set workdir and copy files
 WORKDIR /var/www/html
-COPY --from=base /var/www/html /var/www/html
 COPY --from=composer /var/www/html/vendor /var/www/html/vendor
 COPY --from=assets /var/www/html/public/build /var/www/html/public/build
 

@@ -283,7 +283,7 @@ class DashboardViewHelper {
     }
 
     private function addExercises(DashboardView $view, Student $student, DateTime $date) {
-        if($this->featureManager->isFeatureEnabled(Feature::Book)) {
+        if($this->featureManager->isFeatureEnabled(Feature::Book) !== true) {
             return;
         }
 

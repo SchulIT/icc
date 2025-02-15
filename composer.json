@@ -15,7 +15,6 @@
         "composer/package-versions-deprecated": "1.11.99.4",
         "damienharper/auditor-bundle": "^6.0",
         "defuse/php-encryption": "^2.0",
-        "doctrine/annotations": "^1.0",
         "doctrine/doctrine-bundle": "^2.3",
         "doctrine/doctrine-migrations-bundle": "^3.0.0",
         "doctrine/orm": "^2.10",

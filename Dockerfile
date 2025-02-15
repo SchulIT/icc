@@ -1,101 +1,103 @@
+### --- First Stage: Base Image --- ###
+
 # Use the official PHP image with FPM as the base image
-FROM php:8.3-fpm AS base
+FROM php:8.3-fpm-alpine AS base
 
 # Install dependencies and PHP extensions
-RUN apt-get update && apt-get install -y \
-    unzip \
-    libxml2-dev \
-    libssl-dev \
+RUN apk add icu-dev  \
     libzip-dev \
-    libpng-dev \
-    libfreetype6-dev \
-    libjpeg62-turbo-dev \
-    libonig-dev \
-    libxslt1-dev \
-    libmcrypt-dev \
-    libsodium-dev \
-    nginx \
-    openssl \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) \
-    ctype \
-    dom \
-    filter \
-    iconv \
-    intl \
-    mbstring \
-    pdo_mysql \
-    phar \
-    simplexml \
-    sodium \
-    xml \
-    xmlwriter \
-    zip \
-    gd \
-    xsl \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    imagemagick-dev \
+    libxslt-dev \
+    libgcrypt-dev \
+    supervisor \
+    nginx
 
-# Set memory limit for PHP
+RUN apk add --no-cache --virtual .build-deps \
+    autoconf \
+    g++ \
+    make \
+    && docker-php-ext-install -j$(nproc) pdo_mysql pcntl intl zip xsl \
+    && pecl install imagick \
+    && pecl install apcu \
+    && pecl clear-cache \
+    && apk del .build-deps \
+    && docker-php-source delete \
+    && docker-php-ext-enable pdo_mysql pcntl intl zip imagick apcu
+
+# Copy php.ini
+RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php.ini
+
+# Set memory limit
 RUN echo "memory_limit=512M" > /usr/local/etc/php/conf.d/memory-limit.ini
-ENV PHP_MEMORY_LIMIT=512M
 
+# Set settings for uploading files
+RUN echo "upload_max_filesize = 128M" >> /usr/local/etc/php/conf.d/uploads.ini
+RUN echo "post_max_size = 128M" >> /usr/local/etc/php/conf.d/uploads.ini
+
+# Set maximum execution time
+RUN echo "max_execution_time = 90" > /usr/local/etc/php/conf.d/execution-time.ini
+
+# Do not expose PHP
+RUN echo "expose_php = Off" > /usr/local/etc/php/conf.d/expose-php.ini
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Copy whole project into image
+COPY . .
+
+### --- SECOND STAGE: Composer --- ###
 FROM base AS composer
 
-# Install Composer
+# Install composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
-# Set COMPOSER_ALLOW_SUPERUSER environment variable
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
-# Set working directory
-WORKDIR /var/www/html
-
-# Copy the composer.json and composer.lock files into the container
-COPY . .
-
-# Install PHP dependencies including symfony/runtime
+# Run composer install
 RUN composer install --no-dev --classmap-authoritative --no-scripts
 
-FROM base AS runner
+# Export Translations to JS
+RUN php bin/console bazinga:js-translation:dump assets/js/ --merge-domains
 
-# Set working directory
+# --- Third stage: Install Assets --- #
+FROM node:22-alpine as assets
+
+# Set workdir and copy files
 WORKDIR /var/www/html
-
+COPY --from=base /var/www/html /var/www/html
 COPY --from=composer /var/www/html/vendor /var/www/html/vendor
 
-# Copy the package.json and package-lock.json files into the container
-COPY . .
+# Install dependencies
+RUN npm install \
+    && npm run build \
+    && rm -rf node_modules
 
-# Remove unnecessary files
-RUN rm -rf ./docs
-RUN rm -rf ./.github
-RUN rm -rf ./docker-compose.yml
-RUN rm -rf ./Dockerfile
-RUN rm -rf ./.gitignore
+# --- Fourth Stage: Runner --- #
+FROM base as runner
 
-# Install Node.js and npm
-RUN apt-get update && apt-get install -y nodejs npm
-
-RUN npm install
-
-# Copy build files from the previous stages
+# Set workdir and copy files
+WORKDIR /var/www/html
+COPY --from=base /var/www/html /var/www/html
 COPY --from=composer /var/www/html/vendor /var/www/html/vendor
+COPY --from=assets /var/www/html/public/build /var/www/html/public/build
 
-# Remove the .htaccess file because we are using Nginx
-RUN rm -rf ./public/.htaccess
+# Install assets (copy 3rd party stuff)
+RUN php bin/console assets:install
 
-# Copy the Nginx configuration file into the container
-COPY nginx.conf /etc/nginx/sites-enabled/default
+# Install nginx configuration
+COPY .docker/nginx.conf /etc/nginx/sites-enabled/default
 
-# Copy the startup script into the container
-COPY startup.sh /usr/local/bin/startup.sh
+# Install supervisor configuration
+COPY .docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Ensure the startup script is executable
-RUN chmod +x /usr/local/bin/startup.sh
-
-# Expose port 80
+# Export HTTP port
 EXPOSE 80
 
-# Use the startup script as the entrypoint
-CMD ["/usr/local/bin/startup.sh"]
+# Install cronjob
+RUN crontab -l | { cat; echo "*/2 * * * * php /var/www/html/bin/console shapecode:cron:run"; } | crontab -
+
+# Copy startup.sh
+COPY .docker/startup.sh startup.sh
+RUN chmod +x startup.sh
+
+CMD ["./startup.sh"]

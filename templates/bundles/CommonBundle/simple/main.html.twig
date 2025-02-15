@@ -1,0 +1,12 @@
+{% extends "@!Common/simple/main.html.twig" %}
+
+{% block css %}
+    {{ parent() }}
+
+    {% set customCSS = customCSS() %}
+    {% if customCSS is not empty %}
+        <style>
+            {{ customCSS }}
+        </style>
+    {% endif %}
+{% endblock %}

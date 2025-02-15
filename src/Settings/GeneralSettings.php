@@ -16,7 +16,7 @@ class GeneralSettings extends AbstractSettings {
         return $this->getValue('general.custom_css', null);
     }
 
-    public function setCustomCSS(string $customCSS): void {
+    public function setCustomCSS(?string $customCSS): void {
         $this->setValue('general.custom_css', $customCSS);
     }
 

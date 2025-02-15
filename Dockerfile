@@ -56,20 +56,47 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 # Run composer install
 RUN composer install --no-dev --classmap-authoritative --no-scripts
 
-# Export Translations to JS
+# # Install MariaDB and necessary dependencies
+# RUN apk add --no-cache mariadb mariadb-client su-exec
+
+# # ENV DATABASE_URL=mysql://myuser:mysecurepassword@127.0.0.1:3306/icc?serverVersion=11.4.4-MariaDB
+
+# # Export Translations to JS with fake DB
+# RUN mkdir -p /run/mysqld /var/lib/mysql \
+#     && chown -R mysql:mysql /run/mysqld /var/lib/mysql \
+#     && mariadb-install-db --user=mysql --datadir=/var/lib/mysql
+
+# RUN su-exec mysql mariadbd  \
+#     --user=mysql \
+#     --datadir=/var/lib/mysql \
+#     --socket=/var/run/mysqld/mysqld.sock \ 
+#     --pid-file=/var/run/mysqld/mysqld.pid \ 
+#     --bind-address=0.0.0.0 \
+#     --skip-networking=0 \
+#     & \
+#     sleep 5 \
+#     && su-exec mysql mysql -e "CREATE USER 'myuser'@'%' IDENTIFIED BY 'mysecurepassword';" \
+#     && su-exec mysql mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'myuser'@'%' WITH GRANT OPTION;" \
+#     && su-exec mysql mysql -e "FLUSH PRIVILEGES;" \
+#     && mysql -u myuser --socket=/var/run/mysqld/mysqld.sock -e "SHOW DATABASES;" \
+#    # && php bin/console doctrine:database:create --if-not-exists \
+
 RUN php bin/console bazinga:js-translation:dump assets/js/ --merge-domains
+    # && mysqladmin -u root shutdown
 
 # --- Third stage: Install Assets --- #
 FROM node:22-alpine AS assets
 
 # Set workdir and copy files
 WORKDIR /var/www/html
+COPY . .
+COPY --from=composer /var/www/html/assets/js /var/www/html/assets/js
 COPY --from=composer /var/www/html/vendor /var/www/html/vendor
 
 # Install dependencies
-RUN npm install \
-    && npm run build \
-    && rm -rf node_modules
+RUN npm install 
+
+RUN npm run build
 
 # --- Fourth Stage: Runner --- #
 FROM base AS runner

@@ -55,7 +55,7 @@ RUN echo "max_execution_time = 90" > /usr/local/etc/php/conf.d/execution-time.in
 RUN echo "expose_php = Off" > /usr/local/etc/php/conf.d/expose-php.ini
 
 # Configure PHP-FPM
-COPY .docker/fpm-pool.conf /use/local/etc/php/php-fpm.d/www.conf
+COPY .docker/fpm-pool.conf /usr/local/etc/php-fpm.d/www.conf
 
 # Set DB version so that symfony does not try to connect to a real DB
 ENV DATABASE_SERVER_VERSION=11.4.4-MariaDB
@@ -140,7 +140,7 @@ COPY .docker/nginx/default.conf /etc/nginx/conf.d/icc.conf
 COPY .docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Export HTTP port
-EXPOSE 80
+EXPOSE 8080
 
 # Install cronjob
 RUN crontab -l | { cat; echo "*/2 * * * * php /var/www/html/bin/console shapecode:cron:run"; } | crontab -
@@ -149,7 +149,11 @@ RUN crontab -l | { cat; echo "*/2 * * * * php /var/www/html/bin/console shapecod
 COPY .docker/startup.sh startup.sh
 RUN chmod +x startup.sh
 
-CMD ["./startup.sh"]
+RUN chown -R nobody:nobody /var/www/html /run /var/lib/nginx /var/log/nginx
+USER nobody
+
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# CMD ["./startup.sh"]
 
 # Configure a healthcheck to validate that everything is up&running
 HEALTHCHECK --timeout=10s CMD curl --silent --fail http://127.0.0.1:8080/fpm-ping || exit 1

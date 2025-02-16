@@ -3,7 +3,7 @@ services:
     build: .
     restart: always
     ports:
-      - "8081:80"
+      - "8081:8080"
     depends_on:
       db:
         condition: service_healthy
@@ -18,7 +18,7 @@ services:
       # - ./nginx.conf:/etc/nginx/sites-enabled/default
 
   db:
-    image: mariadb:10.4
+    image: mariadb:10.11
     restart: always
     env_file:
       - .env.local

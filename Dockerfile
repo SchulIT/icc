@@ -124,6 +124,7 @@ RUN php bin/console assets:install
 
 # Install nginx configuration
 COPY .docker/nginx.conf /etc/nginx/sites-available/default
+RUN ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
 
 # Install supervisor configuration
 COPY .docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf

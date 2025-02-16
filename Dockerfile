@@ -4,7 +4,7 @@
 FROM php:8.3-fpm-alpine AS base
 
 LABEL maintainer="SchulIT" \ 
-      description="Webbasiertes Schulinformationssystem mit Vertretungs-, Klausur-, Stundenplan, Mitteilungen, Abwesenheitsmeldungen, digitale Klassenbücher uvm."
+      description="ICC - Webbasiertes Schulinformationssystem mit Vertretungs-, Klausur-, Stundenplan, Mitteilungen, Abwesenheitsmeldungen, digitale Klassenbücher uvm."
 
 # Install dependencies and PHP extensions
 RUN apk add --no-cache icu-dev  \
@@ -58,13 +58,14 @@ RUN echo "expose_php = Off" > /usr/local/etc/php/conf.d/expose-php.ini
 COPY .docker/fpm-pool.conf /usr/local/etc/php-fpm.d/www.conf
 
 # Set DB version so that symfony does not try to connect to a real DB
-ENV DATABASE_SERVER_VERSION=11.4.4-MariaDB
+ENV DATABASE_SERVER_VERSION=10.11.0-MariaDB
 
 # Set working directory
 WORKDIR /var/www/html
 
 # Copy whole project into image
 COPY . .
+
 
 ### --- SECOND STAGE: Composer --- ###
 FROM base AS composer
@@ -76,35 +77,10 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 # Run composer install
 RUN composer install --no-dev --classmap-authoritative --no-scripts
 
-# # Install MariaDB and necessary dependencies
-# RUN apk add --no-cache mariadb mariadb-client su-exec
-
-# # ENV DATABASE_URL=mysql://myuser:mysecurepassword@127.0.0.1:3306/icc?serverVersion=11.4.4-MariaDB
-
-# # Export Translations to JS with fake DB
-# RUN mkdir -p /run/mysqld /var/lib/mysql \
-#     && chown -R mysql:mysql /run/mysqld /var/lib/mysql \
-#     && mariadb-install-db --user=mysql --datadir=/var/lib/mysql
-
-# RUN su-exec mysql mariadbd  \
-#     --user=mysql \
-#     --datadir=/var/lib/mysql \
-#     --socket=/var/run/mysqld/mysqld.sock \ 
-#     --pid-file=/var/run/mysqld/mysqld.pid \ 
-#     --bind-address=0.0.0.0 \
-#     --skip-networking=0 \
-#     & \
-#     sleep 5 \
-#     && su-exec mysql mysql -e "CREATE USER 'myuser'@'%' IDENTIFIED BY 'mysecurepassword';" \
-#     && su-exec mysql mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'myuser'@'%' WITH GRANT OPTION;" \
-#     && su-exec mysql mysql -e "FLUSH PRIVILEGES;" \
-#     && mysql -u myuser --socket=/var/run/mysqld/mysqld.sock -e "SHOW DATABASES;" \
-#    # && php bin/console doctrine:database:create --if-not-exists \
-
 RUN php bin/console bazinga:js-translation:dump assets/js/ --merge-domains
-    # && mysqladmin -u root shutdown
 
-# --- Third stage: Install Assets --- #
+
+### --- Third stage: Install Assets --- ###
 FROM node:22-alpine AS assets
 
 # Set workdir and copy files
@@ -118,7 +94,8 @@ RUN npm install
 
 RUN npm run build
 
-# --- Fourth Stage: Runner --- #
+
+### --- Fourth Stage: Runner --- ###
 FROM base AS runner
 
 # Set workdir and copy files
@@ -152,8 +129,7 @@ RUN chmod +x startup.sh
 RUN chown -R nobody:nobody /var/www/html /run /var/lib/nginx /var/log/nginx
 USER nobody
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
-# CMD ["./startup.sh"]
+CMD ["./startup.sh"]
 
 # Configure a healthcheck to validate that everything is up&running
 HEALTHCHECK --timeout=10s CMD curl --silent --fail http://127.0.0.1:8080/fpm-ping || exit 1

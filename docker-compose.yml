@@ -1,0 +1,38 @@
+services:
+  web:
+    build: .
+    restart: always
+    ports:
+      - "8081:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env.local
+    volumes:
+      - saml:/var/www/html/saml
+      - files:/var/www/html/files
+      - backup:/var/www/html/backup
+      - export:/var/www/html/export
+      # nginx configuration file
+      # - ./nginx.conf:/etc/nginx/sites-enabled/default
+
+  db:
+    image: mariadb:10.11
+    restart: always
+    env_file:
+      - .env.local
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+      interval: 5s
+      timeout: 20s
+      retries: 10
+
+volumes:
+  db_data:
+  saml:
+  files:
+  backup:
+  export:

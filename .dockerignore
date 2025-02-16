@@ -9,3 +9,5 @@ README.md
 CHANGELOG-*.md
 UPGRADE-*.md
 rector.php
+
+.htaccess

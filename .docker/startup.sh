@@ -27,12 +27,5 @@ if [ ! -f /var/www/html/saml/sp.crt ] || [ ! -f /var/www/html/saml/sp.key ]; the
     php bin/console app:create-certificate --type saml --no-interaction
 fi
 
-
-# Start PHP FPM
-php-fpm &
-
-# Start nginx
-nginx -g 'daemon off;'
-
-# Start cron
-crond &
+# Start container
+/usr/bin/supervisord -c "/etc/supervisor/conf.d/supervisord.conf"

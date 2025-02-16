@@ -3,14 +3,18 @@
 # Use the official PHP image with FPM as the base image
 FROM php:8.3-fpm-alpine AS base
 
+LABEL maintainer="SchulIT" \ 
+      description="Webbasiertes Schulinformationssystem mit Vertretungs-, Klausur-, Stundenplan, Mitteilungen, Abwesenheitsmeldungen, digitale Klassenbücher uvm."
+
 # Install dependencies and PHP extensions
-RUN apk add icu-dev  \
+RUN apk add --no-cache icu-dev  \
     libzip-dev \
     imagemagick-dev \
     libxslt-dev \
     libgcrypt-dev \
     supervisor \
-    nginx
+    nginx \
+    curl
 
 RUN apk add --no-cache --virtual .build-deps \
     autoconf \
@@ -49,6 +53,9 @@ RUN echo "max_execution_time = 90" > /usr/local/etc/php/conf.d/execution-time.in
 
 # Do not expose PHP
 RUN echo "expose_php = Off" > /usr/local/etc/php/conf.d/expose-php.ini
+
+# Configure PHP-FPM
+COPY .docker/fpm-pool.conf /use/local/etc/php/php-fpm.d/www.conf
 
 # Set DB version so that symfony does not try to connect to a real DB
 ENV DATABASE_SERVER_VERSION=11.4.4-MariaDB
@@ -123,8 +130,11 @@ COPY --from=assets /var/www/html/public/build /var/www/html/public/build
 RUN php bin/console assets:install
 
 # Install nginx configuration
-COPY .docker/nginx.conf /etc/nginx/sites-available/default
-RUN mkdir -p /etc/nginx/sites-enabled/ && ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
+# Configure nginx - http
+COPY .docker/nginx/nginx.conf /etc/nginx/nginx.conf
+# Configure nginx - default server
+COPY .docker/nginx/default.conf /etc/nginx/conf.d/icc.conf
+# RUN mkdir -p /etc/nginx/sites-enabled/ && ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
 
 # Install supervisor configuration
 COPY .docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
@@ -140,3 +150,6 @@ COPY .docker/startup.sh startup.sh
 RUN chmod +x startup.sh
 
 CMD ["./startup.sh"]
+
+# Configure a healthcheck to validate that everything is up&running
+HEALTHCHECK --timeout=10s CMD curl --silent --fail http://127.0.0.1:8080/fpm-ping || exit 1

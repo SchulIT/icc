@@ -235,20 +235,20 @@ class UntisImportController extends AbstractController {
     #[Route(path: '/html_settings', name: 'import_untis_html_settings')]
     public function htmlSettings(UntisHtmlSettings $htmlSettings, Request $request): Response {
         $form = $this->createFormBuilder()
-            ->add('numberOfBlanks', IntegerType::class, [
-                'label' => 'import.html_settings.number_of_blanks.label',
-                'help' => 'import.html_settings.number_of_blanks.help',
-                'data' => $htmlSettings->getNumberOfBlanksToReplaceASingleBlankWith(),
+            ->add('blockSize', IntegerType::class, [
+                'label' => 'import.html_settings.block_size.label',
+                'help' => 'import.html_settings.block_size.help',
                 'required' => false,
                 'constraints' => [
-                    new GreaterThanOrEqual(1)
-                ]
+                    new GreaterThanOrEqual(0)
+                ],
+                'data' => $htmlSettings->getCourseNameBlockSize()
             ])
             ->getForm();
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            $htmlSettings->setNumberOfBlanksToReplaceASingleBlankWith($form->get('numberOfBlanks')->getData());
+            $htmlSettings->setCourseNameBlockSize($form->get('blockSize')->getData());
 
             $this->addFlash('success', 'import.settings.success');
             return $this->redirectToRoute('import_untis_html_settings');

@@ -134,7 +134,7 @@ class TimetableImporter {
                         ->setGrades($grades)
                         ->setTeachers($teachers)
                         ->setRoom($lesson->getRoom())
-                        ->setSubject($subjectOverrides[$lesson->getSubject()] ?? $this->replaceBlanksIfNecessary($lesson->getSubject()))
+                        ->setSubject($subjectOverrides[$lesson->getSubject()] ?? $this->recreateCourseName($lesson->getSubject()))
                         ->setLessonStart($lesson->getLessonStart())
                         ->setLessonEnd($lesson->getLessonEnd());
                 }
@@ -149,17 +149,30 @@ class TimetableImporter {
         return $this->importer->replaceImport($data, $this->strategy);
     }
 
-    private function replaceBlanksIfNecessary(?string $input): ?string {
-        if(empty($input)) {
+    private function recreateCourseName(?string $input): ?string {
+        if($this->htmlSettings->getCourseNameBlockSize() === 0) {
             return $input;
         }
 
-        if($this->htmlSettings->getNumberOfBlanksToReplaceASingleBlankWith() == 1) {
+        if(!str_contains($input, ' ')) {
             return $input;
         }
 
-        $replacement = str_repeat(" ", $this->htmlSettings->getNumberOfBlanksToReplaceASingleBlankWith());
-        return str_replace(" ", $replacement, $input);
+        $blocks = explode(' ', $input);
+
+        if(count($blocks) !== 2) {
+            return $input;
+        }
+
+        $firstBlock = mb_strlen($blocks[0]);
+        $secondBlock = mb_strlen($blocks[1]);
+        $numberOfBlanks = $this->htmlSettings->getCourseNameBlockSize() - $firstBlock - $secondBlock;
+
+        if($numberOfBlanks < 1) {
+            return $input;
+        }
+
+        return $blocks[0] . str_repeat(' ', $numberOfBlanks) . $blocks[1];
     }
 
     /**

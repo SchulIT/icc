@@ -2350,9 +2350,9 @@ import:
 
     html_settings:
         label: Einstellungen (HTML)
-        number_of_blanks:
-            label: Leerzeichen-Korrektur
-            help: Werden bei Unterrichtsfächern mehrere Leerzeichen verwendet, gibt Untis in der HTML-Datei scheinbar nur ein Leerzeichen aus, sodass die Unterrichtszuordnung nicht mehr funktioniert. Mit dieser Option wird ein einzelnes Leerzeichen durch die festgelegte Anzahl an Leerzeichen ersetzt.
+        block_size:
+            label: Blockgröße für Kursbezeichnungen
+            help: Manchmal werden Kursbezeichnungen auf eine Blockgröße von N Zeichen mittels Leerzeichen aufgebläht, bspw. `M  G1` (zwei Leerzeichen). Diese Leerzeichen sind leider in der HTML-Ausgabe vom Stundenplan nicht enthalten und müssen somit vor dem Import ergänzt werden. Wert 0 verwenden, falls die Kursbezeichnung keine Blockgröße besitzt, bspw. M-GK1.
 
     substitutions:
         gpu:

@@ -114,11 +114,11 @@ class UntisHtmlSettings extends AbstractSettings {
         $this->setValue('untis.import.html.columns.is_cancelled', $columnName);
     }
 
-    public function getNumberOfBlanksToReplaceASingleBlankWith(): int {
-        return $this->getValue('untis.import.html.number_of_blanks_to_replace_with', 1);
+    public function getCourseNameBlockSize(): int {
+        return $this->getValue('untis.import.html.course_block_size', 0);
     }
 
-    public function setNumberOfBlanksToReplaceASingleBlankWith(int $numberOfBlanksToReplace): void {
-        $this->setValue('untis.import.html.number_of_blanks_to_replace_with', $numberOfBlanksToReplace);
+    public function setCourseNameBlockSize(int $courseBlockSize): void {
+        $this->setValue('untis.import.html.course_block_size', $courseBlockSize);
     }
 }

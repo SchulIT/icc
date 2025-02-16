@@ -2348,6 +2348,11 @@ import:
                 label: Trennzeichen
                 help: Gibt das Trennzeichen zwischen Vor- und Nachname sowie dem Geburtstag (falls verwendet) an.
 
+    html_settings:
+        label: Einstellungen (HTML)
+        number_of_blanks:
+            label: Leerzeichen-Korrektur
+            help: Werden bei Unterrichtsfächern mehrere Leerzeichen verwendet, gibt Untis in der HTML-Datei scheinbar nur ein Leerzeichen aus, sodass die Unterrichtszuordnung nicht mehr funktioniert. Mit dieser Option wird ein einzelnes Leerzeichen durch die festgelegte Anzahl an Leerzeichen ersetzt.
 
     substitutions:
         gpu:

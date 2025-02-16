@@ -1,0 +1,20 @@
+{% extends "import/_import.html.twig" %}
+
+{% block title %}{{ 'import.html_settings.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_settings') }}">{{ 'import.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block import_content %}
+    <div class="card">
+        <div class="card-header">{{ 'import.timetable.html.label'|trans }}</div>
+        <div class="card-body">
+            {{ form_row(form.numberOfBlanks) }}
+        </div>
+    </div>
+{% endblock %}

@@ -10,13 +10,16 @@ use App\Import\TimetableLessonsImportStrategy;
 use App\Repository\TimetableWeekRepositoryInterface;
 use App\Request\Data\TimetableLessonData;
 use App\Request\Data\TimetableLessonsData;
+use App\Settings\UntisHtmlSettings;
 use App\Settings\UntisSettings;
 use App\Untis\Html\HtmlParseException;
 use DateTime;
 use Symfony\Component\Stopwatch\Stopwatch;
 
 class TimetableImporter {
-    public function __construct(private Importer $importer, private TimetableLessonsImportStrategy $strategy, private TimetableReader $reader, private TimetableWeekRepositoryInterface $weekRepository, private TimetableLessonCombiner $lessonCombiner, private Grouper $grouper, private UntisSettings $settings)
+    public function __construct(private Importer $importer, private TimetableLessonsImportStrategy $strategy, private TimetableReader $reader,
+                                private TimetableWeekRepositoryInterface $weekRepository, private TimetableLessonCombiner $lessonCombiner,
+                                private Grouper $grouper, private UntisSettings $settings, private UntisHtmlSettings $htmlSettings)
     {
     }
 
@@ -131,7 +134,7 @@ class TimetableImporter {
                         ->setGrades($grades)
                         ->setTeachers($teachers)
                         ->setRoom($lesson->getRoom())
-                        ->setSubject($subjectOverrides[$lesson->getSubject()] ?? $lesson->getSubject())
+                        ->setSubject($subjectOverrides[$lesson->getSubject()] ?? $this->replaceBlanksIfNecessary($lesson->getSubject()))
                         ->setLessonStart($lesson->getLessonStart())
                         ->setLessonEnd($lesson->getLessonEnd());
                 }
@@ -144,6 +147,19 @@ class TimetableImporter {
         $data->setLessons($lessonsToImport);
 
         return $this->importer->replaceImport($data, $this->strategy);
+    }
+
+    private function replaceBlanksIfNecessary(?string $input): ?string {
+        if(empty($input)) {
+            return $input;
+        }
+
+        if($this->htmlSettings->getNumberOfBlanksToReplaceASingleBlankWith() == 1) {
+            return $input;
+        }
+
+        $replacement = str_repeat(" ", $this->htmlSettings->getNumberOfBlanksToReplaceASingleBlankWith());
+        return str_replace(" ", $replacement, $input);
     }
 
     /**

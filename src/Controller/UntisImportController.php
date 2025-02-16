@@ -8,6 +8,7 @@ use App\Form\Import\Untis\RoomImportType;
 use App\Form\Import\Untis\WeekOverrideType;
 use App\Form\TextCollectionEntryType;
 use App\Request\ValidationFailedException;
+use App\Settings\UntisHtmlSettings;
 use App\Untis\Gpu\Room\RoomImporter;
 use App\Untis\StudentId\StudentIdGenerator;
 use App\Untis\StudentIdFormat;
@@ -228,6 +229,33 @@ class UntisImportController extends AbstractController {
         return $this->render('import/settings.html.twig', [
             'form' => $form->createView(),
             'student_preview' => $preview
+        ]);
+    }
+
+    #[Route(path: '/html_settings', name: 'import_untis_html_settings')]
+    public function htmlSettings(UntisHtmlSettings $htmlSettings, Request $request): Response {
+        $form = $this->createFormBuilder()
+            ->add('numberOfBlanks', IntegerType::class, [
+                'label' => 'import.html_settings.number_of_blanks.label',
+                'help' => 'import.html_settings.number_of_blanks.help',
+                'data' => $htmlSettings->getNumberOfBlanksToReplaceASingleBlankWith(),
+                'required' => false,
+                'constraints' => [
+                    new GreaterThanOrEqual(1)
+                ]
+            ])
+            ->getForm();
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $htmlSettings->setNumberOfBlanksToReplaceASingleBlankWith($form->get('numberOfBlanks')->getData());
+
+            $this->addFlash('success', 'import.settings.success');
+            return $this->redirectToRoute('import_untis_html_settings');
+        }
+
+        return $this->render('import/html_settings.html.twig', [
+            'form' => $form->createView()
         ]);
     }
 

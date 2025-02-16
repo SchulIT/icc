@@ -27,6 +27,11 @@ class ImportMenuBuilder extends AbstractMenuBuilder {
             ])
                 ->setExtra('icon', 'fas fa-cogs');
 
+            $menu->addChild('import.html_settings.label', [
+                'route' => 'import_untis_html_settings'
+            ])
+                ->setExtra('icon', 'fas fa-cogs');
+
             $menu->addChild('import.substitutions.gpu.label', [
                 'route' => 'import_untis_substitutions_gpu'
             ])

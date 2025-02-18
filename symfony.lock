@@ -886,6 +886,9 @@
     "xantios/mimey": {
         "version": "v2.1.1"
     },
+    "zenstruck/messenger-monitor-bundle": {
+        "version": "v0.5.1"
+    },
     "zircote/swagger-php": {
         "version": "3.2.3"
     }

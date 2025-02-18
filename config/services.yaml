@@ -365,6 +365,10 @@ services:
                 - 'files'
                 - 'saml'
 
+    Zenstruck\Messenger\Monitor\Command\PurgeCommand:
+        tags:
+            - { name: shapecode_cron.cron_job, expression: '@daily' }
+
     # SECTION
     App\Section\SectionResolver: ~
 

@@ -76,7 +76,8 @@
         "twig/inky-extra": "^3.6",
         "vich/uploader-bundle": "^2.0",
         "willdurand/js-translation-bundle": "^6.0",
-        "xantios/mimey": "^2.1"
+        "xantios/mimey": "^2.1",
+        "zenstruck/messenger-monitor-bundle": "^0.5.1"
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^8.0",

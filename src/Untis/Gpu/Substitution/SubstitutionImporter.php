@@ -82,10 +82,10 @@ class SubstitutionImporter {
                 ->setText($substitution->getRemark())
                 ->setType($this->getType($substitution));
 
-            if($substitution->getId() === '0') {
+            if($substitutionData->getId() === '0') {
                 // Sometimes Untis uses ID 0 and is not able to generate a unique ID - we circumvent this by generating
                 // a unique ID on the fly (this makes the substitution always mark as "new", but hey - the import works)
-                $substitution->setId(Uuid::uuid4()->toString());
+                $substitutionData->setId(Uuid::uuid4()->toString());
             }
 
             if($substitution->getTeacher() !== null) {

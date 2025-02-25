@@ -10,6 +10,7 @@ use App\Request\Data\SubstitutionsData;
 use App\Settings\UntisSettings;
 use DateTime;
 use League\Csv\Reader;
+use Ramsey\Uuid\Uuid;
 
 class SubstitutionImporter {
     public function __construct(private Importer $importer, private SubstitutionsImportStrategy $strategy, private SubstitutionReader $gpuReader, private UntisSettings $settings)
@@ -80,6 +81,12 @@ class SubstitutionImporter {
                 ->setReplacementGrades($substitution->getReplacementGrades())
                 ->setText($substitution->getRemark())
                 ->setType($this->getType($substitution));
+
+            if($substitution->getId() === '0') {
+                // Sometimes Untis uses ID 0 and is not able to generate a unique ID - we circumvent this by generating
+                // a unique ID on the fly (this makes the substitution always mark as "new", but hey - the import works)
+                $substitution->setId(Uuid::uuid4()->toString());
+            }
 
             if($substitution->getTeacher() !== null) {
                 $substitutionData->setTeachers([$substitution->getTeacher()]);

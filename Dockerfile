@@ -20,7 +20,7 @@ RUN apk add --no-cache --virtual .build-deps \
     autoconf \
     g++ \
     make \
-    && docker-php-ext-install -j$(nproc) pdo_mysql pcntl intl zip xsl \
+    && docker-php-ext-install -j$(nproc) pdo_mysql pcntl intl zip xsl sysvsem \
     # Installing Imagic from PECL fails, so we need to install it manually
     # && pecl install imagick \
     && curl -L -o /tmp/imagick.tar.gz https://github.com/Imagick/imagick/archive/7088edc353f53c4bc644573a79cdcd67a726ae16.tar.gz \
@@ -36,7 +36,7 @@ RUN apk add --no-cache --virtual .build-deps \
     && pecl clear-cache \
     && apk del .build-deps \
     && docker-php-source delete \
-    && docker-php-ext-enable pdo_mysql pcntl intl zip imagick apcu
+    && docker-php-ext-enable pdo_mysql pcntl intl zip imagick apcu sysvsem
 
 # Copy php.ini
 RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php.ini

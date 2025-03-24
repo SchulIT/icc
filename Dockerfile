@@ -14,7 +14,8 @@ RUN apk add --no-cache icu-dev  \
     libgcrypt-dev \
     supervisor \
     nginx \
-    curl
+    curl \
+    tzdata
 
 RUN apk add --no-cache --virtual .build-deps \
     autoconf \
@@ -53,6 +54,10 @@ RUN echo "max_execution_time = 90" > /usr/local/etc/php/conf.d/execution-time.in
 
 # Do not expose PHP
 RUN echo "expose_php = Off" > /usr/local/etc/php/conf.d/expose-php.ini
+
+# Set Timezone (default: Europe/Berlin)
+ENV TZ=Europe/Berlin
+RUN echo "date.timezone='${TZ}'" > /usr/local/etc/php/conf.d/timezone.ini
 
 # Configure PHP-FPM
 COPY .docker/fpm-pool.conf /usr/local/etc/php-fpm.d/www.conf

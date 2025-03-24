@@ -70,7 +70,11 @@ class TuitionGradebookController extends AbstractController {
         } else if($studentFilterView->getCurrentStudent() !== null) {
             $overview = $gradeOverviewHelper->computeOverviewForStudent($studentFilterView->getCurrentStudent(), $sectionFilterView->getCurrentSection());
         } else if($gradeFilterView->getCurrentGrade() !== null) {
-            $gradeStudents = $gradeFilterView->getCurrentGrade()->getMemberships()->map(fn(GradeMembership $membership) => $membership->getStudent())->toArray();
+            $gradeStudents = $gradeFilterView->getCurrentGrade()
+                ->getMemberships()
+                ->filter(fn(GradeMembership $membership) => $membership->getSection()?->getId() === $sectionFilterView->getCurrentSection()->getId())
+                ->map(fn(GradeMembership $membership) => $membership->getStudent())
+                ->toArray();
 
             $sorter->sort($gradeStudents, StudentStrategy::class);
 

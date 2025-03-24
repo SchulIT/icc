@@ -57,7 +57,7 @@ RUN echo "expose_php = Off" > /usr/local/etc/php/conf.d/expose-php.ini
 
 # Set Timezone (default: Europe/Berlin)
 ENV TZ=Europe/Berlin
-RUN echo "date.timezone='${TZ}'" > /usr/local/etc/php/conf.d/timezone.ini
+RUN echo 'date.timezone="${TZ}"' > /usr/local/etc/php/conf.d/timezone.ini
 
 # Configure PHP-FPM
 COPY .docker/fpm-pool.conf /usr/local/etc/php-fpm.d/www.conf

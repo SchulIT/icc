@@ -30,7 +30,8 @@ readonly class StudentAbsenceCreatedEventSubscriber implements EventSubscriberIn
         foreach($event->getAbsence()->getType()->getAdditionalRecipients() as $additionalRecipient) {
             $recipients[] = (new User())
                 ->setEmail($additionalRecipient)
-                ->setUsername($additionalRecipient);
+                ->setUsername($additionalRecipient)
+                ->setUserType(UserType::User);
         }
 
         foreach($recipients as $recipient) {

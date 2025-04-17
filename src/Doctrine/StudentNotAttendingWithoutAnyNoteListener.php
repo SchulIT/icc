@@ -38,6 +38,10 @@ class StudentNotAttendingWithoutAnyNoteListener {
             return;
         }
 
+        if($attendance->isZeroAbsentLesson()) {
+            return;
+        }
+
         $entry = $attendance->getEntry();
 
         if($entry === null) {

@@ -1,4 +1,4 @@
-{% extends "main.html.twig" %}
+{% extends "admin/_form.html.twig" %}
 
 {% block title %}{{ 'versions.label'|trans }}{% endblock %}
 
@@ -12,9 +12,7 @@
     </ol>
 {% endblock %}
 
-{% block content %}
-    {{ knp_menu_render('dataMenu', {'currentClass': 'active', 'template': 'admin/_menu.html.twig' }) }}
-
+{% block inner %}
     <div class="card">
         <div class="table-responsive">
             <table class="table table-striped table-bordered table-hover card-table">

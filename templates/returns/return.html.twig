@@ -1,0 +1,40 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'return_items.return.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('return_items') }}">{{ 'return_items.label'|trans }}</a></li>
+        <li class="breadcrumb-item">
+            {{ item.student|student }}
+
+            <span class="badge text-bg-primary">{{ item.type.displayName }}</span>
+        </li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+
+    <div class="card">
+        <div class="card-header">{{ 'return_items.return.label'|trans }}</div>
+
+        <div class="card-body">
+            {{ form_widget(form.group_general.confirm) }}
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-danger btn-sm">
+            <i class="fa fa-check"></i> {{ 'actions.confirm'|trans }}
+        </button>
+
+        <a href="javascript:history.back();" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}

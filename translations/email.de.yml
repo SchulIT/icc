@@ -116,3 +116,9 @@ attendance:
     content: "%student% hat am %date% in der %lesson%. Stunde ohne Abwesenheitsmeldung gefehlt."
     child: Kind
     link: Zur Anwesenheitsübersicht
+
+return_item:
+  create:
+    title: Neue Rückgabe
+    content: "Es wurde eine neue Rückgabe vom Typ %type% erstellt. Bitte das ICC für weitere Informationen prüfen."
+  link: Weitere Informationen

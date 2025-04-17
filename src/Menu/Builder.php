@@ -99,6 +99,13 @@ class Builder {
                 ->setExtra('icon', 'fa-solid fa-people-arrows');
         }
 
+        if($this->featureManager->isFeatureEnabled(Feature::ReturnItem)) {
+            $menu->addChild('return_items.label', [
+                'route' => 'return_items'
+            ])
+                ->setExtra('icon', 'fa-solid fa-repeat');
+        }
+
         if($this->featureManager->isFeatureEnabled(Feature::Book) && $this->authorizationChecker->isGranted('ROLE_BOOK_VIEWER')) {
             $this->bookMenu($menu);
         }

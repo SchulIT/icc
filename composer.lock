@@ -6271,16 +6271,16 @@
         },
         {
             "name": "schulit/common-bundle",
-            "version": "5.0.3",
+            "version": "5.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SchulIT/common-bundle.git",
-                "reference": "c67652e7e3d5e98176eaeeac0efccf61fac13895"
+                "reference": "04b9058e6663f28b190f52869893b4ac03dd27f5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SchulIT/common-bundle/zipball/c67652e7e3d5e98176eaeeac0efccf61fac13895",
-                "reference": "c67652e7e3d5e98176eaeeac0efccf61fac13895",
+                "url": "https://api.github.com/repos/SchulIT/common-bundle/zipball/04b9058e6663f28b190f52869893b4ac03dd27f5",
+                "reference": "04b9058e6663f28b190f52869893b4ac03dd27f5",
                 "shasum": ""
             },
             "require": {
@@ -6322,9 +6322,9 @@
             "description": "Commonly used bundle for SchulIT software suite.",
             "support": {
                 "issues": "https://github.com/SchulIT/common-bundle/issues",
-                "source": "https://github.com/SchulIT/common-bundle/tree/5.0.3"
+                "source": "https://github.com/SchulIT/common-bundle/tree/5.0.4"
             },
-            "time": "2025-02-06T18:13:14+00:00"
+            "time": "2025-03-20T10:44:05+00:00"
         },
         {
             "name": "scienta/doctrine-json-functions",

@@ -1,0 +1,98 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'return_items.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% if items|length == 0 %}
+                    <div class="bs-callout bs-callout-info">
+                        <p>{{ 'return_items.empty'|trans }}</p>
+                    </div>
+                {% else %}
+                    <div class="card">
+                        <div class="card-header">
+                            {{ 'return_items.label'|trans }}
+                        </div>
+
+                        <div class="list-group list-group-flush">
+                            {% for item in items %}
+                                <a class="list-group-item list-group-item-action" href="{{ path('show_return_item', { uuid: item.uuid }) }}">
+                                    <div>
+                                        {% if item.returned %}
+                                            <i class="fas fa-check-circle text-success"></i>
+                                        {% else %}
+                                            <i class="fas fa-times-circle text-danger"></i>
+                                        {% endif %}
+
+                                        {{ item.student|student }}
+
+                                        <span class="badge text-bg-primary">{{ item.type.displayName }}</span>
+                                    </div>
+                                    <div class="text-muted">
+                                        <i class="far fa-calendar"></i> {{ item.createdAt|format_datetime }}
+                                        <i class="fas fa-chalkboard-teacher"></i> {{ item.createdBy|user }}
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    {% include '@Common/includes/pagination.html.twig' with {
+                        currentFilters: {
+                            student: studentFilter.currentStudent != null ? studentFilter.currentStudent.uuid : null,
+                            page: page,
+                            limit: limit
+                        },
+                        currentPage: page,
+                        paginationPath: 'return_items',
+                        lastPage: pages,
+                        showAlwaysFirstAndLast: true
+                    } only %}
+                {% endif %}
+            </div>
+
+            <div class="col-md-3 sticky-sidebar">
+                {% if is_granted('new-return-item')%}
+                    <div class="card">
+                        <div class="list-group list-group-flush">
+                            <a href="{{ path('add_return_item') }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-plus"></i> {{ 'return_items.add.label'|trans }}
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="card">
+                    <div class="card-body">
+                        {% if studentFilter.studentGradeGroups|length > 0 %}
+                            {% include "_filter/student.html.twig" %}
+                        {% endif %}
+
+                        {% if gradeFilter.grades|length > 0 %}
+                            {% include "_filter/grade.html.twig" %}
+                        {% endif %}
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ path('return_items') }}" class="btn btn-primary btn-sm">{{ 'filter.reset'|trans }}</a>
+                    </div>
+                </div>
+
+                <div class="w-100">
+                    <a href="#" class="btn btn-primary btn-sm float-right" data-trigger="scroll">
+                        <i class="fa fa-arrow-up"></i> {{ 'actions.top'|trans }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

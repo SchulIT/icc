@@ -1,0 +1,137 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'return_items.show.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('return_items') }}">{{ 'return_items.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            {{ item.student|student }}
+
+                            <span class="badge text-bg-primary">{{ item.type.displayName }}</span>
+                        </h5>
+
+                        {% if item.returned %}
+                            <div class="bs-callout bs-callout-info">
+                                <h5>{{ 'return_items.show.returned.header'|trans }}</h5>
+                                <p>{{ 'return_items.show.returned.text'|trans({'%date%': item.returnedAt|format_date, '%time%': item.returnedAt.format('date.time_format'|trans), '%user%': item.returnedBy|user }) }}</p>
+                            </div>
+                        {% endif %}
+
+                        {{ item.type.note|markdown }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 sticky-sidebar">
+                {% set canReturn = not item.returned and is_granted('return', item) %}
+                {% set canEdit = is_granted('edit', item) %}
+                {% set canRemove = is_granted('remove', item) %}
+
+                {% if canReturn or canEdit or canRemove %}
+                    <div class="card">
+                        <div class="list-group list-group-flush">
+                            {% if canEdit %}
+                                <a href="{{ path('edit_return_item', { uuid: item.uuid }) }}" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-edit"></i> {{ 'return_items.edit.label'|trans }}
+                                </a>
+                            {% endif %}
+                            {% if canRemove %}
+                                <a href="{{ path('remove_return_item', { uuid: item.uuid }) }}" class="list-group-item list-group-item-danger list-group-item-action">
+                                    <i class="fas fa-trash"></i> {{ 'return_items.remove.label'|trans }}
+                                </a>
+                            {% endif %}
+                            {% if canReturn %}
+                                <a href="{{ path('return_return_item', { uuid: item.uuid }) }}" class="list-group-item list-group-item-action list-group-item-success">
+                                    <i class="fa-solid fa-check-circle"></i> {{ 'return_items.return.label'|trans }}
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ 'label.details'|trans }}</h5>
+
+                        <p>
+                            <span class="text-muted">{{ 'label.created_by'|trans }}</span>
+                            {{ item.createdBy|user }}
+                        </p>
+
+                        <p>
+                            <span class="text-muted">{{ 'label.created_at'|trans }}</span>
+                            {{ item.createdAt|format_datetime }}
+                        </p>
+                    </div>
+                </div>
+
+                {% set student = item.student %}
+                <div class="card">
+                    <div class="card-body">
+                        {% set grade = student.grade(section) %}
+                        <h5 class="card-title">
+                            <i class="far fa-address-card"></i> {{ student|student }}
+
+                            {% if grade is not null %}
+                                ({{ grade.name }})
+                            {% endif %}
+                        </h5>
+
+                        {% if student.email is not empty %}
+                            <p>
+                                <i class="fas fa-envelope" title="{{ 'label.email'|trans }}"></i> <a href="mailto:{{ student.email }}">{{ student.email }}</a>
+                            </p>
+                        {% endif %}
+                        {% if grade is not null %}
+                            <p>
+                                <i class="fas fa-graduation-cap" title="{{ 'lists.study_groups.grade_teacher'|trans }}"></i>
+                                {% for teacher in grade.teachers|sort_gradeteachers|only_section(section) %}
+                                    <a href="mailto:{{ teacher.teacher.email }}">{{ teacher.teacher|teacher }}</a>{% if teacher.type == 'substitute' %} <span title="{{ 'lists.teachers.substitute.long'|trans }}">{{ 'lists.teachers.substitute.short'|trans }}</span>{% endif %}
+                                    {%- if not loop.last -%}, {% endif -%}
+                                {% endfor %}
+                            </p>
+                        {% endif %}
+
+                        {% if is_granted('show-birthday', student) %}
+                            <p>
+                                <i class="fas fa-birthday-cake" title="{{ 'label.birthday'|trans }}"></i> {{ student.birthday|format_date }}
+
+                                {% if student.isFullAged(date()) %}
+                                    <span class="badge text-bg-primary">
+                                        {{ 'label.full_aged.label'|trans }}
+                                    </span>
+                                {% else %}
+                                    <span class="badge text-bg-primary">
+                                        {{ 'label.not_full_aged.label'|trans }}
+                                    </span>
+                                {% endif %}
+                            </p>
+                        {% endif %}
+
+                        <p>
+                            <i class="fas fa-user-tag" title="{{ 'label.status'|trans }}"></i> {{ student.status }}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="w-100">
+                    <a href="#" class="btn btn-primary btn-sm float-right" data-trigger="scroll">
+                        <i class="fa fa-arrow-up"></i> {{ 'actions.top'|trans }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

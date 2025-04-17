@@ -169,6 +169,13 @@ class AdminDataMenuBuilder extends AbstractMenuBuilder {
                     ->setExtra('icon', 'fa-solid fa-people-arrows');
             }
 
+            if($this->featureManager->isFeatureEnabled(Feature::ReturnItem) && $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+                $root->addChild('admin.return_item_types.label', [
+                   'route' => 'admin_return_item_types'
+                ])
+                    ->setExtra('icon', 'fa-solid fa-repeat');
+            }
+
             if($this->featureManager->isFeatureEnabled(Feature::StudentAbsence) || $this->featureManager->isFeatureEnabled(Feature::TeacherAbsence)) {
                 $root->addChild('admin.headers.absence', [])
                     ->setExtra('isHeader', true);

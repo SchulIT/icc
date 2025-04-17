@@ -1,0 +1,74 @@
+{% extends "admin/_main.html.twig" %}
+
+{% block title %}{{ 'admin.return_item_types.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block inner %}
+    {% if types|length == 0 %}
+        <div class="bs-callout bs-callout-info">
+            <h5>{{ 'info.label'|trans }}</h5>
+
+            <p>{{ 'admin.return_item_types.empty'|trans }}</p>
+        </div>
+    {% else %}
+        <div class="card">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover card-table">
+                    <colgroup>
+                        <col>
+                        <col class="column-sm">
+                    </colgroup>
+
+                    <thead>
+                    <tr>
+                        <th>{{ 'label.name'|trans }}</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for type in types %}
+                        <tr>
+                            <td class="align-middle">{{ type.displayName }}</td>
+                            <td class="align-middle">
+                                <div class="dropdown" >
+                                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <a href="{{ path('edit_return_item_type', { uuid: type.uuid })}}" class="dropdown-item">
+                                            <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
+                                        </a>
+
+                                        <a href="{{ path('remove_return_item_type', { uuid: type.uuid })}}" class="dropdown-item text-danger">
+                                            <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block sidebar %}
+    <div class="card">
+        <div class="list-group list-group-flush">
+            <a href="{{ path('add_return_item_type') }}" class="list-group-item list-group-item-action">
+                <i class="fa fa-plus"></i> {{ 'admin.return_item_types.add.label'|trans }}
+            </a>
+        </div>
+    </div>
+{% endblock %}

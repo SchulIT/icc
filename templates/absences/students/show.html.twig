@@ -357,6 +357,55 @@
                     </div>
                 </div>
 
+                {% set student = absence.student %}
+                <div class="card">
+                    <div class="card-body">
+                        {% set grade = student.grade(section) %}
+                        <h5 class="card-title">
+                            <i class="far fa-address-card"></i> {{ student|student }}
+
+                            {% if grade is not null %}
+                                ({{ grade.name }})
+                            {% endif %}
+                        </h5>
+
+                        {% if student.email is not empty %}
+                            <p>
+                                <i class="fas fa-envelope" title="{{ 'label.email'|trans }}"></i> <a href="mailto:{{ student.email }}">{{ student.email }}</a>
+                            </p>
+                        {% endif %}
+                        {% if grade is not null %}
+                            <p>
+                                <i class="fas fa-graduation-cap" title="{{ 'lists.study_groups.grade_teacher'|trans }}"></i>
+                                {% for teacher in grade.teachers|sort_gradeteachers|only_section(section) %}
+                                    <a href="mailto:{{ teacher.teacher.email }}">{{ teacher.teacher|teacher }}</a>{% if teacher.type == 'substitute' %} <span title="{{ 'lists.teachers.substitute.long'|trans }}">{{ 'lists.teachers.substitute.short'|trans }}</span>{% endif %}
+                                    {%- if not loop.last -%}, {% endif -%}
+                                {% endfor %}
+                            </p>
+                        {% endif %}
+
+                        {% if is_granted('show-birthday', student) %}
+                            <p>
+                                <i class="fas fa-birthday-cake" title="{{ 'label.birthday'|trans }}"></i> {{ student.birthday|format_date }}
+
+                                {% if student.isFullAged(date()) %}
+                                    <span class="badge text-bg-primary">
+                                        {{ 'label.full_aged.label'|trans }}
+                                    </span>
+                                {% else %}
+                                    <span class="badge text-bg-primary">
+                                        {{ 'label.not_full_aged.label'|trans }}
+                                    </span>
+                                {% endif %}
+                            </p>
+                        {% endif %}
+
+                        <p>
+                            <i class="fas fa-user-tag" title="{{ 'label.status'|trans }}"></i> {{ student.status }}
+                        </p>
+                    </div>
+                </div>
+
                 {% if absence.type.bookAttendanceType != 1 %}
                 <div class="card">
                     <div class="card-header">

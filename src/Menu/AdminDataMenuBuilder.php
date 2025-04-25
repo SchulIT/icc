@@ -169,7 +169,7 @@ class AdminDataMenuBuilder extends AbstractMenuBuilder {
                     ->setExtra('icon', 'fa-solid fa-people-arrows');
             }
 
-            if($this->featureManager->isFeatureEnabled(Feature::ReturnItem) && $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            if($this->featureManager->isFeatureEnabled(Feature::ReturnItem)) {
                 $root->addChild('admin.return_item_types.label', [
                    'route' => 'admin_return_item_types'
                 ])

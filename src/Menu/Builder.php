@@ -104,7 +104,7 @@ class Builder {
         if($this->featureManager->isFeatureEnabled(Feature::ReturnItem)) {
             $count = 0;
 
-            if($user->isStudentOrParent()) {
+            if($user instanceof User && $user->isStudentOrParent()) {
                 $count = $this->returnItemRepository->countNonReturnedForStudents($user->getStudents()->toArray());
             }
 

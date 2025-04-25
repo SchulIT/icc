@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\GradeMembership;
 use App\Entity\ReturnItem;
+use App\Entity\User;
 use App\Feature\Feature;
 use App\Feature\IsFeatureEnabled;
 use App\Form\ReturnItemType;
@@ -11,7 +12,9 @@ use App\Repository\ReturnItemRepositoryInterface;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\ReturnItemVoter;
 use App\View\Filter\GradeFilter;
+use App\View\Filter\GradeFilterView;
 use App\View\Filter\StudentFilter;
+use App\View\Filter\StudentFilterView;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,7 +35,7 @@ class ReturnItemController extends AbstractController {
         $page = $request->query->getInt('page', 1);
         $limit = $request->query->getInt('limit', 25);
 
-        if($limit > 500) {
+        if($limit > 500 || $limit <= 0) {
             $limit = 25;
         }
 
@@ -42,17 +45,26 @@ class ReturnItemController extends AbstractController {
         $items = [ ];
         $pages = 1;
 
-        if($studentFilterView->getCurrentStudent() !== null) {
-            $result = $this->repository->findByStudentsPaginated([$studentFilterView->getCurrentStudent()], $page, $limit);
-        } else if($gradeFilterView->getCurrentGrade() !== null) {
-            $students = $gradeFilterView->getCurrentGrade()->getMemberships()
-                ->filter(fn(GradeMembership $membership) => $membership->getSection()?->getId() === $sectionResolver->getCurrentSection()?->getId())
-                ->map(fn(GradeMembership $membership) => $membership->getStudent())
-                ->toArray();
-
-            $result = $this->repository->findByStudentsPaginated($students, $page, $limit);
+        if($user->isStudentOrParent()) {
+            $result = $this->repository->findByStudentsPaginated($user->getStudents()->toArray(), $page, $limit);
+            // reset filters to prevent displaying them
+            $studentFilterView = new StudentFilterView([], null, 0);
+            $gradeFilterView = new GradeFilterView([], null, []);
         } else {
-            $result = $this->repository->findAllPaginated($page, $limit);
+            if ($studentFilterView->getCurrentStudent() !== null) {
+                $result = $this->repository->findByStudentsPaginated([$studentFilterView->getCurrentStudent()], $page, $limit);
+            } else {
+                if ($gradeFilterView->getCurrentGrade() !== null) {
+                    $students = $gradeFilterView->getCurrentGrade()->getMemberships()
+                        ->filter(fn(GradeMembership $membership) => $membership->getSection()?->getId() === $sectionResolver->getCurrentSection()?->getId())
+                        ->map(fn(GradeMembership $membership) => $membership->getStudent())
+                        ->toArray();
+
+                    $result = $this->repository->findByStudentsPaginated($students, $page, $limit);
+                } else {
+                    $result = $this->repository->findAllPaginated($page, $limit);
+                }
+            }
         }
 
         $items = $result->result;

@@ -57,7 +57,8 @@ class ReturnItemTypeAdminController extends AbstractController {
         }
 
         return $this->render('admin/return_item_types/edit.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'type' => $type
         ]);
     }
 

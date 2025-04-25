@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Feature\Feature;
 use App\Feature\FeatureManager;
 use App\Repository\ChatMessageRepositoryInterface;
+use App\Repository\ReturnItemRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\WikiArticleRepositoryInterface;
 use App\Section\SectionResolverInterface;
@@ -36,6 +37,7 @@ class Builder {
                                 private readonly SectionResolverInterface $sectionResolver,
                                 private readonly BookSettings $bookSettings,
                                 private readonly ChatMessageRepositoryInterface $chatMessageRepository,
+                                private readonly ReturnItemRepositoryInterface $returnItemRepository,
                                 private readonly FeatureManager $featureManager)
     {
     }
@@ -100,10 +102,17 @@ class Builder {
         }
 
         if($this->featureManager->isFeatureEnabled(Feature::ReturnItem)) {
+            $count = 0;
+
+            if($user->isStudentOrParent()) {
+                $count = $this->returnItemRepository->countNonReturnedForStudents($user->getStudents()->toArray());
+            }
+
             $menu->addChild('return_items.label', [
                 'route' => 'return_items'
             ])
-                ->setExtra('icon', 'fa-solid fa-repeat');
+                ->setExtra('icon', 'fa-solid fa-repeat')
+                ->setextra('count', $count);
         }
 
         if($this->featureManager->isFeatureEnabled(Feature::Book) && $this->authorizationChecker->isGranted('ROLE_BOOK_VIEWER')) {

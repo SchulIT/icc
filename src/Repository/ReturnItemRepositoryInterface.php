@@ -24,6 +24,12 @@ interface ReturnItemRepositoryInterface {
 
     public function countByType(ReturnItemType $type): int;
 
+    /**
+     * @param Student[] $students
+     * @return int
+     */
+    public function countNonReturnedForStudents(array $students): int;
+
     public function persist(ReturnItem $returnItem): void;
 
     public function remove(ReturnItem $returnItem): void;

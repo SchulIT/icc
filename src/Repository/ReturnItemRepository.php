@@ -99,4 +99,19 @@ class ReturnItemRepository extends AbstractRepository implements ReturnItemRepos
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    #[Override]
+    public function countNonReturnedForStudents(array $students): int {
+        $studentIds = array_map(fn(Student $student) => $student->getId(), $students);
+
+        return $this->em->createQueryBuilder()
+            ->select('COUNT(i)')
+            ->from(ReturnItem::class, 'i')
+            ->leftJoin('i.student', 's')
+            ->where('s.id IN (:studentIds)')
+            ->andWhere('i.isReturned = false')
+            ->setParameter('studentIds', $studentIds)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

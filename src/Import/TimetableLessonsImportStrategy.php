@@ -22,6 +22,7 @@ use App\Section\SectionResolverInterface;
 use App\Utils\ArrayUtils;
 use App\Utils\CollectionUtils;
 use Psr\Log\LoggerInterface;
+use SchulIT\CommonBundle\Helper\DateHelper;
 
 class TimetableLessonsImportStrategy implements ReplaceImportStrategyInterface, InitializeStrategyInterface, PostActionStrategyInterface {
 
@@ -34,7 +35,7 @@ class TimetableLessonsImportStrategy implements ReplaceImportStrategyInterface, 
     public function __construct(private readonly TimetableLessonRepositoryInterface $timetableRepository, private readonly TuitionRepositoryInterface $tuitionRepository,
                                 private readonly RoomRepositoryInterface $roomRepository, private readonly TeacherRepositoryInterface $teacherRepository,
                                 private readonly SubjectRepositoryInterface $subjectRepository, private readonly GradeRepositoryInterface $gradeRepository,
-                                private readonly SectionResolverInterface $sectionResolver, private readonly LoggerInterface $logger)
+                                private readonly SectionResolverInterface $sectionResolver, private readonly LoggerInterface $logger, private readonly DateHelper $dateHelper)
     {
     }
 
@@ -94,6 +95,10 @@ class TimetableLessonsImportStrategy implements ReplaceImportStrategyInterface, 
 
         if($data->getDate() < $requestData->getStartDate() || $data->getDate() > $requestData->getEndDate()) {
             return;
+        }
+
+        if($data->getDate()->setTime(0, 0, 0) <= $this->dateHelper->getToday()) {
+            return; // ignore all timetable entries from the past
         }
 
         $section = $this->sectionResolver->getSectionForDate($data->getDate());

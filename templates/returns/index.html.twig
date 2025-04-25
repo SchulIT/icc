@@ -10,9 +10,11 @@
 {% endblock %}
 
 {% block content %}
+    {% set sidebarEnabled = studentFilter.studentGradeGroups|length > 0 or gradeFilter.grades|length > 0 %}
+
     <div class="container-fluid px-0">
         <div class="row">
-            <div class="col-md-9">
+            <div class="{% if sidebarEnabled %}col-md-9{% else %}col-md-12{% endif %}">
                 {% if items|length == 0 %}
                     <div class="bs-callout bs-callout-info">
                         <p>{{ 'return_items.empty'|trans }}</p>
@@ -60,6 +62,7 @@
                 {% endif %}
             </div>
 
+            {% if sidebarEnabled %}
             <div class="col-md-3 sticky-sidebar">
                 {% if is_granted('new-return-item')%}
                     <div class="card">
@@ -93,6 +96,7 @@
                     </a>
                 </div>
             </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

@@ -21,6 +21,7 @@ class ReturnItemType extends AbstractType {
                 'label' => 'label.type',
                 'class' => ReturnItemTypeEntity::class,
                 'choice_label' => fn(ReturnItemTypeEntity $type) => $type->getDisplayName(),
+                'expanded' => true
             ])
             ->addEventListener(FormEvents::POST_SET_DATA, function(FormEvent $event) {
                 $form = $event->getForm();

@@ -2733,10 +2733,10 @@ notifications:
         help: Verschickt eine Benachrichtigung (je nach Einstellung an Klassenleitung und/oder an Eltern), wenn ein Kind ohne Abwesenheitsmeldung als fehlend eingetragen wurde.
     return_item_created:
         label: Rückgabe erstellt
-        help: Verschickt eine Benachrichtigung (an alle betroffenen Personen, d.h. Eltern, volljährige Kinder und Klassenleitung), wenn eine neue Rückgabe erstellt wurde.
+        help: Verschickt eine Benachrichtigung (an alle betroffenen Personen, d.h. Eltern, Kinder und Klassenleitung), wenn eine neue Rückgabe erstellt wurde.
     return_item_returned:
         label: Rückgabe abgeschlossen
-        help: Verschickt eine Benachrichtigung (an alle betroffenen Personen, d.h. Eltern, volljährige Kinder und Klassenleitung), wenn eine Rückgabe abgeschlossen wurde.
+        help: Verschickt eine Benachrichtigung (an alle betroffenen Personen, d.h. Eltern, Kinder und Klassenleitung), wenn eine Rückgabe abgeschlossen wurde.
 
 return_items:
     label: Rückgaben

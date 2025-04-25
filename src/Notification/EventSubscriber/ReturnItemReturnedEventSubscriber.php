@@ -26,7 +26,7 @@ readonly class ReturnItemReturnedEventSubscriber implements NotifierInterface, E
         /** @var User[] $relatedUsers */
         $relatedUsers = array_merge(
             $this->relatedUsersResolver->resolveParents($event->getReturnItem()->getStudent()),
-            $this->relatedUsersResolver->resolveFullAgedStudents($event->getReturnItem()->getStudent(), $event->getReturnItem()->getCreatedAt()),
+            $this->relatedUsersResolver->resolveStudents($event->getReturnItem()->getStudent()),
             $this->relatedUsersResolver->resolveGradeTeachers($event->getReturnItem()->getStudent(), $event->getReturnItem()->getCreatedAt())
         );
 

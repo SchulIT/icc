@@ -50,6 +50,14 @@ readonly class RelatedUsersResolver {
         return $this->userRepository->findAllParentsByStudents([$student]);
     }
 
+    public function resolveStudents(Student|null $student): array {
+        if($student === null) {
+            return [ ];
+        }
+
+        return $this->userRepository->findAllStudentsByStudents([$student]);
+    }
+
     public function resolveFullAgedStudents(Student|null $student, DateTime $referenceDate): array {
         if($student === null) {
             return [ ];

@@ -126,7 +126,7 @@ class TimetableHelper {
      * Computes the model for double lessons such that the model knows which lessons are collapsed. (Does NOT compute
      * which lessons are considered double lessons -> this information must be set at import)
      */
-    private function collapseTimetable(Timetable $timetable) {
+    private function collapseTimetable(Timetable $timetable): void {
         foreach($timetable->getWeeks() as $week) {
             foreach($week->days as $day) {
                 for($lessonNumber = 1; $lessonNumber <= count($day->getLessonsContainers()); $lessonNumber++) {
@@ -137,7 +137,7 @@ class TimetableHelper {
                     }
 
                     if(count($container->getLessons()) === 0) {
-                        continue; // no lessons -> continue (important so we can use $durations[0] afterwards)
+                        continue; // no lessons -> continue (important so we can use $durations[0] afterward)
                     }
 
                     $durations = [ ];
@@ -145,13 +145,13 @@ class TimetableHelper {
                         $durations[] = $lesson->getLessonEnd() - $lesson->getLessonStart() + 1;
                     }
 
-                    if(min($durations) !== max($durations) && $durations[0] > 1) { // dirty condition for "not all numbers are same"
+                    if(min($durations) !== max($durations) && $durations[0] > 1) { // dirty condition for "not all numbers are the same"
                         continue;
                     }
 
                     $duration = $durations[0];
 
-                    // now check if following lessons have same lessons (they might have additional lessons) or have
+                    // now check if the following lessons have the same lessons (they might have additional lessons) or have
                     // supervisions before them (also, then do not collapse)
 
                     $lessonIds = array_map(fn(TimetableLessonEntity $lesson) => $lesson->getId(), $container->getLessons());
@@ -159,7 +159,7 @@ class TimetableHelper {
                     for($nextLessonNumber = $lessonNumber + 1; $nextLessonNumber <= $lessonNumber + $duration - 1; $nextLessonNumber++) {
                         $nextLessonContainer = $day->getTimetableLessonsContainer($nextLessonNumber);
 
-                        if($nextLessonContainer->hasSupervisionBefore()) {
+                        if($nextLessonContainer->hasSupervisionBefore() || $week->hasSupervisionBefore($nextLessonNumber)) {
                             continue 2; // continue to outer loop as collapsing is not possible
                         }
 

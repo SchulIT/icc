@@ -9,6 +9,14 @@ class DashboardSettings extends AbstractSettings {
         parent::__construct($settingsManager);
     }
 
+    public function getRemovableSubjectsAsAbbreviation(): array {
+        return $this->getValue('dashboard.subjects.removable', [ ]);
+    }
+
+    public function setRemovableSubjectsAsAbbreviation(array $abbreviations): void {
+        $this->setValue('dashboard.subjects.removable', $abbreviations);
+    }
+
     public function getRemovableSubstitutionTypes(): array {
         return $this->getValue('dashboard.substitutions.removable_types', [ ]);
     }

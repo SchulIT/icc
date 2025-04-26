@@ -21,6 +21,26 @@
 
         <div class="card-body">
             <div class="mb-3 row">
+                {{ form_label(form.removable_subjects) }}
+                <div class="col-md-10">
+                    <div class="removable_subjects" data-collection="removable_subjects" data-prototype="{{ form_widget(form.removable_subjects.vars.prototype)|e('html_attr') }}">
+                        {% for subject in form.removable_subjects %}
+                            {{ form_widget(subject) }}
+                        {% endfor %}
+                    </div>
+
+                    <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="removable_subjects">
+                        <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+                    </button>
+
+                    {{ form_errors(form.removable_subjects) }}
+                    {{ form_help(form.removable_subjects) }}
+                </div>
+
+                {% do form.removable_subjects.setRendered %}
+            </div>
+
+            <div class="mb-3 row">
                 {{ form_label(form.removable_types) }}
                 <div class="col-md-10">
                     <div class="removable_types" data-collection="removable_types" data-prototype="{{ form_widget(form.removable_types.vars.prototype)|e('html_attr') }}">

@@ -23,6 +23,18 @@ class DashboardSettingsController extends AbstractController {
     public function dashboard(Request $request, DashboardSettings $dashboardSettings): Response {
         $builder = $this->createFormBuilder();
         $builder
+            ->add('removable_subjects', CollectionType::class, [
+                'label' => 'admin.settings.dashboard.removable_subjects.label',
+                'help' => 'admin.settings.dashboard.removable_subjects.help',
+                'data' => $dashboardSettings->getRemovableSubjectsAsAbbreviation(),
+                'required' => false,
+                'entry_type' => TextCollectionEntryType::class,
+                'entry_options' => [
+                    'constraints' => new NotBlank()
+                ],
+                'allow_add' => true,
+                'allow_delete' => true
+            ])
             ->add('removable_types', CollectionType::class, [
                 'label' => 'admin.settings.dashboard.removable_substitutions.label',
                 'help' => 'admin.settings.dashboard.removable_substitutions.help',
@@ -101,6 +113,9 @@ class DashboardSettingsController extends AbstractController {
 
         if($form->isSubmitted() && $form->isValid()) {
             $map = [
+                'removable_subjects' => function($subjects) use ($dashboardSettings) {
+                    $dashboardSettings->setRemovableSubjectsAsAbbreviation($subjects);
+                },
                 'removable_types' => function($types) use ($dashboardSettings) {
                     $dashboardSettings->setRemovableSubstitutionTypes($types);
                 },

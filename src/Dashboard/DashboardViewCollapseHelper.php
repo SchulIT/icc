@@ -150,7 +150,7 @@ class DashboardViewCollapseHelper {
             }
         }
 
-        // Further classication
+        // Further classification
         /** @var SubstitutionViewItem[] $additionalSubstitutions */
         $additionalSubstitutions = array_values(array_filter($substitutions, fn(SubstitutionViewItem $viewItem) => $this->isAdditionalSubstitution($viewItem, $teacherOrStudent)));
         /** @var SubstitutionViewItem[] $removableSubstitutions */
@@ -204,7 +204,7 @@ class DashboardViewCollapseHelper {
             $collision = false;
 
             foreach($lesson->getItems() as $item) {
-                if(!($item instanceof SubstitutionViewItem) || $this->isDefault($item, $teacherOrStudent)) {
+                if((!$item instanceof TimetableLessonViewItem || !$this->isRemovableTimetableEntry($item)) &&(!($item instanceof SubstitutionViewItem) || $this->isDefault($item, $teacherOrStudent))) {
                     $collision = true;
                 }
             }
@@ -233,7 +233,7 @@ class DashboardViewCollapseHelper {
             $lesson->addItem(new TimetableLessonViewItem(null, [ ], [ ],  []));
         }
 
-        // ADD ALL ITEMS THAT HAVE NOT BEEN TAKE CONCIDERATION
+        // ADD ALL ITEMS THAT HAVE NOT BEEN TAKING CONSIDERATION
         $consideredTypes = [
             ExamViewItem::class,
             SubstitutionViewItem::class,
@@ -506,5 +506,15 @@ class DashboardViewCollapseHelper {
 
     private function isDefault(SubstitutionViewItem $viewItem, Teacher|Student|null $teacherOrStudent): bool {
         return $this->isRemovableSubstitution($viewItem, $teacherOrStudent) === false && $this->isAdditionalSubstitution($viewItem, $teacherOrStudent) === false;
+    }
+
+    private function isRemovableTimetableEntry(TimetableLessonViewItem $viewItem): bool {
+        $abbreviation = $viewItem->getLesson()?->getSubject()?->getAbbreviation() ?? $viewItem->getLesson()->getSubject();
+
+        if(empty($abbreviation)) {
+            return false;
+        }
+
+        return in_array($abbreviation, $this->settings->getRemovableSubjectsAsAbbreviation());
     }
 }

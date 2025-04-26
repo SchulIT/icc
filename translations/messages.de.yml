@@ -1033,6 +1033,9 @@ admin:
 
         dashboard:
             label: Dashboard
+            removable_subjects:
+                label: Fächer mit geringer Priorität
+                help: Liste von Fächern, welche bei Vertretungen oder Klausuraufsichten automatisch ausgeblendet werden. Hier sollten die Fächerabkürzungen eingetragen werden, die für Bereitschaften oder Vertretungsreserve stehen.
             removable_substitutions:
                 label: Vertretungsarten mit geringer Priorität
                 help: Liste von Vertretungsarten, welche bei mehreren Vertretungen automatisch ausgeblendet werden.

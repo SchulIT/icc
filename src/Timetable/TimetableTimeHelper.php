@@ -14,7 +14,7 @@ class TimetableTimeHelper {
     {
     }
 
-    private function getDateTime(DateTime $date, ?string $time) {
+    public function getDateTime(DateTime $date, ?string $time): DateTime {
         if(empty($time) || !str_contains($time, ':')) {
             return $date;
         }

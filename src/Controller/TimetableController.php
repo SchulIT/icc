@@ -156,7 +156,7 @@ class TimetableController extends AbstractControllerWithMessages {
         }
 
         $supervisionLabels = [ ];
-        for($i = 1; $i <= $this->timetableSettings->getMaxLessons(); $i++) {
+        for($i = 1; $i <= $this->timetableSettings->getMaxLessons() + 1; $i++) {
             $supervisionLabels[$i] = $this->timetableSettings->getDescriptionBeforeLesson($i);
         }
 
@@ -284,7 +284,7 @@ class TimetableController extends AbstractControllerWithMessages {
         }
 
         $supervisionLabels = [ ];
-        for($i = 1; $i <= $this->timetableSettings->getMaxLessons(); $i++) {
+        for($i = 1; $i <= $this->timetableSettings->getMaxLessons() + 1; $i++) {
             $supervisionLabels[$i] = $this->timetableSettings->getDescriptionBeforeLesson($i);
         }
 

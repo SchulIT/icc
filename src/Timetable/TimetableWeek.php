@@ -82,4 +82,14 @@ class TimetableWeek {
 
         return $dateTime;
     }
+
+    public function hasSupervisionAfterMaxLesson(): bool {
+        foreach($this->days as $day) {
+            if($day->getTimetableLessonsContainer($this->getMaxLessons() + 1)->hasSupervisionBefore()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

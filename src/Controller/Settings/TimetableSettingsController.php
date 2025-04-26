@@ -128,7 +128,7 @@ class TimetableSettingsController extends AbstractController {
                     'label' => $translator->trans('admin.settings.timetable.lesson.start', [ '%lesson%' => $lesson ]),
                     'data' => $timetableSettings->getStart($lesson),
                     'widget' => 'single_text',
-                    'required' => false,
+                    'required' => true,
                     'input' => 'string',
                     'input_format' => 'H:i'
                 ])
@@ -136,7 +136,7 @@ class TimetableSettingsController extends AbstractController {
                     'label' => $translator->trans('admin.settings.timetable.lesson.end', [ '%lesson%' => $lesson ]),
                     'data' => $timetableSettings->getEnd($lesson),
                     'widget' => 'single_text',
-                    'required' => false,
+                    'required' => true,
                     'input' => 'string',
                     'input_format' => 'H:i'
                 ]);
@@ -182,6 +182,23 @@ class TimetableSettingsController extends AbstractController {
                 ]);
         }
 
+        $builder
+            ->add('last_supervision_description', TextType::class, [
+                'label' => 'admin.settings.timetable.supervision.last.label',
+                'help' => 'admin.settings.timetable.supervision.last.help',
+                'data' => $timetableSettings->getDescriptionAfterLastLesson(),
+                'required' => false
+            ])
+            ->add('last_supervision_end', Timetype::class, [
+                'label' => 'admin.settings.timetable.supervision.last.end.label',
+                'help' => 'admin.settings.timetable.supervision.last.end.help',
+                'data' => $timetableSettings->getEndOfSupervisionAfterLastLesson(),
+                'widget' => 'single_text',
+                'required' => true,
+                'input' => 'string',
+                'input_format' => 'H:i'
+            ]);
+
         $form = $builder->getForm();
         $form->handleRequest($request);
 
@@ -193,6 +210,8 @@ class TimetableSettingsController extends AbstractController {
             $timetableSettings->setStart(0, $form->get('supervision_begin')->getData());
             $timetableSettings->setGradeIdsWithCourseNames($form->get('grades_course_names')->getData());
             $timetableSettings->setGradeIdsWithMembershipTypes($form->get('grades_membership_types')->getData());
+            $timetableSettings->setDescriptionAfterLastLesson($form->get('last_supervision_description')->getData());
+            $timetableSettings->setEndOfSupervisionAfterLastLesson($form->get('last_supervision_end')->getData());
 
             foreach($userTypes as $name => $userType) {
                 $timetableSettings->setStartDate($userType, $form->get(sprintf('start_%s', $name))->getData());

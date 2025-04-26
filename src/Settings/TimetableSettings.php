@@ -186,5 +186,19 @@ class TimetableSettings extends AbstractSettings {
         $this->setValue(sprintf(static::TimetableEndKey, $userType->value), $date);
     }
 
+    public function getDescriptionAfterLastLesson(): ?string {
+        return $this->getDescriptionBeforeLesson($this->getMaxLessons() + 1);
+    }
 
+    public function setDescriptionAfterLastLesson(?string $description): void {
+        $this->setDescriptionBeforeLesson($this->getMaxLessons() + 1, $description);
+    }
+
+    public function getEndOfSupervisionAfterLastLesson(): ?string {
+        return $this->getEnd($this->getMaxLessons() + 1);
+    }
+
+    public function setEndOfSupervisionAfterLastLesson(?string $end): void {
+        $this->setEnd($this->getMaxLessons() + 1, $end);
+    }
 }

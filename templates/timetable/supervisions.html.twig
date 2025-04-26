@@ -191,6 +191,28 @@
                                             </tr>
                                     {% endif %}
                                 {% endfor %}
+
+                                {% if week.hasSupervisionAfterMaxLesson %}
+                                    {% set i = week.maxLessons + 1 %}
+                                    {% if week.hasSupervisionBefore(i) and supervisionLabels[i] is defined and supervisionLabels[i] is not empty %}
+                                        <tr>
+                                            <td class="align-middle">
+                                                {{ supervisionLabels[i] }}
+                                            </td>
+
+                                            {% for day in week.days %}
+                                                {% set lessons = day.getTimetableLessonsContainer(i) %}
+                                                {% set background = supervisionColor %}
+
+                                                <td class="align-middle {% if day.isCurrentDay or day.isUpcomingDay %}current{% endif %} {% if day.isFree %}text-secondary{% endif %}" {% if background != null and lessons.beforeSupervisions|length > 0 %}style="background: {{ background }}; color: {{ foreground(background) }}"{% endif %}>
+                                                    {% for supervision in lessons.beforeSupervisions %}
+                                                        {% include 'timetable/supervision.html.twig' %}
+                                                    {% endfor %}
+                                                </td>
+                                            {% endfor %}
+                                        </tr>
+                                    {% endif %}
+                                {% endif %}
                                 </tbody>
                             </table>
                         </div>

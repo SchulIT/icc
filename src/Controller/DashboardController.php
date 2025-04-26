@@ -131,6 +131,9 @@ class DashboardController extends AbstractController {
             $endTimes[$lesson] = $showTimes ? $timetableSettings->getEnd($lesson) : null;
         }
 
+        $startTimes[$timetableSettings->getMaxLessons() + 1] = $showTimes ? $timetableSettings->getEndOfSupervisionAfterLastLesson() : null;
+        $endTimes[$timetableSettings->getMaxLessons() + 1] = $showTimes ? $timetableSettings->getEndOfSupervisionAfterLastLesson() : null;
+
         if($view !== null) {
             $teacherOrStudent = $studentFilterView->getCurrentStudent() ?? $teacherFilterView->getCurrentTeacher();
             $dashboardViewMergeHelper->collapseView($view, $teacherOrStudent);

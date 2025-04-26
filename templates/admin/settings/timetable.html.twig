@@ -69,6 +69,9 @@
                     {{ form_row(form['supervision_label_before_' ~ i]) }}
                 {% endif %}
             {% endfor %}
+
+            {{ form_row(form.last_supervision_description) }}
+            {{ form_row(form.last_supervision_end) }}
         </div>
     </div>
 {% endblock %}

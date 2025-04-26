@@ -1010,6 +1010,12 @@ admin:
                     help: "Gibt den Text in der Stundenspalte an, der vor der %lesson%. Stunde angezeigt wird (bspw. 1. große Pause, Mittagspause, ...)."
                 start: Aufsichtsbeginn vor 1. Stunde
                 color: Farbe
+                last:
+                    label: Text nach letzter Stunde
+                    help: Gibt den Text der Stundenspalte an, der nach der letzten Stunde angezeigt wird.
+                    end:
+                        label: Ende der Aufsicht nach der letzten Stunde
+                        help: Uhrzeit, an der die Aufsicht nach der letzten Stunde beendet ist.
             lesson:
                 legend: Unterrichtsstuden
                 start: "Beginn %lesson%. Stunde"
@@ -1023,6 +1029,7 @@ admin:
                 help: Bei Stundenplaneinträgen von Kursen in diesen Klassen wird die Kursart eines Lernenden angezeigt.
             ranges:
                 legend: Zeitraum für Stundenplan
+
 
         dashboard:
             label: Dashboard

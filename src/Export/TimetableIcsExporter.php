@@ -157,8 +157,13 @@ class TimetableIcsExporter {
         $event->setAllDay(false);
         $event->setSummary($this->timetableSettings->getSupervisionLabel());
 
-        $event->setStart($this->timetableTimeHelper->getLessonStartDateTime($supervision->getDate(), $supervision->getLesson(), $supervision->isBefore()));
-        $event->setEnd($this->timetableTimeHelper->getLessonEndDateTime($supervision->getDate(), $supervision->getLesson(), $supervision->isBefore()));
+        if($supervision->getLesson() > $this->timetableSettings->getMaxLessons()) {
+            $event->setStart($this->timetableTimeHelper->getLessonEndDateTime($supervision->getDate(), $this->timetableSettings->getMaxLessons()));
+            $event->setEnd($this->timetableTimeHelper->getDateTime($supervision->getDate(), $this->timetableSettings->getEndOfSupervisionAfterLastLesson()));
+        } else {
+            $event->setStart($this->timetableTimeHelper->getLessonStartDateTime($supervision->getDate(), $supervision->getLesson(), $supervision->isBefore()));
+            $event->setEnd($this->timetableTimeHelper->getLessonEndDateTime($supervision->getDate(), $supervision->getLesson(), $supervision->isBefore()));
+        }
 
         $teacher = $supervision->getTeacher();
         $organizer = new Organizer(new Formatter());

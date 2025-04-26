@@ -361,7 +361,7 @@ class DashboardViewHelper {
                 $hasLessonEntry = false;
             }
 
-            if($hasLessonEntry === false) {
+            if($hasLessonEntry === false && $lessonNumber <= $this->timetableSettings->getMaxLessons()) {
                 $view->addItem($lessonNumber, new TimetableLessonViewItem(null, [], [], []));
             }
         }

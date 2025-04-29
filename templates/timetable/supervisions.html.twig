@@ -207,6 +207,10 @@
                                                 <td class="align-middle {% if day.isCurrentDay or day.isUpcomingDay %}current{% endif %} {% if day.isFree %}text-secondary{% endif %}" {% if background != null and lessons.beforeSupervisions|length > 0 %}style="background: {{ background }}; color: {{ foreground(background) }}"{% endif %}>
                                                     {% for supervision in lessons.beforeSupervisions %}
                                                         {% include 'timetable/supervision.html.twig' %}
+                                                        <br>
+                                                        {{ supervision.teacher|teacher }}
+
+                                                        {% if not loop.last %}<hr>{% endif %}
                                                     {% endfor %}
                                                 </td>
                                             {% endfor %}

@@ -70,19 +70,7 @@ class UserCrudController extends AbstractCrudController
                 ->setFormTypeOption('required', false),
             AssociationField::new('students')
                 ->hideOnIndex()
-                ->setLabel('Lernende'),
-            Field::new('isSubstitutionNotificationsEnabled')
-                ->setLabel('Benachrichtigen bei neuem Vertretungsplan')
-                ->hideOnIndex(),
-            Field::new('isExamNotificationsEnabled')
-                ->setLabel('Benachrichtigen bei neuem Klausurplan')
-                ->hideOnIndex(),
-            Field::new('isMessageNotificationsEnabled')
-                ->setLabel('Benachrichtigen bei neuen Mitteilungen')
-                ->hideOnIndex(),
-            Field::new('isEmailNotificationsEnabled')
-                ->setLabel('Per E-Mail benachrichtigen')
-                ->hideOnIndex()
+                ->setLabel('Lernende')
         ];
     }
 }

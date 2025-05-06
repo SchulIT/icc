@@ -252,17 +252,6 @@ class AdminDataMenuBuilder extends AbstractMenuBuilder {
             }
         }
 
-        if($this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN')) {
-            $root->addChild('admin.headers.imported', [])
-                ->setExtra('isHeader', true);
-
-            $root->addChild('admin.ea.label', [
-                'uri' => '/admin/ea'
-            ])
-                ->setLinkAttribute('target', '_blank')
-                ->setExtra('icon', 'fas fa-tools');
-        }
-
         return $root;
     }
 }

@@ -57,6 +57,12 @@ class AdminMenuBuilder extends AbstractMenuBuilder {
         }
 
         if($this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN')) {
+            $menu->addChild('admin.ea.label', [
+                'uri' => '/admin/ea'
+            ])
+                ->setLinkAttribute('target', '_blank')
+                ->setExtra('icon', 'fas fa-tools');
+
             $menu->addChild('cron.label', [
                 'route' => 'admin_cronjobs'
             ])

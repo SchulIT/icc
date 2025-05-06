@@ -12,7 +12,7 @@ use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * Checks whether the user meets certain critiera or sends
+ * Checks whether the user meets certain criteria or sends
  * an error page:
  *
  * - students must have exactly one associated student

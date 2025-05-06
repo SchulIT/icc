@@ -5,19 +5,18 @@ namespace App\Security\User;
 use App\Entity\User;
 use App\Repository\UserRepositoryInterface;
 use LightSaml\SpBundle\Security\Http\Authenticator\SamlToken;
-use SchulIT\CommonBundle\Security\AuthenticationEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
+use Symfony\Component\Security\Core\Event\AuthenticationSuccessEvent;
 
-class UserUpdater implements EventSubscriberInterface {
+readonly class UserUpdater implements EventSubscriberInterface {
 
     public function __construct(private UserMapper $userMapper, private UserRepositoryInterface $userRepository)
     {
     }
 
-    public function onLoginSuccess(LoginSuccessEvent $event) {
-        $user = $event->getUser();
-        $token = $event->getAuthenticatedToken();
+    public function onAuthenticationSuccess(AuthenticationSuccessEvent $event): void {
+        $token = $event->getAuthenticationToken();
+        $user = $token->getUser();
 
         if(!$user instanceof User || !$token instanceof SamlToken) {
             return;
@@ -32,7 +31,7 @@ class UserUpdater implements EventSubscriberInterface {
      */
     public static function getSubscribedEvents(): array {
         return [
-            LoginSuccessEvent::class => 'onLoginSuccess'
+            AuthenticationSuccessEvent::class => ['onAuthenticationSuccess', 512], // must be higher than the priority of the UserCheckerListener
         ];
     }
 }

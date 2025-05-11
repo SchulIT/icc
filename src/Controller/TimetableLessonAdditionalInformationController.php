@@ -11,6 +11,7 @@ use App\Security\Voter\TimetableLessonAdditionalInformationVoter;
 use DateTime;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -67,7 +68,7 @@ class TimetableLessonAdditionalInformationController extends AbstractController 
     }
 
     #[Route('/{uuid}/edit', name: 'edit_timetable_lesson_additional_information')]
-    public function edit(TimetableLessonAdditionalInformation $additionalInformation, Request $request): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] TimetableLessonAdditionalInformation $additionalInformation, Request $request): Response {
         $this->denyAccessUnlessGranted(TimetableLessonAdditionalInformationVoter::Edit, $additionalInformation);
 
         $form = $this->createForm(TimetableLessonAdditionInformationType::class, $additionalInformation);
@@ -88,7 +89,7 @@ class TimetableLessonAdditionalInformationController extends AbstractController 
     }
 
     #[Route('/{uuid}/remove', name: 'remove_timetable_lesson_additional_information')]
-    public function remove(TimetableLessonAdditionalInformation $additionalInformation, Request $request, TranslatorInterface $translator): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] TimetableLessonAdditionalInformation $additionalInformation, Request $request, TranslatorInterface $translator): Response {
         $this->denyAccessUnlessGranted(TimetableLessonAdditionalInformationVoter::Remove, $additionalInformation);
 
         $form = $this->createForm(ConfirmType::class, [], [

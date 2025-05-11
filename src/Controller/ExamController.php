@@ -42,6 +42,7 @@ use App\View\Filter\StudyGroupFilter;
 use App\View\Filter\TeacherFilter;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -193,7 +194,7 @@ class ExamController extends AbstractControllerWithMessages {
     }
 
     #[Route(path: '/{uuid}', name: 'show_exam', requirements: ['id' => '\d+'])]
-    public function show(Exam $exam, AbsenceResolver $absenceResolver, ExamRepositoryInterface $repository): Response {
+    public function show(#[MapEntity(mapping: ['uuid' => 'uuid'])] Exam $exam, AbsenceResolver $absenceResolver, ExamRepositoryInterface $repository): Response {
         $this->denyAccessUnlessGranted(ExamVoter::Show, $exam);
 
         /** @var Student[] $students */

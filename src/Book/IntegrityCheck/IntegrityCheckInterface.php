@@ -4,7 +4,9 @@ namespace App\Book\IntegrityCheck;
 
 use App\Entity\Student;
 use DateTime;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
+#[AutoconfigureTag('app.book.integrity_check')]
 interface IntegrityCheckInterface {
 
     /**

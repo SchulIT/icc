@@ -17,6 +17,7 @@ use App\Sorting\Sorter;
 use App\View\Filter\AppointmentCategoryFilter;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -98,7 +99,7 @@ class AppointmentAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/edit', name: 'edit_appointment')]
-    public function edit(Appointment $appointment, Request $request): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] Appointment $appointment, Request $request): Response {
         $this->denyAccessUnlessGranted(AppointmentVoter::Edit, $appointment);
 
         $form = $this->createForm(AppointmentType::class, $appointment);
@@ -118,7 +119,7 @@ class AppointmentAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/remove', name: 'remove_appointment')]
-    public function remove(Appointment $appointment, Request $request, TranslatorInterface $translator): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] Appointment $appointment, Request $request, TranslatorInterface $translator): Response {
         $this->denyAccessUnlessGranted(AppointmentVoter::Remove, $appointment);
 
         $form = $this->createForm(ConfirmType::class, null, [
@@ -143,7 +144,7 @@ class AppointmentAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/confirm', name: 'confirm_appointment')]
-    public function confirm(Appointment $appointment, Request $request, UserStringConverter $converter, EventDispatcherInterface $eventDispatcher): Response {
+    public function confirm(#[MapEntity(mapping: ['uuid' => 'uuid'])] Appointment $appointment, Request $request, UserStringConverter $converter, EventDispatcherInterface $eventDispatcher): Response {
         $this->denyAccessUnlessGranted('ROLE_APPOINTMENTS_ADMIN');
 
         if($appointment->getCreatedBy() === null) {

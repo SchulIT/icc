@@ -10,6 +10,7 @@ use App\Repository\ReturnItemRepositoryInterface;
 use App\Repository\ReturnItemTypeRepositoryInterface;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -46,7 +47,7 @@ class ReturnItemTypeAdminController extends AbstractController {
     }
 
     #[Route('/{uuid}/edit', name: 'edit_return_item_type')]
-    public function edit(Request $request, ReturnItemType $type): Response {
+    public function edit(Request $request, #[MapEntity(mapping: ['uuid' => 'uuid'])] ReturnItemType $type): Response {
         $form = $this->createForm(ReturnItemTypeType::class, $type);
         $form->handleRequest($request);
 
@@ -63,7 +64,7 @@ class ReturnItemTypeAdminController extends AbstractController {
     }
 
     #[Route('/{uuid}/remove', name: 'remove_return_item_type')]
-    public function remove(Request $request, ReturnItemType $type, ReturnItemRepositoryInterface $itemRepository): Response {
+    public function remove(Request $request, #[MapEntity(mapping: ['uuid' => 'uuid'])] ReturnItemType $type, ReturnItemRepositoryInterface $itemRepository): Response {
         $count = $itemRepository->countByType($type);
 
         if($count > 0) {

@@ -4,7 +4,9 @@ namespace App\Book\AttendanceSuggestion;
 
 use App\Entity\Tuition;
 use DateTime;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
+#[AutoconfigureTag('app.book.attendance_suggestion_strategy')]
 interface SuggestionStrategyInterface {
 
     /**

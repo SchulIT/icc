@@ -8,12 +8,13 @@ use App\Settings\BookSettings;
 use App\Sorting\IntegrityCheckViolationStrategy;
 use App\Sorting\Sorter;
 use DateTime;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 class IntegrityCheckRunner {
     /**
      * @param IntegrityCheckInterface[] $checks
      */
-    public function __construct(private readonly iterable $checks, private readonly BookSettings $bookSettings,
+    public function __construct(#[AutowireIterator('app.book.integrity_check')] private readonly iterable $checks, private readonly BookSettings $bookSettings,
                                 private readonly Sorter $sorter, private readonly IntegrityCheckPersister $persister) { }
 
     public function runChecks(Student $student, DateTime $start, DateTime $end): IntegrityCheckResult {

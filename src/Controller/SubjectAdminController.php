@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Subject;
 use App\Form\SubjectType;
@@ -49,7 +50,7 @@ class SubjectAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/edit', name: 'edit_subject')]
-    public function edit(Subject $subject, Request $request): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] Subject $subject, Request $request): Response {
         $form = $this->createForm(SubjectType::class, $subject);
         $form->handleRequest($request);
 
@@ -66,7 +67,7 @@ class SubjectAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/remove', name: 'remove_subject')]
-    public function remove(Subject $subject, Request $request, TuitionRepositoryInterface $tuitionRepository): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] Subject $subject, Request $request, TuitionRepositoryInterface $tuitionRepository): Response {
         $tuitions = $tuitionRepository->findAllBySubjects([$subject]);
 
         if(count($tuitions) > 0) {

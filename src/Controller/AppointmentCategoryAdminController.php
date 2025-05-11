@@ -9,6 +9,7 @@ use App\Sorting\AppointmentCategoryStrategy;
 use App\Sorting\Sorter;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -52,7 +53,7 @@ class AppointmentCategoryAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/edit', name: 'edit_appointment_category')]
-    public function edit(AppointmentCategory $category, Request $request): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] AppointmentCategory $category, Request $request): Response {
         $form = $this->createForm(AppointmentCategoryType::class, $category);
         $form->handleRequest($request);
 
@@ -70,7 +71,7 @@ class AppointmentCategoryAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/remove', name: 'remove_appointment_category')]
-    public function remove(AppointmentCategory $category, Request $request, TranslatorInterface $translator): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] AppointmentCategory $category, Request $request, TranslatorInterface $translator): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => $translator->trans('admin.appointments.categories.remove.confirm', [
                 '%name%' => $category->getName()

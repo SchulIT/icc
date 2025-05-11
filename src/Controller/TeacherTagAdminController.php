@@ -7,6 +7,7 @@ use App\Form\TeacherTagType;
 use App\Repository\TeacherTagRepositoryInterface;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -47,7 +48,7 @@ class TeacherTagAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/edit', name: 'edit_teacher_tag')]
-    public function edit(TeacherTag $tag, Request $request): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] TeacherTag $tag, Request $request): Response {
         $form = $this->createForm(TeacherTagType::class, $tag);
         $form->handleRequest($request);
 
@@ -65,7 +66,7 @@ class TeacherTagAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/remove', name: 'remove_teacher_tag')]
-    public function remove(TeacherTag $tag, Request $request, TranslatorInterface $translator): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] TeacherTag $tag, Request $request, TranslatorInterface $translator): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => $translator->trans('admin.teachers.tags.remove.confirm', [
                 '%name%' => $tag->getName()

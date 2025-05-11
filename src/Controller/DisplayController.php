@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TimetableWeekRepositoryInterface;
 use App\Tools\CountdownCalculator;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
 use App\Display\DisplayHelper;
 use App\Entity\Display;
@@ -26,7 +27,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class DisplayController extends AbstractController {
 
     #[Route(path: '/{uuid}', name: 'show_display')]
-    public function show(Display $display, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
+    public function show(#[MapEntity(mapping: ['uuid' => 'uuid'])] Display $display, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
                          TimetableWeekRepositoryInterface $timetableWeekRepository, AppointmentRepositoryInterface $appointmentRepository,
                          DateHelper $dateHelper, Grouper $grouper, Sorter $sorter, DisplayHelper $displayHelper,
                          ImportDateTypeRepositoryInterface  $importDateTymeRepository, TeacherRepositoryInterface $teacherRepository, CountdownCalculator $countdownCalculator): Response {

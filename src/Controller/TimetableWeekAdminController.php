@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\TimetableWeek;
 use App\Entity\Week;
@@ -43,7 +44,7 @@ class TimetableWeekAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/edit', name: 'admin_edit_timetable_week')]
-    public function edit(TimetableWeek $week, Request $request): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] TimetableWeek $week, Request $request): Response {
         $form = $this->createForm(TimetableWeekType::class, $week);
         $form->handleRequest($request);
 
@@ -89,7 +90,7 @@ class TimetableWeekAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/remove', name: 'admin_remove_timetable_week')]
-    public function remove(TimetableWeek $week, Request $request): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] TimetableWeek $week, Request $request): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'admin.timetable.weeks.remove.confirm',
             'message_parameters' => [

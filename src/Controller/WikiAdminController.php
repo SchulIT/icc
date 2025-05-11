@@ -16,6 +16,7 @@ use EasySlugger\SluggerInterface;
 use League\Flysystem\Filesystem;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -64,7 +65,7 @@ class WikiAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/edit', name: 'edit_wiki_article')]
-    public function edit(WikiArticle $article, Request $request): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] WikiArticle $article, Request $request): Response {
         $form = $this->createForm(WikiArticleType::class, $article);
         $form->handleRequest($request);
 
@@ -80,74 +81,8 @@ class WikiAdminController extends AbstractController {
         ]);
     }
 
-    #[Route(path: '/{uuid}/versions', name: 'wiki_article_versions')]
-    public function versions(WikiArticle $article, LogRepositoryInterface $logRepository, Sorter $sorter): Response {
-        $this->denyAccessUnlessGranted(WikiVoter::Edit, $article);
-
-        $logs = $logRepository->getLogEntries($article);
-        $sorter->sort($logs, LogEntryStrategy::class, SortDirection::Descending);
-
-        return $this->render('admin/wiki/versions.html.twig', [
-            'article' => $article,
-            'logs' => $logs,
-            'token_id' => self::RevertCsrfToken,
-            'token_param' => self::RevertCsrfTokenParam,
-            'version_param' => self::VersionParam
-        ]);
-    }
-
-    #[Route(path: '/{uuid}/versions/{version}', name: 'wiki_article_version')]
-    public function version(WikiArticle $article, LogRepositoryInterface $logRepository, int $version): Response {
-        $this->denyAccessUnlessGranted(WikiVoter::Edit, $article);
-
-        $logs = $logRepository->getLogEntries($article);
-        $entry = null;
-
-        foreach($logs as $logEntry) {
-            if($logEntry->getVersion() === $version) {
-                $entry = $logEntry;
-            }
-        }
-
-        if($entry === null) {
-            throw new NotFoundHttpException();
-        }
-
-        $logRepository->revert($article, $version);
-
-        return $this->render('admin/wiki/version.html.twig', [
-            'article' => $article,
-            'entry' => $entry,
-            'token_id' => self::RevertCsrfToken,
-            'token_param' => self::RevertCsrfTokenParam,
-            'version_param' => self::VersionParam
-        ]);
-    }
-
-    #[Route(path: '/{uuid}/restore', name: 'restore_wiki_article_version')]
-    public function restore(WikiArticle $article, Request $request, LogRepositoryInterface $logRepository, TranslatorInterface $translator): Response {
-        $this->denyAccessUnlessGranted(WikiVoter::Edit, $article);
-
-        if($this->isCsrfTokenValid(self::RevertCsrfToken, $request->request->get(self::RevertCsrfTokenParam)) !== true) {
-            $this->addFlash('error', $translator->trans('The CSRF token is invalid. Please try to resubmit the form.', [], 'validators'));
-
-            return $this->redirectToRoute('wiki_article_versions', [
-                'uuid' => $article->getUuid()
-            ]);
-        }
-
-        $logRepository->revert($article, $request->request->get(self::VersionParam));
-        $this->repository->persist($article);
-
-        $this->addFlash('success', 'versions.restore.success');
-
-        return $this->redirectToRoute('show_wiki_article', [
-            'uuid' => $article->getUuid()
-        ]);
-    }
-
     #[Route(path: '/{uuid}/remove', name: 'remove_wiki_article')]
-    public function remove(WikiArticle $article, Request $request, TranslatorInterface $translator): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] WikiArticle $article, Request $request, TranslatorInterface $translator): Response {
         $this->denyAccessUnlessGranted(WikiVoter::Remove, $article);
 
         $form = $this->createForm(ConfirmType::class, null, [

@@ -10,6 +10,7 @@ use App\Sorting\ResourceTypeStrategy;
 use App\Sorting\Sorter;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -54,7 +55,7 @@ class ResourceTypeAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/edit', name: 'edit_resource_type')]
-    public function edit(ResourceType $type, Request $request): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] ResourceType $type, Request $request): Response {
         $this->denyAccessUnlessGranted(ResourceTypeVoter::Edit, $type);
 
         $form = $this->createForm(ResourceTypeType::class, $type);
@@ -74,7 +75,7 @@ class ResourceTypeAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/remove', name: 'remove_resource_type')]
-    public function remove(ResourceType $type, Request $request): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] ResourceType $type, Request $request): Response {
         $this->denyAccessUnlessGranted(ResourceTypeVoter::Remove, $type);
 
         $form = $this->createForm(ConfirmType::class, null, [

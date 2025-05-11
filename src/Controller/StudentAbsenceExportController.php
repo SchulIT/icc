@@ -14,6 +14,7 @@ use DateTime;
 use Exception;
 use League\Flysystem\FilesystemOperator;
 use Mimey\MimeTypes;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -56,7 +57,7 @@ class StudentAbsenceExportController extends AbstractController {
     }
 
     #[Route('/{uuid}', name: 'export_student_absence')]
-    public function absence(StudentAbsence $absence, SectionResolverInterface $sectionResolver, Environment $twig): Response {
+    public function absence(#[MapEntity(mapping: ['uuid' => 'uuid'])] StudentAbsence $absence, SectionResolverInterface $sectionResolver, Environment $twig): Response {
         $section = $sectionResolver->getSectionForDate($absence->getFrom()->getDate());
 
         $json = [
@@ -93,7 +94,7 @@ class StudentAbsenceExportController extends AbstractController {
     }
 
     #[Route('/attachment/{uuid}', name: 'export_student_absence_attachment')]
-    public function attachment(StudentAbsenceAttachment $attachment, FilesystemOperator $studentAbsenceFilesystem, MimeTypes $mimeTypes, StudentAbsenceSettings $settings): Response {
+    public function attachment(#[MapEntity(mapping: ['uuid' => 'uuid'])] StudentAbsenceAttachment $attachment, FilesystemOperator $studentAbsenceFilesystem, MimeTypes $mimeTypes, StudentAbsenceSettings $settings): Response {
         if($studentAbsenceFilesystem->fileExists($attachment->getPath()) !== true) {
             throw new NotFoundHttpException();
         }

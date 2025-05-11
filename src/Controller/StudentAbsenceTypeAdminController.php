@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Feature\Feature;
 use App\Feature\IsFeatureEnabled;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\StudentAbsenceType;
 use App\Form\StudentAbsenceTypeType;
@@ -49,7 +50,7 @@ class StudentAbsenceTypeAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/edit', name: 'edit_absence_type')]
-    public function edit(StudentAbsenceType $absenceType, Request $request): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] StudentAbsenceType $absenceType, Request $request): Response {
         $form = $this->createForm(StudentAbsenceTypeType::class, $absenceType);
         $form->handleRequest($request);
 
@@ -66,7 +67,7 @@ class StudentAbsenceTypeAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/remove', name: 'remove_absence_type')]
-    public function remove(StudentAbsenceType $absenceType, Request $request): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] StudentAbsenceType $absenceType, Request $request): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'admin.absence_types.remove.confirm',
             'message_parameters' => [

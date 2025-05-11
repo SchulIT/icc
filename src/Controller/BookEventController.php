@@ -23,6 +23,7 @@ use App\Security\Voter\BookEventVoter;
 use JMS\Serializer\SerializerInterface;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -73,7 +74,7 @@ class BookEventController extends AbstractController {
     }
 
     #[Route('/{uuid}', name: 'show_or_edit_book_event_entry')]
-    public function showOrEdit(BookEvent $event, Request $request, SuggestionResolver $suggestionResolver, RemoveSuggestionResolver $removeSuggestionResolver, SectionResolverInterface $sectionResolver, SerializerInterface $serializer): Response {
+    public function showOrEdit(#[MapEntity(mapping: ['uuid' => 'uuid'])] BookEvent $event, Request $request, SuggestionResolver $suggestionResolver, RemoveSuggestionResolver $removeSuggestionResolver, SectionResolverInterface $sectionResolver, SerializerInterface $serializer): Response {
         $this->denyAccessUnlessGranted(BookEventVoter::Show, $event);
 
         $form = $this->createForm(BookEventType::class, $event);
@@ -117,7 +118,7 @@ class BookEventController extends AbstractController {
     }
 
     #[Route('/{uuid}/remove', name: 'remove_book_event_entry')]
-    public function remove(BookEvent $event, Request $request): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] BookEvent $event, Request $request): Response {
         $this->denyAccessUnlessGranted(BookEventVoter::Remove, $event);
 
         $form = $this->createForm(ConfirmType::class, null, [

@@ -87,10 +87,6 @@
                                 <a href="{{ path('edit_wiki_article', { uuid: article.uuid, ref: 'view' }) }}" class="list-group-item list-group-item-action">
                                     <i class="fa fa-edit"></i> {{ 'admin.wiki.edit.label'|trans }}
                                 </a>
-
-                                <a href="{{ path('wiki_article_versions', { uuid: article.uuid, ref: 'view' }) }}" class="list-group-item list-group-item-action">
-                                    <i class="fa fa-history"></i> {{ 'versions.label'|trans }}
-                                </a>
                             {% endif %}
                             {% if is_granted('remove', article) %}
                                 <a href="{{ path('remove_wiki_article', { uuid: article.uuid, ref: 'view' }) }}" class="list-group-item list-group-item-action list-group-item-danger">

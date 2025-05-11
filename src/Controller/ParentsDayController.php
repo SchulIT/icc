@@ -32,6 +32,7 @@ use App\View\Filter\TuitionFilter;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -99,7 +100,7 @@ class ParentsDayController extends AbstractController {
     }
 
     #[Route('/{uuid}/book', name: 'book_parents_day_appointment_overview')]
-    public function book(ParentsDay $parentsDay, TeacherFilter $teacherFilter, Request $request, SectionResolverInterface $sectionResolver, Sorter $sorter): Response {
+    public function book(#[MapEntity(mapping: ['uuid' => 'uuid'])] ParentsDay $parentsDay, TeacherFilter $teacherFilter, Request $request, SectionResolverInterface $sectionResolver, Sorter $sorter): Response {
         $this->denyAccessUnlessGranted(ParentsDayAppointmentVoter::BOOK_ANY, $parentsDay);
 
         /** @var User $user */
@@ -144,7 +145,7 @@ class ParentsDayController extends AbstractController {
     }
 
     #[Route('/{uuid}/add_appointments', name: 'add_parents_day_appointments')]
-    public function addAppointments(ParentsDay $parentsDay, Request $request, AppointmentsCreator $appointmentsCreator): Response {
+    public function addAppointments(#[MapEntity(mapping: ['uuid' => 'uuid'])] ParentsDay $parentsDay, Request $request, AppointmentsCreator $appointmentsCreator): Response {
         $this->denyAccessUnlessGranted(ParentsDayAppointmentVoter::CREATE);
 
         /** @var User $user */
@@ -169,7 +170,7 @@ class ParentsDayController extends AbstractController {
     }
 
     #[Route('/{uuid}/add_appointment', name: 'add_parents_day_appointment')]
-    public function addAppointment(ParentsDay $parentsDay, Request $request): Response {
+    public function addAppointment(#[MapEntity(mapping: ['uuid' => 'uuid'])] ParentsDay $parentsDay, Request $request): Response {
         $this->denyAccessUnlessGranted(ParentsDayAppointmentVoter::CREATE);
 
         /** @var User $user */
@@ -198,7 +199,7 @@ class ParentsDayController extends AbstractController {
     }
 
     #[Route('/a/{uuid}/book', name: 'book_parents_day_appointment')]
-    public function bookAppointment(ParentsDayAppointment $appointment, Request $request): Response {
+    public function bookAppointment(#[MapEntity(mapping: ['uuid' => 'uuid'])] ParentsDayAppointment $appointment, Request $request): Response {
         $this->denyAccessUnlessGranted(ParentsDayAppointmentVoter::BOOK, $appointment);
 
         $form = $this->createForm(BookParentsDayAppointmentType::class, $appointment, [
@@ -241,7 +242,7 @@ class ParentsDayController extends AbstractController {
     }
 
     #[Route('/a/{uuid}/unbook', name: 'unbook_parents_day_appointment')]
-    public function unbookAppointment(ParentsDayAppointment $appointment, Request $request): Response {
+    public function unbookAppointment(#[MapEntity(mapping: ['uuid' => 'uuid'])] ParentsDayAppointment $appointment, Request $request): Response {
         $this->denyAccessUnlessGranted(ParentsDayAppointmentVoter::UNBOOK, $appointment);
 
         $form = $this->createForm(ConfirmType::class, null, [
@@ -276,7 +277,7 @@ class ParentsDayController extends AbstractController {
     }
 
     #[Route('/a/{uuid}/assign', name: 'assign_parents_day_appointment')]
-    public function assignAppointment(ParentsDayAppointment $appointment, Request $request): Response {
+    public function assignAppointment(#[MapEntity(mapping: ['uuid' => 'uuid'])] ParentsDayAppointment $appointment, Request $request): Response {
         $this->denyAccessUnlessGranted(ParentsDayAppointmentVoter::EDIT, $appointment);
 
         $form = $this->createForm(ParentsDayAppointmentType::class, $appointment, [ 'only_students' => true]);
@@ -297,7 +298,7 @@ class ParentsDayController extends AbstractController {
     }
 
     #[Route('/a/{uuid}/unassign', name: 'unassign_parents_day_appointment')]
-    public function unassignAppointment(ParentsDayAppointment $appointment, Request $request): Response {
+    public function unassignAppointment(#[MapEntity(mapping: ['uuid' => 'uuid'])] ParentsDayAppointment $appointment, Request $request): Response {
         $this->denyAccessUnlessGranted(ParentsDayAppointmentVoter::EDIT, $appointment);
 
         $form = $this->createForm(ConfirmType::class, null, [
@@ -330,7 +331,7 @@ class ParentsDayController extends AbstractController {
     }
 
     #[Route('/a/{uuid}/block', name: 'block_parents_day_appointment')]
-    public function blockAppointment(ParentsDayAppointment $appointment, Request $request): Response {
+    public function blockAppointment(#[MapEntity(mapping: ['uuid' => 'uuid'])] ParentsDayAppointment $appointment, Request $request): Response {
         $this->denyAccessUnlessGranted(ParentsDayAppointmentVoter::EDIT, $appointment);
 
         /** @var User $user */
@@ -361,7 +362,7 @@ class ParentsDayController extends AbstractController {
     }
 
     #[Route('/a/{uuid}/unblock', name: 'unblock_parents_day_appointment')]
-    public function unblockAppointment(ParentsDayAppointment $appointment, Request $request): Response {
+    public function unblockAppointment(#[MapEntity(mapping: ['uuid' => 'uuid'])] ParentsDayAppointment $appointment, Request $request): Response {
         $this->denyAccessUnlessGranted(ParentsDayAppointmentVoter::EDIT, $appointment);
 
         $form = $this->createForm(ConfirmType::class, null, [
@@ -389,7 +390,7 @@ class ParentsDayController extends AbstractController {
     }
 
     #[Route('/a/{uuid}/edit', name: 'edit_parents_day_appointment')]
-    public function editAppointment(ParentsDayAppointment $appointment, Request $request): Response {
+    public function editAppointment(#[MapEntity(mapping: ['uuid' => 'uuid'])] ParentsDayAppointment $appointment, Request $request): Response {
         $this->denyAccessUnlessGranted(ParentsDayAppointmentVoter::EDIT, $appointment);
 
         $form = $this->createForm(ParentsDayAppointmentType::class, $appointment);
@@ -408,7 +409,7 @@ class ParentsDayController extends AbstractController {
     }
 
     #[Route('/a/{uuid}/remove', name: 'remove_parents_day_appointment')]
-    public function removeAppointment(ParentsDayAppointment $appointment, Request $request): Response {
+    public function removeAppointment(#[MapEntity(mapping: ['uuid' => 'uuid'])] ParentsDayAppointment $appointment, Request $request): Response {
         $this->denyAccessUnlessGranted(ParentsDayAppointmentVoter::REMOVE, $appointment);
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'parents_day.appointments.remove.confirm',
@@ -432,7 +433,7 @@ class ParentsDayController extends AbstractController {
     }
 
     #[Route('/a/{uuid}/cancel', name: 'cancel_parents_day_appointment')]
-    public function cancelAppointment(ParentsDayAppointment $appointment, Request $request): Response {
+    public function cancelAppointment(#[MapEntity(mapping: ['uuid' => 'uuid'])] ParentsDayAppointment $appointment, Request $request): Response {
         $this->denyAccessUnlessGranted(ParentsDayAppointmentVoter::CANCEL, $appointment);
 
         $form = $this->createForm(CancelParentsDayAppointmentType::class, null, [
@@ -461,7 +462,7 @@ class ParentsDayController extends AbstractController {
     }
 
     #[Route('/{uuid}/prepare', name: 'prepare_parents_day')]
-    public function prepare(ParentsDay $parentsDay, TuitionFilter $tuitionFilter, Request $request,
+    public function prepare(#[MapEntity(mapping: ['uuid' => 'uuid'])] ParentsDay $parentsDay, TuitionFilter $tuitionFilter, Request $request,
                             ParentsDayParentalInformationRepositoryInterface $repository,
                             SectionResolverInterface $sectionResolver, ParentsDayParentalInformationResolver $informationResolver): Response {
         $this->denyAccessUnlessGranted(ParentsDayAppointmentVoter::CREATE);
@@ -510,7 +511,7 @@ class ParentsDayController extends AbstractController {
     }
 
     #[Route('/{uuid}/cancel_all', name: 'cancel_all_parents_day_appointments')]
-    public function cancelAllAppointments(ParentsDay $parentsDay, TuitionFilter $tuitionFilter, Request $request, DateHelper $dateHelper): Response {
+    public function cancelAllAppointments(#[MapEntity(mapping: ['uuid' => 'uuid'])] ParentsDay $parentsDay, TuitionFilter $tuitionFilter, Request $request, DateHelper $dateHelper): Response {
         $this->denyAccessUnlessGranted(ParentsDayAppointmentVoter::CREATE);
 
         if($parentsDay->getBookingAllowedUntil() >= $dateHelper->getToday()) {

@@ -10,6 +10,7 @@ use App\Sorting\Sorter;
 use App\Sorting\TeacherStrategy;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -53,7 +54,7 @@ class TeacherAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/edit', name: 'edit_teacher')]
-    public function edit(Teacher $teacher, Request $request): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] Teacher $teacher, Request $request): Response {
         $form = $this->createForm(TeacherType::class, $teacher);
         $form->handleRequest($request);
 
@@ -71,7 +72,7 @@ class TeacherAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/remove', name: 'remove_teacher')]
-    public function remove(Teacher $teacher, Request $request, TranslatorInterface $translator, TeacherStringConverter $teacherStringConverter): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] Teacher $teacher, Request $request, TranslatorInterface $translator, TeacherStringConverter $teacherStringConverter): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => $translator->trans('admin.teachers.remove.confirm', [
                 '%name%' => $teacherStringConverter->convert($teacher),

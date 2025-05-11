@@ -3,8 +3,7 @@
 namespace App\Sorting;
 
 use App\Grouping\SortableGroupInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 class Sorter {
@@ -15,7 +14,7 @@ class Sorter {
     /**
      * @param SortingStrategyInterface[] $strategies
      */
-    public function __construct(iterable $strategies) {
+    public function __construct(#[AutowireIterator('app.sorting_strategy')] iterable $strategies) {
         foreach($strategies as $strategy) {
             $this->strategies[$strategy::class] = $strategy;
         }

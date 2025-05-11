@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Feature\Feature;
 use App\Feature\IsFeatureEnabled;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\WikiArticle;
 use App\Http\FlysystemFileResponse;
@@ -33,7 +34,7 @@ class WikiController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}', name: 'show_wiki_article')]
-    public function show(?WikiArticle $article): Response {
+    public function show(#[MapEntity(mapping: ['uuid' => 'uuid'])] ?WikiArticle $article): Response {
         if($article !== null) {
             $this->denyAccessUnlessGranted(WikiVoter::View, $article);
         }

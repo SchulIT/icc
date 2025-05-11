@@ -30,6 +30,7 @@ use Exception;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -222,7 +223,7 @@ class ResourceReservationController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/edit', name: 'edit_room_reservation')]
-    public function edit(ResourceReservation $reservation, Request $request): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] ResourceReservation $reservation, Request $request): Response {
         $this->denyAccessUnlessGranted(ResourceReservationVoter::Edit, $reservation);
 
         $form = $this->createForm(ResourceReservationType::class, $reservation);
@@ -242,7 +243,7 @@ class ResourceReservationController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/remove', name: 'remove_room_reservation')]
-    public function remove(ResourceReservation $reservation, TranslatorInterface $translator, Request $request): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] ResourceReservation $reservation, TranslatorInterface $translator, Request $request): Response {
         $this->denyAccessUnlessGranted(ResourceReservationVoter::Remove, $reservation);
 
         $form = $this->createForm(ConfirmType::class, null, [

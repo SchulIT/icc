@@ -38,9 +38,6 @@
                     <a href="{{ path('edit_wiki_article', { uuid: article.uuid }) }}" class="dropdown-item">
                         <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
                     </a>
-                    <a href="{{ path('wiki_article_versions', { uuid: article.uuid }) }}" class="dropdown-item">
-                        <i class="fa fa-history"></i> {{ 'versions.label'|trans }}
-                    </a>
                     <a href="{{ path('remove_wiki_article', { uuid: article.uuid }) }}" class="dropdown-item text-danger">
                         <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
                     </a>

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\ResourceEntity;
 use App\Entity\Room;
@@ -64,7 +65,7 @@ class ResourceAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/edit', name: 'edit_resource')]
-    public function edit(ResourceEntity $room, Request $request): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] ResourceEntity $room, Request $request): Response {
         $form = $this->createForm(ResourceType::class, $room);
         $form->handleRequest($request);
 
@@ -84,7 +85,7 @@ class ResourceAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/remove', name: 'remove_resource')]
-    public function remove(ResourceEntity $room, Request $request): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] ResourceEntity $room, Request $request): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'admin.resources.remove.confirm',
             'message_parameters' => [

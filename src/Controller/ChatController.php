@@ -29,6 +29,7 @@ use App\Sorting\Sorter;
 use App\View\Filter\ChatTagFilter;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -136,7 +137,7 @@ class ChatController extends AbstractController {
     }
 
     #[Route('/attachment/{uuid}/remove', name: 'remove_chat_attachment')]
-    public function removeAttachment(ChatMessageAttachment $attachment, Request $request): Response {
+    public function removeAttachment(#[MapEntity(mapping: ['uuid' => 'uuid'])] ChatMessageAttachment $attachment, Request $request): Response {
         $this->denyAccessUnlessGranted(ChatMessageAttachmentVoter::Remove, $attachment);
 
         $form = $this->createForm(ConfirmType::class, null, [
@@ -163,7 +164,7 @@ class ChatController extends AbstractController {
     }
 
     #[Route('/attachment/{uuid}/download', name: 'download_chat_attachment')]
-    public function downloadAttachment(ChatMessageAttachment $attachment, ChatFilesystem $chatFilesystem): Response {
+    public function downloadAttachment(#[MapEntity(mapping: ['uuid' => 'uuid'])] ChatMessageAttachment $attachment, ChatFilesystem $chatFilesystem): Response {
         $this->denyAccessUnlessGranted(ChatMessageAttachmentVoter::Download, $attachment);
 
         try {
@@ -174,7 +175,7 @@ class ChatController extends AbstractController {
     }
 
     #[Route('/{uuid}', name: 'show_chat')]
-    public function showChat(Chat $chat, Request $request, ChatSeenByHelper $chatSeenByHelper, ChatTagHelper $chatTagHelper, EventDispatcherInterface $dispatcher, TranslatorInterface $translator): Response {
+    public function showChat(#[MapEntity(mapping: ['uuid' => 'uuid'])] Chat $chat, Request $request, ChatSeenByHelper $chatSeenByHelper, ChatTagHelper $chatTagHelper, EventDispatcherInterface $dispatcher, TranslatorInterface $translator): Response {
         $this->denyAccessUnlessGranted(ChatVoter::View, $chat);
 
         /** @var User $user */
@@ -327,7 +328,7 @@ class ChatController extends AbstractController {
     }
 
     #[Route('/{uuid}/remove', name: 'remove_chat')]
-    public function remove(Chat $chat, Request $request): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] Chat $chat, Request $request): Response {
         $this->denyAccessUnlessGranted(ChatVoter::Remove, $chat);
 
         $form = $this->createForm(ConfirmType::class, null, [

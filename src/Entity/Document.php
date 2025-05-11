@@ -13,7 +13,6 @@ use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[Auditable]
-#[Gedmo\Loggable]
 #[ORM\Entity]
 #[ORM\Index(columns: ['title'], flags: ['fulltext'])]
 #[ORM\Index(columns: ['content'], flags: ['fulltext'])]
@@ -22,7 +21,6 @@ class Document {
     use IdTrait;
     use UuidTrait;
 
-    #[Gedmo\Versioned]
     #[Assert\NotBlank]
     #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string')]
@@ -33,7 +31,6 @@ class Document {
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?DocumentCategory $category = null;
 
-    #[Gedmo\Versioned]
     #[Assert\NotNull]
     #[Assert\NotBlank]
     #[ORM\Column(type: 'text')]

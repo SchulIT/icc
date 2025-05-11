@@ -8,6 +8,7 @@ use App\Feature\IsFeatureEnabled;
 use App\Form\TeacherAbsenceTypeType;
 use App\Repository\TeacherAbsenceTypeRepositoryInterface;
 use SchulIT\CommonBundle\Form\ConfirmType;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,7 +48,7 @@ class TeacherAbsenceTypeAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/edit', name: 'edit_teacher_absence_type')]
-    public function edit(TeacherAbsenceType $absenceType, Request $request): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] TeacherAbsenceType $absenceType, Request $request): Response {
         $form = $this->createForm(TeacherAbsenceTypeType::class, $absenceType);
         $form->handleRequest($request);
 
@@ -64,7 +65,7 @@ class TeacherAbsenceTypeAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/remove', name: 'remove_teacher_absence_type')]
-    public function remove(TeacherAbsenceType $absenceType, Request $request): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] TeacherAbsenceType $absenceType, Request $request): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'admin.absence_types.remove.confirm',
             'message_parameters' => [

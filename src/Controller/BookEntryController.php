@@ -26,6 +26,7 @@ use DateTime;
 use Doctrine\DBAL\Driver\Exception;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,7 +48,7 @@ class BookEntryController extends AbstractController {
     }
 
     #[Route(path: '/cancel/{uuid}', name: 'cancel_lesson')]
-    public function cancelLesson(TimetableLesson $lesson, Request $request): Response {
+    public function cancelLesson(#[MapEntity(mapping: ['uuid' => 'uuid'])] TimetableLesson $lesson, Request $request): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
         $tuition = $lesson->getTuition();
@@ -85,7 +86,7 @@ class BookEntryController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}', name: 'edit_entry', methods: ['POST'])]
-    public function edit(LessonEntry $entry, Request $request): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] LessonEntry $entry, Request $request): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::Edit, $entry);
 
         $form = $this->createForm(LessonEntryType::class, $entry, [
@@ -111,7 +112,7 @@ class BookEntryController extends AbstractController {
     }
 
     #[Route(path: '/create/{uuid}', name: 'add_entry')]
-    public function create(TimetableLesson $lesson, Request $request): Response {
+    public function create(#[MapEntity(mapping: ['uuid' => 'uuid'])] TimetableLesson $lesson, Request $request): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
         $entry = (new LessonEntry())
@@ -140,7 +141,7 @@ class BookEntryController extends AbstractController {
     }
 
     #[Route(path: '/attendance/{uuid}/excuse_status', name: 'change_lesson_attendance_excuse_status')]
-    public function attendance(Attendance $attendance, Request $request, LessonAttendanceRepositoryInterface $attendanceRepository): Response {
+    public function attendance(#[MapEntity(mapping: ['uuid' => 'uuid'])] Attendance $attendance, Request $request, LessonAttendanceRepositoryInterface $attendanceRepository): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::Edit, $attendance->getEntry());
 
         $form = $this->createForm(LessonAttendanceExcuseType::class, $attendance);
@@ -159,7 +160,7 @@ class BookEntryController extends AbstractController {
     }
 
     #[Route('/redirect/{uuid}', name: 'redirect_to_last_entry', methods: ['GET'])]
-    public function redirectToLastEntry(Tuition $tuition, Request $request, LessonEntryRepositoryInterface $entryRepository): RedirectResponse {
+    public function redirectToLastEntry(#[MapEntity(mapping: ['uuid' => 'uuid'])] Tuition $tuition, Request $request, LessonEntryRepositoryInterface $entryRepository): RedirectResponse {
         try {
             $dateTime = new DateTime($request->query->get('date'));
             $last = $entryRepository->findLastByTuition($tuition, $dateTime);
@@ -179,7 +180,7 @@ class BookEntryController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}', name: 'show_entry', methods: ['GET'])]
-    public function show(LessonEntry $entry, Request $request, LessonAttendanceFlagRepositoryInterface $attendanceFlagRepository): Response {
+    public function show(#[MapEntity(mapping: ['uuid' => 'uuid'])] LessonEntry $entry, Request $request, LessonAttendanceFlagRepositoryInterface $attendanceFlagRepository): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::Edit, $entry);
 
         $form = $this->createForm(LessonEntryType::class, $entry, [
@@ -207,7 +208,7 @@ class BookEntryController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/remove', name: 'remove_entry')]
-    public function remove(LessonEntry $entry, Request $request): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] LessonEntry $entry, Request $request): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::Remove, $entry);
 
         $form = $this->createForm(ConfirmType::class, null, [

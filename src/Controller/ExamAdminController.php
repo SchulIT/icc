@@ -15,6 +15,7 @@ use App\Sorting\ExamStudentStrategy;
 use DateTime;
 use Exception;
 use SchulIT\CommonBundle\Helper\DateHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Exam;
@@ -210,7 +211,7 @@ class ExamAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/edit', name: 'edit_exam')]
-    public function edit(Exam $exam, Request $request): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] Exam $exam, Request $request): Response {
         $this->denyAccessUnlessGranted(ExamVoter::Edit, $exam);
 
         $form = $this->createForm(ExamType::class, $exam, [
@@ -239,7 +240,7 @@ class ExamAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/unplan', name: 'unplan_exam')]
-    public function unplan(Exam $exam, Request $request, TranslatorInterface $translator): Response {
+    public function unplan(#[MapEntity(mapping: ['uuid' => 'uuid'])] Exam $exam, Request $request, TranslatorInterface $translator): Response {
         $this->denyAccessUnlessGranted(ExamVoter::Unplan, $exam);
 
         $form = $this->createForm(ConfirmType::class, null, [
@@ -273,7 +274,7 @@ class ExamAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/remove', name: 'remove_exam')]
-    public function remove(Exam $exam, Request $request, TranslatorInterface $translator): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] Exam $exam, Request $request, TranslatorInterface $translator): Response {
         $this->denyAccessUnlessGranted(ExamVoter::Remove, $exam);
 
         $form = $this->createForm(ConfirmType::class, null, [
@@ -304,7 +305,7 @@ class ExamAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/students', name: 'edit_exam_students')]
-    public function students(Exam $exam, Request $request): Response {
+    public function students(#[MapEntity(mapping: ['uuid' => 'uuid'])] Exam $exam, Request $request): Response {
         $exam = $this->repository->findOneById($exam->getId()); // Hack to get a sorted list of exam students
 
         $form = $this->createForm(ExamStudentsType::class, $exam);
@@ -324,7 +325,7 @@ class ExamAdminController extends AbstractController {
     }
 
     #[Route('/{uuid}/split', name: 'split_exam')]
-    public function split(Exam $exam, Request $request, ExamSplitter $examSplitter, ResourceReservationRepositoryInterface $reservationRepository): Response {
+    public function split(#[MapEntity(mapping: ['uuid' => 'uuid'])] Exam $exam, Request $request, ExamSplitter $examSplitter, ResourceReservationRepositoryInterface $reservationRepository): Response {
         $this->denyAccessUnlessGranted('ROLE_EXAMS_ADMIN');
 
         $configuration = new ExamSplitConfiguration();

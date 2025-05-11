@@ -7,6 +7,7 @@ use App\Form\RoomTagType;
 use App\Repository\RoomTagRepositoryInterface;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -46,7 +47,7 @@ class RoomTagAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/edit', name: 'edit_room_tag')]
-    public function edit(RoomTag $tag, Request $request): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] RoomTag $tag, Request $request): Response {
         $form = $this->createForm(RoomTagType::class, $tag);
         $form->handleRequest($request);
 
@@ -64,7 +65,7 @@ class RoomTagAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/remove', name: 'remove_room_tag')]
-    public function remove(RoomTag $tag, Request $request): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] RoomTag $tag, Request $request): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'admin.resources.tags.remove.confirm',
             'message_parameters' => [

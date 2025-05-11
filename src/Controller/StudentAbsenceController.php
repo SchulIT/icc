@@ -54,6 +54,7 @@ use League\Flysystem\FilesystemOperator;
 use Mimey\MimeTypes;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Helper\DateHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -159,7 +160,7 @@ class StudentAbsenceController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/edit', name: 'edit_student_absence')]
-    public function edit(StudentAbsence $absence, Request $request, StudentAbsenceSettings $settings, StudentAbsenceRepositoryInterface $repository): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] StudentAbsence $absence, Request $request, StudentAbsenceSettings $settings, StudentAbsenceRepositoryInterface $repository): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::New);
 
         $form = $this->createForm(StudentAbsenceType::class, $absence);
@@ -307,7 +308,7 @@ class StudentAbsenceController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}', name: 'show_student_absence')]
-    public function show(StudentAbsence $absence, StudentAbsenceSettings $settings, Request $request, StudentAbsenceRepositoryInterface $repository, ExamRepositoryInterface $examRepository,
+    public function show(#[MapEntity(mapping: ['uuid' => 'uuid'])] StudentAbsence $absence, StudentAbsenceSettings $settings, Request $request, StudentAbsenceRepositoryInterface $repository, ExamRepositoryInterface $examRepository,
                          AppointmentRepositoryInterface $appointmentRepository, Sorter $sorter, ExcuseStatusResolver $excuseNoteStatusResolver, SectionResolverInterface $sectionResolver): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::View, $absence);
 
@@ -355,7 +356,7 @@ class StudentAbsenceController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/excuse_note', name: 'add_excuse_note_from_absence')]
-    public function createExcuseNote(StudentAbsence $absence, Request $request, ExcuseNoteRepositoryInterface $excuseNoteRepository) {
+    public function createExcuseNote(#[MapEntity(mapping: ['uuid' => 'uuid'])] StudentAbsence $absence, Request $request, ExcuseNoteRepositoryInterface $excuseNoteRepository) {
         $this->denyAccessUnlessGranted(ExcuseNoteVoter::New);
 
         /** @var User $user */
@@ -392,7 +393,7 @@ class StudentAbsenceController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/approve', name: 'approve_student_absence')]
-    public function approve(StudentAbsence $absence, Request $request, ApprovalHelper $approvalHelper): Response {
+    public function approve(#[MapEntity(mapping: ['uuid' => 'uuid'])] StudentAbsence $absence, Request $request, ApprovalHelper $approvalHelper): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::Approve, $absence);
 
         /** @var User $user */
@@ -411,7 +412,7 @@ class StudentAbsenceController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/deny', name: 'deny_student_absence')]
-    public function deny(StudentAbsence $absence, Request $request, ApprovalHelper $approvalHelper): Response {
+    public function deny(#[MapEntity(mapping: ['uuid' => 'uuid'])] StudentAbsence $absence, Request $request, ApprovalHelper $approvalHelper): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::Deny, $absence);
 
         /** @var User $user */
@@ -430,7 +431,7 @@ class StudentAbsenceController extends AbstractController {
     }
 
     #[Route(path: '/attachments/{uuid}', name: 'download_student_absence_attachment', priority: 10)]
-    public function downloadAttachment(StudentAbsenceAttachment $attachment, FilesystemOperator $studentAbsencesFilesystem, MimeTypes $mimeTypes, StudentAbsenceSettings $settings): Response {
+    public function downloadAttachment(#[MapEntity(mapping: ['uuid' => 'uuid'])] StudentAbsenceAttachment $attachment, FilesystemOperator $studentAbsencesFilesystem, MimeTypes $mimeTypes, StudentAbsenceSettings $settings): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::View, $attachment->getAbsence());
 
         if($studentAbsencesFilesystem->fileExists($attachment->getPath()) !== true) {
@@ -448,7 +449,7 @@ class StudentAbsenceController extends AbstractController {
     }
 
     #[Route('/{uuid}/remove', name: 'remove_student_absence')]
-    public function remove(StudentAbsence $absence, Request $request, StudentAbsenceRepositoryInterface $repository): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] StudentAbsence $absence, Request $request, StudentAbsenceRepositoryInterface $repository): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::Remove, $absence);
 
         $form = $this->createForm(ConfirmType::class, null, [

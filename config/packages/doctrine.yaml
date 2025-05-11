@@ -32,6 +32,8 @@ doctrine:
         auto_generate_proxy_classes: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         auto_mapping: true
+        controller_resolver:
+            auto_mapping: false
         mappings:
             App:
                 is_bundle: false
@@ -39,12 +41,6 @@ doctrine:
                 prefix: 'App\Entity'
                 alias: App
                 type: attribute
-            gedmo_loggable:
-                type: attribute
-                prefix: Gedmo\Loggable\Entity
-                dir: "%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Loggable/Entity"
-                alias: GedmoLoggable # (optional) it will default to the name set for the mapping
-                is_bundle: false
         dql:
             string_functions:
                 match: DoctrineExtensions\Query\Mysql\MatchAgainst

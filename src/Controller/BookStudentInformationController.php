@@ -17,6 +17,7 @@ use App\View\Filter\SectionFilter;
 use App\View\Filter\StudentFilter;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -77,7 +78,7 @@ class BookStudentInformationController extends AbstractController {
     }
 
     #[Route('/{uuid}/edit', name: 'edit_student_book_information')]
-    public function edit(BookStudentInformation $info, Request $request, SectionResolverInterface $sectionResolver): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] BookStudentInformation $info, Request $request, SectionResolverInterface $sectionResolver): Response {
         $form = $this->createForm(BookStudentInformationType::class, $info);
         $form->handleRequest($request);
 
@@ -96,7 +97,7 @@ class BookStudentInformationController extends AbstractController {
     }
 
     #[Route('/{uuid}/remove', name: 'remove_student_book_information')]
-    public function remove(BookStudentInformation $information, Request $request, StudentStringConverter $stringConverter, TranslatorInterface $translator): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] BookStudentInformation $information, Request $request, StudentStringConverter $stringConverter, TranslatorInterface $translator): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'book.extra.student_info.remove.confirm',
             'message_parameters' => [

@@ -12,6 +12,7 @@ use App\Security\Voter\AppointmentVoter;
 use App\Security\Voter\ParentsDayAppointmentVoter;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -51,7 +52,7 @@ class ParentsDayAdminController extends AbstractController {
     }
 
     #[Route('/{uuid}/edit', name: 'edit_parents_day')]
-    public function edit(ParentsDay $parentsDay, Request $request) {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] ParentsDay $parentsDay, Request $request) {
         $form = $this->createForm(ParentsDayType::class, $parentsDay);
         $form->handleRequest($request);
 
@@ -69,7 +70,7 @@ class ParentsDayAdminController extends AbstractController {
     }
 
     #[Route('/{uuid}/remove', name: 'remove_parents_day')]
-    public function remove(ParentsDay $parentsDay, Request $request): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] ParentsDay $parentsDay, Request $request): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'admin.parents_day.remove.confirm',
             'message_parameters' => [

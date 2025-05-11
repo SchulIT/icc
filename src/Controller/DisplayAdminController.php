@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Display;
 use App\Form\DisplayType;
@@ -66,7 +67,7 @@ class DisplayAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/edit', name: 'edit_display')]
-    public function edit(Display $display, Request $request): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] Display $display, Request $request): Response {
         $form = $this->createForm(DisplayType::class, $display);
         $form->handleRequest($request);
 
@@ -84,7 +85,7 @@ class DisplayAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/remove', name: 'remove_display')]
-    public function remove(Display $display, Request $request): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] Display $display, Request $request): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'admin.displays.remove.confirm',
             'message_parameters' => [

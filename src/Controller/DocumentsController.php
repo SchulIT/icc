@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Feature\Feature;
 use App\Feature\IsFeatureEnabled;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Document;
 use App\Entity\DocumentAttachment;
@@ -61,7 +62,7 @@ class DocumentsController extends AbstractController {
     }
 
     #[Route(path: '/attachment/{uuid}', name: 'download_document_attachment')]
-    public function downloadAttachment(DocumentAttachment $attachment, DocumentFilesystem $documentFilesystem): Response {
+    public function downloadAttachment(#[MapEntity(mapping: ['uuid' => 'uuid'])] DocumentAttachment $attachment, DocumentFilesystem $documentFilesystem): Response {
         $this->denyAccessUnlessGranted(DocumentVoter::View, $attachment->getDocument());
 
         try {
@@ -72,7 +73,7 @@ class DocumentsController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}', name: 'show_document')]
-    public function show(Document $document): Response {
+    public function show(#[MapEntity(mapping: ['uuid' => 'uuid'])] Document $document): Response {
         $this->denyAccessUnlessGranted(DocumentVoter::View, $document);
 
         return $this->render('documents/show.html.twig', [

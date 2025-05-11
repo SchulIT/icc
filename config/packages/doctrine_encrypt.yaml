@@ -2,35 +2,4 @@ ambta_doctrine_encrypt:
   encryptor_class: Defuse
   secret_directory_path: ~
   secret: '%env(base64:DB_SECRET)%'
-
-services:
-  # Skip trying to read annotations. Only read attributes
-  ambta_doctrine_encrypt.orm_subscriber:
-    class: Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber
-    arguments: ["@ambta_doctrine_attribute_reader", "@ambta_doctrine_encrypt.encryptor"]
-    tags:
-      -  { name: doctrine.event_subscriber }
-
-  ambta_doctrine_encrypt.command.decrypt.database:
-    class: Ambta\DoctrineEncryptBundle\Command\DoctrineDecryptDatabaseCommand
-    tags: ['console.command']
-    arguments:
-      - "@doctrine.orm.entity_manager"
-      - "@ambta_doctrine_attribute_reader"
-      - "@ambta_doctrine_encrypt.subscriber"
-
-  ambta_doctrine_encrypt.command.encrypt.database:
-    class: Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptDatabaseCommand
-    tags: ['console.command']
-    arguments:
-      - "@doctrine.orm.entity_manager"
-      - "@ambta_doctrine_attribute_reader"
-      - "@ambta_doctrine_encrypt.subscriber"
-
-  ambta_doctrine_encrypt.command.encrypt.status:
-    class: Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand
-    tags: ['console.command']
-    arguments:
-      - "@doctrine.orm.entity_manager"
-      - "@ambta_doctrine_attribute_reader"
-      - "@ambta_doctrine_encrypt.subscriber"
+  wrap_exceptions: true

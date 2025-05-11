@@ -48,10 +48,6 @@
                             <a href="{{ path('admin_edit_document', { uuid: document.uuid, ref: 'view' }) }}" class="list-group-item list-group-item-action">
                                 <i class="fa fa-edit"></i> {{ 'admin.documents.edit.label'|trans }}
                             </a>
-
-                            <a href="{{ path('document_versions', { uuid: document.uuid, ref: 'view' }) }}" class="list-group-item list-group-item-action">
-                                <i class="fa fa-history"></i> {{ 'versions.label'|trans }}
-                            </a>
                         {% endif %}
                         {% if is_granted('remove', document) %}
                             <a href="{{ path('admin_remove_document', { uuid: document.uuid, ref: 'view' }) }}" class="list-group-item list-group-item-action list-group-item-danger">

@@ -77,6 +77,7 @@ use Exception;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -566,8 +567,7 @@ class BookController extends AbstractController {
     }
 
     #[Route(path: '/student/{student}/attendance', name: 'book_student_attendance')]
-    #[ParamConverter('student', class: Student::class, options: ['mapping' => ['student' => 'uuid']])]
-    public function studentAttendance(Student $student, SectionFilter $sectionFilter, StudentAwareTuitionFilter $tuitionFilter,
+    public function studentAttendance(#[MapEntity(mapping: ['student' => 'uuid'])] Student $student, SectionFilter $sectionFilter, StudentAwareTuitionFilter $tuitionFilter,
                             StudentAwareGradeFilter $gradeFilter, TeacherFilter  $teacherFilter, Request $request,
                             StudentInfoResolver $infoResolver, TuitionRepositoryInterface $tuitionRepository,
                             Sorter $sorter, Grouper $grouper, DateHelper $dateHelper, TimetableSettings $timetableSettings,
@@ -689,8 +689,7 @@ class BookController extends AbstractController {
     }
 
     #[Route(path: '/student/{student}/comments', name: 'book_student_comments')]
-    #[ParamConverter('student', class: Student::class, options: ['mapping' => ['student' => 'uuid']])]
-    public function studentComments(Student $student, SectionFilter $sectionFilter, Request $request, Sorter $sorter,
+    public function studentComments(#[MapEntity(mapping: ['student' => 'uuid'])] Student $student, SectionFilter $sectionFilter, Request $request, Sorter $sorter,
                                     BookCommentRepositoryInterface $commentRepository): Response {
 
         $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
@@ -802,36 +801,28 @@ class BookController extends AbstractController {
     }
 
     #[Route(path: '/{section}/t/{tuition}/export/json', name: 'book_export_tuition_json')]
-    #[ParamConverter('section', class: Section::class, options: ['mapping' => ['section' => 'uuid']])]
-    #[ParamConverter('tuition', class: Tuition::class, options: ['mapping' => ['tuition' => 'uuid']])]
-    public function exportTutionJson(Tuition $tuition, Section $section, BookExporter $exporter): Response {
+    public function exportTutionJson(#[MapEntity(mapping: ['tuition' => 'uuid'])] Tuition $tuition, #[MapEntity(mapping: ['section' => 'uuid'])] Section $section, BookExporter $exporter): Response {
         $filename = $this->computeFileName($tuition, $section, 'json');
         $json = $exporter->exportTuitionJson($tuition, $section);
         return $this->createResponse($json, 'application/json', $filename);
     }
 
     #[Route(path: '/{section}/t/{tuition}/export/xml', name: 'book_export_tuition_xml')]
-    #[ParamConverter('section', class: Section::class, options: ['mapping' => ['section' => 'uuid']])]
-    #[ParamConverter('tuition', class: Tuition::class, options: ['mapping' => ['tuition' => 'uuid']])]
-    public function exportTuitionXml(Tuition $tuition, Section $section, BookExporter $exporter): Response {
+    public function exportTuitionXml(#[MapEntity(mapping: ['tuition' => 'uuid'])] Tuition $tuition, #[MapEntity(mapping: ['section' => 'uuid'])] Section $section, BookExporter $exporter): Response {
         $filename = $this->computeFileName($tuition, $section, 'xml');
         $xml = $exporter->exportTuitionXml($tuition, $section);
         return $this->createResponse($xml, 'application/xml', $filename);
     }
 
     #[Route(path: '/{section}/g/{grade}/export/json', name: 'book_export_grade_json')]
-    #[ParamConverter('section', class: Section::class, options: ['mapping' => ['section' => 'uuid']])]
-    #[ParamConverter('grade', class: Grade::class, options: ['mapping' => ['grade' => 'uuid']])]
-    public function exportGradeJson(Grade $grade, Section $section, BookExporter $exporter): Response {
+    public function exportGradeJson(#[MapEntity(mapping: ['grade' => 'uuid'])] Grade $grade, #[MapEntity(mapping: ['section' => 'uuid'])] Section $section, BookExporter $exporter): Response {
         $filename = sprintf('%s-%d-%d.json', $grade->getName(), $section->getYear(), $section->getNumber());
         $json = $exporter->exportGradeJson($grade, $section);
         return $this->createResponse($json, 'application/json', $filename);
     }
 
     #[Route(path: '/{section}/g/{grade}/export/xml', name: 'book_export_grade_xml')]
-    #[ParamConverter('section', class: Section::class, options: ['mapping' => ['section' => 'uuid']])]
-    #[ParamConverter('grade', class: Grade::class, options: ['mapping' => ['grade' => 'uuid']])]
-    public function exportGradeXml(Grade $grade, Section $section, BookExporter $exporter): Response {
+    public function exportGradeXml(#[MapEntity(mapping: ['grade' => 'uuid'])] Grade $grade, #[MapEntity(mapping: ['section' => 'uuid'])] Section $section, BookExporter $exporter): Response {
         $filename = sprintf('%s-%d-%d.xml', $grade->getName(), $section->getYear(), $section->getNumber());
         $xml = $exporter->exportGradeXml($grade, $section);
         return $this->createResponse($xml, 'application/xml', $filename);

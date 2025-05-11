@@ -38,22 +38,6 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
-    _instanceof:
-        App\Book\AttendanceSuggestion\SuggestionStrategyInterface:
-            tags: [ 'app.book.attendance_suggestion']
-        App\Book\IntegrityCheck\IntegrityCheckInterface:
-            tags: [ 'app.book.integrity_check']
-        App\Dashboard\Absence\AbsenceResolveStrategyInterface:
-            tags: [ 'app.absence_resolver' ]
-        App\Grouping\GroupingStrategyInterface:
-            tags: [ 'app.grouping_strategy' ]
-        App\Sorting\SortingStrategyInterface:
-            tags: [ 'app.sorting_strategy' ]
-        App\Untis\Html\Substitution\InfotextReaderInterface:
-            tags: [ 'app.untis.import.infotext_reader' ]
-        App\Untis\StudentId\StudentIdGeneratorInterface:
-            tags: [ 'app.untis.student_id_generator' ]
-
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:
@@ -103,13 +87,13 @@ services:
             $loggedInRoute: 'dashboard'
 
     # JSON
-    App\Request\JsonParamConverter:
-        class:
-        arguments:
-            $prefixes:
-                - 'App\Request\Data'
-                - 'App\Request\Book'
-                - 'App\Request\Message'
+    #App\Request\JsonParamConverter:
+    #    class:
+    #    arguments:
+    #        $prefixes:
+    #            - 'App\Request\Data'
+    #            - 'App\Request\Book'
+    #            - 'App\Request\Message'
 
     JMS\Serializer\SerializationContext:
         calls:
@@ -182,36 +166,6 @@ services:
     SchulIT\CommonBundle\Menu\Voter:
         tags:
             - { name: knp_menu.voter }
-
-    # SERVICES
-    App\Book\AttendanceSuggestion\SuggestionResolver:
-        arguments:
-            $strategies: !tagged app.book.attendance_suggestion
-
-    App\Book\IntegrityCheck\IntegrityCheckRunner:
-        arguments:
-            $checks: !tagged app.book.integrity_check
-
-    App\Dashboard\Absence\:
-        resource: '../src/Dashboard/Absence/*Strategy.php'
-
-    App\Sorting\:
-        resource: '../src/Sorting/*Strategy.php'
-
-    App\Grouping\:
-        resource: '../src/Grouping/*Strategy.php'
-
-    App\Dashboard\Absence\AbsenceResolver:
-        arguments:
-            - !tagged app.absence_resolver
-
-    App\Grouping\Grouper:
-        arguments:
-            - !tagged app.grouping_strategy
-
-    App\Sorting\Sorter:
-        arguments:
-            - !tagged app.sorting_strategy
 
     App\Rooms\Status\ServiceCenterRoomStatusHelper:
         arguments:
@@ -317,12 +271,6 @@ services:
             $sender: '%env(MAILER_FROM)%'
 
     # COMMANDS
-    #SchulIT\CommonBundle\Command\SendMailsCommand:
-    #    arguments:
-    #        $messageLimit: '%env(int:MAILER_LIMIT)%'
-    #    tags:
-    #        - { name: shapecode_cron.cron_job, expression: '*\/2 * * * *' }
-
     App\Command\RemoveExpiredStudentAbsencesCommand:
         arguments:
             $filesystem: '@oneup_flysystem.student_absence_filesystem'
@@ -395,28 +343,9 @@ services:
     SchulIT\CommonBundle\Monolog\RequestProcessor:
         tags:
             - { name: monolog.processor }
-    #SchulIT\CommonBundle\Monolog\ExceptionProcessor:
-    #    tags:
-    #        - { name: monolog.processor }
     App\Monolog\SqlAwareExceptionProcessor:
         tags:
             - { name: monolog.processor }
-
-    #App\Monolog\UsernameProcessor:
-    #    tags:
-    #        - { name: monolog.processor }
-    #App\Monolog\RequestProcessor:
-    #    tags:
-    #        - { name: monolog.processor }
-
-    # UNTIS
-    App\Untis\Html\Substitution\SubstitutionReader:
-        arguments:
-            $infotextReader: !tagged app.untis.import.infotext_reader
-
-    App\Untis\StudentId\StudentIdGenerator:
-        arguments:
-            $generators: !tagged app.untis.student_id_generator
 
     # MISC
     App\EventSubscriber\LoadMessengerCronJobs:

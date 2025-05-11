@@ -9,6 +9,7 @@ use App\Repository\GradeResponsibilityRepositoryInterface;
 use App\Repository\SectionRepositoryInterface;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -48,7 +49,7 @@ class GradeResponsibilityController extends AbstractController {
     }
 
     #[Route('/{uuid}/edit', name: 'edit_grade_responsibility')]
-    public function edit(GradeResponsibility $responsibility, Request $request): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] GradeResponsibility $responsibility, Request $request): Response {
         $form = $this->createForm(GradeResponsibilityType::class, $responsibility);
         $form->handleRequest($request);
 
@@ -68,7 +69,7 @@ class GradeResponsibilityController extends AbstractController {
     }
 
     #[Route('/{uuid}/remove', name: 'remove_grade_responsibility')]
-    public function remove(GradeResponsibility $responsibility, Request $request): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] GradeResponsibility $responsibility, Request $request): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'book.responsibilities.remove.confirm',
             'message_parameters' => [

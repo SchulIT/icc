@@ -36,6 +36,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -113,7 +114,7 @@ class MessageController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}', name: 'show_message')]
-    public function show(Message $message, MessageRepositoryInterface $messageRepository,
+    public function show(#[MapEntity(mapping: ['uuid' => 'uuid'])] Message $message, MessageRepositoryInterface $messageRepository,
                          MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $messageFilesystem,
                          PollVoteHelper $voteHelper, Request $request, DateHelper $dateHelper): Response {
         // Requery message for better performance
@@ -222,7 +223,7 @@ class MessageController extends AbstractController {
     }
 
     #[Route(path: '/attachments/{uuid}', name: 'download_message_attachment')]
-    public function downloadAttachment(MessageAttachment $attachment, MessageFilesystem $messageFilesystem): Response {
+    public function downloadAttachment(#[MapEntity(mapping: ['uuid' => 'uuid'])] MessageAttachment $attachment, MessageFilesystem $messageFilesystem): Response {
         $this->denyAccessUnlessGranted(MessageVoter::View, $attachment->getMessage());
 
         try {
@@ -233,7 +234,7 @@ class MessageController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/downloads/{filename}', name: 'download_user_file')]
-    public function downloadUserFile(Message $message, string $filename, MessageFilesystem $messageFilesystem): Response {
+    public function downloadUserFile(#[MapEntity(mapping: ['uuid' => 'uuid'])] Message $message, string $filename, MessageFilesystem $messageFilesystem): Response {
         /** @var User $user */
         $user = $this->getUser();
         $this->denyAccessUnlessGranted(MessageVoter::View, $message);
@@ -247,7 +248,7 @@ class MessageController extends AbstractController {
     }
 
     #[Route(path: '/uploads/{uuid}/download', name: 'download_uploaded_user_file')]
-    public function downloadUploadedUserFile(MessageFile $file, MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $messageFilesystem): Response {
+    public function downloadUploadedUserFile(#[MapEntity(mapping: ['uuid' => 'uuid'])] MessageFile $file, MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $messageFilesystem): Response {
         /** @var User $user */
         $user = $this->getUser();
         $this->denyAccessUnlessGranted(MessageVoter::View, $file->getMessage());
@@ -267,7 +268,7 @@ class MessageController extends AbstractController {
     }
 
     #[Route(path: '/uploads/{uuid}/remove', name: 'remove_uploaded_user_file')]
-    public function removeUploadedUserFile(MessageFile $file, MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $filesystem, Request $request): Response {
+    public function removeUploadedUserFile(#[MapEntity(mapping: ['uuid' => 'uuid'])] MessageFile $file, MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $filesystem, Request $request): Response {
         /** @var User $user */
         $user = $this->getUser();
         $this->denyAccessUnlessGranted(MessageVoter::View, $file->getMessage());
@@ -310,7 +311,7 @@ class MessageController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/confirm', name: 'confirm_message')]
-    public function confirm(Message $message, EntityManagerInterface $entityManager): Response {
+    public function confirm(#[MapEntity(mapping: ['uuid' => 'uuid'])] Message $message, EntityManagerInterface $entityManager): Response {
         $this->denyAccessUnlessGranted(MessageVoter::Confirm, $message);
 
         /** @var User $user */
@@ -332,7 +333,7 @@ class MessageController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/dismiss', name: 'dismiss_message')]
-    public function dismiss(Message $message, UserRepositoryInterface $userRepository): Response {
+    public function dismiss(#[MapEntity(mapping: ['uuid' => 'uuid'])] Message $message, UserRepositoryInterface $userRepository): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -345,7 +346,7 @@ class MessageController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/reenable', name: 'reenable_message')]
-    public function reenable(Message $message, UserRepositoryInterface $userRepository): Response {
+    public function reenable(#[MapEntity(mapping: ['uuid' => 'uuid'])] Message $message, UserRepositoryInterface $userRepository): Response {
         /** @var User $user */
         $user = $this->getUser();
 

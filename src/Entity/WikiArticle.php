@@ -7,14 +7,12 @@ use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Loggable\Loggable;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[Auditable]
 #[Gedmo\Tree(type: 'nested')]
-#[Gedmo\Loggable]
 #[ORM\Entity]
 #[ORM\Table(name: 'wiki')]
 #[ORM\Index(columns: ['title'], flags: ['fulltext'])]
@@ -24,7 +22,6 @@ class WikiArticle {
     use IdTrait;
     use UuidTrait;
 
-    #[Gedmo\Versioned]
     #[Assert\NotBlank]
     #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string')]
@@ -38,6 +35,13 @@ class WikiArticle {
     #[ORM\Column(type: 'boolean')]
     private bool $isOnline = true;
 
+    /**
+     * @var Collection<WikiArticle>
+     */
+    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: WikiArticle::class)]
+    #[ORM\OrderBy(['title' => 'ASC'])]
+    private $children;
+
     #[Gedmo\Timestampable(on: 'create')]
     #[ORM\Column(type: 'datetime')]
     private ?DateTime $createdAt = null;
@@ -46,7 +50,6 @@ class WikiArticle {
     #[ORM\Column(type: 'datetime')]
     private ?DateTime $updatedAt = null;
 
-    #[Gedmo\Versioned]
     #[Assert\NotBlank]
     #[ORM\Column(type: 'text')]
     private ?string $content = null;
@@ -81,13 +84,6 @@ class WikiArticle {
     #[ORM\ManyToOne(targetEntity: WikiArticle::class, inversedBy: 'children')]
     #[ORM\JoinColumn(name: 'parent', onDelete: 'CASCADE')]
     private ?WikiArticle $parent = null;
-
-    /**
-     * @var Collection<WikiArticle>
-     */
-    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: WikiArticle::class)]
-    #[ORM\OrderBy(['title' => 'ASC'])]
-    private $children;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();

@@ -6,6 +6,7 @@ use App\Entity\Notification;
 use App\Entity\User;
 use App\Repository\NotificationRepositoryInterface;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -42,7 +43,7 @@ class NotificationsController extends AbstractController {
     }
 
     #[Route('/{uuid}/redirect', name: 'notification_redirect')]
-    public function redirectToLink(Notification $notification): Response {
+    public function redirectToLink(#[MapEntity(mapping: ['uuid' => 'uuid'])] Notification $notification): Response {
         $notification->setIsRead(true);
         $this->repository->persist($notification);
 

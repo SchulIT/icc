@@ -26,6 +26,7 @@ use DateTime;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -174,7 +175,7 @@ class TeacherAbsenceController extends AbstractController {
     }
 
     #[Route('/{uuid}/processed', name: 'mark_teacher_absence_processed')]
-    public function markProcessed(TeacherAbsence $absence, Request $request): Response {
+    public function markProcessed(#[MapEntity(mapping: ['uuid' => 'uuid'])] TeacherAbsence $absence, Request $request): Response {
         $this->denyAccessUnlessGranted(TeacherAbsenceVoter::Process, $absence);
 
         /** @var User $user */
@@ -194,7 +195,7 @@ class TeacherAbsenceController extends AbstractController {
     }
 
     #[Route('/{uuid}/edit', name: 'edit_teacher_absence')]
-    public function edit(TeacherAbsence $absence, Request $request, TimetableLessonRepositoryInterface $timetableLessonRepository): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] TeacherAbsence $absence, Request $request, TimetableLessonRepositoryInterface $timetableLessonRepository): Response {
         $this->denyAccessUnlessGranted(TeacherAbsenceVoter::Edit, $absence);
 
         $form = $this->createForm(TeacherAbsenceType::class, $absence);
@@ -216,7 +217,7 @@ class TeacherAbsenceController extends AbstractController {
     }
 
     #[Route('/{uuid}/missing/add', name: 'add_missing_absence_lessons')]
-    public function addMissingAbsenceLessons(TeacherAbsence $absence, Request $request, TimetableLessonRepositoryInterface $timetableLessonRepository): Response {
+    public function addMissingAbsenceLessons(#[MapEntity(mapping: ['uuid' => 'uuid'])] TeacherAbsence $absence, Request $request, TimetableLessonRepositoryInterface $timetableLessonRepository): Response {
         $this->denyAccessUnlessGranted(TeacherAbsenceVoter::Edit, $absence);
 
         if(!$this->isCsrfTokenValid(self::CSRF_TOKEN_ID, $request->query->get('_csrf_token'))) {
@@ -232,7 +233,7 @@ class TeacherAbsenceController extends AbstractController {
     }
 
     #[Route('/{uuid}/missing/remove', name: 'remove_missing_absence_lessons')]
-    public function removeMissingAbsenceLessons(TeacherAbsence $absence, Request $request): Response {
+    public function removeMissingAbsenceLessons(#[MapEntity(mapping: ['uuid' => 'uuid'])] TeacherAbsence $absence, Request $request): Response {
         $this->denyAccessUnlessGranted(TeacherAbsenceVoter::Edit, $absence);
 
         if(!$this->isCsrfTokenValid(self::CSRF_TOKEN_ID, $request->query->get('_csrf_token'))) {
@@ -253,7 +254,7 @@ class TeacherAbsenceController extends AbstractController {
     }
 
     #[Route('/l/{uuid}/edit', name: 'edit_teacher_absence_comment')]
-    public function editLesson(TeacherAbsenceComment $lesson, Request $request): Response {
+    public function editLesson(#[MapEntity(mapping: ['uuid' => 'uuid'])] TeacherAbsenceComment $lesson, Request $request): Response {
         $this->denyAccessUnlessGranted(TeacherAbsenceVoter::Edit, $lesson->getAbsence());
 
         $form = $this->createForm(TeacherAbsenceCommentType::class, $lesson);
@@ -276,7 +277,7 @@ class TeacherAbsenceController extends AbstractController {
     }
 
     #[Route('/{uuid}/remove', name: 'remove_teacher_absence')]
-    public function remove(TeacherAbsence $absence, Request $request): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] TeacherAbsence $absence, Request $request): Response {
         $this->denyAccessUnlessGranted(TeacherAbsenceVoter::Remove, $absence);
 
         $form = $this->createForm(ConfirmType::class, null, [

@@ -2,6 +2,9 @@
 
 namespace App\Grouping;
 
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+
+#[AutoconfigureTag('app.grouping_strategy')]
 interface GroupingStrategyInterface {
 
     /**

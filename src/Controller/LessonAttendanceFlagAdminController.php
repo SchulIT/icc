@@ -7,6 +7,7 @@ use App\Form\LessonAttendanceFlagType;
 use App\Repository\LessonAttendanceFlagRepositoryInterface;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -44,7 +45,7 @@ class LessonAttendanceFlagAdminController extends AbstractController {
     }
 
     #[Route('/{uuid}/edit', name: 'edit_attendance_flags')]
-    public function edit(AttendanceFlag $flag, Request $request) {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] AttendanceFlag $flag, Request $request) {
         $form = $this->createForm(LessonAttendanceFlagType::class, $flag);
         $form->handleRequest($request);
 
@@ -60,7 +61,7 @@ class LessonAttendanceFlagAdminController extends AbstractController {
     }
 
     #[Route('/{uuid}/remove', name: 'remove_attendance_flags')]
-    public function remove(AttendanceFlag $flag, Request $request) {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] AttendanceFlag $flag, Request $request) {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'admin.attendance_flags.remove.confirm',
             'message_parameters' => [

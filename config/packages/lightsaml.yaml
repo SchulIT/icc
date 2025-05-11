@@ -16,3 +16,7 @@ light_saml_symfony_bridge:
                 - "%kernel.project_dir%/saml/idp.xml"
     store:
         id_state: SchulIT\CommonBundle\Store\IdStore
+
+light_saml_sp:
+    username_mapper:
+        - "urn:id"

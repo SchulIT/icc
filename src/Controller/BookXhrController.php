@@ -56,6 +56,7 @@ use JMS\Serializer\SerializerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -88,7 +89,7 @@ class BookXhrController extends AbstractController {
     }
 
     #[Route(path: '/tuition/{uuid}', name: 'xhr_tuition')]
-    public function tuition(Tuition $tuition, SerializerInterface $serializer): Response {
+    public function tuition(#[MapEntity(mapping: ['uuid' => 'uuid'])] Tuition $tuition, SerializerInterface $serializer): Response {
         return $this->returnJson($this->getTuition($tuition), $serializer);
     }
 
@@ -120,7 +121,7 @@ class BookXhrController extends AbstractController {
     }
 
     #[Route(path: '/attendances/{uuid}', name: 'xhr_entry_attendances')]
-    public function attendances(Request $request, LessonEntry $entry, SerializerInterface $serializer, SectionResolverInterface $sectionResolver): Response {
+    public function attendances(Request $request, #[MapEntity(mapping: ['uuid' => 'uuid'])] LessonEntry $entry, SerializerInterface $serializer, SectionResolverInterface $sectionResolver): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
         $filter = $request->query->get('filter', null);
@@ -174,8 +175,7 @@ class BookXhrController extends AbstractController {
     }
 
     #[Route('/absence_note/{student}', name: 'xhr_student_absences')]
-    #[ParamConverter('student', options: [ 'mapping' => ['student' => 'uuid']])]
-    public function absenceNote(Request $request, Student $student, StudentAbsenceRepositoryInterface $absenceRepository, SerializerInterface $serializer, UrlGeneratorInterface $urlGenerator, Markdown $markdown): Response {
+    public function absenceNote(Request $request, #[MapEntity(mapping: ['student' => 'uuid'])] Student $student, StudentAbsenceRepositoryInterface $absenceRepository, SerializerInterface $serializer, UrlGeneratorInterface $urlGenerator, Markdown $markdown): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
         $date = new DateTime($request->query->get('date'));
@@ -312,7 +312,7 @@ class BookXhrController extends AbstractController {
     #[OA\Response(response: '201', description: 'Unterrichtsstunden erfolgreich als Entfall markiert.')]
     #[OA\Response(response: '400', description: 'Fehlerhafte Anfrage.', content: new Model(type: ViolationList::class))]
     #[Route(path: '/cancel/{uuid}', name: 'xhr_cancel_lesson', methods: ['POST'])]
-    public function cancelLesson(TimetableLesson $lesson, CancelLessonRequest $request, LessonCancelHelper $lessonCancelHelper): Response {
+    public function cancelLesson(#[MapEntity(mapping: ['uuid' => 'uuid'])] TimetableLesson $lesson, CancelLessonRequest $request, LessonCancelHelper $lessonCancelHelper): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
         $reason = $request->getReason();
         $lessonCancelHelper->cancelLesson($lesson, $reason);
@@ -328,7 +328,7 @@ class BookXhrController extends AbstractController {
     #[OA\Response(response: '200', description: 'Anwesenheit erfolgreich aktualisiert.')]
     #[OA\Response(response: '400', description: 'Fehlerhafte Anfrage.', content: new Model(type: ViolationList::class))]
     #[Route(path: '/attendance/{uuid}', name: 'xhr_update_attendance', methods: ['PUT'])]
-    public function updateAttendance(Attendance $attendance, UpdateAttendanceRequest $request, LessonAttendanceRepositoryInterface $repository): Response {
+    public function updateAttendance(#[MapEntity(mapping: ['uuid' => 'uuid'])] Attendance $attendance, UpdateAttendanceRequest $request, LessonAttendanceRepositoryInterface $repository): Response {
         $this->denyAccessUnlessGranted(AttendanceVoter::Edit, $attendance);
 
         $attendance->setIsZeroAbsentLesson($request->isZeroAbsentLesson());

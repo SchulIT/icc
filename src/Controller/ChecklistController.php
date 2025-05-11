@@ -19,6 +19,7 @@ use App\Sorting\Sorter;
 use App\Sorting\StudentStrategy;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -103,7 +104,7 @@ class ChecklistController extends AbstractController {
     }
 
     #[Route('/{uuid}', name: 'show_checklist')]
-    public function show(Checklist $checklist, Request $request): Response {
+    public function show(#[MapEntity(mapping: ['uuid' => 'uuid'])] Checklist $checklist, Request $request): Response {
         $this->denyAccessUnlessGranted(ChecklistVoter::View, $checklist);
 
         $form = $this->createForm(ChecklistStudentsType::class, $checklist);
@@ -148,7 +149,7 @@ class ChecklistController extends AbstractController {
     }
 
     #[Route('/{uuid}/edit', name: 'edit_checklist')]
-    public function edit(Checklist $checklist, Request $request): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] Checklist $checklist, Request $request): Response {
         $this->denyAccessUnlessGranted(ChecklistVoter::Edit, $checklist);
 
         $form = $this->createForm(ChecklistType::class, $checklist);
@@ -170,7 +171,7 @@ class ChecklistController extends AbstractController {
     }
 
     #[Route('/{uuid}/remove', name: 'remove_checklist')]
-    public function remove(Checklist $checklist, Request $request): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] Checklist $checklist, Request $request): Response {
         $this->denyAccessUnlessGranted(ChecklistVoter::Remove, $checklist);
 
         $form = $this->createForm(ConfirmType::class, null, [

@@ -2,6 +2,7 @@
 
 namespace App\Grouping;
 
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -13,7 +14,7 @@ class Grouper {
     /**
      * @param GroupingStrategyInterface[] $strategies
      */
-    public function __construct(iterable $strategies) {
+    public function __construct(#[AutowireIterator('app.grouping_strategy')] iterable $strategies) {
         foreach($strategies as $strategy) {
             $this->strategies[$strategy::class] = $strategy;
         }

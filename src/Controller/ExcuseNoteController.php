@@ -6,6 +6,7 @@ use App\Entity\DateLesson;
 use App\Security\Voter\ExcuseNoteVoter;
 use App\Settings\TimetableSettings;
 use ArrayIterator;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\ExcuseNote;
 use App\Entity\User;
@@ -97,7 +98,7 @@ class ExcuseNoteController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/edit', name: 'edit_excuse')]
-    public function edit(ExcuseNote $excuse, Request $request): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] ExcuseNote $excuse, Request $request): Response {
         $this->denyAccessUnlessGranted(ExcuseNoteVoter::Edit, $excuse);
 
         $form = $this->createForm(ExcuseType::class, $excuse);
@@ -117,7 +118,7 @@ class ExcuseNoteController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/remove', name: 'remove_excuse')]
-    public function remove(ExcuseNote $excuse, Request $request, TranslatorInterface $translator): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] ExcuseNote $excuse, Request $request, TranslatorInterface $translator): Response {
         $this->denyAccessUnlessGranted(ExcuseNoteVoter::Remove, $excuse);
 
         $form = $this->createForm(ConfirmType::class, null, [

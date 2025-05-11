@@ -24,6 +24,7 @@ use App\Sorting\UserUsernameStrategy;
 use SchulIT\CommonBundle\Form\FieldsetType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -183,7 +184,7 @@ class ProfileController extends AbstractController {
     }
 
     #[Route(path: '/apps/{uuid}/remove', name: 'profile_remove_app', methods: ['POST'])]
-    public function removeApp(IcsAccessToken $token, Request $request, DeviceTokenRepositoryInterface $deviceTokenRepository): Response {
+    public function removeApp(#[MapEntity(mapping: ['uuid' => 'uuid'])] IcsAccessToken $token, Request $request, DeviceTokenRepositoryInterface $deviceTokenRepository): Response {
         $this->denyAccessUnlessGranted(DeviceTokenVoter::Remove, $token);
 
         $csrfToken = $request->request->get('_csrf_token');

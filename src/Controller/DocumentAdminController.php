@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Feature\Feature;
 use App\Feature\IsFeatureEnabled;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Document;
 use App\Form\DocumentType;
@@ -78,7 +79,7 @@ class DocumentAdminController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/edit', name: 'admin_edit_document')]
-    public function edit(Document $document, Request $request): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] Document $document, Request $request): Response {
         $this->denyAccessUnlessGranted(DocumentVoter::Edit, $document);
 
         $form = $this->createForm(DocumentType::class, $document);
@@ -97,74 +98,8 @@ class DocumentAdminController extends AbstractController {
         ]);
     }
 
-    #[Route(path: '/{uuid}/versions', name: 'document_versions')]
-    public function versions(Document $document, LogRepositoryInterface $logRepository, Sorter $sorter): Response {
-        $this->denyAccessUnlessGranted(DocumentVoter::Edit, $document);
-
-        $logs = $logRepository->getLogEntries($document);
-        $sorter->sort($logs, LogEntryStrategy::class, SortDirection::Descending);
-
-        return $this->render('admin/documents/versions.html.twig', [
-            'document' => $document,
-            'logs' => $logs,
-            'token_id' => self::RevertCsrfToken,
-            'token_param' => self::RevertCsrfTokenParam,
-            'version_param' => self::VersionParam
-        ]);
-    }
-
-    #[Route(path: '/{uuid}/versions/{version}', name: 'show_document_version')]
-    public function version(Document $document, LogRepositoryInterface $logRepository, int $version): Response {
-        $this->denyAccessUnlessGranted(DocumentVoter::Edit, $document);
-
-        $logs = $logRepository->getLogEntries($document);
-        $entry = null;
-
-        foreach($logs as $logEntry) {
-            if($logEntry->getVersion() === $version) {
-                $entry = $logEntry;
-            }
-        }
-
-        if($entry === null) {
-            throw new NotFoundHttpException();
-        }
-
-        $logRepository->revert($document, $version);
-
-        return $this->render('admin/documents/version.html.twig', [
-            'document' => $document,
-            'entry' => $entry,
-            'token_id' => self::RevertCsrfToken,
-            'token_param' => self::RevertCsrfTokenParam,
-            'version_param' => self::VersionParam
-        ]);
-    }
-
-    #[Route(path: '/{uuid}/restore', name: 'restore_document_version')]
-    public function restore(Document $document, Request $request, LogRepositoryInterface $logRepository, TranslatorInterface $translator): Response {
-        $this->denyAccessUnlessGranted(DocumentVoter::Edit, $document);
-
-        if($this->isCsrfTokenValid(self::RevertCsrfToken, $request->request->get(self::RevertCsrfTokenParam)) !== true) {
-            $this->addFlash('error', $translator->trans('The CSRF token is invalid. Please try to resubmit the form.', [], 'validators'));
-
-            return $this->redirectToRoute('document_versions', [
-                'uuid' => $document->getUuid()
-            ]);
-        }
-
-        $logRepository->revert($document, $request->request->get(self::VersionParam));
-        $this->repository->persist($document);
-
-        $this->addFlash('success', 'versions.restore.success');
-
-        return $this->redirectToRoute('show_document', [
-            'uuid' => $document->getUuid()
-        ]);
-    }
-
     #[Route(path: '/{uuid}/remove', name: 'admin_remove_document')]
-    public function remove(Document $document, Request $request, TranslatorInterface $translator): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] Document $document, Request $request, TranslatorInterface $translator): Response {
         $this->denyAccessUnlessGranted(DocumentVoter::Remove, $document);
 
         $form = $this->createForm(ConfirmType::class, null, [

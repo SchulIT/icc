@@ -11,6 +11,7 @@ use App\Repository\TuitionGradeCategoryRepositoryInterface;
 use App\Repository\TuitionGradeCatalogRepositoryInterface;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -65,7 +66,7 @@ class TuitionGradeCatalogAdminController extends AbstractController {
     }
 
     #[Route('/{uuid}/edit', name: 'edit_tuition_grade_catalog')]
-    public function edit(TuitionGradeCatalog $catalog, Request $request): RedirectResponse|Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] TuitionGradeCatalog $catalog, Request $request): RedirectResponse|Response {
         $form = $this->createForm(TuitionGradeCatalogType::class, $catalog);
         $form->handleRequest($request);
 
@@ -82,7 +83,7 @@ class TuitionGradeCatalogAdminController extends AbstractController {
     }
 
     #[Route('/{uuid}/remove', name: 'remove_tuition_grade_catalog')]
-    public function remove(TuitionGradeCatalog $catalog, Request $request, TuitionGradeCategoryRepositoryInterface $tuitionGradeCategoryRepository): RedirectResponse|Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] TuitionGradeCatalog $catalog, Request $request, TuitionGradeCategoryRepositoryInterface $tuitionGradeCategoryRepository): RedirectResponse|Response {
         $categories = $tuitionGradeCategoryRepository->findAllByGradeType($catalog);
 
         if(count($categories) > 0) {

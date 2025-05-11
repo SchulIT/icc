@@ -11,6 +11,7 @@ use App\Settings\ChatSettings;
 use App\View\Filter\LearningManagementSystemFilter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Exam;
 use App\Entity\Grade;
@@ -152,7 +153,7 @@ class ListController extends AbstractControllerWithMessages {
     }
 
     #[Route(path: '/tuitions/{uuid}', name: 'list_tuition')]
-    public function tuition(Tuition $tuition, TuitionRepositoryInterface $tuitionRepository, ExamRepositoryInterface $examRepository): Response {
+    public function tuition(#[MapEntity(mapping: ['uuid' => 'uuid'])] Tuition $tuition, TuitionRepositoryInterface $tuitionRepository, ExamRepositoryInterface $examRepository): Response {
         $this->denyAccessUnlessGranted(ListsVoter::Tuitions);
 
         $tuition = $tuitionRepository->findOneById($tuition->getId());
@@ -192,7 +193,7 @@ class ListController extends AbstractControllerWithMessages {
     }
 
     #[Route(path: '/tuitions/{uuid}/export', name: 'export_tuition')]
-    public function exportTuition(Tuition $tuition, TuitionCsvExporter $tuitionCsvExporter): Response {
+    public function exportTuition(#[MapEntity(mapping: ['uuid' => 'uuid'])] Tuition $tuition, TuitionCsvExporter $tuitionCsvExporter): Response {
         $this->denyAccessUnlessGranted(ListsVoter::Tuitions);
 
         return $tuitionCsvExporter->getCsvResponse($tuition);
@@ -285,7 +286,7 @@ class ListController extends AbstractControllerWithMessages {
     }
 
     #[Route(path: '/study_groups/{uuid}/export', name: 'export_studygroup')]
-    public function exportStudyGroup(StudyGroup $studyGroup, StudyGroupCsvExporter $csvExporter): Response {
+    public function exportStudyGroup(#[MapEntity(mapping: ['uuid' => 'uuid'])] StudyGroup $studyGroup, StudyGroupCsvExporter $csvExporter): Response {
         $this->denyAccessUnlessGranted(ListsVoter::StudyGroups);
 
         return $csvExporter->getCsvResponse($studyGroup);
@@ -410,9 +411,7 @@ class ListController extends AbstractControllerWithMessages {
     }
 
     #[Route('/lms/{lms}/{studyGroup}/export', name: 'export_lms')]
-    #[ParamConverter('lms', options: ['mapping' => ['lms' => 'uuid']])]
-    #[ParamConverter('studyGroup', options: ['mapping' => ['studyGroup' => 'uuid']])]
-    public function exportLms(LearningManagementSystem $lms, StudyGroup $studyGroup, LearningManagementSystemInfoCsvExporter $exporter): Response {
+    public function exportLms(#[MapEntity(mapping: ['lms' => 'uuid'])] LearningManagementSystem $lms, #[MapEntity(mapping: ['studyGroup' => 'uuid'])] StudyGroup $studyGroup, LearningManagementSystemInfoCsvExporter $exporter): Response {
         return $exporter->getCsvResponse($lms, $studyGroup);
     }
 }

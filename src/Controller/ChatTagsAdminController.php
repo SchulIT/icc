@@ -9,6 +9,7 @@ use App\Form\ChatTagType;
 use App\Repository\ChatTagRepositoryInterface;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -47,7 +48,7 @@ class ChatTagsAdminController extends AbstractController {
     }
 
     #[Route('/{uuid}/edit', name: 'edit_chat_tag')]
-    public function edit(ChatTag $tag, Request $request): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] ChatTag $tag, Request $request): Response {
         $form = $this->createForm(ChatTagType::class, $tag);
         $form->handleRequest($request);
 
@@ -64,7 +65,7 @@ class ChatTagsAdminController extends AbstractController {
     }
 
     #[Route('/{uuid}/remove', name: 'remove_chat_tag')]
-    public function remove(ChatTag $tag, Request $request, TranslatorInterface $translator): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] ChatTag $tag, Request $request, TranslatorInterface $translator): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => $translator->trans('admin.chat.tags.remove.confirm', [
                 '%title%' => $tag->getName()

@@ -17,6 +17,7 @@ use App\View\Filter\StudentFilter;
 use App\View\Filter\StudentFilterView;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -103,7 +104,7 @@ class ReturnItemController extends AbstractController {
     }
 
     #[Route('/{uuid}', name: 'show_return_item')]
-    public function show(ReturnItem $item, SectionResolverInterface $sectionResolver): Response {
+    public function show(#[MapEntity(mapping: ['uuid' => 'uuid'])] ReturnItem $item, SectionResolverInterface $sectionResolver): Response {
         $this->denyAccessUnlessGranted(ReturnItemVoter::Show, $item);
 
         return $this->render('returns/show.html.twig', [
@@ -113,7 +114,7 @@ class ReturnItemController extends AbstractController {
     }
 
     #[Route('/{uuid}/edit', name: 'edit_return_item')]
-    public function edit(ReturnItem $item, Request $request): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] ReturnItem $item, Request $request): Response {
         $this->denyAccessUnlessGranted(ReturnItemVoter::Edit, $item);
 
         $form = $this->createForm(ReturnItemType::class, $item);
@@ -135,7 +136,7 @@ class ReturnItemController extends AbstractController {
     }
 
     #[Route('/{uuid}/return', name: 'return_return_item')]
-    public function return(ReturnItem $item, Request $request): Response {
+    public function return(#[MapEntity(mapping: ['uuid' => 'uuid'])] ReturnItem $item, Request $request): Response {
         $this->denyAccessUnlessGranted(ReturnItemVoter::Return, $item);
 
         $form = $this->createForm(ConfirmType::class, null, [
@@ -165,7 +166,7 @@ class ReturnItemController extends AbstractController {
     }
 
     #[Route('/{uuid}/remove', name: 'remove_return_item')]
-    public function remove(ReturnItem $item, Request $request): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] ReturnItem $item, Request $request): Response {
         $this->denyAccessUnlessGranted(ReturnItemVoter::Remove, $item);
 
         $form = $this->createForm(ConfirmType::class, null, [

@@ -10,6 +10,7 @@ use DOMNode;
 use DOMNodeList;
 use DOMXPath;
 use Exception;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 class SubstitutionReader extends AbstractHtmlReader {
 
@@ -22,7 +23,7 @@ class SubstitutionReader extends AbstractHtmlReader {
     /**
      * @param InfotextReaderInterface[] $infotextReader
      */
-    public function __construct(private readonly iterable $infotextReader, private readonly TableCellParser $tableCellParser, private readonly UntisHtmlSettings $settings)
+    public function __construct(#[AutowireIterator('app.untis.import.infotext_reader')] private readonly iterable $infotextReader, private readonly TableCellParser $tableCellParser, private readonly UntisHtmlSettings $settings)
     {
     }
 

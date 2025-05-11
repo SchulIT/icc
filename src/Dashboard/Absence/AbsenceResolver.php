@@ -5,6 +5,7 @@ namespace App\Dashboard\Absence;
 use App\Dashboard\AbsentStudent;
 use App\Entity\Student;
 use DateTime;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 /**
  * Helper class which resolves absences in a effective way utilizing database queries instead of working with objects.
@@ -14,7 +15,7 @@ class AbsenceResolver {
     /**
      * @param AbsenceResolveStrategyInterface[] $strategies
      */
-    public function __construct(private iterable $strategies)
+    public function __construct(#[AutowireIterator('app.absence_resolver')] private iterable $strategies)
     {
     }
 

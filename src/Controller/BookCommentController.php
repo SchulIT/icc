@@ -13,6 +13,7 @@ use App\Section\SectionResolverInterface;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -70,14 +71,14 @@ class BookCommentController extends AbstractController {
     }
 
     #[Route('/{uuid}', name: 'show_book_comment')]
-    public function show(BookComment $comment): Response {
+    public function show(#[MapEntity(mapping: ['uuid' => 'uuid'])] BookComment $comment): Response {
         return $this->render('books/comment/show.html.twig', [
             'comment' => $comment
         ]);
     }
 
     #[Route(path: '/{uuid}/edit', name: 'edit_book_comment')]
-    public function edit(BookComment $comment, Request $request): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] BookComment $comment, Request $request): Response {
         $form = $this->createForm(BookCommentType::class, $comment);
         $form->handleRequest($request);
 
@@ -94,7 +95,7 @@ class BookCommentController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/remove', name: 'remove_book_comment')]
-    public function remove(BookComment $comment, Request $request, TranslatorInterface $translator): Response {
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] BookComment $comment, Request $request, TranslatorInterface $translator): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'book.comment.remove.confirm',
             'message_parameters' => [

@@ -18,6 +18,7 @@ use App\Repository\SubstitutionRepositoryInterface;
 use App\Repository\TeacherAbsenceRepositoryInterface;
 use App\Repository\TimetableSupervisionRepositoryInterface;
 use App\Repository\TuitionGradeRepositoryInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Section;
 use App\Form\SectionType;
@@ -61,7 +62,7 @@ class SectionController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/edit', name: 'edit_section')]
-    public function edit(Section $section, Request $request): Response {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] Section $section, Request $request): Response {
         $form = $this->createForm(SectionType::class, $section);
         $form->handleRequest($request);
 
@@ -79,7 +80,7 @@ class SectionController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/remove', name: 'remove_section')]
-    public function remove(Section $section, Request $request, TimetableLessonRepositoryInterface $lessonRepository,
+    public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] Section $section, Request $request, TimetableLessonRepositoryInterface $lessonRepository,
                            TuitionGradeRepositoryInterface $gradeRepository, StudentAbsenceRepositoryInterface $studentAbsenceRepository,
                            TeacherAbsenceRepositoryInterface $teacherAbsenceRepository, TimetableSupervisionRepositoryInterface $supervisionRepository,
                            ExamRepositoryInterface $examRepository, SubstitutionRepositoryInterface $substitutionRepository,

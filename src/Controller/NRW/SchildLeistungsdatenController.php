@@ -6,6 +6,7 @@ use App\Book\Grade\Export\Schild\Exporter;
 use App\Book\Grade\Export\Schild\Request as SchildRequest;
 use App\Controller\AbstractController;
 use App\Repository\TuitionGradeCategoryRepositoryInterface;
+use App\Request\JsonPayload;
 use App\Section\SectionResolverInterface;
 use App\Settings\TuitionGradebookSettings;
 use JMS\Serializer\SerializerInterface;
@@ -26,7 +27,7 @@ class SchildLeistungsdatenController extends AbstractController {
     }
 
     #[Route('/json', name: 'nrw_schild_leistungsdaten_export_json')]
-    public function request(SchildRequest $request, SerializerInterface $serializer, Exporter $exporter): Response {
+    public function request(#[JsonPayload] SchildRequest $request, SerializerInterface $serializer, Exporter $exporter): Response {
         $response = $exporter->export($request);
 
         return new JsonResponse($serializer->serialize($response, 'json'), json: true);

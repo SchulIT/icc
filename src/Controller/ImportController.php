@@ -49,6 +49,7 @@ use App\Request\Data\TeachersData;
 use App\Request\Data\TimetableLessonsData;
 use App\Request\Data\TimetableSupervisionsData;
 use App\Request\Data\TuitionsData;
+use App\Request\JsonPayload;
 use App\Response\ErrorResponse;
 use App\Response\ImportResponse;
 use JMS\Serializer\SerializerInterface;
@@ -56,6 +57,7 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\ValueResolver;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -94,7 +96,7 @@ class ImportController extends AbstractController {
     #[OA\Response(response: '403', description: 'Fehlerhafte Rechte.', content: new Model(type: ErrorResponse::class))]
     #[OA\Response(response: '500', description: 'Serverfehler')]
     #[Route(path: '/appointments', name: 'import_appointments', methods: ['POST'])]
-    public function appointments(AppointmentsData $appointmentsData, AppointmentsImportStrategy $strategy): Response {
+    public function appointments(#[JsonPayload] AppointmentsData $appointmentsData, AppointmentsImportStrategy $strategy): Response {
         $result = $this->importer->import($appointmentsData, $strategy);
         return $this->fromResult($result);
     }
@@ -112,7 +114,7 @@ class ImportController extends AbstractController {
     #[OA\Response(response: '403', description: 'Fehlerhafte Rechte.', content: new Model(type: ErrorResponse::class))]
     #[OA\Response(response: '500', description: 'Serverfehler')]
     #[Route(path: '/appointments/categories', methods: ['POST'])]
-    public function appointmentCategories(AppointmentCategoriesData $appointmentCategoriesData, AppointmentCategoriesImportStrategy $strategy): Response {
+    public function appointmentCategories(#[JsonPayload] AppointmentCategoriesData $appointmentCategoriesData, AppointmentCategoriesImportStrategy $strategy): Response {
         $result = $this->importer->import($appointmentCategoriesData, $strategy);
         return $this->fromResult($result);
     }
@@ -130,7 +132,7 @@ class ImportController extends AbstractController {
     #[OA\Response(response: '403', description: 'Fehlerhafte Rechte.', content: new Model(type: ErrorResponse::class))]
     #[OA\Response(response: '500', description: 'Serverfehler')]
     #[Route(path: '/exams', methods: ['POST'])]
-    public function exams(ExamsData $examsData, ExamsImportStrategy $strategy): Response {
+    public function exams(#[JsonPayload] ExamsData $examsData, ExamsImportStrategy $strategy): Response {
         $result = $this->importer->import($examsData, $strategy);
         return $this->fromResult($result);
     }
@@ -147,7 +149,7 @@ class ImportController extends AbstractController {
     #[OA\Response(response: '403', description: 'Fehlerhafte Rechte.', content: new Model(type: ErrorResponse::class))]
     #[OA\Response(response: '500', description: 'Serverfehler')]
     #[Route(path: '/grades', methods: ['POST'])]
-    public function grades(GradesData $gradesData, GradesImportStrategy $strategy): Response {
+    public function grades(#[JsonPayload] GradesData $gradesData, GradesImportStrategy $strategy): Response {
         $result = $this->importer->import($gradesData, $strategy);
         return $this->fromResult($result);
     }
@@ -164,7 +166,7 @@ class ImportController extends AbstractController {
     #[OA\Response(response: '403', description: 'Fehlerhafte Rechte.', content: new Model(type: ErrorResponse::class))]
     #[OA\Response(response: '500', description: 'Serverfehler')]
     #[Route(path: '/grades/teachers', methods: ['POST'])]
-    public function gradeTeachers(GradeTeachersData $gradeTeachersData, GradeTeachersImportStrategy $strategy): Response {
+    public function gradeTeachers(#[JsonPayload] GradeTeachersData $gradeTeachersData, GradeTeachersImportStrategy $strategy): Response {
         $result = $this->importer->replaceImport($gradeTeachersData, $strategy);
         return $this->fromResult($result);
     }
@@ -181,7 +183,7 @@ class ImportController extends AbstractController {
     #[OA\Response(response: '403', description: 'Fehlerhafte Rechte.', content: new Model(type: ErrorResponse::class))]
     #[OA\Response(response: '500', description: 'Serverfehler')]
     #[Route(path: '/grades/memberships', methods: ['POST'])]
-    public function gradeMemberships(GradeMembershipsData $membershipsData, GradeMembershipImportStrategy $strategy): Response {
+    public function gradeMemberships(#[JsonPayload] GradeMembershipsData $membershipsData, GradeMembershipImportStrategy $strategy): Response {
         $result = $this->importer->replaceImport($membershipsData, $strategy);
         return $this->fromResult($result);
     }
@@ -198,7 +200,7 @@ class ImportController extends AbstractController {
     #[OA\Response(response: '403', description: 'Fehlerhafte Rechte.', content: new Model(type: ErrorResponse::class))]
     #[OA\Response(response: '500', description: 'Serverfehler')]
     #[Route(path: '/students', methods: ['POST'])]
-    public function students(StudentsData $studentsData, StudentsImportStrategy $strategy): Response {
+    public function students(#[JsonPayload] StudentsData $studentsData, StudentsImportStrategy $strategy): Response {
         $result = $this->importer->import($studentsData, $strategy);
         return $this->fromResult($result);
     }
@@ -215,7 +217,7 @@ class ImportController extends AbstractController {
     #[OA\Response(response: '403', description: 'Fehlerhafte Rechte.', content: new Model(type: ErrorResponse::class))]
     #[OA\Response(response: '500', description: 'Serverfehler')]
     #[Route(path: '/studygroups', methods: ['POST'])]
-    public function studyGroups(StudyGroupsData $studyGroupsData, StudyGroupImportStrategy $strategy): Response {
+    public function studyGroups(#[JsonPayload] StudyGroupsData $studyGroupsData, StudyGroupImportStrategy $strategy): Response {
         $result = $this->importer->import($studyGroupsData, $strategy);
         return $this->fromResult($result);
     }
@@ -232,7 +234,7 @@ class ImportController extends AbstractController {
     #[OA\Response(response: '403', description: 'Fehlerhafte Rechte.', content: new Model(type: ErrorResponse::class))]
     #[OA\Response(response: '500', description: 'Serverfehler')]
     #[Route(path: '/studygroups/memberships', methods: ['POST'])]
-    public function studyGroupsMemberships(StudyGroupMembershipsData $membershipsData, StudyGroupMembershipImportStrategy $strategy): Response {
+    public function studyGroupsMemberships(#[JsonPayload] StudyGroupMembershipsData $membershipsData, StudyGroupMembershipImportStrategy $strategy): Response {
         $result = $this->importer->replaceImport($membershipsData, $strategy);
         return $this->fromResult($result);
     }
@@ -249,7 +251,7 @@ class ImportController extends AbstractController {
     #[OA\Response(response: '403', description: 'Fehlerhafte Rechte.', content: new Model(type: ErrorResponse::class))]
     #[OA\Response(response: '500', description: 'Serverfehler')]
     #[Route(path: '/subjects', methods: ['POST'])]
-    public function subjects(SubjectsData $subjectsData, SubjectsImportStrategy $strategy): Response {
+    public function subjects(#[JsonPayload] SubjectsData $subjectsData, SubjectsImportStrategy $strategy): Response {
         $result = $this->importer->import($subjectsData, $strategy);
         return $this->fromResult($result);
     }
@@ -266,7 +268,7 @@ class ImportController extends AbstractController {
     #[OA\Response(response: '403', description: 'Fehlerhafte Rechte.', content: new Model(type: ErrorResponse::class))]
     #[OA\Response(response: '500', description: 'Serverfehler')]
     #[Route(path: '/substitutions', methods: ['POST'])]
-    public function substitutions(SubstitutionsData $substitutionsData, SubstitutionsImportStrategy $strategy): Response {
+    public function substitutions(#[JsonPayload] SubstitutionsData $substitutionsData, SubstitutionsImportStrategy $strategy): Response {
         $result = $this->importer->import($substitutionsData, $strategy);
         return $this->fromResult($result);
     }
@@ -283,7 +285,7 @@ class ImportController extends AbstractController {
     #[OA\Response(response: '403', description: 'Fehlerhafte Rechte.', content: new Model(type: ErrorResponse::class))]
     #[OA\Response(response: '500', description: 'Serverfehler')]
     #[Route(path: '/teachers', methods: ['POST'])]
-    public function teachers(TeachersData $teachersData, TeachersImportStrategy $strategy): Response {
+    public function teachers(#[JsonPayload] TeachersData $teachersData, TeachersImportStrategy $strategy): Response {
         $result = $this->importer->import($teachersData, $strategy);
         return $this->fromResult($result);
     }
@@ -300,7 +302,7 @@ class ImportController extends AbstractController {
     #[OA\Response(response: '403', description: 'Fehlerhafte Rechte.', content: new Model(type: ErrorResponse::class))]
     #[OA\Response(response: '500', description: 'Serverfehler')]
     #[Route(path: '/timetable/lessons', methods: ['POST'])]
-    public function timetableLessons(TimetableLessonsData $lessonsData, TimetableLessonsImportStrategy $strategy): Response {
+    public function timetableLessons(#[JsonPayload] TimetableLessonsData $lessonsData, TimetableLessonsImportStrategy $strategy): Response {
         $result = $this->importer->replaceImport($lessonsData, $strategy);
         return $this->fromResult($result);
     }
@@ -317,7 +319,7 @@ class ImportController extends AbstractController {
     #[OA\Response(response: '403', description: 'Fehlerhafte Rechte.', content: new Model(type: ErrorResponse::class))]
     #[OA\Response(response: '500', description: 'Serverfehler')]
     #[Route(path: '/timetable/supervisions', methods: ['POST'])]
-    public function timetableSupervisions(TimetableSupervisionsData $supervisionsData, TimetableSupervisionsImportStrategy $strategy): Response {
+    public function timetableSupervisions(#[JsonPayload] TimetableSupervisionsData $supervisionsData, TimetableSupervisionsImportStrategy $strategy): Response {
         $result = $this->importer->replaceImport($supervisionsData, $strategy);
         return $this->fromResult($result);
     }
@@ -334,7 +336,7 @@ class ImportController extends AbstractController {
     #[OA\Response(response: '403', description: 'Fehlerhafte Rechte.', content: new Model(type: ErrorResponse::class))]
     #[OA\Response(response: '500', description: 'Serverfehler')]
     #[Route(path: '/tuitions', methods: ['POST'])]
-    public function tuitions(TuitionsData $tuitionsData, TuitionsImportStrategy $strategy): Response {
+    public function tuitions(#[JsonPayload] TuitionsData $tuitionsData, TuitionsImportStrategy $strategy): Response {
         $result = $this->importer->import($tuitionsData, $strategy);
         return $this->fromResult($result);
     }
@@ -351,7 +353,7 @@ class ImportController extends AbstractController {
     #[OA\Response(response: '403', description: 'Fehlerhafte Rechte.', content: new Model(type: ErrorResponse::class))]
     #[OA\Response(response: '500', description: 'Serverfehler')]
     #[Route(path: '/infotexts', methods: ['POST'])]
-    public function infotexts(InfotextsData $infotextsData, InfotextsImportStrategy $strategy): Response {
+    public function infotexts(#[JsonPayload] InfotextsData $infotextsData, InfotextsImportStrategy $strategy): Response {
         $result = $this->importer->replaceImport($infotextsData, $strategy);
         return $this->fromResult($result);
     }
@@ -368,7 +370,7 @@ class ImportController extends AbstractController {
     #[OA\Response(response: '403', description: 'Fehlerhafte Rechte.', content: new Model(type: ErrorResponse::class))]
     #[OA\Response(response: '500', description: 'Serverfehler')]
     #[Route(path: '/absences', methods: ['POST'])]
-    public function absences(AbsencesData $absencesData, AbsencesImportStrategy $strategy): Response {
+    public function absences(#[JsonPayload] AbsencesData $absencesData, AbsencesImportStrategy $strategy): Response {
         $result = $this->importer->replaceImport($absencesData, $strategy);
         return $this->fromResult($result);
     }
@@ -385,7 +387,7 @@ class ImportController extends AbstractController {
     #[OA\Response(response: '403', description: 'Fehlerhafte Rechte.', content: new Model(type: ErrorResponse::class))]
     #[OA\Response(response: '500', description: 'Serverfehler')]
     #[Route(path: '/privacy/categories', methods: ['POST'])]
-    public function privacyCategories(PrivacyCategoriesData $categoriesData, PrivacyCategoryImportStrategy $strategy): Response {
+    public function privacyCategories(#[JsonPayload] PrivacyCategoriesData $categoriesData, PrivacyCategoryImportStrategy $strategy): Response {
         $result = $this->importer->import($categoriesData, $strategy);
         return $this->fromResult($result);
     }
@@ -402,7 +404,7 @@ class ImportController extends AbstractController {
     #[OA\Response(response: '403', description: 'Fehlerhafte Rechte.', content: new Model(type: ErrorResponse::class))]
     #[OA\Response(response: '500', description: 'Serverfehler')]
     #[Route(path: '/rooms', methods: ['POST'])]
-    public function rooms(RoomsData $roomsData, RoomImportStrategy $strategy): Response {
+    public function rooms(#[JsonPayload] RoomsData $roomsData, RoomImportStrategy $strategy): Response {
         $result = $this->importer->import($roomsData, $strategy);
         return $this->fromResult($result);
     }
@@ -419,7 +421,7 @@ class ImportController extends AbstractController {
     #[OA\Response(response: '403', description: 'Fehlerhafte Rechte.', content: new Model(type: ErrorResponse::class))]
     #[OA\Response(response: '500', description: 'Serverfehler')]
     #[Route(path: '/free_lessons', methods: ['POST'])]
-    public function freeLessons(FreeLessonTimespansData $timespansData, FreeTimespanImportStrategy $strategy): Response {
+    public function freeLessons(#[JsonPayload] FreeLessonTimespansData $timespansData, FreeTimespanImportStrategy $strategy): Response {
         $result = $this->importer->replaceImport($timespansData, $strategy);
         return $this->fromResult($result);
     }
@@ -436,7 +438,7 @@ class ImportController extends AbstractController {
     #[OA\Response(response: '403', description: 'Fehlerhafte Rechte.', content: new Model(type: ErrorResponse::class))]
     #[OA\Response(response: '500', description: 'Serverfehler')]
     #[Route(path: '/lms', methods: ['POST'])]
-    public function lms(LearningManagementSystemsData $learningManagementSystemsData, LearningManagementSystemsImportStrategy $strategy): Response {
+    public function lms(#[JsonPayload] LearningManagementSystemsData $learningManagementSystemsData, LearningManagementSystemsImportStrategy $strategy): Response {
         $result = $this->importer->import($learningManagementSystemsData, $strategy);
         return $this->fromResult($result);
     }
@@ -453,7 +455,7 @@ class ImportController extends AbstractController {
     #[OA\Response(response: '403', description: 'Fehlerhafte Rechte.', content: new Model(type: ErrorResponse::class))]
     #[OA\Response(response: '500', description: 'Serverfehler')]
     #[Route(path: '/lms/students', methods: ['POST'])]
-    public function lmsInfo(StudentLearningManagementSystemsData $data, StudentLearningManagementSystemInformationImportStrategy $strategy): Response {
+    public function lmsInfo(#[JsonPayload] StudentLearningManagementSystemsData $data, StudentLearningManagementSystemInformationImportStrategy $strategy): Response {
         $result = $this->importer->replaceImport($data, $strategy);
         return $this->fromResult($result);
     }

@@ -34,6 +34,7 @@ use App\Repository\TeacherRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Request\Book\CancelLessonRequest;
 use App\Request\Book\UpdateAttendanceRequest;
+use App\Request\JsonPayload;
 use App\Response\Book\AttendanceSuggestion;
 use App\Response\Book\RemoveSuggestion;
 use App\Response\Book\Student as StudentResponse;
@@ -312,7 +313,7 @@ class BookXhrController extends AbstractController {
     #[OA\Response(response: '201', description: 'Unterrichtsstunden erfolgreich als Entfall markiert.')]
     #[OA\Response(response: '400', description: 'Fehlerhafte Anfrage.', content: new Model(type: ViolationList::class))]
     #[Route(path: '/cancel/{uuid}', name: 'xhr_cancel_lesson', methods: ['POST'])]
-    public function cancelLesson(#[MapEntity(mapping: ['uuid' => 'uuid'])] TimetableLesson $lesson, CancelLessonRequest $request, LessonCancelHelper $lessonCancelHelper): Response {
+    public function cancelLesson(#[MapEntity(mapping: ['uuid' => 'uuid'])] TimetableLesson $lesson, #[JsonPayload]  CancelLessonRequest $request, LessonCancelHelper $lessonCancelHelper): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
         $reason = $request->getReason();
         $lessonCancelHelper->cancelLesson($lesson, $reason);
@@ -328,7 +329,7 @@ class BookXhrController extends AbstractController {
     #[OA\Response(response: '200', description: 'Anwesenheit erfolgreich aktualisiert.')]
     #[OA\Response(response: '400', description: 'Fehlerhafte Anfrage.', content: new Model(type: ViolationList::class))]
     #[Route(path: '/attendance/{uuid}', name: 'xhr_update_attendance', methods: ['PUT'])]
-    public function updateAttendance(#[MapEntity(mapping: ['uuid' => 'uuid'])] Attendance $attendance, UpdateAttendanceRequest $request, LessonAttendanceRepositoryInterface $repository): Response {
+    public function updateAttendance(#[MapEntity(mapping: ['uuid' => 'uuid'])] Attendance $attendance, #[JsonPayload] UpdateAttendanceRequest $request, LessonAttendanceRepositoryInterface $repository): Response {
         $this->denyAccessUnlessGranted(AttendanceVoter::Edit, $attendance);
 
         $attendance->setIsZeroAbsentLesson($request->isZeroAbsentLesson());

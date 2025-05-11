@@ -2,8 +2,12 @@
 
 ## Veränderungen unter Haube
 
-* Das Projekt basiert nun auf Symfony 6.4
+* Das Projekt basiert nun auf Symfony 7x2
 * Das Projekt benötigt nun PHP 8.3
+
+## Wichtige Änderung
+Die Versionierung von Dokumenten und Wiki-Artikeln musste entfernt werden, da die verwendete Bibliothek dafür nicht mit
+der verwendeten ORM-Version kompatibel ist.
 
 ## Neue Rollen
 

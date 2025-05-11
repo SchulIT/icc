@@ -37,7 +37,7 @@ Das Handbuch ist [hier](https://docs.schulit.de/icc) zu finden.
 
 Die Anwendung ist Teil der SchulIT Software Suite und kann kostenlos und auf eigene Gefahr installiert werden.
 
-Das ICC ist eine Symfony 6.3 Anwendung.
+Das ICC ist eine Symfony 7.2 Anwendung.
 
 ## Wichtige Information
 

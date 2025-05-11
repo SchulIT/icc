@@ -10,6 +10,8 @@ berücksichtigt, die sich bereits einmalig am ICC angemeldet haben.
 Bei der Synchronisation werden alle (für das ICC relevanten) Attribute vom Single Sign-On abgefragt und anschließend in
 der ICC-Datenbank aktualisiert.
 
+Der Abgleich ist **standardmäßig deaktiviert** und muss händisch aktiviert werden.
+
 ## Zeitplan
 
 Der Abgleich passiert per Cronjob einmal täglich um Mitternacht.

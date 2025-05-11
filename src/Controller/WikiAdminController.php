@@ -32,10 +32,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[IsFeatureEnabled(Feature::Wiki)]
 class WikiAdminController extends AbstractController {
 
-    private const VersionParam = '_version';
-    private const RevertCsrfTokenParam = '_csrf_token';
-    private const RevertCsrfToken = 'revert-wiki-article';
-
     public function __construct(private WikiArticleRepositoryInterface $repository, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);
     }

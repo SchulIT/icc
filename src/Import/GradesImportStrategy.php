@@ -4,12 +4,11 @@ namespace App\Import;
 
 use App\Entity\Grade;
 use App\Repository\GradeRepositoryInterface;
-use App\Repository\SectionRepositoryInterface;
 use App\Repository\TransactionalRepositoryInterface;
 use App\Request\Data\GradeData;
 use App\Request\Data\GradesData;
 use App\Utils\ArrayUtils;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 
 class GradesImportStrategy implements ImportStrategyInterface {
 

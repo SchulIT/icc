@@ -29,10 +29,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[IsFeatureEnabled(Feature::Documents)]
 class DocumentAdminController extends AbstractController {
 
-    private const VersionParam = '_version';
-    private const RevertCsrfTokenParam = '_csrf_token';
-    private const RevertCsrfToken = 'revert-document';
-
     public function __construct(private DocumentRepositoryInterface $repository, RefererHelper $refererHelper) {
         parent::__construct($refererHelper);
     }

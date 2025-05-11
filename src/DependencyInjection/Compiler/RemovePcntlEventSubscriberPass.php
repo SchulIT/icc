@@ -14,7 +14,6 @@ class RemovePcntlEventSubscriberPass implements CompilerPassInterface {
      * @inheritDoc
      */
     public function process(ContainerBuilder $container): void {
-        $container->removeDefinition(StopWorkerOnSignalsListener::class);
         $container->removeDefinition(DispatchPcntlSignalListener::class);
         $container->removeDefinition('messenger.listener.dispatch_pcntl_signal_listener');
         $container->removeDefinition('messenger.listener.stop_worker_on_sigterm_signal_listener');

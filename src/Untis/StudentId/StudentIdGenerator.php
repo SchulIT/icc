@@ -6,12 +6,12 @@ use App\Entity\Student;
 use App\Settings\UntisSettings;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
-readonly class StudentIdGenerator {
+class StudentIdGenerator {
 
     /**
      * @param iterable|StudentIdGeneratorInterface[] $generators
      */
-    public function __construct(#[AutowireIterator('app.untis.student_id_generator')] private iterable $generators, private UntisSettings $settings) { }
+    public function __construct(#[AutowireIterator('app.untis.student_id_generator')] private readonly iterable $generators, private readonly  UntisSettings $settings) { }
 
     public function generate(Student $student): ?string {
         foreach($this->generators as $generator) {

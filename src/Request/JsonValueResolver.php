@@ -2,6 +2,7 @@
 
 namespace App\Request;
 
+use Exception;
 use JMS\Serializer\ContextFactory\DeserializationContextFactoryInterface;
 use JMS\Serializer\DeserializationContext;
 use JMS\Serializer\Exception\Exception as SerializerException;
@@ -57,8 +58,6 @@ class JsonValueResolver implements ValueResolverInterface {
         } catch (SerializerException) {
             throw new BadRequestHttpException('Request body does not contain valid JSON.');
         }
-
-        return [ ];
     }
 
     private function getDeserializationContext(JsonPayload $attribute): DeserializationContext {

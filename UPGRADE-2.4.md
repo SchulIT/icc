@@ -43,6 +43,13 @@ deaktiviert ist, werden alle Menüeinträge ausgeblendet und entsprechende URLs 
 Deaktivieren einer Funktion führt nicht zu Datenverlust. Alle bereits eingetragenen Daten bleiben in der Datenbank
 erhalten und werden nur an den entsprechenden Stellen ausgeblendet.
 
+### Benutzerabgleich mit Single Sign-On
+
+Es ist nun möglich, dass im Hintergrund eine Synchronisation der Benutzer mit dem Single Sign-On erfolgt. Diese Synchronisation
+wird zukünftig wichtig, wenn man per API auf das ICC zugreifen können soll, damit das ICC stets die aktuellen Daten hat.
+
+Zur Aktivierung des Features bitte das [Handbuch](https://docs.schulit.de/icc/admin/guides/sso_sync) lesen.
+
 ### Allgemeine Verbesserungen & Bugfixes
 
 ## Upgrade TODO

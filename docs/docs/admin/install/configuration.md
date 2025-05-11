@@ -150,6 +150,20 @@ OpenSSL:
 $ openssl rand -hex 32
 ```
 
+#### SSO_USER_UPDATE
+
+Gibt an, ob der automatische Benutzerabgleich mit dem Single Sign-On aktiviert wird. Mögliche Werte sind `true` (aktiv)
+bzw. `false` (inaktiv).
+
+#### SSO_URL
+
+Basis-URL des Single Sign-On, bspw. `https://sso.schulit.de/`. 
+
+#### SSO_APITOKEN
+
+Ein API-Token, welches im Single Sign-On unter *Verwaltung ➜ Anwendungen* erstellt wurde. Als Zugriffbereich *Allgemein*
+und bei *Dienst* den entsprechenden ICC-Dienstnamen auswählen.
+
 ### Datenbank
 
 #### DATABASE_URL

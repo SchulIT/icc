@@ -4,6 +4,8 @@ namespace App\Security\Voter;
 
 use App\Entity\ReturnItem;
 use App\Entity\User;
+use App\Feature\Feature;
+use App\Feature\FeatureManager;
 use LogicException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
@@ -18,7 +20,7 @@ class ReturnItemVoter extends Voter {
 
     public const string Return = 'return';
 
-    public function __construct(private readonly AccessDecisionManagerInterface $accessDecisionManager) {
+    public function __construct(private readonly AccessDecisionManagerInterface $accessDecisionManager, private readonly FeatureManager $featureManager) {
 
     }
 
@@ -28,6 +30,10 @@ class ReturnItemVoter extends Voter {
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool {
+        if($this->featureManager->isFeatureEnabled(Feature::ReturnItem) !== true) {
+            return false;
+        }
+
         switch($attribute) {
             case self::New:
                 return $this->canCreate($token);

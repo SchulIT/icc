@@ -163,7 +163,7 @@ class TeacherAbsenceController extends AbstractController {
     }
 
     #[Route('/{uuid}', name: 'show_teacher_absence')]
-    public function show(TeacherAbsence $absence, Sorter $sorter): Response {
+    public function show(#[MapEntity(mapping: ['uuid' => 'uuid'])] TeacherAbsence $absence, Sorter $sorter): Response {
         $this->denyAccessUnlessGranted(TeacherAbsenceVoter::Show, $absence);
         $sortedComments = $absence->getComments()->toArray();
         $sorter->sort($sortedComments, TeacherAbsenceCommentStrategy::class);

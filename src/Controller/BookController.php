@@ -55,6 +55,7 @@ use App\Security\Voter\LessonEntryVoter;
 use App\Settings\BookSettings;
 use App\Settings\TimetableSettings;
 use App\Settings\TuitionGradebookSettings;
+use App\Sorting\BookCommentDateStrategy;
 use App\Sorting\DateStrategy;
 use App\Sorting\DateWeekOfYearGroupStrategy;
 use App\Sorting\LessonDayGroupStrategy;
@@ -699,7 +700,7 @@ class BookController extends AbstractController {
             $comments = $commentRepository->findAllByDateAndStudent($student, $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd());
         }
 
-        $sorter->sort($comments, DateStrategy::class);
+        $sorter->sort($comments, BookCommentDateStrategy::class, SortDirection::Descending);
 
         return $this->render('books/student_comments.html.twig', [
             'sectionFilter' => $sectionFilterView,

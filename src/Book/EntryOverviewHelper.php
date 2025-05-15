@@ -25,11 +25,14 @@ use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Section\SectionResolverInterface;
 use App\Settings\TimetableSettings;
+use App\Sorting\BookCommentDateStrategy;
 use App\Sorting\LessonDayGroupStrategy;
 use App\Sorting\LessonStrategy;
+use App\Sorting\SortDirection;
 use App\Sorting\Sorter;
 use App\Utils\ArrayUtils;
 use DateTime;
+use Egulias\EmailValidator\Parser\CommentStrategy\CommentStrategy;
 
 class EntryOverviewHelper {
     public function __construct(private TimetableLessonRepositoryInterface $lessonRepository, private TuitionRepositoryInterface $tuitionRepository, private LessonEntryRepositoryInterface $entryRepository, private BookCommentRepositoryInterface $commentRepository, private LessonAttendanceRepositoryInterface $attendanceRepository, private SectionResolverInterface $sectionResolver, private TimetableSettings $timetableSettings, private AppointmentCategoryRepositoryInterface $appointmentCategoryRepository, private AppointmentRepositoryInterface $appointmentRepository, private FreeTimespanRepositoryInterface $freeTimespanRepository, private SubstitutionRepositoryInterface $substitutionRepository, private readonly BookEventRepositoryInterface $bookEventRepository, private Grouper $grouper, private Sorter $sorter)
@@ -155,6 +158,7 @@ class EntryOverviewHelper {
         $groups = $this->grouper->group(array_values($lessons), LessonDayStrategy::class);
         $this->sorter->sort($groups, LessonDayGroupStrategy::class);
         $this->sorter->sortGroupItems($groups, LessonStrategy::class);
+        $this->sorter->sort($comments, BookCommentDateStrategy::class, SortDirection::Descending);;
 
         $freeTimespans = $this->computeFreeTimespans($start, $end);
 

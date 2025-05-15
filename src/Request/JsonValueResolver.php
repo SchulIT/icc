@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[AsTargetedValueResolver('json')]
 class JsonValueResolver implements ValueResolverInterface {
 
-    private const string JSON_CONTENT_TYPE = 'application/json';
+    private const string JSON_CONTENT_TYPE = 'json';
 
     public function __construct(private readonly SerializerInterface $serializer, private readonly ValidatorInterface $validator, private readonly DeserializationContextFactoryInterface $contextFactory) {
 
@@ -29,7 +29,7 @@ class JsonValueResolver implements ValueResolverInterface {
      * @throws BadRequestHttpException
      */
     public function resolve(Request $request, ArgumentMetadata $argument): iterable {
-        $contentType = $request->headers->get('Content-Type');
+        $contentType = $request->getContentTypeFormat();
 
         if($contentType !== self::JSON_CONTENT_TYPE) {
             throw new BadRequestHttpException(sprintf('Request header "Content-Type" must be "application/json", "%s" provided.', $contentType));

@@ -35,7 +35,8 @@ readonly class StudentAbsenceApprovalChangedEventSubscriber implements EventSubs
         if(!empty($event->getAbsence()->getEmail()) && !in_array($event->getAbsence()->getEmail(), $emails)) {
             $recipients[] = (new User())
                 ->setEmail($event->getAbsence()->getEmail())
-                ->setUsername($event->getAbsence()->getEmail());
+                ->setUsername($event->getAbsence()->getEmail())
+                ->setUserType(UserType::User);
         }
 
         foreach($recipients as $recipient) {

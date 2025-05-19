@@ -7,3 +7,179 @@
     </ol>
 {% endblock %}
 
+{% block title %}{{ 'logs.label'|trans }}{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="row row-cols-4 mb-3 g-4">
+                    {% for counter in counters %}
+                    <div class="col">
+                        <a class="card card-link h-100" href="{{ path('admin_logs', { level: counter.level, channel: channel, username: username, request: request_id }) }}">
+                            <div class="card-body d-flex align-items-center" >
+                                <div class="icon d-inline-block me-2">{{ counter.counter }}</div>
+                                {{ counter.name }}
+                            </div>
+                        </a>
+                    </div>
+
+                    {% if loop.index % 4 == 0 and not loop.last %}
+                </div>
+                <div class="row row-cols-4 mb-3 g-4">
+                    {% endif %}
+                    {% endfor %}
+                </div>
+
+
+                <div class="card">
+                    <table class="table table-hover table-striped card-table">
+                        <colgroup>
+                            <col class="column-sm" />
+                            <col class="column-100" />
+                            <col class="column-md" />
+                            <col />
+                            <col class="column-md" />
+                        </colgroup>
+
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th>{{ 'logs.level'|trans }}</th>
+                            <th>{{ 'logs.channel'|trans }}</th>
+                            <th>{{ 'logs.message'|trans }}</th>
+                            <th>{{ 'logs.time'|trans }}</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        {% for item in items %}
+                            <tr>
+                                <td>
+                                    <div class="pointer" data-toggle="table-collapse" data-target="#log-detail-{{ item.id }}">
+                                        <i class="fa fa-chevron-down indicator"></i>
+                                    </div>
+                                </td>
+                                <td>{{ item.getLevel()|log_level }}</td>
+                                <td>{{ item.getChannel() }}</td>
+                                <td>{{ item.getMessage() }}</td>
+                                <td>{{ item.getTime().format('d.m.Y H:i:s') }}</td>
+                            </tr>
+                            <tr id="log-detail-{{ item.id }}" class="collapse">
+                                <td colspan="8">
+                                    <table class="table mb-1">
+                                        <tbody>
+                                            <tr>
+                                                <th>{{ 'logs.url'|trans }}</th>
+                                                <td>
+                                                    {% if item.details['url'] is defined and item.details['url'] is not empty %}
+                                                        {{ item.details['url'] }}
+                                                    {% else %}
+                                                        <span class="badge text-bg-danger">N/A</span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>{{ 'logs.username'|trans }}</th>
+                                                <td>
+                                                    {% if item.details['username'] is defined and item.details['username'] is not empty %}
+                                                        {{ item.details['username'] }}
+                                                    {% else %}
+                                                        <span class="badge text-bg-danger">N/A</span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>{{ 'logs.request_id'|trans }}</th>
+                                                <td>
+                                                    {% if item.details['request_id'] is defined and item.details['request_id'] is not empty %}
+                                                        <a href="{{ path('admin_logs', { request: item.details['request_id']}) }}">{{ item.details['request_id'] }}</a>
+                                                    {% else %}
+                                                        <span class="badge text-bg-danger">N/A</span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+
+                                            {% if item.getDetails()['exception']['stacktrace'] is defined %}
+                                                <tr>
+                                                    <th></th>
+                                                    <td class="font-monospace">
+                                                        {{ item.getDetails()['exception']['stacktrace']|nl2br }}
+                                                    </td>
+                                                </tr>
+                                            {% endif %}
+                                        </tbody>
+                                    </table>
+
+                                    {% if item.details is not null %}
+                                        <pre style="max-width: 1000px;">{{ item.getDetails()|json_encode(192)|raw }}</pre> {# 192 = JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT  #}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% include '@Common/includes/pagination.html.twig' with {
+                    currentPage: page,
+                    currentFilters: { level: level, channel: channel, request: request_id },
+                    paginationPath: 'admin_logs',
+                    lastPage: pages,
+                    showAlwaysFirstAndLast: true
+                } only %}
+            </div>
+
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ path('admin_logs_clear') }}" class="list-group-item list-group-item-action list-group-item-danger">
+                            <i class="fa fa-trash"></i> {{ 'logs.clear.label'|trans }}
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <form action="{{ path('admin_logs') }}" method="get">
+                        <div class="card-header">{{ 'logs.filter'|trans }}</div>
+                        <div class="card-body">
+                            {% if level != null %}
+                                <input type="hidden" name="level" value="{{ level }}" />
+                            {% endif %}
+
+                            <div class="mb-2">
+                                <label for="channel" class="form-label">{{ 'logs.channel'|trans }}</label>
+                                <select class="form-control" name="channel" id="channel" data-choice="true">
+                                    <option value="">{{ 'logs.all_channels'|trans }}</option>
+                                    {% for c in channels %}
+                                        <option value="{{ c }}" {% if c == channel %}selected{% endif %}>{{ c }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="username" class="form-label">{{ 'logs.username'|trans }}</label>
+                                <input type="text" name="username" id="username" class="form-control" value="{{ username }}">
+                            </div>
+
+                            <div>
+                                <label for="request_id" class="form-label">{{ 'logs.request_id'|trans }}</label>
+                                <input type="text" name="request_id" id="request_id" class="form-control" value="{{ request_id }}">
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fa fa-check"></i> {{ 'logs.apply_filter'|trans }}
+                            </button>
+
+                            <a href="{{ path('admin_logs', { level: level }) }}" class="btn btn-secondary btn-sm">
+                                {{ 'logs.clear_filter'|trans }}
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

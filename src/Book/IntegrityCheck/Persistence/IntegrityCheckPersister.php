@@ -4,9 +4,11 @@ namespace App\Book\IntegrityCheck\Persistence;
 
 use App\Book\IntegrityCheck\IntegrityCheckResult;
 use App\Book\IntegrityCheck\IntegrityCheckViolation;
+use App\Entity\BookEvent;
 use App\Entity\BookIntegrityCheckRun;
 use App\Entity\BookIntegrityCheckViolation;
 use App\Entity\Student;
+use App\Entity\TimetableLesson;
 use App\Repository\BookIntegrityCheckRunRepositoryInterface;
 use App\Repository\BookIntegrityCheckViolationRepositoryInterface;
 use App\Utils\ArrayUtils;
@@ -66,12 +68,17 @@ class IntegrityCheckPersister {
         $this->runRepository->persist($run);
     }
 
+    private function getObjectiveId(BookEvent|TimetableLesson $lessonOrEvent): ?int {
+        return $lessonOrEvent->getId();
+    }
+
     public function computeReferenceId(IntegrityCheckViolation $violation, Student $student): string {
         $id = sprintf(
-            '%d-%s-%d-%s',
+            '%d-%s-%d-%d-%s',
             $student->getId(),
             $violation->getDate()->format('Y-m-d'),
             $violation->getLesson(),
+            $this->getObjectiveId($violation->getEvent() ?? $violation->getTimetableLesson()),
             hash('sha256', $violation->getMessage())
         );
 

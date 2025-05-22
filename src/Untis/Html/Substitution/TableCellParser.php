@@ -85,7 +85,14 @@ class TableCellParser {
 
         // Case 3: Supervisions (X/Y)
         if(str_contains($value, '/') && count($lessons = explode('/', $value)) === 2) {
-            return new ParsedLesson(intval($lessons[0]), intval($lessons[1]), true);
+            $firstLesson = intval($lessons[0]);
+            $secondLesson = intval($lessons[1]);
+
+            if(empty($secondLesson)) { // Fix for supervisions after last lesson, Untis seems to produce something like "8/" which internally needs to be "8/9" to be processed correctly
+                $secondLesson = $firstLesson + 1;
+            }
+
+            return new ParsedLesson($firstLesson, $secondLesson, true);
         }
 
         throw new Exception(sprintf('Spalte "Stunde" konnte aufgrund eines ungültiges Formates nicht eingelesen werden: "%s" eingelesen.', $value));

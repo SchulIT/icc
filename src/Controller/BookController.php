@@ -85,6 +85,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Route(path: '/book')]
 #[IsFeatureEnabled(Feature::Book)]
@@ -572,6 +573,7 @@ class BookController extends AbstractController {
                             StudentAwareGradeFilter $gradeFilter, TeacherFilter  $teacherFilter, Request $request,
                             StudentInfoResolver $infoResolver, TuitionRepositoryInterface $tuitionRepository,
                             Sorter $sorter, Grouper $grouper, DateHelper $dateHelper, TimetableSettings $timetableSettings,
+                            UrlGeneratorInterface $urlGenerator,
                             LessonEntryRepositoryInterface $entryRepository, LessonAttendanceRepositoryInterface $lessonAttendanceRepository): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -644,7 +646,8 @@ class BookController extends AbstractController {
                 'lesson' => $lesson,
                 'start' => $entry->getLessonStart(),
                 'end' => $entry->getLessonEnd(),
-                'is_cancelled' => $entry->isCancelled()
+                'is_cancelled' => $entry->isCancelled(),
+                'url' => $urlGenerator->generate('show_entry', ['uuid' => $entry->getUuid()->toString()])
             ];
 
             if($entry->isCancelled()) {
@@ -663,7 +666,8 @@ class BookController extends AbstractController {
                 'start' => $event->getLessonStart(),
                 'end' => $event->getLessonEnd(),
                 'teacher' => $event->getTeacher()->getAcronym(),
-                'title' => $event->getTitle()
+                'title' => $event->getTitle(),
+                'url' => $urlGenerator->generate('show_or_edit_book_event_entry', ['uuid' => $event->getUuid()->toString()])
             ];
         }
 

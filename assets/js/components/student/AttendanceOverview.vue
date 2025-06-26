@@ -128,7 +128,7 @@
           </div>
 
           <div class="modal-body" v-if="editAttendance !== null && editLesson !== null">
-            <div class="d-flex" v-if="editLesson.entry !== undefined">
+            <div class="d-flex align-items-baseline" v-if="editLesson.entry !== undefined">
               <span class="badge text-bg-primary">
                 {{ editLesson.entry.lesson.subject }}
               </span>
@@ -149,6 +149,10 @@
 
                 {{ $transChoice('label.exam_lessons', 0, { 'start': editAttendance.lesson}) }}
               </div>
+
+              <a v-if="editLesson.entry.url !== undefined" :href="editLesson.entry.url" target="_blank" class="ms-2 btn btn-sm btn-outline-primary">
+                <i class="fas fa-external-link"></i>
+              </a>
             </div>
 
             <div class="d-flex" v-if="editLesson.event !== undefined">
@@ -172,6 +176,10 @@
 
                 {{ $transChoice('label.exam_lessons', 0, { 'start': editAttendance.lesson}) }}
               </div>
+
+              <a v-if="editLesson.event.url !== undefined" :href="editLesson.event.url" target="_blank" class="ms-2 btn btn-sm btn-outline-primary">
+                <i class="fas fa-external-link"></i>
+              </a>
             </div>
 
             <div class="mt-2">

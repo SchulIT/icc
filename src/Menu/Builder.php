@@ -310,11 +310,6 @@ class Builder {
         ])
             ->setExtra('icon', 'fas fa-users');
 
-        $book->addChild('book.extra.student_info.label', [
-            'route' => 'student_information_index'
-        ])
-            ->setExtra('icon', 'fa-solid fa-circle-info');
-
         if($this->featureManager->isFeatureEnabled(Feature::GradeBook)) {
             $book->addChild('book.grades.label', [
                 'route' => 'gradebook'

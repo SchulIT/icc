@@ -45,6 +45,7 @@ class StudentController extends AbstractController {
         $studentFilterView = $studentFilter->handle($request->query->get('student'), $sectionFilterView->getCurrentSection(), $user);
 
         $students = [ ];
+        $groups = [ ];
 
         if($sectionFilterView->getCurrentSection() !== null && $studentFilterView->getCurrentStudent() !== null) {
             return $this->redirectToRoute('show_student', [
@@ -91,8 +92,8 @@ class StudentController extends AbstractController {
         $attendanceFlags = $attendanceFlagRepository->findAll();
         $studentInfo = null;
         $returnItems = [ ];
-        $tuitions = [ ];
         $privacyCategories = [ ];
+        $grade = null;
 
         if($this->isGranted(ListsVoter::Privacy) && $featureManager->isFeatureEnabled(Feature::Privacy)) {
             $privacyCategories = $privacyCategoryRepository->findAll();

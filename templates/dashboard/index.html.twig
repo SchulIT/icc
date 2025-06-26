@@ -773,6 +773,29 @@
     {% endif %}
 {% endblock %}
 
+{% block excuseStatusNotSetEntries %}
+    {% if excuseStatusNotSetCount is not empty %}
+        {% for student in app.user.students %}
+            {% if excuseStatusNotSetCount[student.id] is defined and excuseStatusNotSetCount[student.id] > 0 %}
+                <div class="bs-callout bs-callout-danger mt-0">
+                    <div class="d-flex align-items-center">
+                        <p class="me-auto mb-0">
+                            <i class="fas fa-user-times"></i> {{ 'dashboard.excuse_status_not_set.message'|trans }}
+
+                            <i class="fas fa-user"></i> {{ student|student }}
+                        </p>
+                        <div>
+                            <a href="{{ path('student_attendance', { student: student.uuid }) }}" class="btn btn-outline-primary btn-sm" target="_blank">
+                                <i class="fas fa-external-link"></i> {{ 'dashboard.excuse_status_not_set.link'|trans }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
 {% block parentsDayAppointments %}
     {% if view.parentsDayAppointments|length > 0 %}
         <div class="spacer mb-2">

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Book\Student\StudentInfoResolver;
 use App\Dashboard\DashboardViewCollapseHelper;
 use App\Dashboard\DashboardViewHelper;
 use App\Entity\GradeMembership;
@@ -19,10 +20,12 @@ use App\Repository\ParentsDayRepositoryInterface;
 use App\Repository\SectionRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
+use App\Repository\TuitionRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\ChecklistStudentVoter;
 use App\Security\Voter\ParentsDayAppointmentVoter;
+use App\Settings\BookSettings;
 use App\Settings\DashboardSettings;
 use App\Settings\TimetableSettings;
 use App\Utils\EnumArrayUtils;
@@ -57,6 +60,7 @@ class DashboardController extends AbstractController {
                               BookIntegrityCheckViolationRepositoryInterface $bookIntegrityCheckViolationRepository,
                               SectionResolverInterface $sectionResolver, StudyGroupRepositoryInterface $studyGroupRepository,
                               ParentsDayRepositoryInterface $parentsDayRepository, ChecklistStudentRepositoryInterface $checklistStudentRepository,
+                              BookSettings $bookSettings, StudentInfoResolver $studentInfoResolver, TuitionRepositoryInterface $tuitionRepository,
                               FeatureManager $featureManager, Request $request): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -170,6 +174,16 @@ class DashboardController extends AbstractController {
             }
         }
 
+        $excuseStatusNotSetCount = [ ];
+
+        if($user->isStudentOrParent() && $bookSettings->isAttendanceVisibleForStudentsAndParentsEnabled()) {
+            foreach($user->getStudents() as $student) {
+                $tuitions = $tuitionRepository->findAllByStudents([$student], $sectionResolver->getCurrentSection());
+                $studentInfo = $studentInfoResolver->resolveStudentInfo($student, $sectionResolver->getCurrentSection(), $tuitions);
+                $excuseStatusNotSetCount[$student->getId()] = $studentInfo->getNotExcusedOrNotSetLessonsCount();
+            }
+        }
+
         return $this->render($template, [
             'studentFilter' => $studentFilterView,
             'teacherFilter' => $teacherFilterView,
@@ -192,7 +206,8 @@ class DashboardController extends AbstractController {
             'unreadNotificationsCount' => $notificationRepository->countUnreadForUser($user),
             'missingBookEntriesCount' => $missingBookEntries,
             'upcomingParentsDays' => $parentsDayRepository->findUpcoming($dateHelper->getToday()),
-            'checklists' => $checklists
+            'checklists' => $checklists,
+            'excuseStatusNotSetCount' => $excuseStatusNotSetCount
         ]);
     }
 

@@ -461,6 +461,9 @@ dashboard:
         link: jetzt buchen
     checklists:
         link: Checklisten anzeigen
+    excuse_status_not_set:
+        message: Es stehen noch offene Fehlstunden aus. Bitte zeitnah mit der Klassenleitung oder der Fachlehrkraft klären.
+        link: Zur Anwesenheitsübersicht
 
     additional_information:
         label: Information zur Stunde

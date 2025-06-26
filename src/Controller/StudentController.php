@@ -34,8 +34,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/student')]
+#[IsGranted(StudentVoter::ShowAny)]
 class StudentController extends AbstractController {
     #[Route(name: 'students')]
     public function index(#[CurrentUser] User $user, StudentRepositoryInterface $studentRepository, StudentFilter $studentFilter, SectionFilter $sectionFilter, Request $request, Grouper $grouper, Sorter $sorter): Response {

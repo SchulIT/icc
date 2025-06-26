@@ -11,7 +11,7 @@ der verwendeten ORM-Version kompatibel ist.
 
 ## Neue Rollen
 
-Keine neuen Rollen.
+* `ROLE_STUDENT_VIEWER`: Benutzer mit dieser Rolle können die Lernenden-Übersicht anschauen (siehe neue Features). 
 
 ## Gelöschte Parameter für Konfigurationsdatei
 
@@ -27,6 +27,13 @@ Keine neuen Parameter für die Konfigurationsdatei.
 ## Neue Features / Verbesserungen
 
 Der zugrundeliegende Milestone 2.4 ist [auf GitHub](https://github.com/SchulIT/icc/milestone/14?closed=1) zu finden.
+
+### Lernendenübersicht
+
+Es gibt nun einen neuen Menüpunkt *Lernendenübersicht*. Hier werden alle Informationen aus den verschiedenen Bereichen
+für einen Schüler oder eine Schülerin zusammengeführt. Unter anderem: Unterrichte, Anwesenheitsstatistiken, Kommentare
+im Unterrichtsbuch, ergänzende Informationen für Lernende (für Unterricht oder Klausuren), Rückgaben, Datenschutzzustimmungen
+und Lernplattformen.
 
 ### Benachrichtigungssystem
 

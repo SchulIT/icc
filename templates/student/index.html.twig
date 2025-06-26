@@ -1,0 +1,41 @@
+{% extends 'main.html.twig' %}
+
+{% block title %}{{ 'students.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ 'students.label'|trans }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <div class="row">
+        <div class="col-md-9">
+            {% for group in groups %}
+                <div class="card">
+                    <div class="card-header">{{ group.grade.name }}</div>
+
+                    <div class="list-group list-group-flush">
+                        {% for student in group.students %}
+                            <a href="{{ path('show_student', { uuid: student.uuid, section: sectionFilter.currentSection.uuid}) }}" class="list-group-item list-group-item-action">
+                                {{ student|student }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="col-md-3 sticky-sidebar">
+            <div class="card">
+                <div class="card-body">
+                    {% include "_filter/section.html.twig" %}
+
+                    {% include "_filter/student.html.twig" %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

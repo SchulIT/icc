@@ -6,6 +6,8 @@ use App\Entity\Grade;
 use App\Entity\ReturnItem;
 use App\Entity\ReturnItemType;
 use App\Entity\Student;
+use DateTime;
+use DateTimeImmutable;
 
 interface ReturnItemRepositoryInterface {
     /**
@@ -21,6 +23,14 @@ interface ReturnItemRepositoryInterface {
      * @return PaginatedResult<ReturnItem>
      */
     public function findByStudentsPaginated(array $students, int &$page, int &$limit, ?ReturnItemType $type = null): PaginatedResult;
+
+    /**
+     * @param Student $student
+     * @param DateTime $start
+     * @param DateTime $end
+     * @return ReturnItem[]
+     */
+    public function findByStudent(Student $student, DateTime $start, DateTime $end): array;
 
     public function countByType(ReturnItemType $type): int;
 

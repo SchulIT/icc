@@ -2774,3 +2774,6 @@ return_items:
             text: "Die Rückgabe erfolgte am %date% um %time% durch %user%"
 
 
+students:
+    label: Lernende
+    button: Gesamt-Übersicht

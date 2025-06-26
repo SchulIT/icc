@@ -15,6 +15,7 @@ use App\Security\Voter\ListsVoter;
 use App\Security\Voter\ParentsDayAppointmentVoter;
 use App\Security\Voter\ResourceReservationVoter;
 use App\Security\Voter\StudentAbsenceVoter;
+use App\Security\Voter\StudentVoter;
 use App\Security\Voter\TeacherAbsenceVoter;
 use App\Security\Voter\WikiVoter;
 use App\Settings\BookSettings;
@@ -124,6 +125,13 @@ class Builder {
                 'route' => 'checklists'
             ])
                 ->setExtra('icon', 'fa-solid fa-list-check');
+        }
+
+        if($this->authorizationChecker->isGranted(StudentVoter::ShowAny)) {
+            $menu->addChild('students.label', [
+                'route' => 'students'
+            ])
+                ->setExtra('icon', 'fa-solid fa-users');
         }
 
         return $menu;

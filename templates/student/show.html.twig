@@ -1,0 +1,260 @@
+{% extends 'main.html.twig' %}
+
+{% block title %}{{ student|student }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ 'students.label'|trans }}</li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-body border-bottom">
+                        <h5 class="card-title">
+                            {{ student|student }}
+
+                            {% if grade is not null %}
+                                <span class="badge text-bg-primary">{{ grade.name }}</span>
+
+                                {% for teacher in gradeTeachers %}
+                                    <span class="badge text-bg-secondary">{{ teacher.acronym }}</span>
+                                {% endfor %}
+                            {% else %}
+
+                            {% endif %}
+                        </h5>
+                    </div>
+
+                    <table class="table table-bordered card-table">
+                        <tbody>
+                            <tr>
+                                <th>{{ 'label.status'|trans }}</th>
+                                <td>{{ student.status }}</td>
+                            </tr>
+                            <tr>
+                                <th>{{ 'label.birthday'|trans }}</th>
+                                <td>{{ student.birthday|format_date }}</td>
+                            </tr>
+                            <tr>
+                                <th>{{ 'label.email'|trans }}</th>
+                                <td><i class="fas fa-envelope"></i> <a href="mailto:{{ student.email }}">{{ student.email }}</a> </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                {% if tuitions|length > 0 %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title d-flex mb-0">
+                                <span class="flex-fill">{{ 'label.tuitions'|trans }}</span>
+                                <a href="{{ path('list_tuitions', { student: student.uuid, section: sectionFilter.currentSection.uuid }) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-external-link"></i>
+                                </a>
+                            </h5>
+                        </div>
+
+                        <div class="list-group list-group-flush">
+                            {% for tuition in tuitions %}
+                                <div class="list-group-item d-flex">
+                                    <div class="flex-fill align-self-baseline">
+                                        {{ tuition.name }}
+
+                                        <span class="badge text-bg-primary">{{ tuition.subject.name }}</span>
+
+                                        {% for teacher in tuition.teachers %}
+                                            <span class="badge text-bg-secondary">
+                                                <i class="fas fa-chalkboard-teacher"></i>
+                                                {{ teacher|teacher }}
+                                            </span>
+                                        {% endfor %}
+                                    </div>
+                                    <a href="{{ path('list_tuition', { uuid: tuition.uuid }) }}" target="_blank" class="btn btn-outline-primary btn-sm align-self-baseline">
+                                        <i class="fas fa-external-link"></i>
+                                        {{ 'label.details'|trans }}
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if studentInfo != null %}
+                <div class="row">
+                    <a class="col-md-4" href="{{ path('book_student_attendance', { student: student.uuid, section: sectionFilter.currentSection.uuid }) }}">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">
+                                    <i class="fas fa-user-times"></i>
+                                </h5>
+
+                                {{ studentInfo.absentLessonsCount }} / {{  studentInfo.totalLessonsCount }}
+                            </div>
+                        </div>
+                    </a>
+
+                    <a class="col-md-4" href="{{ path('book_student_attendance', { student: student.uuid, section: sectionFilter.currentSection.uuid }) }}">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">
+                                    <i class="far fa-clock"></i>
+                                </h5>
+
+                                {{ 'book.attendance.late_minutes'|trans({'%count%': studentInfo.lateMinutesCount }) }}
+                            </div>
+                        </div>
+                    </a>
+
+                    <a class="col-md-4" href="{{ path('book_student_comments', { student: student.uuid, section: sectionFilter.currentSection.uuid }) }}">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">
+                                    <i class="fas fa-comments"></i>
+                                </h5>
+
+                                {{ studentInfo.comments|length }}
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="row row-cols-{{ min(attendanceFlags|length, 6) }}">
+                    {% for flag in attendanceFlags %}
+                        {% set flagCount = studentInfo.attendanceFlagCount(flag) %}
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">
+                                        <span class="fa-stack fa-1x" title="{{ flag.description }}">
+                                        <i class="{{ flag.icon }} fa-stack-1x"></i>
+                                        {% if flag.stackIcon is not empty %}
+                                            <i class="{{ flag.stackIcon }} fa-stack-1x text-danger"></i>
+                                        {% endif %}
+                                    </span>
+                                    </h5>
+
+                                    {% if flagCount != null %}
+                                        {{ flagCount.count }}
+                                    {% else %}
+                                        0
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title d-flex mb-0">
+                            <span class="flex-fill">{{ 'book.comment.label'|trans }}</span>
+                            <a href="{{ path('book_student_comments', { student: student.uuid, section: sectionFilter.currentSection.uuid }) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-external-link"></i>
+                            </a>
+                        </h5>
+                    </div>
+
+                    <div class="list-group list-group-flush">
+                        {% for comment in comments %}
+                            <a class="list-group-item list-group-item-action" href="{{ path('show_book_comment', { uuid: comment.uuid }) }}">
+                                <div class="text-muted">
+                                    <i class="fas fa-calendar-alt"></i> {{ comment.date|format_date }}
+                                    <i class="fas fa-chalkboard-teacher"></i> {{ comment.teacher|teacher }}
+                                </div>
+
+                                {{ comment.text }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title d-flex mb-0">
+                            <span class="flex-fill">{{ 'book.extra.student_info.label'|trans }}</span>
+                            <a href="{{ path('book_student_information_index', { student: student.uuid, section: sectionFilter.currentSection.uuid }) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-external-link"></i>
+                            </a>
+                        </h5>
+                    </div>
+
+                    <div class="list-group list-group-flush">
+                        {% for info in lessonInfo %}
+                            <div class="list-group-item">
+                                <div class="text-muted">
+                                    <i class="fas fa-calendar-alt"></i> {{ info.from|format_date }} - {{ info.until|format_date }}
+                                </div>
+
+                                {{ info.content|markdown }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title d-flex mb-0">
+                            <span class="flex-fill">{{ 'return_items.label'|trans }}</span>
+                            <a href="{{ path('return_items', { student: student.uuid }) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-external-link"></i>
+                            </a>
+                        </h5>
+                    </div>
+
+                    <div class="list-group list-group-flush">
+                        {% for item in returnItems %}
+                            <a href="{{ path('show_return_item', { uuid: item.uuid }) }}" class="list-group-item list-group-item-action">
+                                <div class="text-muted">
+                                    <i class="fas fa-calendar-alt"></i> {{ item.createdAt|format_date }}
+                                </div>
+
+                                {{ item.type.displayName }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {% if privacyCategories|length > 0 %}
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title mb-0">{{ 'lists.privacy.label'|trans }}</h5>
+                    </div>
+
+                    <div class="list-group list-group-flush">
+                        {% for category in privacyCategories %}
+                            <div class="list-group-item">
+                                <p class="mb-0">
+                                    {% if student.approvedPrivacyCategories.contains(category) %}
+                                        <i class="fas fa-check-circle text-success"></i>
+                                    {% else %}
+                                        <i class="fas fa-times-circle text-danger"></i>
+                                    {% endif %}
+                                    {{ category.label }}
+                                </p>
+                                {% if category.description is not empty %}
+                                    <p class="text-muted mt-1">{{ category.description }}</p>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="col-md-3 sticky-sidebar">
+                <div class="card">
+                    <div class="card-body">
+                        {% include "_filter/section.html.twig" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -6,6 +6,7 @@ use App\Entity\Grade;
 use App\Entity\ReturnItem;
 use App\Entity\ReturnItemType;
 use App\Entity\Student;
+use DateTime;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Override;
@@ -113,5 +114,20 @@ class ReturnItemRepository extends AbstractRepository implements ReturnItemRepos
             ->setParameter('studentIds', $studentIds)
             ->getQuery()
             ->getSingleScalarResult();
+    }
+
+    public function findByStudent(Student $student, DateTime $start, DateTime $end): array {
+        return $this->em->createQueryBuilder()
+            ->select('i')
+            ->from(ReturnItem::class, 'i')
+            ->leftJoin('i.student', 's')
+            ->where('s.id = :studentId')
+            ->andwhere('i.createdAt >= :start')
+            ->andWhere('i.createdAt <= :end')
+            ->setParameter('studentId', $student->getId())
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getQuery()
+            ->getResult();
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Dashboard;
 
-use App\Entity\BookStudentInformation;
+use App\Entity\StudentInformation;
 use App\Entity\TeacherAbsenceComment;
 use App\Entity\TimetableLesson;
 use App\Entity\TimetableLessonAdditionalInformation;
@@ -16,7 +16,7 @@ class TimetableLessonViewItem extends AdditionalExtraAwareViewItem {
     /**
      * @param TimetableLesson|null $lesson
      * @param AbsentStudentGroup[] $absentStudentGroups
-     * @param BookStudentInformation[] $studentInfo
+     * @param StudentInformation[] $studentInfo
      * @param TimetableLessonAdditionalInformation[] $additionalInformation
      */
     public function __construct(private readonly ?TimetableLesson $lesson, array $absentStudentGroups, array $studentInfo, private readonly array $additionalInformation) {

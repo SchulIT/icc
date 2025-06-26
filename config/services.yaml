@@ -249,6 +249,7 @@ services:
                 absence_reason: App\Dashboard\AbsenceReason
                 sick_reason: App\Entity\SickNoteReason
                 student_id_format: App\Untis\StudentIdFormat
+                student_information_type: App\Entity\StudentInformationType
 
     # DOCTRINE:
     Doctrine\Persistence\ManagerRegistry:

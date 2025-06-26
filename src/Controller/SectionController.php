@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Repository\AbsenceRepositoryInterface;
 use App\Repository\AppointmentRepositoryInterface;
 use App\Repository\BookCommentRepositoryInterface;
-use App\Repository\BookStudentInformationRepositoryInterface;
+use App\Repository\StudentInformationRepositoryInterface;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\FreeTimespanRepositoryInterface;
@@ -81,14 +81,14 @@ class SectionController extends AbstractController {
 
     #[Route(path: '/{uuid}/remove', name: 'remove_section')]
     public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] Section $section, Request $request, TimetableLessonRepositoryInterface $lessonRepository,
-                           TuitionGradeRepositoryInterface $gradeRepository, StudentAbsenceRepositoryInterface $studentAbsenceRepository,
-                           TeacherAbsenceRepositoryInterface $teacherAbsenceRepository, TimetableSupervisionRepositoryInterface $supervisionRepository,
-                           ExamRepositoryInterface $examRepository, SubstitutionRepositoryInterface $substitutionRepository,
-                           NotificationRepositoryInterface $notificationRepository, ResourceReservationRepositoryInterface $reservationRepository,
-                           AbsenceRepositoryInterface $absenceRepository, FreeTimespanRepositoryInterface $freeTimespanRepository,
-                           InfotextRepositoryInterface $infotextRepository, AppointmentRepositoryInterface $appointmentRepository,
-                           ExcuseNoteRepositoryInterface $excuseNoteRepository, BookCommentRepositoryInterface $bookCommentRepository,
-                           ParentsDayRepositoryInterface $parentsDayRepository, BookStudentInformationRepositoryInterface $studentInformationRepository): Response {
+                           TuitionGradeRepositoryInterface                   $gradeRepository, StudentAbsenceRepositoryInterface $studentAbsenceRepository,
+                           TeacherAbsenceRepositoryInterface                 $teacherAbsenceRepository, TimetableSupervisionRepositoryInterface $supervisionRepository,
+                           ExamRepositoryInterface                           $examRepository, SubstitutionRepositoryInterface $substitutionRepository,
+                           NotificationRepositoryInterface                   $notificationRepository, ResourceReservationRepositoryInterface $reservationRepository,
+                           AbsenceRepositoryInterface                        $absenceRepository, FreeTimespanRepositoryInterface $freeTimespanRepository,
+                           InfotextRepositoryInterface                       $infotextRepository, AppointmentRepositoryInterface $appointmentRepository,
+                           ExcuseNoteRepositoryInterface                     $excuseNoteRepository, BookCommentRepositoryInterface $bookCommentRepository,
+                           ParentsDayRepositoryInterface                     $parentsDayRepository, StudentInformationRepositoryInterface $studentInformationRepository): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'admin.sections.remove.confirm',
             'message_parameters' => [

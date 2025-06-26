@@ -11,7 +11,7 @@ use App\Feature\FeatureManager;
 use App\Grouping\Grouper;
 use App\Grouping\StudentGradeStrategy;
 use App\Repository\BookCommentRepositoryInterface;
-use App\Repository\BookStudentInformationRepositoryInterface;
+use App\Repository\StudentInformationRepositoryInterface;
 use App\Repository\LessonAttendanceFlagRepositoryInterface;
 use App\Repository\PrivacyCategoryRepositoryInterface;
 use App\Repository\ReturnItemRepositoryInterface;
@@ -70,16 +70,16 @@ class StudentController extends AbstractController {
 
     #[Route('/{uuid}', name: 'show_student')]
     public function student(#[MapEntity(mapping: ['uuid' => 'uuid'])] Student $student, BookCommentRepositoryInterface $bookCommentRepository,
-                            BookStudentInformationRepositoryInterface $bookStudentInformationRepository,
-                            ReturnItemRepositoryInterface $returnItemRepository,
-                            StudentInfoResolver $studentInfoResolver,
-                            LessonAttendanceFlagRepositoryInterface $attendanceFlagRepository,
-                            TuitionRepositoryInterface $tuitionRepository,
-                            PrivacyCategoryRepositoryInterface $privacyCategoryRepository,
-                            SectionFilter $sectionFilter,
-                            FeatureManager $featureManager,
-                            Sorter $sorter,
-                            Request $request): Response {
+                            StudentInformationRepositoryInterface             $bookStudentInformationRepository,
+                            ReturnItemRepositoryInterface                     $returnItemRepository,
+                            StudentInfoResolver                               $studentInfoResolver,
+                            LessonAttendanceFlagRepositoryInterface           $attendanceFlagRepository,
+                            TuitionRepositoryInterface                        $tuitionRepository,
+                            PrivacyCategoryRepositoryInterface                $privacyCategoryRepository,
+                            SectionFilter                                     $sectionFilter,
+                            FeatureManager                                    $featureManager,
+                            Sorter                                            $sorter,
+                            Request                                           $request): Response {
         $this->denyAccessUnlessGranted(StudentVoter::Show, $student);
 
         $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
@@ -121,7 +121,7 @@ class StudentController extends AbstractController {
 
             if($this->isGranted('ROLE_BOOK_VIEWER') && $featureManager->isFeatureEnabled(Feature::Book)) {
                 $studentInfo = $studentInfoResolver->resolveStudentInfo($student, $sectionFilterView->getCurrentSection(), $tuitions);
-                $lessonInfo = $bookStudentInformationRepository->findByStudents([$student], $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd());
+                $lessonInfo = $bookStudentInformationRepository->findByStudents([$student], null, $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd());
             }
 
             if($this->isGranted('ROLE_RETURN_ITEM_CREATOR') && $featureManager->isFeatureEnabled(Feature::ReturnItem)) {

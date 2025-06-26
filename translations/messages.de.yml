@@ -2283,23 +2283,6 @@ book:
                 label: mehr als eine Anwesenheit pro Stunde
                 help: Dieser Check prüft nur, es es für das Kind zu einer Stunde zwei Anwesenheiten gibt (die Art der Anwesenheit, also anwesend, abwesend etc., wird dabei nicht geprüft).
                 violation: Kind hat zwei Anwesenheiten
-
-    extra:
-        student_info:
-            label: Lernendeninfos
-            help: Hier können zeitlich begrenzte Informationen zu Lernenden (bspw. Maßnahmen, Krankheitsinfos, ...) hinterlegt werden. Es gilt den Datenschutz zu beachten.
-            empty: Bisher wurden keine Informationen hinterlegt
-            add:
-                label: Neue Information
-                success: Information erfolgreich erstellt
-            edit:
-                label: Information bearbeiten
-                success: Information erfolgreich aktualisiert
-            remove:
-                label: Information löschen
-                confirm: 'Soll die Information über %student% wirklich gelöscht werden?'
-                success: Information erfolgreich gelöscht
-
     events:
         label: Veranstaltungen
         add:
@@ -2780,3 +2763,18 @@ return_items:
 students:
     label: Lernende
     button: Gesamt-Übersicht
+
+    extra:
+        label: Zusätzliche Informationen
+        help: Hier können zeitlich begrenzte Informationen zu Lernenden (bspw. Maßnahmen, Krankheitsinfos, ...) hinterlegt werden. Es gilt den Datenschutz zu beachten.
+        empty: Bisher wurden keine Informationen hinterlegt
+        add:
+            label: Neue Information
+            success: Information erfolgreich erstellt
+        edit:
+            label: Information bearbeiten
+            success: Information erfolgreich aktualisiert
+        remove:
+            label: Information löschen
+            confirm: 'Soll die Information über %student% wirklich gelöscht werden?'
+            success: Information erfolgreich gelöscht

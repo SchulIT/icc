@@ -28,6 +28,18 @@
             {% endfor %}
         </div>
         <div class="col-md-3 sticky-sidebar">
+            {% if is_granted('new-student-info') %}
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ path('student_information_index') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-circle-info"></i> {{ 'students.extra.label'|trans }}
+
+                            <div class="text-muted">{{ 'students.extra.help'|trans }}</div>
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+
             <div class="card">
                 <div class="card-body">
                     {% include "_filter/section.html.twig" %}

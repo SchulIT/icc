@@ -16,6 +16,7 @@ use App\Entity\MessageScope;
 use App\Entity\ResourceReservation;
 use App\Entity\Room;
 use App\Entity\Student;
+use App\Entity\StudentInformationType;
 use App\Entity\StudyGroup;
 use App\Entity\StudyGroupMembership;
 use App\Entity\Substitution;
@@ -32,7 +33,7 @@ use App\Grouping\AbsentStudentStrategy as AbstentStudentGroupStrategy;
 use App\Grouping\Grouper;
 use App\Repository\AbsenceRepositoryInterface;
 use App\Repository\AppointmentRepositoryInterface;
-use App\Repository\BookStudentInformationRepositoryInterface;
+use App\Repository\StudentInformationRepositoryInterface;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\FreeTimespanRepositoryInterface;
 use App\Repository\InfotextRepositoryInterface;
@@ -53,7 +54,7 @@ use App\Repository\TuitionRepositoryInterface;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\AbsenceVoter;
 use App\Security\Voter\AppointmentVoter;
-use App\Security\Voter\BookStudentInformationVoter;
+use App\Security\Voter\StudentInformationVoter;
 use App\Security\Voter\ExamVoter;
 use App\Security\Voter\MessageVoter;
 use App\Security\Voter\ResourceReservationVoter;
@@ -79,17 +80,17 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class DashboardViewHelper {
 
-    public function __construct(private SubstitutionRepositoryInterface $substitutionRepository, private ExamRepositoryInterface $examRepository, private TimetableLessonRepositoryInterface $timetableRepository,
-                                private TimetableSupervisionRepositoryInterface $supervisionRepository, private MessageRepositoryInterface $messageRepository, private InfotextRepositoryInterface $infotextRepository,
-                                private AbsenceRepositoryInterface $absenceRepository, private StudyGroupRepositoryInterface $studyGroupRepository, private AppointmentRepositoryInterface $appointmentRepository,
-                                private ResourceReservationRepositoryInterface $roomReservationRepository, private FreeTimespanRepositoryInterface $freeTimespanRepository, private StudyGroupHelper $studyGroupHelper,
-                                private TimetableTimeHelper $timetableTimeHelper, private Sorter $sorter, private Grouper $grouper, private TimetableSettings $timetableSettings, private DashboardSettings $dashboardSettings,
-                                private AuthorizationCheckerInterface $authorizationChecker, private ValidatorInterface $validator, private DateHelper $dateHelper, private AbsenceResolver $absenceResolver,
-                                private SectionResolverInterface $sectionResolver, private readonly TuitionRepositoryInterface $tuitionRepository, private readonly TimetableLessonAdditionalInformationRepositoryInterface $timetableLessonAdditionalInformationRepository,
-                                private readonly BookSettings $bookSettings, private readonly LessonEntryRepositoryInterface $lessonEntryRepository, private readonly TeacherRepositoryInterface $teacherRepository,
-                                private readonly StudentRepositoryInterface $studentRepository, private readonly TokenStorageInterface $tokenStorage,
-                                private readonly ParentsDayRepositoryInterface $parentsDayRepository, private readonly ParentsDayAppointmentRepositoryInterface $parentsDayAppointmentRepository,
-                                private readonly BookStudentInformationRepositoryInterface $bookStudentInformationRepository, private readonly FeatureManager $featureManager)
+    public function __construct(private SubstitutionRepositoryInterface                $substitutionRepository, private ExamRepositoryInterface $examRepository, private TimetableLessonRepositoryInterface $timetableRepository,
+                                private TimetableSupervisionRepositoryInterface        $supervisionRepository, private MessageRepositoryInterface $messageRepository, private InfotextRepositoryInterface $infotextRepository,
+                                private AbsenceRepositoryInterface                     $absenceRepository, private StudyGroupRepositoryInterface $studyGroupRepository, private AppointmentRepositoryInterface $appointmentRepository,
+                                private ResourceReservationRepositoryInterface         $roomReservationRepository, private FreeTimespanRepositoryInterface $freeTimespanRepository, private StudyGroupHelper $studyGroupHelper,
+                                private TimetableTimeHelper                            $timetableTimeHelper, private Sorter $sorter, private Grouper $grouper, private TimetableSettings $timetableSettings, private DashboardSettings $dashboardSettings,
+                                private AuthorizationCheckerInterface                  $authorizationChecker, private ValidatorInterface $validator, private DateHelper $dateHelper, private AbsenceResolver $absenceResolver,
+                                private SectionResolverInterface                       $sectionResolver, private readonly TuitionRepositoryInterface $tuitionRepository, private readonly TimetableLessonAdditionalInformationRepositoryInterface $timetableLessonAdditionalInformationRepository,
+                                private readonly BookSettings                          $bookSettings, private readonly LessonEntryRepositoryInterface $lessonEntryRepository, private readonly TeacherRepositoryInterface $teacherRepository,
+                                private readonly StudentRepositoryInterface            $studentRepository, private readonly TokenStorageInterface $tokenStorage,
+                                private readonly ParentsDayRepositoryInterface         $parentsDayRepository, private readonly ParentsDayAppointmentRepositoryInterface $parentsDayAppointmentRepository,
+                                private readonly StudentInformationRepositoryInterface $bookStudentInformationRepository, private readonly FeatureManager $featureManager)
     {
     }
 
@@ -310,8 +311,8 @@ class DashboardViewHelper {
             $studentInfo = [ ];
 
             if($lesson->getTuition() !== null && $lesson->getTuition()->getStudyGroup() !== null) {
-                foreach($this->bookStudentInformationRepository->findByStudyGroup($lesson->getTuition()->getStudyGroup(), $lesson->getDate(), $lesson->getDate()) as $info) {
-                    if($this->authorizationChecker->isGranted(BookStudentInformationVoter::Show, $info)) {
+                foreach($this->bookStudentInformationRepository->findByStudyGroup($lesson->getTuition()->getStudyGroup(), StudentInformationType::Lessons, $lesson->getDate(), $lesson->getDate()) as $info) {
+                    if($this->authorizationChecker->isGranted(StudentInformationVoter::Show, $info)) {
                         $studentInfo[] = $info;
                     }
                 }
@@ -421,8 +422,8 @@ class DashboardViewHelper {
 
                 $studentInfo = [ ];
 
-                foreach($this->bookStudentInformationRepository->findByStudents($students, $substitution->getDate(), $substitution->getDate()) as $info) {
-                    if($this->authorizationChecker->isGranted(BookStudentInformationVoter::Show, $info)) {
+                foreach($this->bookStudentInformationRepository->findByStudents($students, StudentInformationType::Lessons, $substitution->getDate(), $substitution->getDate()) as $info) {
+                    if($this->authorizationChecker->isGranted(StudentInformationVoter::Show, $info)) {
                         $studentInfo[] = $info;
                     }
                 }
@@ -504,8 +505,8 @@ class DashboardViewHelper {
                 $absentStudents = $computeAbsences ? $this->computeAbsentStudents($examStudents, $lesson, $exam->getDate(), [ ExamStudentsResolver::class ]) : [ ];
                 $studentInfo = [];
 
-                foreach($this->bookStudentInformationRepository->findByStudents($examStudents, $exam->getDate(), $exam->getDate()) as $info) {
-                    if($this->authorizationChecker->isGranted(BookStudentInformationVoter::Show, $info)) {
+                foreach($this->bookStudentInformationRepository->findByStudents($examStudents, StudentInformationType::Exams, $exam->getDate(), $exam->getDate()) as $info) {
+                    if($this->authorizationChecker->isGranted(StudentInformationVoter::Show, $info)) {
                         $studentInfo[] = $info;
                     }
                 }

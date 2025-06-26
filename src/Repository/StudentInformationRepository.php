@@ -2,20 +2,21 @@
 
 namespace App\Repository;
 
-use App\Entity\BookStudentInformation;
+use App\Entity\StudentInformation;
 use App\Entity\Grade;
 use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\StudyGroup;
+use App\Entity\StudentInformationType;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
 
-class BookStudentInformationRepository extends AbstractRepository implements BookStudentInformationRepositoryInterface {
+class StudentInformationRepository extends AbstractRepository implements StudentInformationRepositoryInterface {
 
-    private function getDefaultQueryBuilder(DateTime|null $from = null, DateTime|null $until = null): QueryBuilder {
+    private function getDefaultQueryBuilder(StudentInformationType|null $type, DateTime|null $from = null, DateTime|null $until = null): QueryBuilder {
         $qb = $this->em->createQueryBuilder();
         $qb->select(['s', 'i'])
-            ->from(BookStudentInformation::class, 'i')
+            ->from(StudentInformation::class, 'i')
             ->leftJoin('i.student', 's');
 
         if($from !== null && $from == $until) {
@@ -36,21 +37,26 @@ class BookStudentInformationRepository extends AbstractRepository implements Boo
                 ->setParameter('until', $until);
         }
 
+        if($type !== null) {
+            $qb->andWhere('i.type = :type')
+                ->setParameter('type', $type);
+        }
+
         return $qb;
     }
 
-    public function findByStudents(array $students, DateTime|null $from = null, DateTime|null $until = null): array {
+    public function findByStudents(array $students, StudentInformationType|null $type, DateTime|null $from = null, DateTime|null $until = null): array {
         $ids = array_map(fn(Student $student) => $student->getId(), $students);
 
-        $qb = $this->getDefaultQueryBuilder($from, $until);
+        $qb = $this->getDefaultQueryBuilder($type, $from, $until);
         $qb->andWhere('s.id IN(:students)')
             ->setParameter('students', $ids);
 
         return $qb->getQuery()->getResult();
     }
 
-    public function findByGrade(Grade $grade, Section $section, DateTime|null $from = null, DateTime|null $until = null): array {
-        $qb = $this->getDefaultQueryBuilder($from, $until);
+    public function findByGrade(Grade $grade, Section $section, StudentInformationType|null $type, DateTime|null $from = null, DateTime|null $until = null): array {
+        $qb = $this->getDefaultQueryBuilder($type, $from, $until);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('sInner.id')
@@ -68,8 +74,8 @@ class BookStudentInformationRepository extends AbstractRepository implements Boo
         return $qb->getQuery()->getResult();
     }
 
-    public function findByStudyGroup(StudyGroup $studyGroup, DateTime|null $from = null, DateTime|null $until = null): array {
-        $qb = $this->getDefaultQueryBuilder($from, $until);
+    public function findByStudyGroup(StudyGroup $studyGroup, StudentInformationType|null $type, DateTime|null $from = null, DateTime|null $until = null): array {
+        $qb = $this->getDefaultQueryBuilder($type, $from, $until);
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('sInner.id')
@@ -86,19 +92,19 @@ class BookStudentInformationRepository extends AbstractRepository implements Boo
 
     public function removeExpired(DateTime $dateTime): int {
         return $this->em->createQueryBuilder()
-            ->delete(BookStudentInformation::class, 'i')
+            ->delete(StudentInformation::class, 'i')
             ->where('i.until <= :date')
             ->setParameter('date', $dateTime)
             ->getQuery()
             ->execute();
     }
 
-    public function persist(BookStudentInformation $information): void {
+    public function persist(StudentInformation $information): void {
         $this->em->persist($information);
         $this->em->flush();
     }
 
-    public function remove(BookStudentInformation $information): void {
+    public function remove(StudentInformation $information): void {
         $this->em->remove($information);
         $this->em->flush();
     }

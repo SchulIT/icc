@@ -2,17 +2,17 @@
 
 namespace App\Sorting;
 
-use App\Entity\BookStudentInformation;
+use App\Entity\StudentInformation;
 
-class BookStudentInformationStrategy implements SortingStrategyInterface {
+class StudentInformationStrategy implements SortingStrategyInterface {
 
     public function __construct(private readonly DateStrategy $dateStrategy) {
 
     }
 
     /**
-     * @param BookStudentInformation $objectA
-     * @param BookStudentInformation $objectB
+     * @param StudentInformation $objectA
+     * @param StudentInformation $objectB
      * @return int
      */
     public function compare($objectA, $objectB): int {

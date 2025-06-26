@@ -2,19 +2,23 @@
 
 namespace App\Form;
 
-use App\Controller\MarkdownController;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
+use App\Entity\StudentInformationType as StudentInformationTypeEntity;
 
-class BookStudentInformationType extends AbstractType {
+class StudentInformationType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
             ->add('student', StudentsType::class, [
                 'multiple' => false,
                 'label' => 'label.student'
+            ])
+            ->add('type', EnumType::class, [
+                'label' => 'label.type',
+                'class' => StudentInformationTypeEntity::class
             ])
             ->add('content', MarkdownType::class, [
                 'label' => 'label.content'

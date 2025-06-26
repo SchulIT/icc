@@ -10,10 +10,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[Auditable]
 #[ORM\Entity]
-class BookStudentInformation {
+class StudentInformation {
 
     use IdTrait;
     use UuidTrait;
+
+    #[ORM\Column(name: '`type`', type: 'string', enumType: StudentInformationType::class)]
+    private StudentInformationType $type;
 
     #[ORM\ManyToOne(targetEntity: Student::class)]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
@@ -38,11 +41,20 @@ class BookStudentInformation {
         $this->uuid = Uuid::uuid4();
     }
 
+    public function getType(): StudentInformationType {
+        return $this->type;
+    }
+
+    public function setType(StudentInformationType $type): StudentInformation {
+        $this->type = $type;
+        return $this;
+    }
+
     public function getStudent(): ?Student {
         return $this->student;
     }
 
-    public function setStudent(?Student $student): BookStudentInformation {
+    public function setStudent(?Student $student): StudentInformation {
         $this->student = $student;
         return $this;
     }
@@ -51,7 +63,7 @@ class BookStudentInformation {
         return $this->content;
     }
 
-    public function setContent(?string $content): BookStudentInformation {
+    public function setContent(?string $content): StudentInformation {
         $this->content = $content;
         return $this;
     }
@@ -60,7 +72,7 @@ class BookStudentInformation {
         return $this->from;
     }
 
-    public function setFrom(DateTime $from): BookStudentInformation {
+    public function setFrom(DateTime $from): StudentInformation {
         $this->from = $from;
         return $this;
     }
@@ -69,7 +81,7 @@ class BookStudentInformation {
         return $this->until;
     }
 
-    public function setUntil(DateTime $until): BookStudentInformation {
+    public function setUntil(DateTime $until): StudentInformation {
         $this->until = $until;
         return $this;
     }
@@ -78,7 +90,7 @@ class BookStudentInformation {
         return $this->includeInGradeBookExport;
     }
 
-    public function setIncludeInGradeBookExport(bool $includeInGradeBookExport): BookStudentInformation {
+    public function setIncludeInGradeBookExport(bool $includeInGradeBookExport): StudentInformation {
         $this->includeInGradeBookExport = $includeInGradeBookExport;
         return $this;
     }

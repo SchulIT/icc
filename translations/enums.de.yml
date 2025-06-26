@@ -68,3 +68,7 @@ student_id_format:
   firstname_lastname: Vorname, Nachname
   lastname_firstname: Nachname, Vorname
   lastname_firstname_birthday: Nachname, Vorname, Geburtstag
+
+student_information_type:
+  lessons: Unterricht
+  exams: Klausuren

@@ -32,11 +32,13 @@
                         <colgroup>
                             <col class="column-lg">
                             <col>
+                            <col>
                         </colgroup>
                         <thead>
                         <tr>
                             <th>{{ 'label.lastname'|trans }}</th>
                             <th>{{ 'label.firstname'|trans }}</th>
+                            <th>{{ 'label.comment'|trans }}</th>
                         </tr>
                         </thead>
 
@@ -50,6 +52,15 @@
 
                                     {% if absentStudents[student.uuid.toString] is defined %}
                                         <span class="badge text-bg-warning">{{ 'book.attendance.type.absent'|trans }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if studentInformation[student.uuid.toString] is defined and studentInformation[student.uuid.toString]|length > 0 %}
+                                        {% for info in studentInformation[student.uuid.toString] %}
+                                            <div>
+                                                <i class="fas fa-info-circle"></i> {{ info.content }}
+                                            </div>
+                                        {% endfor %}
                                     {% endif %}
                                 </td>
                             </tr>

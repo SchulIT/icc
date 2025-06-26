@@ -24,7 +24,7 @@ use App\Entity\StudyGroupMembership;
 use App\Entity\Teacher as TeacherEntity;
 use App\Entity\TimetableLesson;
 use App\Entity\Tuition as TuitionEntity;
-use App\Repository\BookStudentInformationRepositoryInterface;
+use App\Repository\StudentInformationRepositoryInterface;
 use App\Repository\GradeLimitedMembershipRepositoryInterface;
 use App\Repository\GradeResponsibilityRepositoryInterface;
 use App\Repository\LessonAttendanceFlagRepositoryInterface;
@@ -36,13 +36,13 @@ use JMS\Serializer\SerializerInterface;
 
 class BookExporter {
 
-    public function __construct(private readonly EntryOverviewHelper $overviewHelper, private readonly StudentInfoResolver $studentInfoResolver,
-                                private readonly Sorter $sorter, private readonly SerializerInterface $serializer, private readonly StudentsResolver $studentsResolver,
-                                private readonly GradeOverviewHelper $gradeOverviewHelper, private readonly TuitionRepositoryInterface $tuitionRepository,
-                                private readonly LessonAttendanceFlagRepositoryInterface $flagRepository,
-                                private readonly GradeResponsibilityRepositoryInterface $responsibilityRepository,
+    public function __construct(private readonly EntryOverviewHelper                       $overviewHelper, private readonly StudentInfoResolver $studentInfoResolver,
+                                private readonly Sorter                                    $sorter, private readonly SerializerInterface $serializer, private readonly StudentsResolver $studentsResolver,
+                                private readonly GradeOverviewHelper                       $gradeOverviewHelper, private readonly TuitionRepositoryInterface $tuitionRepository,
+                                private readonly LessonAttendanceFlagRepositoryInterface   $flagRepository,
+                                private readonly GradeResponsibilityRepositoryInterface    $responsibilityRepository,
                                 private readonly GradeLimitedMembershipRepositoryInterface $limitedMembershipRepository,
-                                private readonly BookStudentInformationRepositoryInterface $bookStudentInformationRepository)
+                                private readonly StudentInformationRepositoryInterface     $bookStudentInformationRepository)
     {
     }
 
@@ -175,7 +175,7 @@ class BookExporter {
                     ->setFlagCounts($counts)
             );
 
-            foreach($this->bookStudentInformationRepository->findByStudents([$student], $section->getStart(), $section->getEnd()) as $info) {
+            foreach($this->bookStudentInformationRepository->findByStudents([$student], null, $section->getStart(), $section->getEnd()) as $info) {
                 if($info->isIncludeInGradeBookExport() !== true) {
                     continue;
                 }

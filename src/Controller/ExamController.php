@@ -12,6 +12,8 @@ use App\Entity\IcsAccessTokenType;
 use App\Entity\MessageScope;
 use App\Entity\Section;
 use App\Entity\Student;
+use App\Entity\StudentInformation;
+use App\Entity\StudentInformationType;
 use App\Entity\User;
 use App\Export\ExamIcsExporter;
 use App\Form\IcsAccessTokenType as DeviceTokenTypeForm;
@@ -23,7 +25,9 @@ use App\Message\DismissedMessagesHelper;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
+use App\Repository\StudentInformationRepositoryInterface;
 use App\Security\IcsAccessToken\IcsAccessTokenManager;
+use App\Security\Voter\StudentInformationVoter;
 use App\Security\Voter\ExamVoter;
 use App\Security\Voter\StudentAbsenceVoter;
 use App\Settings\ExamSettings;
@@ -194,7 +198,7 @@ class ExamController extends AbstractControllerWithMessages {
     }
 
     #[Route(path: '/{uuid}', name: 'show_exam', requirements: ['id' => '\d+'])]
-    public function show(#[MapEntity(mapping: ['uuid' => 'uuid'])] Exam $exam, AbsenceResolver $absenceResolver, ExamRepositoryInterface $repository): Response {
+    public function show(#[MapEntity(mapping: ['uuid' => 'uuid'])] Exam $exam, AbsenceResolver $absenceResolver, ExamRepositoryInterface $repository, StudentInformationRepositoryInterface $studentInformationRepository): Response {
         $this->denyAccessUnlessGranted(ExamVoter::Show, $exam);
 
         /** @var Student[] $students */
@@ -215,6 +219,16 @@ class ExamController extends AbstractControllerWithMessages {
             );
         }
 
+        $studentInformation = [ ];
+        $studentInformation = ArrayUtils::createArrayWithKeys(
+            array_filter(
+                $studentInformationRepository->findByStudents($students, StudentInformationType::Exams, $exam->getDate(), $exam->getDate()),
+                fn(StudentInformation $information) => $this->isGranted(StudentInformationVoter::Show, $information)
+            ),
+            fn(StudentInformation $information) => $information->getStudent()->getUuid()->toString(),
+            true
+        );
+
         $groups = $this->grouper->group($exam->getStudents()->toArray(), ExamStudentTuitionStrategy::class);
         $this->sorter->sort($groups, ExamStudentTuitionGroupStrategy::class);
         $this->sorter->sortGroupItems($groups, ExamStudentStrategy::class);
@@ -233,6 +247,7 @@ class ExamController extends AbstractControllerWithMessages {
             'exam' => $exam,
             'groups' => $groups,
             'absentStudents' => $absentStudents,
+            'studentInformation' => $studentInformation,
             'relatedExams' => ArrayUtils::unique($relatedExams),
             'last_import' => $this->importDateTypeRepository->findOneByEntityClass(Exam::class)
         ]);

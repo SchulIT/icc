@@ -178,8 +178,8 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title d-flex mb-0">
-                            <span class="flex-fill">{{ 'book.extra.student_info.label'|trans }}</span>
-                            <a href="{{ path('book_student_information_index', { student: student.uuid, section: sectionFilter.currentSection.uuid }) }}" class="btn btn-sm btn-outline-primary">
+                            <span class="flex-fill">{{ 'students.extra.label'|trans }}</span>
+                            <a href="{{ path('student_information_index', { student: student.uuid, section: sectionFilter.currentSection.uuid }) }}" class="btn btn-sm btn-outline-primary">
                                 <i class="fas fa-external-link"></i>
                             </a>
                         </h5>

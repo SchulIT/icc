@@ -2,16 +2,16 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\BookStudentInformation;
+use App\Entity\StudentInformation;
 use App\Entity\User;
 use LogicException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class BookStudentInformationVoter extends Voter {
+class StudentInformationVoter extends Voter {
 
-    public const New = 'new-book-student-info';
+    public const New = 'new-student-info';
     public const Edit = 'edit';
     public const Remove = 'remove';
     public const Show = 'show';
@@ -26,7 +26,7 @@ class BookStudentInformationVoter extends Voter {
         }
 
         return in_array($attribute, [ self::Edit, self::Remove, self::Show])
-            && $subject instanceof BookStudentInformation;
+            && $subject instanceof StudentInformation;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool {
@@ -51,15 +51,15 @@ class BookStudentInformationVoter extends Voter {
         return $this->accessDecisionManager->decide($token, ['ROLE_BOOK_ENTRY_CREATOR']);
     }
 
-    private function canEdit(BookStudentInformation $information, TokenInterface $token): bool {
+    private function canEdit(StudentInformation $information, TokenInterface $token): bool {
         return $this->accessDecisionManager->decide($token, ['ROLE_BOOK_ENTRY_CREATOR']);
     }
     
-    private function canRemove(BookStudentInformation $information, TokenInterface $token): bool {
+    private function canRemove(StudentInformation $information, TokenInterface $token): bool {
         return $this->accessDecisionManager->decide($token, ['ROLE_BOOK_ENTRY_CREATOR']);
     }
 
-    private function canShow(BookStudentInformation $information, TokenInterface $token): bool {
+    private function canShow(StudentInformation $information, TokenInterface $token): bool {
         return $this->accessDecisionManager->decide($token, ['ROLE_BOOK_ENTRY_CREATOR']);
     }
 

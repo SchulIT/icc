@@ -2,7 +2,7 @@
 
 namespace App\Dashboard;
 
-use App\Entity\BookStudentInformation;
+use App\Entity\StudentInformation;
 use App\Entity\Exam;
 use App\Entity\Room;
 use App\Grouping\AbsentStudentGroup;
@@ -15,7 +15,7 @@ class ExamSupervisionViewItem extends AdditionalExtraAwareViewItem {
     /**
      * @param Exam|Exam[] $examOrExams
      * @param AbsentStudentGroup[] $absentStudentGroups
-     * @param BookStudentInformation[] $studentInfo
+     * @param StudentInformation[] $studentInfo
      */
     public function __construct($examOrExams, array $absentStudentGroups, array $studentInfo) {
         parent::__construct($absentStudentGroups, $studentInfo);

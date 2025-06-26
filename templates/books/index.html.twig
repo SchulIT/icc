@@ -354,11 +354,11 @@
                                                     </button>
 
                                                     <div class="dropdown-menu dropdown-menu-end">
-                                                        <a href="{{ path('edit_student_book_information', { uuid: info.uuid }) }}" class="dropdown-item">
+                                                        <a href="{{ path('edit_student_information', { uuid: info.uuid }) }}" class="dropdown-item">
                                                             <i class="fas fa-edit"></i> {{ 'actions.edit'|trans }}
                                                         </a>
 
-                                                        <a href="{{ path('remove_student_book_information', { uuid: info.uuid }) }}" class="dropdown-item text-danger">
+                                                        <a href="{{ path('remove_student_information', { uuid: info.uuid }) }}" class="dropdown-item text-danger">
                                                             <i class="fas fa-trash"></i> {{ 'actions.remove'|trans }}
                                                         </a>
                                                     </div>
@@ -369,7 +369,7 @@
                                 </div>
 
                                 <div class="card-footer">
-                                    <a href="{{ path('add_student_book_information') }}" class="btn btn-outline-primary btn-sm">
+                                    <a href="{{ path('add_student_information') }}" class="btn btn-outline-primary btn-sm">
                                         <i class="fas fa-plus"></i> {{ 'book.extra.student_info.add.label'|trans }}
                                     </a>
                                 </div>

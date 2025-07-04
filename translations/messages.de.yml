@@ -1156,6 +1156,15 @@ admin:
             notify_grade_teachers_on_absent_student_without_note:
                 label: Klassenleitung bei Fehlen benachrichtigen
                 help: Wenn diese Option aktiv ist, wird die Klassenleitung informiert, wenn Lernende ohne bekannten Grund (Abwesenheitsmeldung, vorliegende Entschuldigung, absente Lerngruppen, Klausur) als abwesend eingetragen wird.
+            comments:
+                label: Kommentare (Klassenbucheinträge)
+            students_and_parents_can_view_book_comments:
+                label: Lernende und Eltern können Kommentare einsehen
+                help: Wenn diese Option aktiv ist, können Lernende und Eltern Kommentare aus dem Unterrichtbuch einsehen (Klassenbucheinträge). Lehrkräfte können beim Erstellen eines Kommentars auswählen, ob der Kommentar einsehbar ist oder nicht. Es greifen die Benachrichtigungsoptionen.
+            always_make_comments_visible_for_student_and_parents:
+                label: Alle Kommentare für Lernende und Eltern automatisch einsehbar machen
+                help: Steigerung der vorherigen Option. Alle Kommentare werden automatisch für Lernende und Eltern einsehbar gemacht. Lehrkräfte haben dann keine Option mehr beim Erstellen eines Kommentar, ob dieser angezeigt werden soll.
+
 
         tuition_grades:
             label: Notenmodul-Einstellungen
@@ -2447,7 +2456,10 @@ lesson_topics:
     empty: Diese Übersicht ist aktuell leer.
 
 reports:
-    label: Unterrichtsthemen & Anwesenheit
+    label: Unterrichtsthemen & Anwesenheit & Kommentare
+
+comments:
+    label: Kommentare
 
 parents_day:
     label: Elternsprechtag

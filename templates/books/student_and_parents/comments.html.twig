@@ -1,0 +1,54 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'comments.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+
+    {% set currentFilter = {
+        section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null
+    } %}
+
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% if comments is empty %}
+                    <div class="bs-callout bs-callout-success">
+                        <p>{{ 'book.comment.empty'|trans }}</p>
+                    </div>
+                {% endif %}
+
+                {% for comment in comments %}
+                    <div class="card" id="{{ comment.uuid }}">
+                        <div class="card-header">
+                            <i class="fas fa-calendar-alt"></i> {{ comment.date|format_date }}
+
+                            <i class="fas fa-chalkboard-teacher"></i> {{ comment.teacher|teacher }}
+
+                            {% for student in comment.students %}
+                                <i class="fas fa-user-graduate"></i> {{ student|student }}
+                            {% endfor %}
+                        </div>
+                        <div class="card-body">
+                            {{ comment.text }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="col-md-3 sticky-sidebar">
+                <div class="card">
+                    <div class="card-body">
+                        {% include "_filter/section.html.twig" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

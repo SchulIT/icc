@@ -48,6 +48,9 @@ class BookComment {
     #[ORM\Column(type: 'string')]
     private ?string $createdBy = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $canStudentAndParentsView = false;
+
     public function __construct() {
         $this->uuid = Uuid::uuid4();
         $this->students = new ArrayCollection();
@@ -101,5 +104,13 @@ class BookComment {
 
     public function getCreatedBy(): ?string {
         return $this->createdBy;
+    }
+
+    public function canStudentAndParentsView(): bool {
+        return $this->canStudentAndParentsView;
+    }
+
+    public function setCanStudentAndParentsView(bool $notifyStudentAndParents): void {
+        $this->canStudentAndParentsView = $notifyStudentAndParents;
     }
 }

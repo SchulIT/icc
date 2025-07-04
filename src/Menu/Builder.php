@@ -162,6 +162,14 @@ class Builder {
                 ->setExtra('icon', 'fa-solid fa-list-check');
         }
 
+        if($this->bookSettings->getStudentsAndParentsCanViewBookCommentsEnabled()) {
+            $reports
+                ->addChild('comments.label', [
+                    'route' => 'student_comments'
+                ])
+                ->setExtra('icon', 'fa-regular fa-comments');
+        }
+
         $this->replaceWithFirstItem($menu, $reports, false, false);
 
         return $menu;

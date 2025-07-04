@@ -159,4 +159,20 @@ class BookSettings extends AbstractSettings {
     public function getNotifyGradeTeachersOnStudentAbsenceWithoutSuggestion(): bool {
         return $this->getValue('book.attendance.notify_grade_teachers_on_absence_without_suggestion', false);
     }
+
+    public function setStudentsAndParentsCanViewBookCommentsEnabled(bool $enabled): void {
+        $this->setValue('book.comments.students_and_parents_can_view_book_comments', $enabled);
+    }
+
+    public function getStudentsAndParentsCanViewBookCommentsEnabled(): bool {
+        return $this->getValue('book.comments.students_and_parents_can_view_book_comments', false);
+    }
+
+    public function setAlwaysMakeCommentsVisibleForStudentAndParents(bool $enabled): void {
+        $this->setValue('book.comments.always_make_comments_visible_for_student_and_parents', $enabled);
+    }
+
+    public function getAlwaysMakeCommentsVisibleForStudentAndParents(): bool {
+        return $this->getValue('book.comments.always_make_comments_visible_for_student_and_parents', false);
+    }
 }

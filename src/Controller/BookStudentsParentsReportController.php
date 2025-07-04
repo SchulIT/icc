@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Book\EntryOverviewHelper;
 use App\Book\Student\StudentInfoResolver;
+use App\Entity\BookComment;
 use App\Entity\BookEvent;
 use App\Entity\LessonEntry;
 use App\Entity\Teacher;
@@ -12,12 +13,15 @@ use App\Feature\Feature;
 use App\Feature\IsFeatureEnabled;
 use App\Grouping\DateWeekOfYearStrategy;
 use App\Grouping\Grouper;
+use App\Repository\BookCommentRepositoryInterface;
 use App\Repository\BookEventRepositoryInterface;
 use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Repository\LessonEntryRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
+use App\Security\Voter\BookCommentVoter;
 use App\Settings\BookSettings;
 use App\Settings\TimetableSettings;
+use App\Sorting\BookCommentDateStrategy;
 use App\Sorting\DateStrategy;
 use App\Sorting\DateWeekOfYearGroupStrategy;
 use App\Sorting\SortDirection;
@@ -31,6 +35,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 #[Route('/report')]
 #[IsFeatureEnabled(Feature::Book)]
@@ -66,12 +71,39 @@ class BookStudentsParentsReportController extends AbstractController {
             $weekStarts = $this->listCalendarWeeks($sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd());
         }
 
-        return $this->render('books/lesson_topics/index.html.twig', [
+        return $this->render('books/student_and_parents/lesson_topics.html.twig', [
             'sectionFilter' => $sectionFilterView,
             'studentFilter' => $studentFilterView,
             'overview' => $overview,
             'weekStarts' => $weekStarts,
             'selectedDate' => $selectedDate
+        ]);
+    }
+
+    #[Route('/comments', name: 'student_comments')]
+    public function comments(Request $request, SectionFilter $sectionFilter, BookSettings $bookSettings,
+                             #[CurrentUser] User $user, BookCommentRepositoryInterface $commentRepository, Sorter $sorter): Response {
+        if($bookSettings->getStudentsAndParentsCanViewBookCommentsEnabled() === false) {
+            throw new AccessDeniedHttpException();
+        }
+
+        $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
+
+        $comments = [ ];
+
+        if($sectionFilterView->getCurrentSection() !== null) {
+            foreach($user->getStudents() as $student) {
+                $comments = array_merge($comments, $commentRepository->findAllByDateAndStudent($student, $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd()));
+            }
+
+            $comments = array_filter($comments, fn(BookComment $comment) => $this->isGranted(BookCommentVoter::View, $comment));
+        }
+
+        $sorter->sort($comments, BookCommentDateStrategy::class, SortDirection::Descending);
+
+        return $this->render('books/student_and_parents/comments.html.twig', [
+            'sectionFilter' => $sectionFilterView,
+            'comments' => $comments
         ]);
     }
 

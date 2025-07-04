@@ -20,7 +20,7 @@ class BookCommentVoter extends Voter {
     public const Edit = 'edit';
     public const Remove = 'remove';
 
-    public function __construct(private AccessDecisionManagerInterface $accessDecisionManager)
+    public function __construct(private readonly AccessDecisionManagerInterface $accessDecisionManager)
     {
     }
 
@@ -65,7 +65,7 @@ class BookCommentVoter extends Voter {
             $commentStudentIds = $comment->getStudents()->map(fn(Student $student) => $student->getId())->toArray();
 
             if(count(array_intersect($userStudentIds, $commentStudentIds)) > 0) {
-                return true;
+                return $comment->canStudentAndParentsView();
             }
 
             return false;

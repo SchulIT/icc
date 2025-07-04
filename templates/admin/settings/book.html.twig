@@ -70,4 +70,12 @@
             {% endfor %}
         </div>
     </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'admin.settings.book.comments.label'|trans }}</div>
+        <div class="card-body">
+            {{ form_row(form.students_and_parents_can_view_book_comments) }}
+            {{ form_row(form.always_make_comments_visible_for_student_and_parents) }}
+        </div>
+    </div>
 {% endblock %}

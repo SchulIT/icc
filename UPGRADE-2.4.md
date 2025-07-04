@@ -57,6 +57,12 @@ wird zukünftig wichtig, wenn man per API auf das ICC zugreifen können soll, da
 
 Zur Aktivierung des Features bitte das [Handbuch](https://docs.schulit.de/icc/admin/guides/sso_sync) lesen.
 
+### Klassenbucheinträge für Lernende und Eltern einsehbar machen
+
+Es ist nun möglich, Kommentare im Unterrichtsbuch (Klassenbucheinträge) für Lernende und Eltern einsehbar zu machen. Es
+obliegt zunächst der Lehrkraft, ob ein Kommentar auch für Lernende und Eltern einsehbar ist. Alternativ kann eine zweite
+Option aktiviert werden, sodass automatisch alle (neuen) Kommentare für Lernende und Eltern einsehbar sind.
+
 ### Allgemeine Verbesserungen & Bugfixes
 
 ## Upgrade TODO

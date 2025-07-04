@@ -9,8 +9,11 @@ use App\Event\BookCommentCreatedEvent;
 use App\Event\BookCommentUpdatedEvent;
 use App\Notification\Notification;
 use App\Notification\NotificationService;
+use App\ParentsDay\InvolvedUsersResolver;
 use App\Repository\UserRepositoryInterface;
 use App\Section\SectionResolverInterface;
+use App\Settings\BookSettings;
+use App\Student\RelatedUsersResolver;
 use App\Utils\ArrayUtils;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -22,7 +25,9 @@ readonly class BookCommentEventSubscriber implements EventSubscriberInterface, N
                                 private UrlGeneratorInterface $urlGenerator,
                                 private NotificationService $notificationService,
                                 private SectionResolverInterface $sectionResolver,
-                                private UserRepositoryInterface $userRepository) { }
+                                private UserRepositoryInterface $userRepository,
+                                private BookSettings $bookSettings,
+                                private RelatedUsersResolver $relatedUsersResolver) { }
 
     public function onBookCommentCreatedOrUpdate(BookCommentCreatedEvent|BookCommentUpdatedEvent $event): void {
         $teachers = $this->resolveTeachers($event->getComment());
@@ -38,6 +43,32 @@ readonly class BookCommentEventSubscriber implements EventSubscriberInterface, N
                 $this->translator->trans($subjectKey, [], 'email'),
                 $this->translator->trans($contentKey, [], 'email'),
                 $this->urlGenerator->generate('show_book_comment', [ 'uuid' => $event->getComment()->getUuid() ]),
+                $this->translator->trans('book_comment.link', [], 'email')
+            );
+
+            $this->notificationService->notify($notification);
+        }
+
+        if($this->bookSettings->getStudentsAndParentsCanViewBookCommentsEnabled() === false || $event->getComment()->canStudentAndParentsView() === false) {
+            return;
+        }
+
+        // We also need to notify students/parents
+        $users = [ ];
+
+        foreach($event->getComment()->getStudents() as $student) {
+            $users = array_merge($users, $this->relatedUsersResolver->resolveStudents($student), $this->relatedUsersResolver->resolveParents($student));
+        }
+
+        $users = ArrayUtils::unique($users);
+
+        foreach($users as $recipient) {
+            $notification = new Notification(
+                self::getKey(),
+                $recipient,
+                $this->translator->trans($subjectKey, [], 'email'),
+                $this->translator->trans($contentKey, [], 'email'),
+                $this->urlGenerator->generate('student_comments') . '#' . $event->getComment()->getUuid(),
                 $this->translator->trans('book_comment.link', [], 'email')
             );
 
@@ -86,7 +117,9 @@ readonly class BookCommentEventSubscriber implements EventSubscriberInterface, N
 
     public static function getSupportedRecipientUserTypes(): array {
         return [
-            UserType::Teacher
+            UserType::Teacher,
+            UserType::Student,
+            UserType::Parent
         ];
     }
 

@@ -117,6 +117,18 @@ class BookSettingsController extends AbstractController {
                 'label' => 'admin.settings.book.notify_grade_teachers_on_absent_student_without_note.label',
                 'help' => 'admin.settings.book.notify_grade_teachers_on_absent_student_without_note.help',
                 'data' => $settings->getNotifyGradeTeachersOnStudentAbsenceWithoutSuggestion()
+            ])
+            ->add('students_and_parents_can_view_book_comments', CheckboxType::class, [
+                'required' => false,
+                'label' => 'admin.settings.book.students_and_parents_can_view_book_comments.label',
+                'help' =>  'admin.settings.book.students_and_parents_can_view_book_comments.help',
+                'data' => $settings->getStudentsAndParentsCanViewBookCommentsEnabled()
+            ])
+            ->add('always_make_comments_visible_for_student_and_parents', CheckboxType::class, [
+                'required' => false,
+                'label' => 'admin.settings.book.always_make_comments_visible_for_student_and_parents.label',
+                'help' =>  'admin.settings.book.always_make_comments_visible_for_student_and_parents.help',
+                'data' => $settings->getAlwaysMakeCommentsVisibleForStudentAndParents()
             ]);
 
         $types = $typeRepository->findAll();
@@ -172,6 +184,12 @@ class BookSettingsController extends AbstractController {
                 },
                 'notify_grade_teachers_on_absent_student_without_note' => function(bool $notify) use($settings) {
                     $settings->setNotifyGradeTeachersOnStudentAbsenceWithoutSuggestion($notify);
+                },
+                'students_and_parents_can_view_book_comments' => function(bool $enabled) use ($settings) {
+                    $settings->setStudentsAndParentsCanViewBookCommentsEnabled($enabled);
+                },
+                'always_make_comments_visible_for_student_and_parents' => function(bool $enabled) use ($settings) {
+                    $settings->setAlwaysMakeCommentsVisibleForStudentAndParents($enabled);
                 }
             ];
 

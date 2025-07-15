@@ -37,7 +37,7 @@
         <div class="card-body">
             <p>{{ 'label.additional_recipients.help'|trans }}</p>
 
-            <div data-collection="recipients" data-prototype="{{ form_widget(form.additionalRecipients.vars.prototype)|e('html_attr') }}">
+            <div data-collection="recipients" data-prototype="{{ form_widget(form.additionalRecipients.vars.prototype)|e('html_attr') }}" data-id="{{ form.additionalRecipients.vars.id }}">
                 {% for recipient in form.additionalRecipients %}
                     {{ form_widget(recipient) }}
                 {% endfor %}

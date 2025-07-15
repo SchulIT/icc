@@ -1942,7 +1942,7 @@ absences:
             message: Mitteilung
             attachments:
                 label: Anhänge
-                info: 'Hier können bis zu drei Dokumente (bspw. Attest, Meldung vom Gesundheitsamt,… ) angehangen werden. Gültige Dateitypen: PDF, PNG, JPG. Maximale Größe pro Datei: 5 MB'
+                info: 'Hier können bis zu %count% Dokumente (bspw. Attest, Meldung vom Gesundheitsamt,… ) angehangen werden. Gültige Dateitypen: PDF, PNG, JPG. Maximale Größe pro Datei: 5 MB'
             absent_from: Abwesend ab
             absent_until: Abwesend voraussichtlich bis
             phone: Telefonnummer

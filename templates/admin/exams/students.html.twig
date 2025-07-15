@@ -52,7 +52,7 @@
     <div class="card">
         <div class="card-header">{{ 'label.students_simple'|trans }}</div>
         <div class="card-body">
-            <div data-collection="students" data-prototype="{{ form_widget(form.students.vars.prototype)|e('html_attr') }}">
+            <div data-collection="students" data-prototype="{{ form_widget(form.students.vars.prototype)|e('html_attr') }}" data-id="{{ form.students.vars.id }}">
                 {% for student in form.students %}
                     {{ form_widget(student) }}
                 {% endfor %}

@@ -26,7 +26,7 @@
             <div class="mb-3 row">
                 {{ form_label(form.exclude_student_status) }}
                 <div class="col-md-10">
-                    <div class="exclude_student_status" data-collection="exclude_student_status" data-prototype="{{ form_widget(form.exclude_student_status.vars.prototype)|e('html_attr') }}">
+                    <div class="exclude_student_status" data-collection="exclude_student_status" data-prototype="{{ form_widget(form.exclude_student_status.vars.prototype)|e('html_attr') }}" data-id="{{ form.exclude_student_status.vars.id }}">
                         {% for recipient in form.exclude_student_status %}
                             {{ form_widget(recipient) }}
                         {% endfor %}

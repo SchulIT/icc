@@ -24,7 +24,7 @@
                 {{ 'admin.settings.import.exam_rules.help'|trans }}
             </p>
 
-            <div class="rules" data-collection="rules" data-prototype="{{ form_widget(form.rules.vars.prototype)|e('html_attr') }}">
+            <div class="rules" data-collection="rules" data-prototype="{{ form_widget(form.rules.vars.prototype)|e('html_attr') }}" data-id="{{ form.rules.vars.id }}">
                 {% for rule in form.rules %}
                     {{ form_widget(rule) }}
                 {% endfor %}
@@ -51,7 +51,7 @@
                 {{ 'admin.settings.import.subjects_without_tuition.help'|trans }}
             </p>
 
-            <div data-collection="subjects_without_tuition" data-prototype="{{ form_widget(form.subjects_without_tuition.vars.prototype)|e('html_attr') }}">
+            <div data-collection="subjects_without_tuition" data-prototype="{{ form_widget(form.subjects_without_tuition.vars.prototype)|e('html_attr') }}" data-id="{{ form.subjects_without_tuition.vars.id }}">
                 {% for rule in form.subjects_without_tuition %}
                     {{ form_widget(rule) }}
                 {% endfor %}

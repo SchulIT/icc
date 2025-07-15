@@ -19,6 +19,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity]
 class StudentAbsence {
 
+    public const int MaxNumberOfAttachments = 3;
+
     use IdTrait;
     use UuidTrait;
 
@@ -110,6 +112,7 @@ class StudentAbsence {
      */
     #[ORM\OneToMany(mappedBy: 'absence', targetEntity: StudentAbsenceAttachment::class, cascade: ['persist'])]
     #[ORM\OrderBy(['filename' => 'asc'])]
+    #[Assert\Count(max: self::MaxNumberOfAttachments)]
     private Collection $attachments;
 
     /**

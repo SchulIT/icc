@@ -2,8 +2,19 @@ import Choices from "choices.js";
 
 document.addEventListener('DOMContentLoaded', function() {
     function deleteOption() {
-        let selector = this.getAttribute('data-selector') ?? '.mb-3';
-        this.closest(selector).remove();
+        if(this.hasAttribute('data-selector')) {
+            this.closest(this.getAttribute('data-selector')).remove();
+            return;
+        }
+
+        let collectionHolder = this.closest('[data-id]');
+
+        if(collectionHolder === null) {
+            return;
+        }
+
+        let collectionId = collectionHolder.getAttribute('data-id');
+        this.closest('[id^=' + collectionId + ']').remove();
     }
 
     function htmlToElement(html) {
@@ -15,6 +26,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function addOption(collectionHolder) {
+        let maximumNumberOfItem = Number.MAX_SAFE_INTEGER;
+
+        if(collectionHolder.hasAttribute('data-max')) {
+            maximumNumberOfItem = parseInt(collectionHolder.getAttribute('data-max'));
+        }
+
+        let currentNumberOfItems = collectionHolder.children.length;
+
+        if(currentNumberOfItems >= maximumNumberOfItem) {
+            return;
+        }
+
         // Get the data-prototype explained earlier
         let prototype = collectionHolder.getAttribute('data-prototype');
 

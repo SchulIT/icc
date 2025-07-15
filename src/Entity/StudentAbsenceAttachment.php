@@ -82,6 +82,10 @@ class StudentAbsenceAttachment {
     }
 
     public function getFilename(): ?string {
+        if(!isset($this->filename)) {
+            return null;
+        }
+
         return $this->filename;
     }
 
@@ -91,6 +95,10 @@ class StudentAbsenceAttachment {
     }
 
     public function getPath(): ?string {
+        if(!isset($this->path)) {
+            return null;
+        }
+
         return $this->path;
     }
 
@@ -100,6 +108,10 @@ class StudentAbsenceAttachment {
     }
 
     public function getSize(): ?int {
+        if(!isset($this->size)) {
+            return null;
+        }
+
         return $this->size;
     }
 

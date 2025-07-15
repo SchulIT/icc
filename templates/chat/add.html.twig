@@ -34,7 +34,7 @@
             {{ form_row(form.messages[0].content) }}
         </div>
         <div class="card-body">
-            <div class="attachments" data-collection="attachments" data-prototype="{{ form_widget(form.messages[0].attachments.vars.prototype)|e('html_attr') }}">
+            <div class="attachments" data-collection="attachments" data-prototype="{{ form_widget(form.messages[0].attachments.vars.prototype)|e('html_attr') }}" data-id="{{ form.messages[0].attachments.vars.id }}">
                 {% for attachment in form.messages[0].attachments %}
                     {{ form_widget(attachment) }}
                 {% endfor %}

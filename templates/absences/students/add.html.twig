@@ -88,14 +88,17 @@
         <div class="card-header">{{ 'absences.students.add.attachments.label'|trans }}</div>
         <div class="card-body">
             <div class="bs-callout bs-callout-info">
-                {{ 'absences.students.add.attachments.info'|trans }}
+                {{ 'absences.students.add.attachments.info'|trans({'%count%': maxNumberOfAttachments}) }}
             </div>
 
-            <div class="attachments" data-collection="attachments" data-prototype="{{ form_widget(form.attachments.vars.prototype)|e('html_attr') }}">
-                {{ form_widget(form.attachments) }}
+            <div class="attachments" data-collection="attachments" data-id="{{ form.attachments.vars.id }}" data-max="{{ maxNumberOfAttachments }}" data-prototype="{{ form_widget(form.attachments.vars.prototype)|e('html_attr') }}">
+                {% for attachment in form.attachments %}
+                    {{ form_widget(attachment) }}
+                {% endfor %}
             </div>
 
             {{ form_errors(form.attachments) }}
+            {% do form.attachments.setRendered %}
         </div>
 
         <div class="card-footer">

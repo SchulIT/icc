@@ -62,20 +62,22 @@
         <div class="card-header">{{ 'absences.students.add.attachments.label'|trans }}</div>
         <div class="card-body">
             <div class="bs-callout bs-callout-info">
-                {{ 'absences.students.add.attachments.info'|trans }}
+                {{ 'absences.students.add.attachments.info'|trans({'%count%': maxNumberOfAttachments}) }}
             </div>
 
-            <div class="attachments" data-collection="attachments" data-prototype="{{ form_widget(form.attachments.vars.prototype)|e('html_attr') }}">
+            <div class="attachments" data-collection="attachments" data-prototype="{{ form_widget(form.attachments.vars.prototype)|e('html_attr') }}" data-max="{{ maxNumberOfAttachments }}" data-id="{{ form.attachments.vars.id }}">
                 {% for attachment in form.attachments %}
                     {% if attachment.vars.value is not null and attachment.vars.value.id is not null %}
-                        <div class="mb-3 row">
-                            <div class="col-sm-2">  </div>
-                            <div class="col-sm-10">
-                                <i class="fa fa-file"></i> {{ attachment.vars.value.filename }}
+                        <div id="{{ form.attachments.vars.id }}_{{ attachment.vars.value.uuid }}">
+                            <div class="mb-3 row">
+                                <div class="col-sm-2">  </div>
+                                <div class="col-sm-10">
+                                    <i class="fa fa-file"></i> {{ attachment.vars.value.filename }}
 
-                                {% if attachment.children.file.delete is defined %}
-                                    {{ form_widget(attachment.children.file.delete) }}
-                                {% endif %}
+                                    {% if attachment.children.file.delete is defined %}
+                                        {{ form_widget(attachment.children.file.delete) }}
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
 

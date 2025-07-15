@@ -130,7 +130,7 @@
                         {{ form_widget(form.content) }}
                     </div>
                     <div class="card-body">
-                        <div class="attachments" data-collection="attachments" data-prototype="{{ form_widget(form.attachments.vars.prototype)|e('html_attr') }}">
+                        <div class="attachments" data-collection="attachments" data-prototype="{{ form_widget(form.attachments.vars.prototype)|e('html_attr') }}" data-id="{{ form.attachments.vars.id }}">
                             {% for attachment in form.attachments %}
                                 {{ form_widget(attachment) }}
                             {% endfor %}

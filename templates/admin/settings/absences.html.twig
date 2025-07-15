@@ -38,7 +38,7 @@
             <div class="mb-3 row">
                 {{ form_label(form.teacher_create_recipients) }}
                 <div class="col-md-10">
-                    <div class="create_recipients" data-collection="create_recipients" data-prototype="{{ form_widget(form.teacher_create_recipients.vars.prototype)|e('html_attr') }}">
+                    <div class="create_recipients" data-id="{{ form.teacher_create_recipients.vars.id }}" data-collection="create_recipients" data-prototype="{{ form_widget(form.teacher_create_recipients.vars.prototype)|e('html_attr') }}">
                         {% for recipient in form.teacher_create_recipients %}
                             {{ form_widget(recipient) }}
                         {% endfor %}
@@ -58,7 +58,7 @@
             <div class="mb-3 row">
                 {{ form_label(form.teacher_update_recipients) }}
                 <div class="col-md-10">
-                    <div class="create_recipients" data-collection="update_recipients" data-prototype="{{ form_widget(form.teacher_update_recipients.vars.prototype)|e('html_attr') }}">
+                    <div class="create_recipients" data-id="form.teacher_update_recipients.vars.id" data-collection="update_recipients" data-prototype="{{ form_widget(form.teacher_update_recipients.vars.prototype)|e('html_attr') }}">
                         {% for recipient in form.teacher_update_recipients %}
                             {{ form_widget(recipient) }}
                         {% endfor %}

@@ -59,7 +59,7 @@
         <div class="card-body">
             {{ form_errors(form)}}
 
-            <div data-collection="splits" data-prototype="{{ form_widget(form.splits.vars.prototype)|e('html_attr') }}">
+            <div data-collection="splits" data-prototype="{{ form_widget(form.splits.vars.prototype)|e('html_attr') }}" data-id="{{ form.splits.vars.id }}">
                 {% for split in form.splits %}
                     {{ form_widget(split) }}
                 {% endfor %}

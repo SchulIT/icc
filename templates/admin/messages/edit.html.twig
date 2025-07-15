@@ -31,10 +31,10 @@
         <div class="card-header">{{ 'label.attachments'|trans }}</div>
 
         <div class="card-body">
-            <div class="attachments" data-collection="attachments" data-prototype="{{ form_widget(form.group_attachments.attachments.vars.prototype)|e('html_attr') }}">
+            <div class="attachments" data-collection="attachments" data-id="{{ form.group_attachments.attachments.vars.id }}" data-prototype="{{ form_widget(form.group_attachments.attachments.vars.prototype)|e('html_attr') }}">
                 {% for attachment in form.group_attachments.attachments %}
                     {% if attachment.vars.value is not null and attachment.vars.value.id is not null %}
-                        <div class="mb-3 row">
+                        <div class="mb-3 row" id="{{ form.group_attachments.attachments.vars.id }}_{{ attachment.vars.value.uuid }}">
                             <div class="col-sm-2">  </div>
                             <div class="col-sm-10">
                                 <i class="fa fa-file"></i> {{ attachment.vars.value.filename }}
@@ -107,7 +107,7 @@
             {{ form_row(form.group_upload.uploadEnabledStudyGroups) }}
             {{ form_row(form.group_upload.uploadDescription) }}
 
-            <div class="files" data-collection="files" data-prototype="{{ form_row(form.group_upload.files.vars.prototype)|e('html_attr') }}">
+            <div class="files" data-collection="files" data-prototype="{{ form_row(form.group_upload.files.vars.prototype)|e('html_attr') }}" data-id="{{ form.group_upload.files.vars.id }}">
                 {% for file in form.group_upload.files %}
                     {{ form_row(file) }}
                 {% endfor %}
@@ -137,7 +137,7 @@
             {{ form_row(form.group_poll.pollStudyGroups) }}
             {{ form_row(form.group_poll.pollNumChoices) }}
 
-            <div class="poll-choices" data-collection="poll-choices" data-prototype="{{ form_row(form.group_poll.pollChoices.vars.prototype)|e('html_attr') }}">
+            <div class="poll-choices" data-collection="poll-choices" data-prototype="{{ form_row(form.group_poll.pollChoices.vars.prototype)|e('html_attr') }}" data-id="{{ form.group_poll.pollChoices.vars.id }}">
                 {% for choice in form.group_poll.pollChoices %}
                     {{ form_row(choice) }}
                 {% endfor %}

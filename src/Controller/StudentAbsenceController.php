@@ -99,7 +99,8 @@ class StudentAbsenceController extends AbstractController {
 
         return $this->render('absences/students/add.html.twig', [
             'form' => $form->createView(),
-            'settings' => $settings
+            'settings' => $settings,
+            'maxNumberOfAttachments' => StudentAbsence::MaxNumberOfAttachments
         ]);
     }
 
@@ -155,7 +156,8 @@ class StudentAbsenceController extends AbstractController {
         return $this->render('absences/students/add_bulk.html.twig', [
             'form' => $form->createView(),
             'settings' => $settings,
-            'studyGroupsData' => $studyGroupsData
+            'studyGroupsData' => $studyGroupsData,
+            'maxNumberOfAttachments' => StudentAbsence::MaxNumberOfAttachments
         ]);
     }
 
@@ -177,7 +179,8 @@ class StudentAbsenceController extends AbstractController {
 
         return $this->render('absences/students/edit.html.twig', [
             'form' => $form->createView(),
-            'settings' => $settings
+            'settings' => $settings,
+            'maxNumberOfAttachments' => StudentAbsence::MaxNumberOfAttachments
         ]);
     }
 

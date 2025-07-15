@@ -29,7 +29,7 @@
             <div class="mt-2 row">
                 {{ form_label(form.grades) }}
                 <div class="col-md-10">
-                    <div class="values" data-collection="grades" data-prototype="{{ form_widget(form.grades.vars.prototype)|e('html_attr') }}">
+                    <div class="values" data-collection="grades" data-prototype="{{ form_widget(form.grades.vars.prototype)|e('html_attr') }}" data-id="{{ form.grades.vars.id }}">
                         {% for grade in form.grades %}
                             {{ form_widget(grade) }}
                         {% endfor %}

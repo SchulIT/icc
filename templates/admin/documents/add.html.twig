@@ -26,7 +26,7 @@
         <div class="card-header">{{ 'label.attachments'|trans }}</div>
 
         <div class="card-body">
-            <div class="attachments" data-collection="attachments" data-prototype="{{ form_widget(form.group_attachments.attachments.vars.prototype)|e('html_attr') }}">
+            <div class="attachments" data-collection="attachments" data-prototype="{{ form_widget(form.group_attachments.attachments.vars.prototype)|e('html_attr') }}" data-id="{{ form.group_attachments.attachments.vars.id }}">
                 {{ form_widget(form.group_attachments.attachments) }}
             </div>
 

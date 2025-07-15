@@ -23,7 +23,7 @@
             <div class="mb-3 row">
                 {{ form_label(form.removable_subjects) }}
                 <div class="col-md-10">
-                    <div class="removable_subjects" data-collection="removable_subjects" data-prototype="{{ form_widget(form.removable_subjects.vars.prototype)|e('html_attr') }}">
+                    <div class="removable_subjects" data-collection="removable_subjects" data-prototype="{{ form_widget(form.removable_subjects.vars.prototype)|e('html_attr') }}" data-id="{{ form.removable_subjects.vars.id }}">
                         {% for subject in form.removable_subjects %}
                             {{ form_widget(subject) }}
                         {% endfor %}
@@ -43,7 +43,7 @@
             <div class="mb-3 row">
                 {{ form_label(form.removable_types) }}
                 <div class="col-md-10">
-                    <div class="removable_types" data-collection="removable_types" data-prototype="{{ form_widget(form.removable_types.vars.prototype)|e('html_attr') }}">
+                    <div class="removable_types" data-collection="removable_types" data-prototype="{{ form_widget(form.removable_types.vars.prototype)|e('html_attr') }}" data-id="{{ form.removable_types.vars.id }}">
                         {% for type in form.removable_types %}
                             {{ form_widget(type) }}
                         {% endfor %}
@@ -63,7 +63,7 @@
             <div class="mb-3 row">
                 {{ form_label(form.additional_types) }}
                 <div class="col-md-10">
-                    <div class="additional_types" data-collection="additional_types" data-prototype="{{ form_widget(form.additional_types.vars.prototype)|e('html_attr') }}">
+                    <div class="additional_types" data-collection="additional_types" data-prototype="{{ form_widget(form.additional_types.vars.prototype)|e('html_attr') }}" data-id="{{ form.additional_types.vars.id }}">
                         {% for type in form.additional_types %}
                             {{ form_widget(type) }}
                         {% endfor %}
@@ -83,7 +83,7 @@
             <div class="mb-3 row">
                 {{ form_label(form.free_lesson_types) }}
                 <div class="col-md-10">
-                    <div class="free_lesson_types" data-collection="free_lesson_types" data-prototype="{{ form_widget(form.free_lesson_types.vars.prototype)|e('html_attr') }}">
+                    <div class="free_lesson_types" data-collection="free_lesson_types" data-prototype="{{ form_widget(form.free_lesson_types.vars.prototype)|e('html_attr') }}" data-id="{{ form.free_lesson_types.vars.id }}">
                         {% for type in form.free_lesson_types %}
                             {{ form_widget(type) }}
                         {% endfor %}

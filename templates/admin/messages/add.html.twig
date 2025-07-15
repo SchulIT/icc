@@ -30,7 +30,7 @@
         <div class="card-header">{{ 'label.attachments'|trans }}</div>
 
         <div class="card-body">
-            <div class="attachments" data-collection="attachments" data-prototype="{{ form_widget(form.group_attachments.attachments.vars.prototype)|e('html_attr') }}">
+            <div class="attachments" data-collection="attachments" data-prototype="{{ form_widget(form.group_attachments.attachments.vars.prototype)|e('html_attr') }}" data-id="{{ form.group_attachments.attachments.vars.id }}">
                 {% for attachment in form.group_attachments.attachments %}
                     {{ form_widget(attachment) }}
                 {% endfor %}
@@ -89,7 +89,7 @@
             {{ form_row(form.group_upload.uploadEnabledStudyGroups) }}
             {{ form_row(form.group_upload.uploadDescription) }}
 
-            <div class="files" data-collection="files" data-prototype="{{ form_row(form.group_upload.files.vars.prototype)|e('html_attr') }}">
+            <div class="files" data-collection="files" data-prototype="{{ form_row(form.group_upload.files.vars.prototype)|e('html_attr') }}" data-id="{{ form.group_upload.files.vars.id }}">
                 {% for file in form.group_upload.files %}
                     {{ form_row(file) }}
                 {% endfor %}
@@ -119,7 +119,7 @@
             {{ form_row(form.group_poll.pollStudyGroups) }}
             {{ form_row(form.group_poll.pollNumChoices) }}
 
-            <div class="poll-choices" data-collection="poll-choices" data-prototype="{{ form_row(form.group_poll.pollChoices.vars.prototype)|e('html_attr') }}">
+            <div class="poll-choices" data-collection="poll-choices" data-prototype="{{ form_row(form.group_poll.pollChoices.vars.prototype)|e('html_attr') }}" data-id="{{ form.group_poll.pollChoices.vars.id }}">
                 {% for choice in form.group_poll.pollChoices %}
                     {{ form_row(choice) }}
                 {% endfor %}

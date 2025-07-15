@@ -43,7 +43,7 @@
                             </div>
                         {% endif %}
 
-                        <div class="list-group list-group-flush" data-collection="students">
+                        <div class="list-group list-group-flush" data-collection="students" data-id="{{ form.students.vars.id }}">
                             {% for student in form.students %}
                                 {{ form_widget(student) }}
                             {% endfor %}

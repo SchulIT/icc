@@ -26,7 +26,7 @@
                 {{ form_label(form.ignored_substitution_types) }}
 
                 <div class="col-sm-10">
-                    <div class="rules" data-collection="ignored_substitution_types" data-prototype="{{ form_widget(form.ignored_substitution_types.vars.prototype)|e('html_attr') }}">
+                    <div class="rules" data-collection="ignored_substitution_types" data-prototype="{{ form_widget(form.ignored_substitution_types.vars.prototype)|e('html_attr') }}" data-id="{{ form.ignored_substitution_types.vars.id }}">
                         {% for type in form.ignored_substitution_types %}
                             {{ form_widget(type) }}
                         {% endfor %}
@@ -104,7 +104,7 @@
                 {{ 'import.settings.overrides.help'|trans }}
             </p>
 
-            <div class="rules" data-collection="overrides" data-prototype="{{ form_widget(form.overrides.vars.prototype)|e('html_attr') }}">
+            <div class="rules" data-collection="overrides" data-prototype="{{ form_widget(form.overrides.vars.prototype)|e('html_attr') }}" data-id="{{ form.overrides.vars.id }}">
                 {% for override in form.overrides %}
                     {{ form_widget(override) }}
                 {% endfor %}
@@ -130,7 +130,7 @@
                 {{ 'import.settings.week_overrides.help'|trans }}
             </p>
 
-            <div class="week_overrides" data-collection="week_overrides" data-prototype="{{ form_widget(form.week_overrides.vars.prototype)|e('html_attr') }}">
+            <div class="week_overrides" data-collection="week_overrides" data-prototype="{{ form_widget(form.week_overrides.vars.prototype)|e('html_attr') }}" data-id="{{ form.week_overrides.vars.id }}">
                 {% for override in form.week_overrides %}
                     {{ form_widget(override) }}
                 {% endfor %}
@@ -157,7 +157,7 @@
                 {{ 'import.settings.weeks.help'|trans }}
             </p>
 
-            <div class="rules" data-collection="weeks" data-prototype="{{ form_widget(form.weeks.vars.prototype)|e('html_attr') }}">
+            <div class="rules" data-collection="weeks" data-prototype="{{ form_widget(form.weeks.vars.prototype)|e('html_attr') }}" data-id="{{ form.weeks.vars.id }}">
                 {% for week in form.weeks %}
                     {{ form_widget(week) }}
                 {% endfor %}

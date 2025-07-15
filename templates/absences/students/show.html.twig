@@ -226,7 +226,7 @@
                 {{ form_end(form) }}
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-3 sticky-sidebar">
                 {% set canEdit = is_granted('edit', absence) %}
                 {% set canCreateExcuseNote = is_granted('new-excuse') and not absence.type.bookExcuseStatus.value == 1 and not excuseStatus.completelyExcused %}
                 {% set canDelete = is_granted('remove', absence) %}
@@ -339,6 +339,19 @@
                                     </a>
                                 </p>
                             {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if is_granted('new-absence-bulk') and absence.bulkUuid is not empty %}
+                    <div class="card">
+                        <div class="card-body">
+                            <p>{{ 'absences.students.show.bulk.is_bulk'|trans }}</p>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            <a href="{{ path('show_bulk_student_absence', { uuid: absence.bulkUuid}) }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-arrow-right"></i> {{ 'absences.students.show.bulk.all'|trans }}
+                            </a>
                         </div>
                     </div>
                 {% endif %}

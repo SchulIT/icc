@@ -7,7 +7,6 @@ use App\Entity\AttendanceExcuseStatus;
 use App\Entity\DateLesson;
 use App\Entity\Exam;
 use App\Entity\ExcuseNote;
-use App\Entity\Student;
 use App\Entity\StudentAbsence;
 use App\Entity\StudentAbsenceAttachment;
 use App\Entity\StudentAbsenceMessage;
@@ -16,9 +15,11 @@ use App\Entity\User;
 use App\Feature\Feature;
 use App\Feature\IsFeatureEnabled;
 use App\Form\Model\BulkStudentAbsence;
+use App\Form\Model\UpdateStudentBulkAbsence;
 use App\Form\StudentAbsenceBulkType;
 use App\Form\StudentAbsenceMessageType;
 use App\Form\StudentAbsenceType;
+use App\Form\UpdateStudentBulkAbsenceType;
 use App\Grouping\StudentAbsenceGenericGroup;
 use App\Grouping\StudentAbsenceGradeGroup;
 use App\Grouping\StudentAbsenceStudentGroup;
@@ -52,6 +53,7 @@ use App\View\Filter\StudentFilter;
 use App\View\Filter\TeacherFilter;
 use League\Flysystem\FilesystemOperator;
 use Mimey\MimeTypes;
+use Ramsey\Uuid\Uuid;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -61,6 +63,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route(path: '/absence/students')]
 #[IsFeatureEnabled(Feature::StudentAbsence)]
@@ -104,6 +108,72 @@ class StudentAbsenceController extends AbstractController {
         ]);
     }
 
+    #[Route(path: '/bulk/{uuid}', name: 'show_bulk_student_absence')]
+    public function showBulk(string $uuid, Request $request, StudentAbsenceRepositoryInterface $absenceRepository, SectionResolverInterface $sectionResolver, ValidatorInterface $validator): Response {
+        $this->denyAccessUnlessGranted(StudentAbsenceVoter::Bulk);
+
+        $absences = $absenceRepository->findByBulkUuid($uuid);
+
+        $toUpdate = new UpdateStudentBulkAbsence();
+        $form = $this->createForm(UpdateStudentBulkAbsenceType::class, $toUpdate);
+        $form->handleRequest($request);
+
+        $numViolations = 0;
+
+        if($form->isSubmitted() && $form->isValid()) {
+            foreach($absences as $absence) {
+                if (!empty($toUpdate->type)) {
+                    $absence->setType($toUpdate->type);
+                }
+
+                if ($toUpdate->from !== null && $toUpdate->from->getDate() !== null) {
+                    $absence->setFrom($toUpdate->from);
+                }
+
+                if ($toUpdate->until !== null && $toUpdate->until->getDate() !== null) {
+                    $absence->setUntil($toUpdate->until);
+                }
+
+                if (!empty($toUpdate->message)) {
+                    $absence->setMessage($toUpdate->message);
+                }
+
+                if (!empty($toUpdate->phone)) {
+                    $absence->setPhone($toUpdate->phone);
+                }
+
+                if (!empty($toUpdate->email)) {
+                    $absence->setEmail($toUpdate->email);
+                }
+
+                $violations = $validator->validate($absence);
+                $numViolations += count($violations);
+
+                if (count($violations) == 0) {
+                    $absenceRepository->persist($absence);
+                } else {
+                    foreach ($violations as $violation) {
+                        $this->addFlash('error', $violation->getMessage());
+                    }
+                }
+            }
+
+            if($numViolations === 0) {
+                $this->addFlash('success', 'absences.students.bulk.success');
+            }
+
+            return $this->redirectToRoute('show_bulk_student_absence', [
+                'uuid' => $uuid
+            ]);
+        }
+
+        return $this->render('absences/students/bulk.html.twig', [
+            'absences' => $absences,
+            'section' => $sectionResolver->getCurrentSection(),
+            'form' => $form->createView(),
+        ]);
+    }
+
     #[Route(path: '/add_bulk', name: 'add_student_absence_bulk')]
     public function addBulk(Request $request, StudentAbsenceSettings $settings, SectionResolverInterface $sectionResolver,
                             StudentAbsenceRepositoryInterface $repository, StudyGroupRepositoryInterface $studyGroupRepository,
@@ -122,10 +192,12 @@ class StudentAbsenceController extends AbstractController {
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
+            $uuid = Uuid::uuid4();
+
             // Create absence for each student
-            /** @var Student $student */
             foreach($note->getStudents() as $student) {
                 $studentAbsence = (new StudentAbsence())
+                    ->setBulkUuid($uuid)
                     ->setStudent($student)
                     ->setFrom($note->getFrom())
                     ->setUntil($note->getUntil())

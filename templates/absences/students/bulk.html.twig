@@ -1,0 +1,118 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'absences.students.bulk.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('student_absences') }}">{{ 'absences.students.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% if absences|length == 0 %}
+
+                {% endif %}
+
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        {% for absence in absences %}
+                            <a href="{{ path('show_student_absence', { uuid: absence.uuid }) }}"
+                               class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
+                                <div class="me-auto">
+                                    <div>
+                                        {{ absence.type.name }}
+
+                                        {% if absence.type.mustApprove %}
+                                            {% if absence.approvedAt is null %}
+                                                <span class="badge text-bg-warning">
+                                                            {{ 'absences.students.approval.pending'|trans }}
+                                                        </span>
+                                            {% else %}
+                                                {% if absence.isApproved %}
+                                                    <span class="badge text-bg-success">
+                                                                {{ 'absences.students.approval.approved'|trans }}
+                                                            </span>
+                                                {% else %}
+                                                    <span class="badge text-bg-danger">
+                                                                {{ 'absences.students.approval.not_approved'|trans }}
+                                                            </span>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endif %}
+
+                                        {% set status = excuseStatus[absence.uuid.toString]|default(null) %}
+                                        {% if status is not null %}
+                                            {% if status.isCompletelyExcused %}
+                                                <span class="badge text-bg-success">{{ 'absences.students.excuse_status.excused'|trans }}</span>
+                                            {% else %}
+                                                <span class="badge text-bg-warning">{{ 'absences.students.excuse_status.not_excused'|trans }}</span>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="d-flex align-items-baseline flex-wrap">
+                                        <div class="me-2">
+                                            {% set grade = absence.student.grade(section) %}
+                                            {% if grade is not null %}
+                                                <span class="badge text-bg-secondary">{{ grade.name }}</span>
+                                            {% else %}
+                                                <span class="badge text-bg-warning">{{ 'label.not_available'|trans }}</span>
+                                            {% endif %}
+
+                                            {{ absence.student|student }}
+                                        </div>
+                                        <div class="me-2">
+                                            <i class="fas fa-calendar"></i> {{ absence.from.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.from.lesson, '%count%': 0}) }}) - {{ absence.until.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.until.lesson, '%count%': 0}) }})
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    {% if absence.messages|length > 0 %}
+                                        <span class="badge text-bg-secondary"><i class="fas fa-comment"></i> {{ absence.messages|length }}</span>
+                                    {% endif %}
+                                    {% if absence.attachments|length > 0 %}
+                                        <span class="badge text-bg-secondary"><i class="fa-solid fa-paperclip"></i> {{ absence.attachments|length }}</span>
+                                    {% endif %}
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 sticky-sidebar">
+                {{ form_start(form) }}
+                <div class="card">
+                    <div class="card-header">
+                        {{ 'absences.students.bulk.form.header'|trans }}
+                    </div>
+                    <div class="card-body">
+                        <div class="bs-callout bs-callout-info">
+                            <p>{{ 'absences.students.bulk.form.info'|trans }}</p>
+                        </div>
+
+                        {% form_theme form 'bootstrap_5_layout.html.twig' %}
+                        {{ form_widget(form) }}
+                    </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fas fa-save"></i> {{ 'actions.save'|trans }}
+                        </button>
+                    </div>
+                </div>
+                {{ form_end(form) }}
+
+                <div class="w-100">
+                    <a href="#" class="btn btn-primary btn-sm float-right" data-trigger="scroll">
+                        <i class="fa fa-arrow-up"></i> {{ 'actions.top'|trans }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

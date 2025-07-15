@@ -7,11 +7,8 @@ use Ramsey\Uuid\UuidInterface;
 
 trait UuidTrait {
 
-    /**
-     * @var UuidInterface
-     */
     #[ORM\Column(type: 'uuid')]
-    private $uuid;
+    private UuidInterface $uuid;
 
     public function getUuid(): UuidInterface {
         return $this->uuid;

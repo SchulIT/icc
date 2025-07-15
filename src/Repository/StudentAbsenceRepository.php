@@ -220,4 +220,15 @@ class StudentAbsenceRepository extends AbstractRepository implements StudentAbse
 
         return $this->createPaginatorForQueryBuilder($qb, $itemsPerPage, $page);
     }
+
+    public function findByBulkUuid(string $uuid): array {
+        return $this->em->createQueryBuilder()
+            ->select('sn', 's')
+            ->from(StudentAbsence::class, 'sn')
+            ->leftJoin('sn.student', 's')
+            ->where('sn.bulkUuid = :uuid')
+            ->setParameter('uuid', $uuid)
+            ->getQuery()
+            ->getResult();
+    }
 }

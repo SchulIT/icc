@@ -13,6 +13,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[Auditable]
@@ -23,6 +24,9 @@ class StudentAbsence {
 
     use IdTrait;
     use UuidTrait;
+
+    #[ORM\Column(type: 'uuid', nullable: true)]
+    private UuidInterface|null $bulkUuid = null;
 
     /**
      * @var Student|null
@@ -126,6 +130,15 @@ class StudentAbsence {
 
         $this->attachments = new ArrayCollection();
         $this->messages = new ArrayCollection();
+    }
+
+    public function getBulkUuid(): ?UuidInterface {
+        return $this->bulkUuid;
+    }
+
+    public function setBulkUuid(?UuidInterface $bulkUuid): StudentAbsence {
+        $this->bulkUuid = $bulkUuid;
+        return $this;
     }
 
     public function getStudent(): ?Student {

@@ -1971,6 +1971,14 @@ absences:
                 placeholder: Lernende aus Lerngruppe übernehmen
                 apply: übernehmen
 
+        bulk:
+            label: Massen-Abwesenheitsmeldung
+            success: Alle Meldungen erfolgreich aktualisiert.
+            form:
+                header: Meldungen ändern
+                info: Sofern hier Werte angegeben werden, werden diese bei allen Abwesenheitsmitteilungen geändert. Leere Felder werden dabei ignoriert (die Werte werden nicht überschrieben).
+
+
         edit:
             label: Abwesenheitsmeldung bearbeiten
             label_help: Zeitbereich oder Art ändern, Kontaktinformationen bearbeiten, Anhänge hinzufügen oder löschen
@@ -1993,6 +2001,9 @@ absences:
             label: Abwesenheitsmeldung
             header: "Abwesenheitsmeldung von %student%"
             contact: Kontaktinformationen
+            bulk:
+                is_bulk: Diese Meldung ist Teil einer Massen-Abwesenheitsmeldung. Alle Änderungen, die hier vorgenommen werden, beziehen sich ausschließlich auf diese Meldung.
+                all: Alle Meldungen der Massen-Abwesenheitsmeldung anzeigen
             affected_exams:
                 label: Betroffene Klausuren
                 empty: Laut aktuellem Stand sind keine Klausuren betroffen.

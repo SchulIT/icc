@@ -3,11 +3,18 @@
 namespace App\Form;
 
 use App\Entity\Grade;
+use App\Entity\Section;
+use App\Entity\Subject;
 use App\Entity\Tuition;
 use App\Section\SectionResolverInterface;
+use App\Sorting\GradeNameStrategy;
+use App\Sorting\SectionDateStrategy;
 use App\Sorting\StringStrategy;
+use App\Sorting\SubjectNameStrategy;
 use App\Sorting\TuitionStrategy;
+use App\Utils\ArrayUtils;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -16,46 +23,52 @@ use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 
 class ExamBulkType extends AbstractType {
 
-    public function __construct(private readonly TuitionStrategy $tuitionStrategy, private readonly StringStrategy $stringStrategy, private readonly SectionResolverInterface $sectionResolver)
+    public function __construct(private readonly GradeNameStrategy $gradeNameStrategy,
+                                private readonly SubjectNameStrategy $subjectNameStrategy,
+                                private readonly SectionDateStrategy $sectionDateStrategy)
     {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
-            ->add('number', IntegerType::class, [
+            ->add('section', SortableEntityType::class, [
+                'class' => Section::class,
+                'choice_label' => fn(Section $section) => $section->getDisplayName(),
+                'label' => 'admin.settings.general.current_section.label',
+                'help' => 'admin.settings.general.current_section.help',
+                'attr' => [
+                    'data-choice' => 'true'
+                ],
+                'sort_by' => $this->sectionDateStrategy
+            ])
+
+            ->add('numberOfExams', IntegerType::class, [
                 'label' => 'admin.exams.bulk.number_of_exams',
                 'constraints' => [
                     new GreaterThanOrEqual(['value' => 0])
                 ]
             ])
-            ->add('tuitions', SortableEntityType::class, [
-                'label' => 'label.tuitions',
-                'attr' => [
-                    'size' => 10
-                ],
+            ->add('subjects', SortableEntityType::class, [
+                'class' => Subject::class,
+                'label' => 'label.subjects',
+                'choice_label' => fn(Subject $subject) => $subject->getName(),
                 'multiple' => true,
-                'class' => Tuition::class,
-                'query_builder' => function(EntityRepository $repository) {
-                    if($this->sectionResolver->getCurrentSection() === null) {
-                        return $repository->createQueryBuilder('t');
-                    }
-
-                    return $repository->createQueryBuilder('t')
-                        ->where('t.section = :section')
-                        ->setParameter('section', $this->sectionResolver->getCurrentSection());
-                },
-                'choice_label' => function(Tuition $tuition) {
-                    if($tuition->getName() === $tuition->getStudyGroup()->getName()) {
-                        return sprintf('%s - %s', $tuition->getName(), $tuition->getSubject()->getName());
-                    }
-
-                    return sprintf('%s - %s - %s', $tuition->getName(), $tuition->getStudyGroup()->getName(), $tuition->getSubject()->getName());
-                },
-                'group_by' => fn(Tuition $tuition) => implode(', ', $tuition->getStudyGroup()->getGrades()->map(fn(Grade $grade) => $grade->getName())->toArray()),
-                'sort_by' => $this->stringStrategy,
-                'sort_items_by' => $this->tuitionStrategy
+                'attr' => [
+                    'data-choice' => 'true'
+                ],
+                'sort_by' => $this->subjectNameStrategy
             ])
-            ->add('add_students', CheckboxType::class, [
+            ->add('grades', SortableEntityType::class, [
+                'class' => Grade::class,
+                'label' => 'label.grades',
+                'choice_label' => fn(Grade $grade) => $grade->getName(),
+                'multiple' => true,
+                'attr' => [
+                    'data-choice' => 'true'
+                ],
+                'sort_by' => $this->gradeNameStrategy
+            ])
+            ->add('addStudents', CheckboxType::class, [
                 'required' => false,
                 'label' => 'admin.exams.students.add_all',
                 'help' => 'admin.exams.students.info',
@@ -63,7 +76,7 @@ class ExamBulkType extends AbstractType {
                     'class' => 'checkbox-custom'
                 ]
             ])
-            ->add('can_edit', CheckboxType::class, [
+            ->add('canEdit', CheckboxType::class, [
                 'label' => 'admin.exams.tuition_teachers_can_edit.label',
                 'help' => 'admin.exams.tuition_teachers_can_edit.help',
                 'required' => false

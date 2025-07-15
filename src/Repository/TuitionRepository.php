@@ -216,6 +216,35 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
         return $tuitions;
     }
 
+    public function findAllByGradeAndSubject(Grade $grade, Subject $subject, Section $section): array {
+        $qb = $this->getDefaultQueryBuilder();
+        $qb = $this->filterSection($qb, $section);
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('tInner.id')
+            ->from(Tuition::class, 'tInner')
+            ->leftJoin('tInner.subject', 'sInner')
+            ->leftJoin('tInner.studyGroup', 'sgInner')
+            ->leftJoin('sgInner.grades', 'gInner')
+            ->where('sInner.id = :subject');
+
+        $qb->andWhere($qb->expr()->in('t.id', $qbInner->getDQL()))
+            ->setParameter('subject', $subject->getId());
+
+        $tuitions = [ ];
+        $result = $qb->getQuery()->getResult();
+
+        /** @var Tuition $tuition */
+        foreach($result as $tuition) {
+            $tuitionGrades = $tuition->getStudyGroup()->getGrades()->map(fn(Grade $grade) => $grade->getName())->toArray();
+            if(count(array_intersect($tuitionGrades, [$grade])) > 0) {
+                $tuitions[] = $tuition;
+            }
+        }
+
+        return $tuitions;
+    }
+
     /**
      * @inheritDoc
      */
@@ -320,6 +349,4 @@ class TuitionRepository extends AbstractTransactionalRepository implements Tuiti
         $this->em->remove($tuition);
         $this->flushIfNotInTransaction();
     }
-
-
 }

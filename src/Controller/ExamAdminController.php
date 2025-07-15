@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\ExamStudent;
+use App\Exam\Bulk\BulkExamRequest;
+use App\Exam\Bulk\ExamCreator;
 use App\Exam\ExamSplitConfiguration;
 use App\Exam\ExamSplitter;
 use App\Exam\ExamStudentsResolver;
@@ -48,8 +50,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[Route(path: '/admin/exams')]
 class ExamAdminController extends AbstractController {
 
-    private const NumberOfExams = 25;
-    private const ReassignCsrfId = 'reassign_exams';
+    private const int NumberOfExams = 25;
+    private const string ReassignCsrfId = 'reassign_exams';
 
     public function __construct(RefererHelper $redirectHelper, private ExamRepositoryInterface $repository, private readonly ExamStudentsResolver $examStudentsResolver, private readonly TranslatorInterface $translator) {
         parent::__construct($redirectHelper);
@@ -138,23 +140,16 @@ class ExamAdminController extends AbstractController {
     }
 
     #[Route(path: '/bulk', name: 'bulk_exams')]
-    public function addBulk(Request $request): Response {
+    public function addBulk(Request $request, ExamCreator $examCreator, SectionResolverInterface $sectionResolver): Response {
         $this->denyAccessUnlessGranted('ROLE_EXAMS_CREATOR');
 
-        $defaultData = [
-            'number' => 3,
-            'tuitions' => [ ],
-            'add_students' => true,
-            'can_edit' => true
-        ];
-
-        $form = $this->createForm(ExamBulkType::class, $defaultData);
+        $bulkExamRequest = new BulkExamRequest();
+        $bulkExamRequest->section = $sectionResolver->getCurrentSection();
+        $form = $this->createForm(ExamBulkType::class, $bulkExamRequest);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-
-            $this->bulkCreateExams($data['number'], $data['tuitions'], $data['add_students'], $data['can_edit']);
+            $examCreator->bulkCreate($bulkExamRequest);
 
             $this->addFlash('success', 'admin.exams.bulk.success');
             return $this->redirectToRoute('admin_exams');
@@ -373,32 +368,5 @@ class ExamAdminController extends AbstractController {
             'form' => $form->createView(),
             'exam' => $exam
         ]);
-    }
-
-    /**
-     * @param Tuition[] $tuitions
-     */
-    private function bulkCreateExams(int $number, array $tuitions, bool $addStudents, bool $canEdit): void {
-        $this->repository->beginTransaction();
-
-        foreach($tuitions as $tuition) {
-            $students = $tuition->getStudyGroup()->getMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudent())->toArray();
-
-            for($i = 0; $i < $number; $i++) {
-                $exam = new Exam();
-                $exam->setTuitionTeachersCanEditExam($canEdit);
-                $exam->addTuition($tuition);
-
-                if($addStudents === true) {
-                    foreach ($students as $student) {
-                        $exam->addStudent((new ExamStudent())->setStudent($student)->setTuition($tuition)->setExam($exam));
-                    }
-                }
-
-                $this->repository->persist($exam);
-            }
-        }
-
-        $this->repository->commit();
     }
 }

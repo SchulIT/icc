@@ -189,7 +189,13 @@ class DashboardViewHelper {
     public function createViewForStudentOrParent(Student $student, DateTime $dateTime, UserType $userType, User|null $user = null): DashboardView {
         $view = new DashboardView($dateTime);
 
-        $studyGroups = $this->studyGroupHelper->getStudyGroups([$student])->toArray();
+        $students = [ $student ];
+
+        if($user !== null) {
+            $students = $user->getStudents()->toArray();
+        }
+
+        $studyGroups = $this->studyGroupHelper->getStudyGroups($students)->toArray();
 
         $start = $this->getTimetableStartDate();
         $end = $this->getTimetableEndDate();
@@ -203,11 +209,11 @@ class DashboardViewHelper {
 
         $this->addMessages($this->messageRepository->findBy(MessageScope::Messages, $userType, $dateTime, $studyGroups), $view);
         $this->addSubstitutions($this->filterSubstitutionsByGrade($this->substitutionRepository->findAllForStudyGroups($studyGroups, $dateTime), $student->getGrade($section)), $view, false);
-        $this->addExams($this->examRepository->findAllByStudents([$student], $dateTime, true), $view, null, false);
+        $this->addExams($this->examRepository->findAllByStudents($students, $dateTime, true), $view, null, false);
         $this->addInfotexts($dateTime, $view);
         $this->addAbsentStudyGroup($this->absenceRepository->findAllStudyGroups($dateTime), $view);
         $this->addAbsentTeachers($this->absenceRepository->findAllTeachers($dateTime), $view);
-        $this->addAppointments($this->appointmentRepository->findAllForStudents([$student], $dateTime), $view);
+        $this->addAppointments($this->appointmentRepository->findAllForStudents($students, $dateTime), $view);
         $this->addRoomReservations($this->roomReservationRepository->findAllByStudentAndDate($student, $dateTime), $view);
         $this->addFreeTimespans($this->freeTimespanRepository->findAllByDate($dateTime), $view);
         $this->setCurrentLesson($view);
@@ -218,10 +224,7 @@ class DashboardViewHelper {
         foreach($this->parentsDayRepository->findByDate($dateTime) as $parentsDay) {
             $appointments = array_merge(
                 $appointments,
-                $this->parentsDayAppointmentRepository->findForStudents(
-                    $user !== null ? $user->getStudents()->toArray() : [$student ],
-                    $parentsDay
-                )
+                $this->parentsDayAppointmentRepository->findForStudents($students, $parentsDay)
             );
         }
 

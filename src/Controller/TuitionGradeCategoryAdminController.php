@@ -2,15 +2,20 @@
 
 namespace App\Controller;
 
+use App\Book\Grade\AdminOverview\OverviewHelper;
 use App\Entity\Tuition;
 use App\Entity\TuitionGradeCategory;
 use App\Entity\TuitionGradeCatalog;
+use App\Entity\User;
 use App\Feature\Feature;
 use App\Feature\IsFeatureEnabled;
 use App\Form\AssignTuitionGradeCategoryType;
 use App\Form\TuitionGradeCategoryType;
 use App\Repository\TuitionGradeCategoryRepositoryInterface;
 use App\Repository\TuitionGradeRepositoryInterface;
+use App\Utils\ArrayUtils;
+use App\View\Filter\GradesFilter;
+use App\View\Filter\SectionFilter;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -18,6 +23,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 #[Route('/admin/gradebook')]
 #[IsFeatureEnabled(Feature::Book)]
@@ -32,6 +38,41 @@ class TuitionGradeCategoryAdminController extends AbstractController {
     public function index(): Response {
         return $this->render('admin/tuition_grades/index.html.twig', [
             'categories' => $this->repository->findAll()
+        ]);
+    }
+
+    #[Route('/overview', name: 'tuition_grades_overview')]
+    public function overview(SectionFilter $sectionFilter, GradesFilter $gradesFilter, Request $request, #[CurrentUser] User $user, OverviewHelper $overviewHelper): Response {
+        $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
+        $gradesFilterView = $gradesFilter->handle($request->query->all('grades'), $sectionFilterView->getCurrentSection(), $user);
+
+        $categories = ArrayUtils::createArrayWithKeys(
+            $this->repository->findAll(),
+            fn(TuitionGradeCategory $category) => $category->getUuid()->toString()
+        );
+
+        $selectedCategories = [ ];
+
+        foreach($request->query->all('categories') as $categoryUuid) {
+            $category = $categories[$categoryUuid] ?? null;
+
+            if($category !== null) {
+                $selectedCategories[] = $category;
+            }
+        }
+
+        $overview = null;
+
+        if(count($gradesFilterView->getGrades()) > 0 && count($selectedCategories) > 0 && $sectionFilterView->getCurrentSection() !== null) {
+            $overview = $overviewHelper->computeOverview($gradesFilterView->getCurrentGrades(), $selectedCategories, $sectionFilterView->getCurrentSection());
+        }
+
+        return $this->render('admin/tuition_grades/overview.html.twig', [
+            'categories' => $categories,
+            'sectionFilter' => $sectionFilterView,
+            'gradesFilter' => $gradesFilterView,
+            'selectedCategories' => $selectedCategories,
+            'overview' => $overview
         ]);
     }
 

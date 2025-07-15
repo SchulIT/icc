@@ -1,0 +1,105 @@
+{% extends "admin/_main.html.twig" %}
+
+{% block title %}{{ 'admin.tuition_grades.overview.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_tuition_grades') }}">{{ 'admin.tuition_grades.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block inner %}
+    {% if overview == null %}
+        <div class="bs-callout bs-callout-info">
+            <h5>{{ 'info.label'|trans }}</h5>
+
+            <p>{{ 'admin.tuition_grades.overview.empty'|trans }}</p>
+        </div>
+    {% else %}
+        <div class="card">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover card-table">
+                    <thead>
+                    <tr>
+                        <th>{{ 'label.tuition'|trans }}</th>
+                        <th>{{ 'label.grades'|trans }}</th>
+                        {% for category in overview.categories %}
+                            <th>
+                                {{ category.displayName }}
+                                <span class="text-muted">{{ category.comment }}</span>
+                            </th>
+                        {% endfor %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for row in overview.rows %}
+                        <tr>
+                            <td>{{ row.tuition.name }}</td>
+                            <td>{{ row.tuition.studyGroup.grades|grades }}</td>
+                            {% for category in overview.categories %}
+                                <td>
+                                    {% if row.categoryEnabled(category) %}
+                                        <i class="fas fa-check text-success"></i>
+                                    {% else %}
+                                        <i class="fas fa-times text-danger"></i>
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block sidebar %}
+    <div class="card">
+        <div class="list-group list-group-flush">
+            <a href="{{ path('admin_tuition_grades') }}" class="list-group-item list-group-item-action">
+                <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+            </a>
+        </div>
+    </div>
+
+    <form method="get">
+        <div class="card">
+            <div class="card-body">
+
+                <div class="mb-3">
+                    <label for="section" class="form-label">{{ 'label.section'|trans }}:</label>
+                    <select name="section" id="section" class="form-control" data-trigger="submit" data-choice="true">
+                        <option value="" placeholder>{{ 'label.select.section'|trans }}</option>
+                        {% for s in sectionFilter.sections %}
+                            <option value="{{ s.uuid }}" {% if sectionFilter.currentSection != null and s.uuid == sectionFilter.currentSection.uuid %}selected="selected"{% endif %}>
+                                {{ s.displayName }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3 mb-0">
+                    <label for="grades" class="form-label">{{ 'label.select.grade'|trans }}:</label>
+                    <select name="grades[]" multiple="multiple" id="grades" class="form-control" data-trigger="submit" size="{{ gradesFilter.grades|length }}">
+                        {% for g in gradesFilter.grades %}
+                            <option value="{{ g.uuid }}" {% if g in gradesFilter.currentGrades %}selected="selected"{% endif %}>{{ g.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3 mb-0">
+                    <label for="categories" class="form-label">{{ 'label.select.category'|trans }}:</label>
+                    <select name="categories[]" multiple="multiple" id="categories" class="form-control" data-trigger="submit" size="{{ categories|length }}">
+                        {% for c in categories %}
+                            <option value="{{ c.uuid }}" {% if c in selectedCategories %}selected="selected"{% endif %}>{{ c.displayName }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}

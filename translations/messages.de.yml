@@ -1625,6 +1625,10 @@ admin:
             confirm: 'Soll die Notenkategorie %name% wirklich gelöscht werden? Die Kategorie ist aktuell keiner Note zugeordnet, daher kommt es nicht zu Datenverlust.'
             error: Die Notenkategorie kann nicht gelöscht werden, weil Noten mit ihr verknüpft sind.
 
+        overview:
+            label: Zuweisungsübersicht
+            empty: Bitte rechts im Filter Klassen bzw. Notenkategorien auswählen.
+
     tuition_grade_catalogs:
         label: Notenkataloge
         empty: Keine Notenkataloge vorhanden

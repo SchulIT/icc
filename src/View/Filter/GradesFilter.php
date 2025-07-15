@@ -8,7 +8,7 @@ use App\Sorting\GradeNameStrategy;
 
 class GradesFilter extends AbstractGradeFilter {
     
-    public function handle(array $gradeUuids, ?Section $section, User $user) {
+    public function handle(array $gradeUuids, ?Section $section, User $user): GradesFilterView {
         $grades = $this->getGrades($user, $section, $defaultGrade);
         $selectedGrades = [ ];
 

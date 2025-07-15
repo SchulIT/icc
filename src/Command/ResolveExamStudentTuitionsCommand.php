@@ -11,14 +11,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand('app:exams:resolve_tuitions', description: 'Für alle Klausurschreibende wird geschaut, in welchem Unterricht sie Klausur schreiben (sofern dies nicht bereits festgelegt ist).')]
-class ResolveExamStudentTuitionsCommand extends Command {
-    public function __construct(private readonly ExamRepositoryInterface $examRepository, private readonly ExamStudentsResolver $resolver, string $name = null) {
-        parent::__construct($name);
-    }
+readonly class ResolveExamStudentTuitionsCommand {
+    public function __construct(private ExamRepositoryInterface $examRepository, private ExamStudentsResolver $resolver) { }
 
-    public function execute(InputInterface $input, OutputInterface $output): int {
-        $style = new SymfonyStyle($input, $output);
-
+    public function __invoke(SymfonyStyle $style, OutputInterface $output): int {
         $exams = $this->examRepository->findAll();
 
         $progress = $style->createProgressBar(count($exams));

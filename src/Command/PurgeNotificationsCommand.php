@@ -11,14 +11,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand('app:notifications:purge', description: 'Löscht alle Benachrichtigungen.')]
-class PurgeNotificationsCommand extends Command {
-    public function __construct(private readonly NotificationRepositoryInterface $repository, string $name = null) {
-        parent::__construct($name);
-    }
+readonly class PurgeNotificationsCommand {
+    public function __construct(private NotificationRepositoryInterface $repository) { }
 
-    public function execute(InputInterface $input, OutputInterface $output): int {
-        $style = new SymfonyStyle($input, $output);
-
+    public function __invoke(SymfonyStyle $style, OutputInterface $output): int {
         $style->section('Lösche alle Benachrichtigungen');
 
         $style->caution('Diese Aktion kann nicht rückgängig gemacht werden');

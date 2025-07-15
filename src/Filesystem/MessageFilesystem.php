@@ -26,11 +26,7 @@ use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
 
 class MessageFilesystem implements DirectoryNamerInterface {
 
-    private LoggerInterface|NullLogger $logger;
-
-    public function __construct(private TokenStorageInterface $tokenStorage, private FilesystemOperator $filesystem, private MimeTypes $mimeTypes, LoggerInterface $logger = null) {
-        $this->logger = $logger ?? new NullLogger();
-    }
+    public function __construct(private readonly TokenStorageInterface $tokenStorage, private readonly FilesystemOperator $filesystem, private readonly MimeTypes $mimeTypes, private readonly LoggerInterface $logger) {    }
 
     /**
      * @throws FileNotFoundException|FilesystemException

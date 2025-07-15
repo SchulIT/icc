@@ -20,7 +20,13 @@ class Sorter {
         }
     }
 
-    public function sortGroupItems(array $groups, string $strategyService, SortDirection $direction = null) {
+    /**
+     * @param array $groups
+     * @param class-string $strategyService
+     * @param SortDirection $direction
+     * @return void
+     */
+    public function sortGroupItems(array $groups, string $strategyService, SortDirection $direction = SortDirection::Ascending): void {
         foreach($groups as $group) {
             if($group instanceof SortableGroupInterface) {
                 $this->sort($group->getItems(), $strategyService, $direction);
@@ -29,9 +35,12 @@ class Sorter {
     }
 
     /**
-     * @param SortDirection|null $direction
+     * @param array $array
+     * @param class-string $strategyService
+     * @param SortDirection $direction
+     * @param bool $keepIndices
      */
-    public function sort(array &$array, string $strategyService, SortDirection $direction = null, bool $keepIndices = false) {
+    public function sort(array &$array, string $strategyService, SortDirection $direction = SortDirection::Ascending, bool $keepIndices = false): void {
         $strategy = $this->strategies[$strategyService] ?? null;
 
         if($strategy === null) {

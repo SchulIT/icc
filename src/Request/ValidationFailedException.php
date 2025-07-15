@@ -8,7 +8,7 @@ use Throwable;
 
 class ValidationFailedException extends ImportException {
 
-    public function __construct(private ConstraintViolationListInterface $violations, $message = "", $code = 0, Throwable $previous = null) {
+    public function __construct(private readonly ConstraintViolationListInterface $violations, $message = "", $code = 0, Throwable|null $previous = null) {
         parent::__construct($message, $code, $previous);
     }
 

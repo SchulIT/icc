@@ -16,21 +16,17 @@ use ZipArchive;
 use function Symfony\Component\String\u;
 
 #[AsCommand('app:backup:restore', description: 'Stellt ein Backup wieder her.')]
-class RestoreCommand extends Command {
+readonly class RestoreCommand {
 
-    public function __construct(private readonly string $projectPath,
-                                private readonly string $databaseDsn,
-                                private readonly string $backupDirectory,
-                                private readonly string $tempDirectory,
-                                private readonly array $files,
-                                private readonly array $directories,
-                                private readonly EntityManagerInterface $em,
-                                string $name = null) {
-        parent::__construct($name);
-    }
+    public function __construct(private string $projectPath,
+                                private string $databaseDsn,
+                                private string $backupDirectory,
+                                private string $tempDirectory,
+                                private array $files,
+                                private array $directories,
+                                private EntityManagerInterface $em) { }
 
-    public function execute(InputInterface $input, OutputInterface $output): int {
-        $style = new SymfonyStyle($input, $output);
+    public function __invoke(SymfonyStyle $style, OutputInterface $output): int {
         $style->section('Backup auswählen');
 
         $backups = [ ];

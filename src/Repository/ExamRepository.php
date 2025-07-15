@@ -15,7 +15,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class ExamRepository extends AbstractTransactionalRepository implements ExamRepositoryInterface {
 
-    private function getDefaultQueryBuilder(DateTime $today = null, bool $onlyToday = false, bool $onlyPlanned = true): QueryBuilder {
+    private function getDefaultQueryBuilder(?DateTime $today = null, bool $onlyToday = false, bool $onlyPlanned = true): QueryBuilder {
         $qb = $this->em->createQueryBuilder();
 
         $qb
@@ -361,7 +361,7 @@ class ExamRepository extends AbstractTransactionalRepository implements ExamRepo
     /**
      * @inheritDoc
      */
-    public function findAllExternal(DateTime $today = null) {
+    public function findAllExternal(?DateTime $today = null) {
         $qb = $this->getDefaultQueryBuilder($today);
 
         return $qb->andWhere($qb->expr()->isNotNull('e.externalId'))

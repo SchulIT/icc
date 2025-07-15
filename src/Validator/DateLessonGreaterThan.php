@@ -11,7 +11,7 @@ class DateLessonGreaterThan extends Constraint {
 
     public string $propertyPath;
 
-    public function __construct(mixed $options = null, array $groups = null, mixed $payload = null, string $propertyPath = null) {
+    public function __construct(mixed $options = null, array|null $groups = null, mixed $payload = null, string|null $propertyPath = null) {
         parent::__construct($options, $groups, $payload);
 
         if(!empty($propertyPath)) {

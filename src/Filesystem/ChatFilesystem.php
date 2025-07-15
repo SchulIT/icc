@@ -21,7 +21,7 @@ class ChatFilesystem implements DirectoryNamerInterface {
 
     }
 
-    public function purge() {
+    public function purge(): void {
         foreach($this->filesystem->listContents('/') as $item) {
             if($item instanceof DirectoryAttributes) {
                 $this->filesystem->deleteDirectory($item->path());

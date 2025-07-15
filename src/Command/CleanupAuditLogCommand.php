@@ -8,15 +8,14 @@ use SchulIT\CommonBundle\Helper\DateHelper;
 use Shapecode\Bundle\CronBundle\Attribute\AsCronJob;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use function Symfony\Component\String\u;
 
 #[AsCommand('app:audit:cleanup', 'Leert das Audit-Log für Entitäten, die importiert werden, um Speicherplatz zu sparen.')]
 #[AsCronJob('@daily')]
-class CleanupAuditLogCommand extends Command {
-    private const ListOfTables = [
+readonly class CleanupAuditLogCommand {
+    private const array ListOfTables = [
         'grade_membership',
         'free_timespan',
         'infotext',
@@ -31,13 +30,9 @@ class CleanupAuditLogCommand extends Command {
         'tuition'
     ];
 
-    public function __construct(private readonly int $retentionDays, private readonly EntityManagerInterface $em, private readonly DateHelper $dateHelper, string $name = null) {
-        parent::__construct($name);
-    }
+    public function __construct(private int $retentionDays, private EntityManagerInterface $em, private DateHelper $dateHelper) { }
 
-    public function execute(InputInterface $input, OutputInterface $output): int {
-        $style = new SymfonyStyle($input, $output);
-
+    public function __invoke(SymfonyStyle $style, OutputInterface $output): int {
         $auditTables = array_filter(
             $this->em->getConnection()->createSchemaManager()->listTables(),
             fn(Table $table) => u($table->getName())->endsWith('_audit')
@@ -72,6 +67,6 @@ class CleanupAuditLogCommand extends Command {
 
         $style->success('Fertig');
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

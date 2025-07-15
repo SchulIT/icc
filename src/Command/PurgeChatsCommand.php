@@ -10,14 +10,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand('app:chats:purge', description: 'Löscht alle Chats.')]
-class PurgeChatsCommand extends Command {
-    public function __construct(private readonly Cleaner $cleaner, string $name = null) {
-        parent::__construct($name);
-    }
+readonly class PurgeChatsCommand {
+    public function __construct(private Cleaner $cleaner) { }
 
-    public function execute(InputInterface $input, OutputInterface $output): int {
-        $style = new SymfonyStyle($input, $output);
-
+    public function __invoke(SymfonyStyle $style, OutputInterface $output): int {
         $style->section('Lösche alle Chats');
 
         $style->caution('Diese Aktion kann nicht rückgängig gemacht werden');

@@ -218,7 +218,7 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
         return $qb->getQuery()->getResult();
     }
 
-    private function getDefaultQueryBuilder(DateTime $date = null): QueryBuilder {
+    private function getDefaultQueryBuilder(?DateTime $date = null): QueryBuilder {
         $qb = $this->em->createQueryBuilder();
 
         $qb->select(['s', 't', 'rt', 'sg', 'rsg', 'rg'])
@@ -229,7 +229,7 @@ class SubstitutionRepository extends AbstractTransactionalRepository implements 
             ->leftJoin('s.replacementStudyGroups', 'rsg')
             ->leftJoin('s.replacementGrades', 'rg')
             ->orderBy('s.date', 'asc')
-            ->orderBy('s.lessonStart', 'asc');
+            ->addOrderBy('s.lessonStart', 'asc');
 
         if($date !== null) {
             $qb

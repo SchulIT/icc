@@ -33,7 +33,7 @@ class ImportUserAuthenticator extends AbstractAuthenticator implements Authentic
     /**
      * @inheritDoc
      */
-    public function start(Request $request, AuthenticationException $authException = null): Response {
+    public function start(Request $request, AuthenticationException|null $authException = null): Response {
         $json = $this->serializer->serialize(
             new ErrorResponse($authException != null ? $authException->getMessage() : 'Authentication required.')
             , 'json');

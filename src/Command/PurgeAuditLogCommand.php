@@ -12,15 +12,11 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use function Symfony\Component\String\u;
 
 #[AsCommand('app:audit:purge', 'Leert das gesamte Audit-Log.')]
-class PurgeAuditLogCommand extends Command {
+readonly class PurgeAuditLogCommand {
 
-    public function __construct(private EntityManagerInterface $em, string $name = null) {
-        parent::__construct($name);
-    }
+    public function __construct(private EntityManagerInterface $em) { }
 
-    public function execute(InputInterface $input, OutputInterface $output): int {
-        $style = new SymfonyStyle($input, $output);
-
+    public function __invoke(SymfonyStyle $style, OutputInterface $output): int {
         /** @var Table[] $tables */
         $tables = array_filter(
             $this->em->getConnection()->createSchemaManager()->listTables(),

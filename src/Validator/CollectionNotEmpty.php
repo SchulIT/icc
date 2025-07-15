@@ -13,7 +13,7 @@ class CollectionNotEmpty extends Constraint {
 
     public string $message = 'This collection must not be empty.';
 
-    public function __construct(mixed $options = null, array $groups = null, mixed $payload = null, ?string $propertyPath = null) {
+    public function __construct(mixed $options = null, array|null $groups = null, mixed $payload = null, ?string $propertyPath = null) {
         parent::__construct($options, $groups, $payload);
 
         if($propertyPath !== null) {

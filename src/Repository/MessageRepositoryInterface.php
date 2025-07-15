@@ -25,7 +25,7 @@ interface MessageRepositoryInterface {
      * @param StudyGroup[] $studyGroups Only return messages which belong to the given study groups
      * @return Message[]
      */
-    public function findBy(MessageScope $scope, UserType $userType, DateTime $today = null, array $studyGroups = [ ]);
+    public function findBy(MessageScope $scope, UserType $userType, DateTime|null $today = null, array $studyGroups = [ ]): array;
 
     /**
      * @param MessageScope $scope
@@ -34,7 +34,7 @@ interface MessageRepositoryInterface {
      * @param StudyGroup[] $studyGroups Only return messages which belong to the given study groups
      * @return int
      */
-    public function countBy(MessageScope $scope, UserType $userType, DateTime $today = null, array $studyGroups = [ ]): int;
+    public function countBy(MessageScope $scope, UserType $userType, DateTime|null $today = null, array $studyGroups = [ ]): int;
 
     /**
      * @param int $itemsPerPage
@@ -67,7 +67,7 @@ interface MessageRepositoryInterface {
     /**
      * @return Message[]
      */
-    public function findAll();
+    public function findAll(): array;
 
     /**
      * @param Message $message

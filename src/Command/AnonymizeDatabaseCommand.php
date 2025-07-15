@@ -9,23 +9,19 @@ use App\Repository\UserRepositoryInterface;
 use Faker\Generator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use function Symfony\Component\String\u;
 
 #[AsCommand('app:anonymize', 'Anonymisiert Lehrkräfte, Lernende und Benutzer.')]
-class AnonymizeDatabaseCommand extends Command {
+readonly class AnonymizeDatabaseCommand {
 
-    public function __construct(private readonly StudentRepositoryInterface $studentRepository, private readonly TeacherRepositoryInterface $teacherRepository,
-                                private readonly UserRepositoryInterface    $userRepository, private readonly SluggerInterface $slugger, private readonly Generator $faker, string $name = null) {
-        parent::__construct($name);
+    public function __construct(private StudentRepositoryInterface $studentRepository, private TeacherRepositoryInterface $teacherRepository,
+                                private UserRepositoryInterface $userRepository, private SluggerInterface $slugger, private Generator $faker) {
     }
 
-    public function execute(InputInterface $input, OutputInterface $output): int {
-        $style = new SymfonyStyle($input, $output);
-
+    public function __invoke(SymfonyStyle $style, OutputInterface $output): int {
         $style->section('Lehrkräfte anonymisieren');
         $this->teacherRepository->beginTransaction();
         foreach($this->teacherRepository->findAll() as $teacher) {
@@ -71,7 +67,7 @@ class AnonymizeDatabaseCommand extends Command {
         $this->userRepository->commit();
         $style->success('Fertig');
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     private function generateEmail(string $firstname, string $lastname, $domain): string {

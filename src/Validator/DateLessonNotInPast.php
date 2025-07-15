@@ -15,7 +15,7 @@ class DateLessonNotInPast extends Constraint {
     /** @var string|null If set, the validator can ignore this constraint in case the value was not changed. */
     public ?string $propertyName = null;
 
-    public function __construct(mixed $options = null, array $groups = null, mixed $payload = null, array $exceptions = [ ], ?string $propertyName = null) {
+    public function __construct(mixed $options = null, array|null $groups = null, mixed $payload = null, array $exceptions = [ ], ?string $propertyName = null) {
         parent::__construct($options, $groups, $payload);
 
         if(!empty($exceptions)) {

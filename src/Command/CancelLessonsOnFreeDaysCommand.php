@@ -16,15 +16,12 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCronJob('@daily')]
 #[AsCommand(name: 'app:book:auto_cancel', description: 'Markiert alle Stunden an einem Tag als Entfall, wenn es einen Entfallgrund gibt.')]
-class CancelLessonsOnFreeDaysCommand extends Command {
+readonly class CancelLessonsOnFreeDaysCommand {
 
-    public function __construct(private readonly DateHelper $dateHelper, private readonly LessonCancelHelper $cancelHelper,
-                                private readonly TimetableLessonRepositoryInterface $lessonRepository, private readonly EntryOverviewHelper $overviewHelper, string $name = null) {
-        parent::__construct($name);
-    }
+    public function __construct(private DateHelper $dateHelper, private LessonCancelHelper $cancelHelper,
+                                private TimetableLessonRepositoryInterface $lessonRepository, private EntryOverviewHelper $overviewHelper) { }
 
-    public function execute(InputInterface $input, OutputInterface $output): int {
-        $io = new SymfonyStyle($input, $output);
+    public function __invoke(SymfonyStyle $io, OutputInterface $output): int {
         $today = $this->dateHelper->getToday();
 
         $io->section(sprintf('Betrachte %s', $today->format('d.m.Y')));

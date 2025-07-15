@@ -36,7 +36,7 @@ class SubstitutionController extends AbstractControllerWithMessages {
 
     use DateTimeHelperTrait;
 
-    private const SectionKey = 'substitutions';
+    private const string SectionKey = 'substitutions';
 
     #[Route(path: '/substitutions', name: 'substitutions')]
     public function index(SubstitutionRepositoryInterface $substitutionRepository, InfotextRepositoryInterface $infotextRepository, AbsenceRepositoryInterface $absenceRepository,
@@ -64,13 +64,13 @@ class SubstitutionController extends AbstractControllerWithMessages {
         if($teacherFilterView->getCurrentTeacher() !== null) {
             $substitutions = $substitutionRepository->findAllForTeacher($teacherFilterView->getCurrentTeacher(), $selectedDate);
 
-            for($idx = 0; $idx < (is_countable($days) ? count($days) : 0); $idx++) {
+            for($idx = 0; $idx < count($days); $idx++) {
                 $counts[$idx] = $substitutionRepository->countAllForTeacher($teacherFilterView->getCurrentTeacher(), $days[$idx]);
             }
         } else if($gradeFilterView->getCurrentGrade() !== null) {
             $substitutions = $substitutionRepository->findAllForGrade($gradeFilterView->getCurrentGrade(), $selectedDate);
 
-            for($idx = 0; $idx < (is_countable($days) ? count($days) : 0); $idx++) {
+            for($idx = 0; $idx < count($days); $idx++) {
                 $counts[$idx] = $substitutionRepository->countAllForGrade($gradeFilterView->getCurrentGrade(), $days[$idx]);
             }
         } else if($studentFilterView->getCurrentStudent() !== null) {
@@ -78,13 +78,13 @@ class SubstitutionController extends AbstractControllerWithMessages {
 
             $substitutions = $substitutionRepository->findAllForStudyGroups($studyGroups, $selectedDate);
 
-            for($idx = 0; $idx < (is_countable($days) ? count($days) : 0); $idx++) {
+            for($idx = 0; $idx < count($days); $idx++) {
                 $counts[$idx] = $substitutionRepository->countAllForStudyGroups($studyGroups, $days[$idx]);
             }
         } else {
             $substitutions = $substitutionRepository->findAllByDate($selectedDate);
 
-            for($idx = 0; $idx < (is_countable($days) ? count($days) : 0); $idx++) {
+            for($idx = 0; $idx < count($days); $idx++) {
                 $counts[$idx] = $substitutionRepository->countAllByDate($days[$idx]);
             }
         }

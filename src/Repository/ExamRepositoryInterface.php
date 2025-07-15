@@ -150,7 +150,7 @@ interface ExamRepositoryInterface extends TransactionalRepositoryInterface {
      * @param \DateTime|null $today If set, only exams on $today or later are returned
      * @return Exam[]
      */
-    public function findAllExternal(DateTime $today = null);
+    public function findAllExternal(?DateTime $today = null);
 
     /**
      * @param DateTime $start

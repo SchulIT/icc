@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use DateInterval;
+use DateMalformedStringException;
 use DateTime;
 use Exception;
 use SchulIT\CommonBundle\Helper\DateHelper;
@@ -31,7 +32,15 @@ trait DateTimeHelperTrait {
         return $today;
     }
 
-    private function getListOfNextDays(DateHelper $dateHelper, int $numberOfDays, bool $skipWeekends, DateTime $today = null) {
+    /**
+     * @param DateHelper $dateHelper
+     * @param int $numberOfDays
+     * @param bool $skipWeekends
+     * @param DateTime|null $today
+     * @return DateTime[]
+     * @throws \DateMalformedStringException
+     */
+    private function getListOfNextDays(DateHelper $dateHelper, int $numberOfDays, bool $skipWeekends, DateTime|null $today = null): array {
         if($today === null) {
             $today = $dateHelper->getToday();
         }
@@ -61,7 +70,8 @@ trait DateTimeHelperTrait {
     }
 
     /**
-     * @param \DateTime[] $dateTimes
+     * @param DateTime[] $dateTimes
+     * @throws DateMalformedStringException
      */
     private function getCurrentDate(array $dateTimes, ?string $date): ?DateTime {
         if(count($dateTimes) === 0) {

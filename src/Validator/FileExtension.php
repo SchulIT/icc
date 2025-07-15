@@ -12,7 +12,7 @@ class FileExtension extends Constraint {
 
     public string $message = 'File has the wrong format. Expected Format: {{ extensions }}';
 
-    public function __construct(mixed $options = null, array $groups = null, mixed $payload = null, ?array $extensions = null) {
+    public function __construct(mixed $options = null, array|null $groups = null, mixed $payload = null, ?array $extensions = null) {
         parent::__construct($options, $groups, $payload);
 
         if($extensions !== null) {

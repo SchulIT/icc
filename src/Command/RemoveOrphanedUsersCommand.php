@@ -12,19 +12,15 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCronJob('@daily')]
 #[AsCommand('app:user:remove_orphaned', 'Löscht Lernende, Eltern und Lehrkräfte ohne verknüpfte Entität.')]
-class RemoveOrphanedUsersCommand extends Command {
+readonly class RemoveOrphanedUsersCommand {
 
-    public function __construct(private UserRepositoryInterface $userRepository, string $name = null) {
-        parent::__construct($name);
-    }
+    public function __construct(private UserRepositoryInterface $userRepository) { }
 
-    public function execute(InputInterface $input, OutputInterface $output): int {
-        $style = new SymfonyStyle($input, $output);
-
+    public function __invoke(SymfonyStyle $style, OutputInterface $output): int {
         $count = $this->userRepository->removeOrphaned();
 
         $style->success(sprintf('%d verwaiste Benutzer gelöscht', $count));
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

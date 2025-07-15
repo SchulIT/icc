@@ -14,21 +14,16 @@ use ZipArchive;
 use function Symfony\Component\String\u;
 
 #[AsCommand('app:backup:create', 'Erstellt ein Backup aller relevanten Daten (Konfigurationsdatei, Datenbank, Zertifikate & hochgeladene Dateien.')]
-class BackupCommand extends Command {
+readonly class BackupCommand {
 
-    public function __construct(private readonly string $projectPath,
-                                private readonly string $databaseDsn,
-                                private readonly string $backupDirectory,
-                                private readonly string $tempDirectory,
-                                private readonly array $files,
-                                private readonly array $directories,
-                                string $name = null) {
-        parent::__construct($name);
-    }
+    public function __construct(private string $projectPath,
+                                private string $databaseDsn,
+                                private string $backupDirectory,
+                                private string $tempDirectory,
+                                private array $files,
+                                private array $directories) { }
 
-    public function execute(InputInterface $input, OutputInterface $output): int {
-        $style = new SymfonyStyle($input, $output);
-
+    public function __invoke(SymfonyStyle $style, OutputInterface $output): int {
         $filename = sprintf('%s/backup-%s.zip', $this->backupDirectory, (new DateTime())->format('Y-m-d-H-i-s'));
 
         $zip = new ZipArchive();
@@ -61,7 +56,7 @@ class BackupCommand extends Command {
 
         $style->success(sprintf('Backup erstellt: %s', $filename));
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     private function doDatabaseDump(ZipArchive $zip): string {

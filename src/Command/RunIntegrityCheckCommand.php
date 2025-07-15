@@ -15,15 +15,11 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCronJob('0 1 * * *')]
 #[AsCommand('app:book:integrity_check:queue', description: 'Veranlasst einen (asynchronen) Integritätscheck.')]
-class RunIntegrityCheckCommand extends Command {
-    public function __construct(private readonly MessageBusInterface $messageBus, private readonly StudentRepositoryInterface $studentRepository,
-                                private readonly SectionResolverInterface $sectionResolver, private readonly bool $isEnabled, string $name = null) {
-        parent::__construct($name);
-    }
+readonly class RunIntegrityCheckCommand {
+    public function __construct(private MessageBusInterface $messageBus, private StudentRepositoryInterface $studentRepository,
+                                private SectionResolverInterface $sectionResolver, private bool $isEnabled) { }
 
-    public function execute(InputInterface $input, OutputInterface $output): int {
-        $io = new SymfonyStyle($input, $output);
-
+    public function __invoke(SymfonyStyle $io, OutputInterface $output): int {
         if($this->isEnabled === false) {
             $io->error('Der Parameter ASYNC_CHECKS muss auf true gesetzt werden.');
             return Command::SUCCESS;

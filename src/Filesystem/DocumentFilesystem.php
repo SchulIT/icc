@@ -5,6 +5,7 @@ namespace App\Filesystem;
 use App\Entity\Document;
 use App\Entity\DocumentAttachment;
 use App\Http\FlysystemFileResponse;
+use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Mimey\MimeTypes;
 use Psr\Log\LoggerInterface;
@@ -15,14 +16,10 @@ use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
 
 class DocumentFilesystem implements DirectoryNamerInterface {
 
-    private LoggerInterface|NullLogger $logger;
-
-    public function __construct(private FilesystemOperator $filesystem, private MimeTypes $mimeTypes, LoggerInterface $logger = null) {
-        $this->logger = $logger ?? new NullLogger();
-    }
+    public function __construct(private readonly FilesystemOperator $filesystem, private readonly MimeTypes $mimeTypes, private readonly LoggerInterface $logger) {  }
 
     /**
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException|FilesystemException
      */
     public function getDownloadResponse(DocumentAttachment $attachment): Response {
         $path = $this->getAttachmentPath($attachment);

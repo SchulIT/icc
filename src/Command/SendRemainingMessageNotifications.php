@@ -15,16 +15,12 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCronJob('*\/5 * * * *')]
 #[AsCommand('app:notifications:send', 'Versendet E-Mail-Benachrichtigungen für Mitteilungen, für die noch keine Benachrichtigung versendet wurde (z.B. weil die Mitteilung für ein zukünftiges Datum erstellt wurde.')]
-class SendRemainingMessageNotifications extends Command {
+readonly class SendRemainingMessageNotifications {
 
-    public function __construct(private readonly DateHelper $dateHelper, private readonly MessageCreatedEventSubscriber $eventSubscriber,
-                                private readonly MessageRepositoryInterface $messageRepository, string $name = null) {
-        parent::__construct($name);
-    }
+    public function __construct(private DateHelper $dateHelper, private MessageCreatedEventSubscriber $eventSubscriber,
+                                private MessageRepositoryInterface $messageRepository) { }
 
-    public function execute(InputInterface $input, OutputInterface $output): int {
-        $style = new SymfonyStyle($input, $output);
-
+    public function __invoke(SymfonyStyle $style, OutputInterface $output): int {
         $today = $this->dateHelper->getToday();
         $messages = $this->messageRepository->findAllNotificationNotSent($today);
 

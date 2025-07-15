@@ -9,31 +9,19 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\DirectoryAttributes;
 use League\Flysystem\FileAttributes;
 use League\Flysystem\FilesystemOperator;
-use Shapecode\Bundle\CronBundle\Attribute\AsCronJob;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand('app:filesystem:documents:cleanup', description: 'Räumt den Ordner files/documents/ auf und synchronisiert ihn mit der Datenbank.')]
-class CleanupDocumentFilesystemCommand extends Command {
-    public function __construct(private readonly FilesystemOperator $documentsFilesystem,
-                                private readonly DocumentFilesystem $appFilesystem,
-                                private readonly EntityManagerInterface $em,
-                                string $name = null) {
-        parent::__construct($name);
-    }
+readonly class CleanupDocumentFilesystemCommand {
+    public function __construct(private FilesystemOperator $documentsFilesystem,
+                                private DocumentFilesystem $appFilesystem,
+                                private EntityManagerInterface $em) { }
 
-    public function configure(): void {
-        $this->addOption('dry-run', 'd', InputOption::VALUE_OPTIONAL, 'Nur prüfen und nichts löschen.', false);
-    }
-
-    public function execute(InputInterface $input, OutputInterface $output): int {
-        $dryRun = $input->getOption('dry-run') !== false;
-        $style = new SymfonyStyle($input, $output);
-
+    public function __invoke(SymfonyStyle $style, OutputInterface $output, #[Option('Nur prüfen und nichts löschen.', 'dry-run', 'd')] bool $dryRun = false): int {
         if($dryRun === true) {
             $style->info('Diese Operation wird als `dry-run` ausgeführt. Es wird nichts gelöscht.');
         }

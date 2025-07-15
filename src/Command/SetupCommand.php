@@ -9,26 +9,21 @@ use App\Utils\ArrayUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler;
 
 #[AsCommand('app:setup', 'Installiert die Anwendungen')]
-class SetupCommand extends Command {
+readonly class SetupCommand {
 
-    public function __construct(private UserTypeEntityRepositoryInterface $userTypeEntityRepository, private EntityManagerInterface $em, private PdoSessionHandler $pdoSessionHandler, string $name = null) {
-        parent::__construct($name);
-    }
+    public function __construct(private UserTypeEntityRepositoryInterface $userTypeEntityRepository, private EntityManagerInterface $em, private PdoSessionHandler $pdoSessionHandler) { }
 
-    public function execute(InputInterface $input, OutputInterface $output): int {
-        $style = new SymfonyStyle($input, $output);
-
+    public function __invoke(SymfonyStyle $style, OutputInterface $output): int {
         $this->setupSessions($style);
         $this->addMissingUserTypeEntities($style);
         $this->addMissingWeeks($style);
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     private function addMissingUserTypeEntities(SymfonyStyle $style) {

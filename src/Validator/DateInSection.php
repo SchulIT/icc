@@ -11,7 +11,7 @@ class DateInSection extends Constraint {
 
     public string $propertyPath;
 
-    public function __construct(string $propertyPath, mixed $options = null, array $groups = null, mixed $payload = null) {
+    public function __construct(string $propertyPath, mixed $options = null, array|null $groups = null, mixed $payload = null) {
         parent::__construct($options, $groups, $payload);
 
         $this->propertyPath = $propertyPath;

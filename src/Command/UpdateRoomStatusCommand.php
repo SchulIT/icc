@@ -6,24 +6,19 @@ use App\Rooms\Status\ServiceCenterRoomStatusHelper;
 use Shapecode\Bundle\CronBundle\Attribute\AsCronJob;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCronJob('*\/15 * * * *')]
 #[AsCommand('app:room:status:update', 'Aktualisiert den Raumstatus aus dem ServiceCenter (falls aktiviert)')]
-class UpdateRoomStatusCommand extends Command {
+readonly class UpdateRoomStatusCommand {
 
-    public function __construct(private ServiceCenterRoomStatusHelper $statusHelper, string $name = null) {
-        parent::__construct($name);
-    }
+    public function __construct(private ServiceCenterRoomStatusHelper $statusHelper) {    }
 
-    public function execute(InputInterface $input, OutputInterface $output): int {
-        $style = new SymfonyStyle($input, $output);
-
+    public function __invoke(SymfonyStyle $style, OutputInterface $output): int {
         $this->statusHelper->retrieveFromRemote();
 
         $style->success('Status aktualisiert');
-        return 0;
+        return Command::SUCCESS;
     }
 }

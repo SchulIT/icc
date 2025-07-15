@@ -12,19 +12,15 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCronJob('@daily')]
 #[AsCommand('app:students:remove_orphaned', 'Löscht Lernende, die mit keinem Schulabschnitt verknüpft sind.')]
-class RemoveOrphanedStudentsCommand extends Command {
+readonly class RemoveOrphanedStudentsCommand {
 
-    public function __construct(private readonly StudentRepositoryInterface $studentRepository, string $name = null) {
-        parent::__construct($name);
-    }
+    public function __construct(private StudentRepositoryInterface $studentRepository) { }
 
-    public function execute(InputInterface $input, OutputInterface $output): int {
-        $style = new SymfonyStyle($input, $output);
-
+    public function __invoke(SymfonyStyle $style, OutputInterface $output): int {
         $count = $this->studentRepository->removeOrphaned();
 
         $style->success(sprintf('%s Lernende gelöscht', $count));
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

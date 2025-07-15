@@ -11,7 +11,6 @@ use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class AbstractControllerWithMessages extends AbstractController {
-    protected $userResolver;
 
     public function __construct(protected MessageRepositoryInterface $messageRepository, protected DismissedMessagesHelper $dismissedMessagesHelper,
                                  protected DateHelper $dateHelper, RefererHelper $refererHelper) {
@@ -20,7 +19,7 @@ abstract class AbstractControllerWithMessages extends AbstractController {
 
     protected abstract function getMessageScope(): MessageScope;
 
-    public function renderWithMessages(string $view, array $parameters = [], Response $response = null): Response {
+    public function renderWithMessages(string $view, array $parameters = [], Response|null $response = null): Response {
         /** @var User $user */
         $user = $this->getUser();
 

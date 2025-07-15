@@ -20,6 +20,12 @@
     <div class="container-fluid px-0">
         <div class="row">
             <div class="col-md-9">
+                {% if chat.archived %}
+                    <div class="bs-callout bs-callout-info">
+                        <p>{{ 'chat.show.archived.info'|trans }}</p>
+                    </div>
+                {% endif %}
+
                 {% for message in chat.messages %}
                     <div class="card {% if message.createdBy == app.user %}ms-auto w-75{% else%}me-auto w-75{% endif %}">
                         {% set canEdit = is_granted('edit', message) %}
@@ -109,6 +115,7 @@
                     </div>
                 {% endfor %}
 
+                {% if is_granted('reply', chat) %}
                 {{ form_start(form) }}
                 <div class="card">
                     <div class="card-header">{{ 'chat.message.add.label'|trans }}</div>
@@ -143,6 +150,7 @@
                     </div>
                 </div>
                 {{ form_end(form) }}
+                {% endif %}
             </div>
 
             <div class="col-md-3 sticky-sidebar">
@@ -180,6 +188,30 @@
                         </div>
                         {% endif %}
                     </div>
+
+                    {% if is_granted('archive', chat) %}
+                        {% set action = path('archive_chat', { uuid: chat.uuid }) %}
+                        {% if chat.archived %}
+                            {% set action = path('unarchive_chat', { uuid: chat.uuid }) %}
+                        {% endif %}
+
+                        <form action="{{ action }}" method="post">
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('archive_chat') }}">
+
+                            <div class="list-group list-group-flush">
+                                {% if chat.archived %}
+                                    <button type="submit" class="list-group-item list-group-item-action border-bottom border-top">
+                                        <i class="fas fa-archive"></i> {{ 'chat.archive.unarchive.label'|trans }}
+                                    </button>
+                                {% else %}
+                                    <button type="submit" class="list-group-item list-group-item-action border-bottom border-top">
+                                        <i class="fas fa-archive"></i> {{ 'chat.archive.archive.label'|trans }}
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </form>
+                    {% endif %}
+
                     <form method="post">
                         <input type="hidden" name="_csrf_token" value="{{ csrf_token('remove_participant') }}">
                         <div class="list-group list-group-flush">
@@ -198,7 +230,7 @@
                         </div>
                     </form>
 
-                    {% if is_granted('edit', chat) %}
+                    {% if is_granted('participants', chat) %}
                     <div class="card-footer">
                         <div class="bs-callout bs-callout-warning">
                             <p>{{ 'chat.participants.add.caution'|trans }}</p>
@@ -214,7 +246,7 @@
 
                         {{ form_end(participantsForm) }}
                     </div>
-                    {% else %}
+                    {% elseif chat.archived == false %}
                         <div class="card-footer">
                             <div class="bs-callout bs-callout-warning">
                                 <p>{{ 'chat.participants.missing_rights'|trans }}</p>

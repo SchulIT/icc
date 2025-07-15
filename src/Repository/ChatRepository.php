@@ -7,7 +7,7 @@ use App\Entity\User;
 
 class ChatRepository extends AbstractRepository implements ChatRepositoryInterface {
 
-    public function findAllByUser(User $user): array {
+    public function findAllByUser(User $user, bool $archived): array {
         $qb = $this->em->createQueryBuilder();
         $qbInner = $this->em->createQueryBuilder();
 
@@ -23,6 +23,8 @@ class ChatRepository extends AbstractRepository implements ChatRepositoryInterfa
             ->where(
                 $qb->expr()->in('c.id', $qbInner->getDQL())
             )
+            ->andWhere('c.isArchived = :isArchived')
+            ->setParameter('isArchived', $archived)
             ->addOrderBy('m.createdAt', 'desc')
             ->setParameter('user', $user->getId())
             ->getQuery()
@@ -42,6 +44,14 @@ class ChatRepository extends AbstractRepository implements ChatRepositoryInterfa
     public function removeAll(): int {
         return $this->em->createQueryBuilder()
             ->delete(Chat::class, 'c')
+            ->getQuery()
+            ->execute();
+    }
+
+    public function archiveAll(): int {
+        return $this->em->createQueryBuilder()
+            ->update(Chat::class, 'c')
+            ->set('c.isArchived', true)
             ->getQuery()
             ->execute();
     }

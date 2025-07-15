@@ -2585,6 +2585,9 @@ chat:
         seen_by: gesehen von
         seen_by_nobody: von niemandem gesehen
         edited_at: bearbeitet am %date%
+        archived:
+            label: archiviert
+            info: Diese Nachricht wurde archiviert und kann daher nicht mehr bearbeitet werden.
     message:
         add:
             label: Antworten
@@ -2610,6 +2613,17 @@ chat:
         success:
             added: "%users% zu diesem Gespräch hinzugefügt."
             remove: "%users% aus diesem Gespräch entfernt."
+    archive:
+        label: Archiv
+        info: Archivierte private Nachrichten können nicht mehr bearbeitet werden und werden auf der Übersichtsseite ausgeblendet. Sie werden nicht gelöscht.
+
+        archive:
+            label: Ins Archiv verschieben
+            success: Nachricht erfolgreich ins Archiv verschoben.
+        unarchive:
+            label: Aus dem Archiv holen
+            success: Nachricht erfolgreich aus dem Archiv geholt.
+
     tags:
         label: Kategorien
         filter: Kategorie

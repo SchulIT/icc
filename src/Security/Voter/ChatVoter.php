@@ -12,13 +12,14 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class ChatVoter extends Voter {
 
-    public const ChatEnabled = 'is-chat-enabled';
-
-    public const View = 'view';
-
-    public const Remove = 'remove';
-
-    public const Edit = 'edit';
+    public const string ChatEnabled = 'is-chat-enabled';
+    public const string View = 'view';
+    public const string Remove = 'remove';
+    public const string Edit = 'edit';
+    public const string Archive = 'archive';
+    public const string Unarchive = 'unarchive';
+    public const string Reply = 'reply';
+    public const string Participants = 'participants';
 
     public function __construct(private readonly ChatSettings $chatSettings, private readonly AccessDecisionManagerInterface $accessDecisionManager) {
 
@@ -29,7 +30,7 @@ class ChatVoter extends Voter {
             return true;
         }
 
-        return $subject instanceof Chat && in_array($attribute, [self::View, self::Remove, self::Edit], true);
+        return $subject instanceof Chat && in_array($attribute, [self::View, self::Remove, self::Edit, self::Archive, self::Unarchive, self::Reply, self::Participants], true);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool {
@@ -41,10 +42,20 @@ class ChatVoter extends Voter {
                 return $this->canView($subject, $token);
 
             case self::Edit:
-                return $this->canEdit($token);
+                return $this->canEdit($subject, $token);
 
             case self::Remove:
-                return $this->canRemove($token);
+                return $this->canRemove($subject, $token);
+
+            case self::Archive:
+            case self::Unarchive:
+                return $this->canArchive($token);
+
+            case self::Reply:
+                return $this->canReply($subject, $token);
+
+            case self::Participants:
+                return $this->canAddOrRemoveParticipants($subject, $token);
         }
 
         throw new LogicException('This code should not be executed.');
@@ -80,7 +91,11 @@ class ChatVoter extends Voter {
         return false;
     }
 
-    private function canEdit(TokenInterface $token): bool {
+    private function canEdit(Chat $chat, TokenInterface $token): bool {
+        if($chat->isArchived()) {
+            return false;
+        }
+
         $user = $token->getUser();
 
         if(!$user instanceof User) {
@@ -90,7 +105,45 @@ class ChatVoter extends Voter {
         return $this->accessDecisionManager->decide($token, [ 'ROLE_CHAT_MOD' ]);
     }
 
-    private function canRemove(TokenInterface $token): bool {
-        return $this->canEdit($token);
+    private function canRemove(Chat $chat, TokenInterface $token): bool {
+        $user = $token->getUser();
+
+        if(!$user instanceof User) {
+            return false;
+        }
+
+        return $this->accessDecisionManager->decide($token, [ 'ROLE_CHAT_MOD' ]);
+    }
+
+    private function canArchive(TokenInterface $token): bool {
+        return $this->accessDecisionManager->decide($token, [ 'ROLE_CHAT_MOD' ]);
+    }
+
+    private function canReply(Chat $chat, TokenInterface $token): bool {
+        if($this->canView($chat, $token) !== true) {
+            return false;
+        }
+
+        $user = $token->getUser();
+
+        if(!$user instanceof User) {
+            return false;
+        }
+
+        if($chat->isArchived()) {
+            return false;
+        }
+
+        foreach($chat->getParticipants() as $participant) {
+            if($participant->getId() === $user->getId()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function canAddOrRemoveParticipants(Chat $chat, TokenInterface $token): bool {
+        return $this->canEdit($chat, $token);
     }
 }

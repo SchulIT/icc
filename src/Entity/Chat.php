@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
@@ -48,6 +49,9 @@ class Chat {
      */
     #[ORM\OneToMany(mappedBy: 'chat', targetEntity: ChatUserTag::class, cascade: ['persist'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     private Collection $userTags;
+
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    private bool $isArchived = false;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
@@ -113,6 +117,15 @@ class Chat {
 
     public function setCreatedBy(?User $createdBy): Chat {
         $this->createdBy = $createdBy;
+        return $this;
+    }
+
+    public function isArchived(): bool {
+        return $this->isArchived;
+    }
+
+    public function setIsArchived(bool $isArchived): Chat {
+        $this->isArchived = $isArchived;
         return $this;
     }
 }

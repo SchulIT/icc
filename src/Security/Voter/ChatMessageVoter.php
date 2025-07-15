@@ -11,10 +11,10 @@ use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class ChatMessageVoter extends Voter {
-    public const CanViewReadConfirmations = 'can-view-read-confirmations';
-    public const View = 'view';
-    public const Edit = 'edit';
-    public const Remove = 'remove';
+    public const string CanViewReadConfirmations = 'can-view-read-confirmations';
+    public const string View = 'view';
+    public const string Edit = 'edit';
+    public const string Remove = 'remove';
 
     public function __construct(private readonly AccessDecisionManagerInterface $accessDecisionManager, private readonly ChatSettings $chatSettings) {
 
@@ -62,6 +62,10 @@ class ChatMessageVoter extends Voter {
     }
 
     private function canEdit(ChatMessage $message, TokenInterface $token): bool {
+        if($message->getChat()->isArchived()) {
+            return false;
+        }
+
         $user = $token->getUser();
 
         if(!$user instanceof User || $message->getCreatedBy() === null) {

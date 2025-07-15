@@ -6,6 +6,9 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
+        {% if isArchive %}
+            <li class="breadcrumb-item">{{ 'chat.archive.label'|trans }}</li>
+        {% endif %}
     </ol>
 {% endblock %}
 
@@ -77,6 +80,15 @@
                         <a href="{{ path('new_chat') }}" class="list-group-item list-group-item-action">
                             <i class="fa fa-plus"></i> {{ 'chat.add.label'|trans }}
                         </a>
+                        {% if isArchive %}
+                            <a href="{{ path('chats', { tag: tagFilter.currentTag != null ? tagFilter.currentTag.uuid : null }) }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-arrow-left"></i> {{ 'actions.back'|trans }}
+                            </a>
+                        {% else %}
+                            <a href="{{ path('chats', { tag: tagFilter.currentTag != null ? tagFilter.currentTag.uuid : null, archive: '✓'}) }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-archive"></i> {{ 'chat.archive.label'|trans }}
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -88,14 +100,14 @@
 
                         <div class="list-group list-group-flush">
                             {% for tag in tagFilter.tags %}
-                                <a href="{{ path('chats', { tag: tag.uuid }) }}" class="list-group-item list-group-item-action {% if tagFilter.currentTag != null and tagFilter.currentTag.uuid == tag.uuid %}active{% endif %}">
+                                <a href="{{ path('chats', { tag: tag.uuid, archive: isArchive ? '✓' : null }) }}" class="list-group-item list-group-item-action {% if tagFilter.currentTag != null and tagFilter.currentTag.uuid == tag.uuid %}active{% endif %}">
                                     <span class="badge" style="background: {{ tag.color }}; color: {{ foreground(tag.color) }}">{{ tag.name }}</span>
                                 </a>
                             {% endfor %}
                         </div>
 
                         <div class="card-footer">
-                            <a href="{{ path('chats') }}" class="btn btn-primary btn-sm">
+                            <a href="{{ path('chats', { archive: isArchive ? '✓' : null }) }}" class="btn btn-primary btn-sm">
                                 {{ 'filter.reset'|trans }}
                             </a>
                         </div>

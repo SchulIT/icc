@@ -8,7 +8,6 @@ use App\Entity\Chat;
 use App\Entity\ChatMessage;
 use App\Entity\ChatMessageAttachment;
 use App\Entity\User;
-use App\Event\ChatMessageCreatedEvent;
 use App\Feature\Feature;
 use App\Feature\IsFeatureEnabled;
 use App\Filesystem\ChatFilesystem;
@@ -25,7 +24,6 @@ use App\Security\Voter\ChatMessageAttachmentVoter;
 use App\Security\Voter\ChatMessageVoter;
 use App\Security\Voter\ChatVoter;
 use App\Settings\ChatSettings;
-use App\Sorting\Sorter;
 use App\View\Filter\ChatTagFilter;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
@@ -56,7 +54,9 @@ class ChatController extends AbstractController {
         /** @var User $user */
         $user = $this->getUser();
 
-        $chats = $this->chatRepository->findAllByUser($user);
+        $isArchive = $request->query->get('archive') === '✓';
+
+        $chats = $this->chatRepository->findAllByUser($user, $isArchive);
         $chatTagFilterView = $chatTagFilter->handle($request->query->get('tag', null), $user);
 
         if($chatTagFilterView->getCurrentTag() !== null) {
@@ -94,7 +94,8 @@ class ChatController extends AbstractController {
             'lastMessageDates' => $lastMessageDates,
             'attachmentsCount' => $attachmentsCount,
             'userTags' => $userTags,
-            'tagFilter' => $chatTagFilterView
+            'tagFilter' => $chatTagFilterView,
+            'isArchive' => $isArchive
         ]);
     }
 
@@ -193,6 +194,8 @@ class ChatController extends AbstractController {
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
+            $this->denyAccessUnlessGranted(ChatVoter::Reply, $chat);
+
             $this->chatMessageRepository->persist($message);
             $this->addFlash('success', 'chat.message.add.success');
 
@@ -201,7 +204,7 @@ class ChatController extends AbstractController {
             ]);
         }
 
-        if($this->isGranted(ChatVoter::Edit, $chat) && $request->getMethod() === Request::METHOD_POST
+        if($this->isGranted(ChatVoter::Participants, $chat) && $request->getMethod() === Request::METHOD_POST
             && $request->request->has('remove')
             && $this->isCsrfTokenValid('remove_participant', $request->request->get('_csrf_token'))) {
 
@@ -245,7 +248,7 @@ class ChatController extends AbstractController {
         $participantsForm = $this->createForm(ChatUserRecipientType::class, null, ['multiple' => true, 'required' => false]);
         $participantsForm->handleRequest($request);
 
-        if($this->isGranted(ChatVoter::Edit, $chat) && $participantsForm->isSubmitted() && $participantsForm->isValid()) {
+        if($this->isGranted(ChatVoter::Participants, $chat) && $participantsForm->isSubmitted() && $participantsForm->isValid()) {
             $newParticipants = $participantsForm->getData();
 
             foreach ($newParticipants as $newParticipant) {
@@ -324,6 +327,36 @@ class ChatController extends AbstractController {
             'tags' => $tags,
             'userTags' => $userTags,
             'canEditOrRemove' => in_array($user->getUserType(), $this->chatSettings->getUserTypesAllowedToEditOrRemoveMessages(), strict: true)
+        ]);
+    }
+
+    #[Route('/{uuid}/archive', name: 'archive_chat')]
+    public function archive(#[MapEntity(mapping: ['uuid' => 'uuid'])] Chat $chat, Request $request): Response {
+        $this->denyAccessUnlessGranted(ChatVoter::Archive, $chat);
+
+        if($this->isCsrfTokenValid('archive_chat', $request->request->get('_csrf_token'))) {
+            $chat->setIsArchived(true);
+            $this->chatRepository->persist($chat);
+            $this->addFlash('success', 'chat.archive.archive.success');
+        }
+
+        return $this->redirectToRoute('show_chat', [
+            'uuid' => $chat->getUuid()
+        ]);
+    }
+
+    #[Route('/{uuid}/unarchive', name: 'unarchive_chat')]
+    public function unarchive(#[MapEntity(mapping: ['uuid' => 'uuid'])] Chat $chat, Request $request): Response {
+        $this->denyAccessUnlessGranted(ChatVoter::Unarchive, $chat);
+
+        if($this->isCsrfTokenValid('archive_chat', $request->request->get('_csrf_token'))) {
+            $chat->setIsArchived(false);
+            $this->chatRepository->persist($chat);
+            $this->addFlash('success', 'chat.archive.unarchive.success');
+        }
+
+        return $this->redirectToRoute('show_chat', [
+            'uuid' => $chat->getUuid()
         ]);
     }
 

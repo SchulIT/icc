@@ -38,6 +38,10 @@
                                 <td>{{ student.status }}</td>
                             </tr>
                             <tr>
+                                <th>{{ 'label.gender'|trans }}</th>
+                                <td>{{ student.gender|enum }}</td>
+                            </tr>
+                            <tr>
                                 <th>{{ 'label.birthday'|trans }}</th>
                                 <td>{{ student.birthday|format_date }}</td>
                             </tr>

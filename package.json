@@ -37,7 +37,7 @@
         "inline-attachment": "^2.0.3",
         "intl-messageformat": "^9.7.1",
         "jspdf": "^3.0.1",
-        "jspdf-autotable": "^3.5.23",
+        "jspdf-autotable": "^5.0.0",
         "jszip": "^3.6",
         "jszip-utils": "^0.1.0",
         "node-polyfill-webpack-plugin": "^2.0.1",

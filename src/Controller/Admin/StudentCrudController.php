@@ -10,10 +10,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 
@@ -49,10 +49,9 @@ class StudentCrudController extends AbstractCrudController
             TextField::new('externalId')->setLabel('Externe ID'),
             TextField::new('firstname')->setLabel('Vorname'),
             TextField::new('lastname')->setLabel('Nachname'),
-            EnumField::new('gender')
-                ->setLabel('Geschlecht')
-                ->setFormType(EnumType::class)
-                ->setFormTypeOption('class', Gender::class),
+            ChoiceField::new('gender')
+                ->setChoices(Gender::cases())
+                ->setLabel('Geschlecht'),
             EmailField::new('email')->setLabel('E-Mail-Adresse'),
             TextField::new('status')->setLabel('Status'),
             DateField::new('birthday')->setLabel('Geburtstag')->hideOnIndex(),

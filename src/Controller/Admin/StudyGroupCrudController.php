@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
@@ -41,10 +42,9 @@ class StudyGroupCrudController extends AbstractCrudController
         return [
             TextField::new('externalId')->setLabel('Externe ID'),
             TextField::new('name')->setLabel('Name'),
-            EnumField::new('type')
-                ->setLabel('Art')
-                ->setFormType(EnumType::class)
-                ->setFormTypeOption('class', StudyGroupType::class),
+            ChoiceField::new('type')
+                ->setChoices(StudyGroupType::cases())
+                ->setLabel('Art'),
             AssociationField::new('grades')->setLabel('Klassen'),
             AssociationField::new('section')->setLabel('Abschnitt')->setFormTypeOption('expanded', true)
         ];

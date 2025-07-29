@@ -11,6 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
@@ -57,10 +58,9 @@ class UserCrudController extends AbstractCrudController
             TextField::new('firstname')->setLabel('Vorname'),
             TextField::new('lastname')->setLabel('Nachname'),
             EmailField::new('email')->setLabel('E-Mail-Adresse'),
-            EnumField::new('userType')
+            ChoiceField::new('userType')
                 ->setLabel('Art')
-                ->setFormType(EnumType::class)
-                ->setFormTypeOption('class', UserType::class),
+                ->setChoices(UserType::cases()),
             ArrayField::new('roles')
                 ->setLabel('Rollen')
                 ->hideOnIndex(),

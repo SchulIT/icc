@@ -1,8 +1,10 @@
 import { Modal } from 'bootstrap';
 import { jsPDF } from "jspdf";
-import 'jspdf-autotable';
+import { applyPlugin } from "jspdf-autotable";
 const axios = require('axios');
 const crypto = require('easy-web-crypto');
+
+applyPlugin(jsPDF);
 
 let regularFont = null;
 let boldFont = null;
@@ -69,6 +71,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
     async function createPdf(response) {
         let pdf = new jsPDF();
+
         addFont(pdf);
         setFont(pdf, 'normal');
 

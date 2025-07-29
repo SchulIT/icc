@@ -11,6 +11,7 @@ use League\Flysystem\FilesystemOperator;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use Mimey\MimeTypes;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
@@ -57,7 +58,7 @@ class DocumentFilesystemTest extends TestCase {
     }
 
     private function getFilesystem(FilesystemOperator $flysystem): DocumentFilesystem {
-        $filesystem = new DocumentFilesystem($flysystem, new MimeTypes());
+        $filesystem = new DocumentFilesystem($flysystem, new MimeTypes(), new NullLogger());
         $flysystem->write('/1f1248d4-8742-4b89-a0c4-1f345ce5664a/foo.txt', 'bla');
         $flysystem->write('/1f1248d4-8742-4b89-a0c4-1f345ce5664a/bla.txt', 'foo');
         $flysystem->write('/08d1ab65-3f7c-47e6-abcb-ca2cd8d4fa4e/foo.txt', 'bla');

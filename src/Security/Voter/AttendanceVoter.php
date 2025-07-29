@@ -7,6 +7,7 @@ use App\Entity\BookEvent;
 use LogicException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class AttendanceVoter extends Voter {
@@ -21,7 +22,7 @@ class AttendanceVoter extends Voter {
         return $attribute === self::Edit && $subject instanceof Attendance;
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool {
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, Vote|null $vote = null): bool {
         switch($attribute) {
             case self::Edit:
                 return $this->canEdit($subject, $token);

@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Form\ChecklistStudentType;
 use LogicException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class ChecklistVoter extends Voter {
@@ -26,7 +27,7 @@ class ChecklistVoter extends Voter {
             && $subject instanceof Checklist;
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool {
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, Vote|null $vote = null): bool {
         switch($attribute) {
             case self::Add:
                 return $this->canAdd($token);

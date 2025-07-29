@@ -11,6 +11,7 @@ use App\Settings\TeacherAbsenceSettings;
 use LogicException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class TeacherAbsenceVoter extends Voter {
@@ -34,7 +35,7 @@ class TeacherAbsenceVoter extends Voter {
             || ($subject instanceof TeacherAbsence && in_array($attribute, [ self::Edit, self::Show, self::Remove, self::Process ]));
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool {
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, Vote|null $vote = null): bool {
         if($this->featureManager->isFeatureEnabled(Feature::TeacherAbsence) !== true) {
             return false;
         }

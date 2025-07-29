@@ -10,6 +10,7 @@ use App\Repository\ParentsDayRepositoryInterface;
 use LogicException;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class ParentsDayAppointmentVoter extends Voter {
@@ -44,7 +45,7 @@ class ParentsDayAppointmentVoter extends Voter {
             && in_array($attribute, [ self::EDIT, self::CANCEL, self::CREATE, self::REMOVE, self::DETAILS, self::BOOK, self::UNBOOK ]);
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool {
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, Vote|null $vote = null): bool {
         switch($attribute) {
             case self::VIEW:
                 return $this->canView($token);

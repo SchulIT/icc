@@ -9,6 +9,7 @@ use App\Exception\UnexpectedTypeException;
 use LogicException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class BirthdayVoter extends Voter {
@@ -29,7 +30,7 @@ class BirthdayVoter extends Voter {
     /**
      * @throws UnexpectedTypeException
      */
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool {
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token, Vote|null $vote = null): bool {
         if($attribute !== self::ShowBirthday) {
             throw new LogicException('This code should not be executed.');
         }

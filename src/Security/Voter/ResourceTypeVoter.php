@@ -6,6 +6,7 @@ use App\Entity\ResourceType;
 use LogicException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class ResourceTypeVoter extends Voter {
@@ -29,7 +30,7 @@ class ResourceTypeVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token, Vote|null $vote = null): bool
     {
         return match ($attribute) {
             self::New => $this->canCreate($token),

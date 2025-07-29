@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Entity\UserType;
 use App\Utils\ArrayUtils;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class TuitionVoter extends Voter {
@@ -23,7 +24,7 @@ class TuitionVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token, Vote|null $vote = null): bool {
         $user = $token->getUser();
 
         if(!$user instanceof User) {

@@ -9,6 +9,7 @@ use App\Feature\FeatureManager;
 use LogicException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class ReturnItemVoter extends Voter {
@@ -29,7 +30,7 @@ class ReturnItemVoter extends Voter {
             ($subject instanceof ReturnItem && in_array($attribute, [self::Edit, self::Remove, self::Show, self::Return]));
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool {
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, Vote|null $vote = null): bool {
         if($this->featureManager->isFeatureEnabled(Feature::ReturnItem) !== true) {
             return false;
         }

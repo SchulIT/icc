@@ -5,6 +5,7 @@ namespace App\Security\Voter;
 use App\Entity\MessageScope;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class MessageScopeVoter extends Voter {
@@ -26,7 +27,7 @@ class MessageScopeVoter extends Voter {
     /**
      * @param MessageScope $subject
      */
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool {
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token, Vote|null $vote = null): bool {
         if($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             return true;
         }

@@ -8,6 +8,7 @@ use App\Settings\ChatSettings;
 use LogicException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class ChatVoter extends Voter {
@@ -33,7 +34,7 @@ class ChatVoter extends Voter {
         return $subject instanceof Chat && in_array($attribute, [self::View, self::Remove, self::Edit, self::Archive, self::Unarchive, self::Reply, self::Participants], true);
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool {
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, Vote|null $vote = null): bool {
         switch($attribute) {
             case self::ChatEnabled:
                 return $this->isEnabled($token);

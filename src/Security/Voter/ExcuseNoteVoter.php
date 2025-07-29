@@ -11,6 +11,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\The;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class ExcuseNoteVoter extends Voter {
@@ -25,7 +26,7 @@ class ExcuseNoteVoter extends Voter {
             || (in_array($attribute, [ self::Edit, self::Remove ]) && $subject instanceof ExcuseNote);
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool {
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, Vote|null $vote = null): bool {
         if($this->featureManager->isFeatureEnabled(Feature::Book) !== true) {
             return false;
         }

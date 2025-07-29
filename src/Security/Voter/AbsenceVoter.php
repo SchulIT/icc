@@ -6,6 +6,7 @@ use App\Entity\Absence;
 use App\Entity\User;
 use App\Settings\SubstitutionSettings;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class AbsenceVoter extends Voter {
@@ -27,7 +28,7 @@ class AbsenceVoter extends Voter {
     /**
      * @inheritDoc
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool {
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token, Vote|null $vote = null): bool {
         $user = $token->getUser();
 
         if(!$user instanceof User) {

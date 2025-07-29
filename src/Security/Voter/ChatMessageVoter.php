@@ -8,6 +8,7 @@ use App\Settings\ChatSettings;
 use LogicException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class ChatMessageVoter extends Voter {
@@ -29,7 +30,7 @@ class ChatMessageVoter extends Voter {
         return $subject instanceof ChatMessage && in_array($attribute, [self::View, self::Edit, self::Remove], true);
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool {
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, Vote|null $vote = null): bool {
         switch($attribute) {
             case self::CanViewReadConfirmations:
                 return $this->canViewReadConfirmations($token);

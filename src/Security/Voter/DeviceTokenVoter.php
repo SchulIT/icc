@@ -5,6 +5,7 @@ namespace App\Security\Voter;
 use App\Entity\IcsAccessToken;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class DeviceTokenVoter extends Voter {
@@ -18,7 +19,7 @@ class DeviceTokenVoter extends Voter {
         return $attribute === self::Remove && $subject instanceof IcsAccessToken;
     }
 
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool {
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token, Vote|null $vote = null): bool {
         /** @var User|null $user */
         $user = $token->getUser();
 

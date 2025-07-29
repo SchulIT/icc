@@ -3962,16 +3962,16 @@
         },
         {
             "name": "lightsaml2/lightsaml",
-            "version": "3.0.0",
+            "version": "3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lightsaml2/lightSAML.git",
-                "reference": "7a2db45d638a434dc5c62b6a9d5ee4d0a2ec7c89"
+                "reference": "b0743e4051ea9bc71d53024871526c930305a6c5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lightsaml2/lightSAML/zipball/7a2db45d638a434dc5c62b6a9d5ee4d0a2ec7c89",
-                "reference": "7a2db45d638a434dc5c62b6a9d5ee4d0a2ec7c89",
+                "url": "https://api.github.com/repos/lightsaml2/lightSAML/zipball/b0743e4051ea9bc71d53024871526c930305a6c5",
+                "reference": "b0743e4051ea9bc71d53024871526c930305a6c5",
                 "shasum": ""
             },
             "require": {
@@ -3984,7 +3984,9 @@
                 "symfony/http-foundation": "^6.4|^7.0"
             },
             "require-dev": {
+                "phpstan/phpstan": "^2.1",
                 "phpunit/phpunit": "^10.0|^11.0",
+                "rector/rector": "^2.1",
                 "symfony/css-selector": "^6.4|^7.0",
                 "symfony/dom-crawler": "^6.4|^7.0"
             },
@@ -4026,7 +4028,7 @@
                 "issues": "https://github.com/lightsaml2/lightsaml/issues",
                 "source": "https://github.com/lightSAML2/lightSAML"
             },
-            "time": "2024-08-05T10:53:17+00:00"
+            "time": "2025-07-29T16:23:38+00:00"
         },
         {
             "name": "lightsaml2/sp-bundle",

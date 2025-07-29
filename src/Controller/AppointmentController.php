@@ -191,7 +191,7 @@ class AppointmentController extends AbstractControllerWithMessages {
         }
 
         // Add exams
-        if((is_countable($examGradesFilterView->getCurrentGrades()) ? count($examGradesFilterView->getCurrentGrades()) : 0) > 0) {
+        if(count($examGradesFilterView->getCurrentGrades()) > 0) {
             $exams = [ ];
 
             foreach($examGradesFilterView->getCurrentGrades() as $grade) {

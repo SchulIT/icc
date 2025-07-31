@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Repository\AbsenceRepositoryInterface;
 use App\Repository\AppointmentRepositoryInterface;
 use App\Repository\BookCommentRepositoryInterface;
+use App\Repository\BookEventRepositoryInterface;
 use App\Repository\StudentInformationRepositoryInterface;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\ExcuseNoteRepositoryInterface;
@@ -88,7 +89,8 @@ class SectionController extends AbstractController {
                            AbsenceRepositoryInterface                        $absenceRepository, FreeTimespanRepositoryInterface $freeTimespanRepository,
                            InfotextRepositoryInterface                       $infotextRepository, AppointmentRepositoryInterface $appointmentRepository,
                            ExcuseNoteRepositoryInterface                     $excuseNoteRepository, BookCommentRepositoryInterface $bookCommentRepository,
-                           ParentsDayRepositoryInterface                     $parentsDayRepository, StudentInformationRepositoryInterface $studentInformationRepository): Response {
+                           ParentsDayRepositoryInterface                     $parentsDayRepository, StudentInformationRepositoryInterface $studentInformationRepository,
+                           BookEventRepositoryInterface                      $bookEventRepository): Response {
         $form = $this->createForm(ConfirmType::class, null, [
             'message' => 'admin.sections.remove.confirm',
             'message_parameters' => [
@@ -97,7 +99,7 @@ class SectionController extends AbstractController {
         ]);
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $lessonRepository->removeRange($section->getStart(), $section->getEnd());
             $supervisionRepository->removeBetween($section->getStart(), $section->getEnd());
             $examRepository->removeBetween($section->getStart(), $section->getEnd());
@@ -110,6 +112,7 @@ class SectionController extends AbstractController {
             $appointmentRepository->removeBetween($section->getStart(), $section->getEnd());
             $excuseNoteRepository->removeBetween($section->getStart(), $section->getEnd());
             $bookCommentRepository->removeRange($section->getStart(), $section->getEnd());
+            $bookEventRepository->removeRange($section->getStart(), $section->getEnd());
             $gradeRepository->removeForSection($section);
             $studentAbsenceRepository->removeRange($section->getStart(), $section->getEnd());
             $teacherAbsenceRepository->removeRange($section->getStart(), $section->getEnd());

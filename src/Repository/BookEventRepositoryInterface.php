@@ -38,4 +38,6 @@ interface BookEventRepositoryInterface {
     public function persist(BookEvent $bookEvent): void;
 
     public function remove(BookEvent $bookEvent): void;
+
+    public function removeRange(DateTime $start, DateTime $end): int;
 }

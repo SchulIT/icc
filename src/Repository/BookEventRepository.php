@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\BookComment;
 use App\Entity\BookEvent;
 use App\Entity\Grade;
 use App\Entity\Section;
@@ -84,5 +85,16 @@ class BookEventRepository extends AbstractRepository implements BookEventReposit
         );
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function removeRange(DateTime $start, DateTime $end): int {
+        return $this->em->createQueryBuilder()
+            ->delete(BookEvent::class, 'e')
+            ->where('e.date >= :start')
+            ->andWhere('e.date <= :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getQuery()
+            ->execute();
     }
 }

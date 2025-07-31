@@ -30,6 +30,14 @@ interface LessonAttendanceRepositoryInterface {
      * @param Student $student
      * @param DateTime $start
      * @param DateTime $end
+     * @return Attendance[]
+     */
+    public function findByStudentEvents(Student $student, DateTime $start, DateTime $end): array;
+
+    /**
+     * @param Student $student
+     * @param DateTime $start
+     * @param DateTime $end
      * @param Tuition[] $tuitions
      * @return Attendance[]
      */

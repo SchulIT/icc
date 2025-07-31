@@ -146,6 +146,17 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
         return $qb->getQuery()->getResult();
     }
 
+    public function findByStudentEvents(Student $student, DateTime $start, DateTime $end): array {
+        $qb = $this->getDefaultQueryBuilder()
+            ->where('s.id = :student')
+            ->setParameter('student', $student->getId());
+
+        $qb->andWhere('a.event IS NOT NULL');
+        $this->applyDateRange($qb, $start, $end);
+
+        return $qb->getQuery()->getResult();
+    }
+
     public function findLateByStudent(Student $student, DateTime $start, DateTime $end, array $tuitions = [ ]): array {
         $qb = $this->getDefaultQueryBuilder()
             ->where('s.id = :student')

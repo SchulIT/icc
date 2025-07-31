@@ -7,6 +7,7 @@ use App\Entity\AttendanceType;
 use App\Entity\Section;
 use App\Entity\Student;
 use App\Repository\BookCommentRepositoryInterface;
+use App\Repository\BookEventRepositoryInterface;
 use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
@@ -21,8 +22,15 @@ class StudentInfoResolver extends AbstractResolver {
         parent::__construct($attendanceRepository, $excuseNoteRepository, $excuseCollectionResolver);
     }
 
-    public function resolveStudentInfo(Student $student, ?Section $section, array $tuitions = []): StudentInfo {
+    public function resolveStudentInfo(Student $student, Section $section, array $tuitions = [], bool $includeEvents = false): StudentInfo {
         $attendances = $this->getAttendanceRepository()->findByStudent($student, $section->getStart(), $section->getEnd(), $tuitions);
+
+        $eventLessonCount = 0;
+        if($includeEvents === true) {
+            $eventAttendances = $this->getAttendanceRepository()->findByStudentEvents($student, $section->getStart(), $section->getEnd());
+            $attendances = array_merge($attendances, $eventAttendances);
+            $eventLessonCount = count($eventAttendances);
+        }
 
         $late = array_filter($attendances, fn(Attendance $a) => $a->getType() === AttendanceType::Late);
         $absent = array_filter($attendances, fn(Attendance $a) => $a->getType() === AttendanceType::Absent);
@@ -36,14 +44,11 @@ class StudentInfoResolver extends AbstractResolver {
         $lateAttendanceCollection = $this->computeAttendanceCollectionWithoutExcuses($late);
         $absentAttendanceCollection = $this->computeAttendanceCollection($absent, $excuseCollections);
         $presentAttendanceCollection = $this->computeAttendanceCollectionWithoutExcuses($present);
-        $comments = [ ];
-        if($section !== null) {
-            $comments = $this->commentRepository->findAllByDateAndStudent($student, $section->getStart(), $section->getEnd());
-        }
+        $comments = $this->commentRepository->findAllByDateAndStudent($student, $section->getStart(), $section->getEnd());
 
         return new StudentInfo(
             $student,
-            $this->lessonRepository->countHoldLessons($tuitions, $student),
+            $this->lessonRepository->countHoldLessons($tuitions, $student) + $eventLessonCount,
             $lateAttendanceCollection,
             $absentAttendanceCollection,
             $presentAttendanceCollection,

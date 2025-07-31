@@ -611,6 +611,7 @@ class BookController extends AbstractController {
         $teacherFilterView = $teacherFilter->handle($request->query->get('teacher'), $sectionFilterView->getCurrentSection(), $user, $gradeFilterView->getCurrentGrade() === null && $tuitionFilterView->getCurrentTuition() === null);
 
         $tuitions = [ ];
+        $includeEvents = false;
 
         if($tuitionFilterView->getCurrentTuition() !== null) {
             $tuitions[] = $tuitionFilterView->getCurrentTuition();
@@ -618,6 +619,7 @@ class BookController extends AbstractController {
             $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
         } else if($gradeFilterView->getCurrentGrade() !== null) {
             $tuitions = [];
+            $includeEvents = true;
         }
 
         // Filter tuitions which the student is a part of
@@ -698,7 +700,11 @@ class BookController extends AbstractController {
             ];
         }
 
-        $info = $infoResolver->resolveStudentInfo($student, $sectionFilterView->getCurrentSection(), $tuitions);
+        if($includeEvents === false) {
+            $events = [ ];
+        }
+
+        $info = $infoResolver->resolveStudentInfo($student, $sectionFilterView->getCurrentSection(), $tuitions, includeEvents: $includeEvents);
 
         $days = $this->getListOfDays($min, $max, $timetableSettings->getDays());
         $groups = $grouper->group($days, DateWeekOfYearStrategy::class);

@@ -61,7 +61,7 @@ class StudentInfoCountsGenerator {
                 $tuitions = $this->tuitionRepository->findAllByGrades([ $context ], $section);
             }
 
-            $info = $this->studentInfoResolver->resolveStudentInfo($student, $section, $tuitions);
+            $info = $this->studentInfoResolver->resolveStudentInfo($student, $section, $tuitions, includeEvents: $context instanceof Grade);
 
             $flagCounts = [ ];
 

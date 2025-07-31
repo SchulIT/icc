@@ -150,7 +150,7 @@ class BookExporter {
         $tuitionsToConsider = $tuition !== null ? [ $tuition ] : $this->tuitionRepository->findAllByGrades([$grade], $section);
 
         foreach($students as $student) {
-            $info = $this->studentInfoResolver->resolveStudentInfo($student, $section, $tuitionsToConsider);
+            $info = $this->studentInfoResolver->resolveStudentInfo($student, $section, $tuitionsToConsider, includeEvents: $grade !== null);
             $studentInfo[$student->getId()] = $info;
             $counts = [ ];
 

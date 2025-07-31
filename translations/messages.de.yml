@@ -2145,6 +2145,12 @@ book:
         excuse_note_exists: Für diese Stunde liegt eine Entschuldigung vor
         overview:
             info: Durch Anklicken einer Unterrichtsstunde kann die Anwesenheit eingesehen und bearbeitet werden. Ein Rechtsklick ändert den Entschuldigungsstatus. Liegt für die Stunde eine Entschuldigung vor, so kann der Status nicht geändert werden.
+        cache:
+            info: Die hier angezeigten Zahlen werden nicht in Echtzeit sondern in regelmäßigen Abständen vom System im Hintergrund berechnet. Bitte mit der Maus das Uhr-Icon anklicken, um die Uhrzeit der letzten Berechnung anzuzeigen.
+            regenerate:
+                button: Neu berechnen (für aktuellen Filter)
+                success: Die Zahlen werden im Hintergrund erneut berechnet. Je nach Auslastung des Systems kann dieser Prozess kann einige Minuten in Anspruch nehmen.
+
 
     excuse_status_short:
         excused: e

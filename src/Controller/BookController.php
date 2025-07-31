@@ -11,6 +11,9 @@ use App\Book\IntegrityCheck\Persistence\ViolationsResolver;
 use App\Book\Lesson;
 use App\Book\Statistics\BookLessonCountGenerator;
 use App\Book\Student\AbsenceExcuseResolver;
+use App\Book\Student\Cache\CacheWarmupHelper;
+use App\Book\Student\Cache\GenerateStudentInfoCountsMessage;
+use App\Book\Student\Cache\StudentInfoCountsGenerator;
 use App\Book\Student\StudentInfo;
 use App\Book\Student\StudentInfoResolver;
 use App\Book\StudentsResolver;
@@ -518,7 +521,7 @@ class BookController extends AbstractController {
     #[Route(path: '/student', name: 'book_students')]
     public function students(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TuitionFilter $tuitionFilter, TeacherFilter $teacherFilter,
                              TuitionRepositoryInterface $tuitionRepository, StudentRepositoryInterface $studentRepository, LessonAttendanceFlagRepositoryInterface $flagRepository, StudentInfoResolver $studentInfoResolver,
-                             Sorter $sorter, StudentsResolver $studentsResolver, Request $request): Response {
+                             Sorter $sorter, StudentsResolver $studentsResolver, Request $request, StudentInfoCountsGenerator $studentInfoCountsGenerator, CacheWarmupHelper $cacheWarmupHelper): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -533,17 +536,38 @@ class BookController extends AbstractController {
         $page = $request->query->getInt('page', 1);
         $paginator = [ ];
         $tuitions = [ ];
+        $context = null;
         if($gradeFilterView->getCurrentGrade() !== null && $sectionFilterView->getCurrentSection() !== null) {
-            $tuitions = $tuitionRepository->findAllByGrades([$gradeFilterView->getCurrentGrade()], $sectionFilterView->getCurrentSection());
+            $context = $gradeFilterView->getCurrentGrade();
             $paginator = $studentRepository->getStudentsByGradePaginator(self::StudentsPerPage, $page, $gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection());
         } else if($tuitionFilterView->getCurrentTuition() !== null) {
-            $tuitions = [ $tuitionFilterView->getCurrentTuition() ];
+            $context = $tuitionFilterView->getCurrentTuition();
             $paginator = $studentsResolver->resolvePaginated(self::StudentsPerPage, $page, $tuitionFilterView->getCurrentTuition(), false, true);
         } else if($teacherFilterView->getCurrentTeacher() !== null) {
+            $context = $teacherFilterView->getCurrentTeacher();
             $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
             $studyGroups = array_map(fn(Tuition $tuition) => $tuition->getStudyGroup(), $tuitions);
 
             $paginator = $studentRepository->getStudentsByStudyGroupsPaginator(self::StudentsPerPage, $page, $studyGroups);
+        }
+
+        if($sectionFilterView->getCurrentSection() !== null && $request->isMethod(Request::METHOD_POST) && $this->isCsrfTokenValid('regenerate', $request->request->get('_csrf_token'))) {
+            if($gradeFilterView->getCurrentGrade() !== null) {
+                $cacheWarmupHelper->warmupGrade($gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection());
+            } else if($tuitionFilterView->getCurrentTuition() !== null) {
+                $cacheWarmupHelper->warmupTuition($tuitionFilterView->getCurrentTuition(), $sectionFilterView->getCurrentSection());
+            } else if($teacherFilterView->getCurrentTeacher() !== null) {
+                $cacheWarmupHelper->warmupTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
+            }
+
+            $this->addFlash('success', 'book.students.cache.regenerate.success');
+            return $this->redirectToRoute('book_students', [
+                'section' => $sectionFilterView->getCurrentSection()->getUuid()->toString(),
+                'tuition' => $tuitionFilterView->getCurrentTuition()?->getUuid()->toString(),
+                'grade' => $gradeFilterView->getCurrentGrade()?->getUuid()->toString(),
+                'teacher' => $teacherFilterView->getCurrentTeacher()?->getUuid()->toString(),
+                'page' => $page
+            ]);
         }
 
         $students = !is_array($paginator) ? iterator_to_array($paginator->getIterator()) : $paginator;
@@ -553,7 +577,7 @@ class BookController extends AbstractController {
         $info = [ ];
 
         foreach($students as $student) {
-            $info[] = $studentInfoResolver->resolveStudentInfo($student, $sectionFilterView->getCurrentSection(), $tuitions);
+            $info[$student->getId()] = $studentInfoCountsGenerator->generate($student, $sectionFilterView->getCurrentSection(), $context);
         }
 
         return $this->render('books/students.html.twig', [
@@ -566,7 +590,8 @@ class BookController extends AbstractController {
             'info' => $info,
             'flags' => $flagRepository->findAll(),
             'page' => $page,
-            'pages' => $pages
+            'pages' => $pages,
+            'students' => $students
         ]);
     }
 

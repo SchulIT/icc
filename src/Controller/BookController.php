@@ -9,6 +9,7 @@ use App\Book\IntegrityCheck\IntegrityCheckRunner;
 use App\Book\IntegrityCheck\IntegrityCheckTeacherFilter;
 use App\Book\IntegrityCheck\Persistence\ViolationsResolver;
 use App\Book\Lesson;
+use App\Book\Statistics\BookLessonCountGenerator;
 use App\Book\Student\AbsenceExcuseResolver;
 use App\Book\Student\StudentInfo;
 use App\Book\Student\StudentInfoResolver;
@@ -743,8 +744,8 @@ class BookController extends AbstractController {
 
     #[Route(path: '/export', name: 'book_export')]
     public function export(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter,
-                           TuitionRepositoryInterface $tuitionRepository, TimetableLessonRepositoryInterface $lessonRepository,
-                           Request $request, Grouper $grouper, Sorter $sorter, DateHelper $dateHelper, TuitionGradebookSettings $gradebookSettings) {
+                           TuitionRepositoryInterface $tuitionRepository, BookLessonCountGenerator $bookLessonCountGenerator,
+                           Request $request, Grouper $grouper, Sorter $sorter,  TuitionGradebookSettings $gradebookSettings) {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -757,19 +758,16 @@ class BookController extends AbstractController {
         } else if($teacherFilterView->getCurrentTeacher() !== null) {
             $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
         } else {
-            $tuitions = []; // $tuitionRepository->findAllBySection($sectionFilterView->getCurrentSection());
+            $tuitions = [ ];
         }
 
         $holtCounts = [ ];
         $missingCounts = [ ];
 
         foreach($tuitions as $tuition) {
-            $holtCounts[$tuition->getId()] = $lessonRepository->countHoldLessons([$tuition], null);
-            $missingCounts[$tuition->getId()] = $lessonRepository->countMissingByTuition(
-                $tuition,
-                $sectionFilterView->getCurrentSection()->getStart(),
-                min($dateHelper->getToday(), $sectionFilterView->getCurrentSection()->getEnd())
-            );
+            $stats = $bookLessonCountGenerator->getCount($tuition);
+            $holtCounts[$tuition->getId()] = $stats->holdLessonsCount;
+            $missingCounts[$tuition->getId()] = $stats->missingLessonsCount;
         }
 
         $groups = $grouper->group($tuitions, TuitionGradeStrategy::class);

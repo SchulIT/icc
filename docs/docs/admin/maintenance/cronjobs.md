@@ -28,3 +28,10 @@ RestartSec=30
 [Install]
 WantedBy=default.target
 ```
+
+## Dienst aktivieren und starten
+
+```bash
+$ systemctl enable --user icc-cron.service
+$ systemctl start --user icc-cron.service
+```

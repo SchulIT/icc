@@ -162,7 +162,7 @@
               <i class="fa fa-user"></i>
               {{ attendance.student.lastname }}, {{ attendance.student.firstname }}
             </div>
-            <div class="d-flex align-self-center text-right my-2 me-3 flex-fill justify-content-end">
+            <div class="d-flex align-self-center text-right my-2 me-3 justify-content-end">
               <div class="btn-group" v-if="flags.length > 0">
                 <template v-for="flag in flags">
                   <input type="checkbox" class="btn-check" autocomplete="off" :checked="attendance.flags.includes(flag.id)" :id="uniquePrefix + '_' + attendance.student.uuid + '_' + flag.id" :name="fieldName + '[attendances][' + attendances.indexOf(attendance) + '][flags][]'" :value="flag.id">
@@ -192,15 +192,16 @@
                       @click.prevent="late(attendance)">
                 <i class="fas fa-user-clock"></i>
               </button>
-              <div class="btn-group d-inline-flex align-items-center ms-1"
+              <div class="input-group input-group-sm d-inline-flex ms-1"
                    :title="$trans('book.attendance.late')"
                    v-if="attendance.type === 2">
                 <button class="btn btn-outline-warning btn-sm"
                         @click.prevent="minusMinute(attendance)">
                   <i class="fa fa-minus"></i>
                 </button>
+                <input type="number" :value="attendance.minutes" class="form-control border-warning" style="max-width: 70px" min="0">
                 <span class="border-top border-bottom border-warning align-self-stretch align-items-center d-flex px-2">
-                  <span>{{ $transChoice('book.attendance.late_minutes', attendance.minutes, { '%count%': attendance.minutes }) }}</span>
+                  <span>min</span>
                 </span>
                 <button class="btn btn-outline-warning btn-sm"
                         @click.prevent="plusMinute(attendance)">

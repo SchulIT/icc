@@ -136,7 +136,7 @@ class Importer {
                     $addedEntities[] = $object;
                 } catch (EntityIgnoredException $e) {
                     $ignoredEntities[] = $e->getEntity();
-                    $this->logger->info($e->getMessage());
+                    $this->logger->warning($e->getMessage());
                 }
             }
 

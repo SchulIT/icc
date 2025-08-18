@@ -176,10 +176,6 @@ services:
         bind:
             $studentAbsencesFilesystem: '@oneup_flysystem.student_absence_filesystem'
 
-    App\Controller\BookController:
-        arguments:
-            $isAsyncChecksEnabled: '%env(ASYNC_CHECKS)%'
-
     App\Controller\Settings\NotificationSettingsController:
         arguments:
             $pushoverToken: '%env(PUSHOVER_TOKEN)%'

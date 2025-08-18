@@ -104,7 +104,7 @@ class BookController extends AbstractController {
 
     private const ToggleSuppressCsrfId = 'book.integrity_check.suppress';
 
-    public function __construct(private readonly bool $isAsyncChecksEnabled, RefererHelper $redirectHelper) {
+    public function __construct(RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);
     }
 

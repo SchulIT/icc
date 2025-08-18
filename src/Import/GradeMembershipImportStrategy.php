@@ -60,7 +60,7 @@ class GradeMembershipImportStrategy implements ReplaceImportStrategyInterface {
         $student = $this->studentRepository->findOneByExternalId($data->getStudent());
 
         if($student === null) {
-            throw new EntityIgnoredException($data, sprintf('Kind mit ID "%s" wurde nicht gefunden.', $data->getStudent()));
+            throw new EntityIgnoredException($data, sprintf('Kind mit ID "%s" wurde nicht gefunden (Klasse %s).', $data->getStudent(), $data->getGrade()));
         }
 
         $grade = $this->gradeRepository->findOneByExternalId($data->getGrade());

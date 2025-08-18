@@ -77,7 +77,7 @@ class StudyGroupMembershipImportStrategy implements ReplaceImportStrategyInterfa
         $student = $this->students[$data->getStudent()] ?? null;
 
         if($student === null) {
-            throw new EntityIgnoredException($data, sprintf('Kind mit ID "%s" wurde nicht gefunden.', $data->getStudent()));
+            throw new EntityIgnoredException($data, sprintf('Kind mit ID "%s" wurde nicht gefunden (Lerngruppe %s).', $data->getStudent(), $data->getStudyGroup()));
         }
 
         $membership = (new StudyGroupMembership())

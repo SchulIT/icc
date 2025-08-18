@@ -20,7 +20,7 @@ final class Version20210223204347 extends AbstractMigration
     public function postUp(Schema $schema): void {
         for($i = 1; $i <= 53; $i++) {
             $stmt = $this->connection->prepare('INSERT INTO week (number) VALUES(?)');
-            $stmt->execute([$i]);
+            $stmt->executeQuery([$i]);
         }
     }
 

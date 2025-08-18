@@ -30,7 +30,7 @@ final class Version20201229194545 extends AbstractMigration
         $stmt->bindValue(1, 'Raum', 'string');
         $stmt->bindValue(2, 'fas fa-door-open', 'string');
         $stmt->bindValue(3, Uuid::uuid4()->toString(), 'string');
-        $stmt->execute();
+        $stmt->executeQuery();
 
         $typeId = $this->connection->lastInsertId();
 
@@ -44,7 +44,7 @@ final class Version20201229194545 extends AbstractMigration
             $stmt->bindValue(6, $room['uuid'], 'string');
             $stmt->bindValue(7, 'room', 'string');
 
-            $stmt->execute();
+            $stmt->executeQuery();
         }
     }
 

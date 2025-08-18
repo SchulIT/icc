@@ -904,22 +904,12 @@ class BookController extends AbstractController {
         $sorter->sort($students, StudentStrategy::class);
 
         if($request->query->get('run') === '✓' && count($students) > 0) {
-            if($this->isAsyncChecksEnabled) {
-                // handle async
-                foreach($students as $student) {
-                    $messageBus->dispatch(new RunIntegrityCheckMessage($student->getId(), $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd()));
-                }
-
-                $this->addFlash('success', 'book.integrity_check.run.success.async');
-            } else if(count($students) < 50) {
-                foreach ($students as $student) {
-                    $runner->runChecks($student, $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd());
-                }
-
-                $this->addFlash('success', 'book.integrity_check.run.success.no_async');
-            } else {
-                $this->addFlash('error', 'book.integrity_check.run.error.too_many');
+            // handle async
+            foreach($students as $student) {
+                $messageBus->dispatch(new RunIntegrityCheckMessage($student->getId(), $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd()));
             }
+
+            $this->addFlash('success', 'book.integrity_check.run.success.async');
 
             return $this->redirectToRoute('book_integrity_check', [
                 'study_group' => $studyGroupFilterView->getCurrentStudyGroup()?->getUuid(),

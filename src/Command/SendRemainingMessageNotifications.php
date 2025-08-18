@@ -6,14 +6,12 @@ use App\Event\MessageCreatedEvent;
 use App\Notification\EventSubscriber\MessageCreatedEventSubscriber;
 use App\Repository\MessageRepositoryInterface;
 use SchulIT\CommonBundle\Helper\DateHelper;
-use Shapecode\Bundle\CronBundle\Attribute\AsCronJob;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
-#[AsCronJob('*\/5 * * * *')]
+#[AsCronTask('*/5 * * * *')]
 #[AsCommand('app:notifications:send', 'Versendet E-Mail-Benachrichtigungen für Mitteilungen, für die noch keine Benachrichtigung versendet wurde (z.B. weil die Mitteilung für ein zukünftiges Datum erstellt wurde.')]
 readonly class SendRemainingMessageNotifications {
 

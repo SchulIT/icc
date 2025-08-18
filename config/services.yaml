@@ -127,11 +127,6 @@ services:
         arguments:
             $typesMap: '%types_map%'
 
-    App\Security\CronUserProvider:
-        arguments:
-            $username: 'cron'
-            $password: '%env(CRON_PASSWORD)%'
-
     # MENU
     App\Menu\Builder:
         tags:
@@ -280,11 +275,6 @@ services:
         arguments:
             $retentionDays: '%env(AUDIT_RETENTION_DAYS)%'
 
-
-    App\Command\RunIntegrityCheckCommand:
-        arguments:
-            $isEnabled: '%env(ASYNC_CHECKS)%'
-
     App\Command\UpdateUsersFromSsoCommand:
         arguments:
             $ssoUrl: '%env(SSO_URL)%'
@@ -316,7 +306,11 @@ services:
 
     Zenstruck\Messenger\Monitor\Command\PurgeCommand:
         tags:
-            - { name: shapecode_cron.cron_job, expression: '@daily' }
+            - { name: scheduler.task, arguments: '', trigger: 'cron', expression: '@daily' }
+
+    SchulIT\CommonBundle\Command\ClearLogsCommand:
+        tags:
+            - { name: scheduler.task, arguments: '', trigger: 'cron', expression: '@daily' }
 
     # SECTION
     App\Section\SectionResolver: ~
@@ -347,16 +341,6 @@ services:
     App\Monolog\SqlAwareExceptionProcessor:
         tags:
             - { name: monolog.processor }
-
-    # MISC
-    App\EventSubscriber\LoadMessengerCronJobs:
-        arguments:
-            $useCronjobForMessenger: "%env(bool:MESSENGER_CRONJOB)%"
-            $command: '@console.command.messenger_consume_messages'
-
-    App\EventSubscriber\WorkerRunningSubscriber:
-        arguments:
-            $useCronjobForMessenger: "%env(bool:MESSENGER_CRONJOB)%"
 
     # TWIG
     App\Twig\WebpackEntryCssSourceExtension:

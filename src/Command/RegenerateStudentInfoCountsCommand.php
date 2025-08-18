@@ -8,14 +8,14 @@ use App\Feature\FeatureManager;
 use App\Repository\GradeRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Section\SectionResolverInterface;
-use Shapecode\Bundle\CronBundle\Attribute\AsCronJob;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
+use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
 #[AsCommand('app:book:generate:student_info', description: 'Veranlasst das asynchrone Berechnen der Lernenden-Übersichten (nur Zahlen) für die entsprechenden Übersichten.')]
-#[AsCronJob('*/20 * * * *')]
+#[AsCronTask('*/20 * * * *')]
 readonly class RegenerateStudentInfoCountsCommand {
     public function __construct(private GradeRepositoryInterface $gradeRepository,
                                 private TeacherRepositoryInterface $teacherRepository,

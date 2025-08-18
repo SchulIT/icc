@@ -7,13 +7,13 @@ use App\Repository\StudentAbsenceRepositoryInterface;
 use App\Settings\StudentAbsenceSettings;
 use League\Flysystem\Filesystem;
 use SchulIT\CommonBundle\Helper\DateHelper;
-use Shapecode\Bundle\CronBundle\Attribute\AsCronJob;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
-#[AsCronJob('@monthly')]
+#[AsCronTask('@monthly')]
 #[AsCommand('app:absences:cleanup', 'Löscht abgelaufene Abwesenheitsmeldungen (Lernende).')]
 readonly class RemoveExpiredStudentAbsencesCommand {
 

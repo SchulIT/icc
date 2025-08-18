@@ -14,14 +14,9 @@ framework:
             mail:
                 dsn: "%env(MESSENGER_TRANSPORT_DSN)%?queue_name=mail"
                 rate_limiter: mail
-            checks: "%env(MESSENGER_TRANSPORT_DSN)%?queue_name=checks"
-            users: "%env(MESSENGER_TRANSPORT_DSN)%?queue_name=users"
 
         routing:
             'Symfony\Component\Mailer\Messenger\SendEmailMessage': mail
-            'App\Messenger\RunIntegrityCheckMessage': checks
-            'App\Messenger\UpdateOrRemoveUserMessage': users
-            'App\Messenger\SendPushoverNotificationMessage': async
 
 # when@test:
 #    framework:

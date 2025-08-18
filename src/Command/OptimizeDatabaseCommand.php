@@ -3,13 +3,13 @@
 namespace App\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Shapecode\Bundle\CronBundle\Attribute\AsCronJob;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
-#[AsCronJob('@monthly')]
+#[AsCronTask('@monthly')]
 #[AsCommand('app:db:optimize', 'Optimiert alle Datenbanktabellen mit dem OPTIMIZE-Befehl (MariaDB)')]
 readonly class OptimizeDatabaseCommand {
     public function __construct(private EntityManagerInterface $em) { }

@@ -12,6 +12,8 @@ common:
         logo_link: 'dashboard'
     locales: "%locales%"
     menu: mainMenu
+    disable:
+      cron: true
 
 services:
     SchulIT\CommonBundle\Monolog\DatabaseHandler:

@@ -20,8 +20,6 @@ security:
             entity:
                 class: App\Entity\User
                 property: username
-        cron:
-            id: App\Security\CronUserProvider
         import:
             memory:
                 users:
@@ -48,7 +46,6 @@ security:
         - { path: ^/absence/export, roles: ROLE_ADMIN }
         - { path: ^/book/, roles: ROLE_BOOK_VIEWER }
         - { path: ^/authorize, roles: IS_AUTHENTICATED_REMEMBERED }
-        - { path: ^/cron, roles: ROLE_CRON }
         - { path: ^, roles: ROLE_USER }
 
     role_hierarchy:
@@ -138,21 +135,11 @@ security:
         # Role which enables users to import data
         ROLE_IMPORTER: ROLE_USER
 
-        # Cronjob user
-        ROLE_CRON: ROLE_USER
-
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-
-        cron:
-            pattern: ^/cron
-            provider: cron
-            stateless: true
-            http_basic:
-                realm: Cronjob
 
         import:
             pattern: ^/api/import

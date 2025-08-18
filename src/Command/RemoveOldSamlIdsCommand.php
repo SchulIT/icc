@@ -5,13 +5,13 @@ namespace App\Command;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use SchulIT\CommonBundle\Entity\IdEntity;
-use Shapecode\Bundle\CronBundle\Attribute\AsCronJob;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
-#[AsCronJob('@monthly')]
+#[AsCronTask('@monthly')]
 #[AsCommand('app:saml:remove_ids', 'Löscht alle SAML _InResponse IDs.')]
 readonly class RemoveOldSamlIdsCommand {
     private const int Days = 30;

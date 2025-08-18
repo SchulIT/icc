@@ -23,8 +23,6 @@ $ php bin/console cache:clear
 $ php bin/console doctrine:migrations:migrate --no-interaction
 # Anwendung installieren
 $ php bin/console app:setup
-# Cronjobs registrieren
-$ php bin/console shapecode:cron:scan
 ```
 
 ## Webserver konfigurieren
@@ -37,10 +35,6 @@ Es ist wichtig, dass das `public/`-Verzeichnis als Wurzelverzeichnis im Webserve
 Konfigurationsdateien abgefangen werden.
 :::
 
-## E-Mail konfigurieren
+## Hintergrundaufgaben und Cronjobs konfigurieren
 
-Siehe [E-Mails](../maintenance/messenger).
-
-## Cronjobs konfigurieren
-
-Siehe [Cronjobs](../maintenance/cronjobs).
+Siehe [Hintergrundaufgaben](../maintenance/background_jobs) und [Cronjobs](../maintenance/cronjobs).

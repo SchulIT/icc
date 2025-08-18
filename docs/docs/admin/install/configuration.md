@@ -90,14 +90,6 @@ Für Microsoft 365 findet man die entsprechenden Limits [hier](https://learn.mic
 Praktischerweise sind die Limits (30 E-Mails pro 1 Minute) bereits in der Standardkonfiguration abgedeckt.
 :::
 
-#### CRON_PASSWORD
-
-Das Passwort für den Cronjob-Benutzer, sofern Cronjobs via HTTPs ausgeführt werden. Details siehe [Cronjobs](../maintenance/cronjobs).
-
-:::info
-Der Konfigurationsparameter können zunächst übersprungen werden und zu einem späteren Zeitpunkt konfiguriert werden.
-:::
-
 #### IMPORT_PSK
 
 Der Preshared-Key, der für den Import von Daten über die API-Schnittstelle verwendet wird. 

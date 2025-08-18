@@ -2,13 +2,16 @@
 
 namespace App\Messenger;
 
-class SendPushoverNotificationMessage {
-    public function __construct(public readonly int $recipientId,
-                                public readonly string $recipientUserIdentifier,
-                                public readonly string $content,
-                                public readonly ?string $subject,
-                                public readonly ?string $link = null,
-                                public readonly ?string $linkText = null) {
+use Symfony\Component\Messenger\Attribute\AsMessage;
+
+#[AsMessage('async')]
+readonly class SendPushoverNotificationMessage {
+    public function __construct(public int     $recipientId,
+                                public string  $recipientUserIdentifier,
+                                public string  $content,
+                                public ?string $subject,
+                                public ?string $link = null,
+                                public ?string $linkText = null) {
     }
 
 }

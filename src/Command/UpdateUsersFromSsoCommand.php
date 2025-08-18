@@ -4,16 +4,16 @@ namespace App\Command;
 
 use App\Messenger\UpdateOrRemoveUserMessage;
 use App\Repository\UserRepositoryInterface;
-use Shapecode\Bundle\CronBundle\Attribute\AsCronJob;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
 #[AsCommand('app:users:update', 'Aktualisiert alle Benutzer aus dem Single-Sign-On und löscht sie bei Bedarf aus dem System (falls aktiviert)')]
-#[AsCronJob('@daily')]
+#[AsCronTask('@daily')]
 readonly class UpdateUsersFromSsoCommand {
     public function __construct(private string|null $ssoUrl,
                                 private string|null  $ssoToken,

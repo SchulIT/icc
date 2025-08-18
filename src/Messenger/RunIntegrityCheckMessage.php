@@ -3,9 +3,11 @@
 namespace App\Messenger;
 
 use DateTime;
+use Symfony\Component\Messenger\Attribute\AsMessage;
 
-class RunIntegrityCheckMessage {
-    public function __construct(private readonly int $studentId, private readonly DateTime $start, private readonly DateTime $end) { }
+#[AsMessage('async')]
+readonly class RunIntegrityCheckMessage {
+    public function __construct(private int $studentId, private DateTime $start, private DateTime $end) { }
 
     public function getStudentId(): int {
         return $this->studentId;

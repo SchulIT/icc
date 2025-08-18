@@ -63,11 +63,6 @@ class AdminMenuBuilder extends AbstractMenuBuilder {
                 ->setLinkAttribute('target', '_blank')
                 ->setExtra('icon', 'fas fa-tools');
 
-            $menu->addChild('cron.label', [
-                'route' => 'admin_cronjobs'
-            ])
-                ->setExtra('icon', 'fas fa-history');
-
             $menu->addChild('logs.label', [
                 'route' => 'admin_logs'
             ])

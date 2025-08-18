@@ -30,8 +30,8 @@ Sofern die Hintergrunddienste z.B. mittels systemd realisiert werden, sollten di
 
 ```bash
 $ systemctl --user stop icc-background.service
-$ systemctl --user stop icc-mail.service
-$ systemctl --user stop icc-checks.service
+$ systemctl --user stop icc-mails.service
+$ systemctl --user stop icc-cron.service
 ```
 
 ## Quelltext aktualisieren
@@ -69,8 +69,6 @@ $ php bin/console cache:clear
 $ php bin/console doctrine:migrations:migrate --no-interaction
 # Anwendung installieren (führt ggf. durch das Update neue Schritte aus - bisherige Schritte werden übersprungen)
 $ php bin/console app:setup
-# Cronjobs registrieren
-$ php bin/console shapecode:cron:scan
 ```
 
 :::success Erfolg
@@ -83,8 +81,8 @@ Sofern die Hintergrunddienste z.B. mittels systemd realisiert werden, sollten di
 
 ```bash
 $ systemctl --user start icc-background.service
-$ systemctl --user start icc-mail.service
-$ systemctl --user start icc-checks.service
+$ systemctl --user start icc-mails.service
+$ systemctl --user start icc-cron.service
 ```
 
 ## Wiederherstellen einer vorherigen Version
@@ -124,7 +122,5 @@ $ php bin/console assets:install
 $ php bin/console cache:clear
 # Anwendung installieren (führt ggf. durch das Update neue Schritte aus - bisherige Schritte werden übersprungen)
 $ php bin/console app:setup
-# Cronjobs registrieren
-$ php bin/console shapecode:cron:scan
 ```
 

@@ -13,8 +13,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
-#[AsCronJob('@daily')]
+#[AsCronTask('@daily')]
 #[AsCommand(name: 'app:book:auto_cancel', description: 'Markiert alle Stunden an einem Tag als Entfall, wenn es einen Entfallgrund gibt.')]
 readonly class CancelLessonsOnFreeDaysCommand {
 

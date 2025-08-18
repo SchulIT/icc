@@ -12,13 +12,9 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsDoctrineListener(event: Events::postUpdate)]
 class AttendanceUpdateSubscriber {
-    public function __construct(private readonly bool $isEnabled, private readonly MessageBusInterface $messageBus, private readonly SectionResolverInterface $sectionResolver) { }
+    public function __construct(private readonly MessageBusInterface $messageBus, private readonly SectionResolverInterface $sectionResolver) { }
 
     public function postUpdate(PostUpdateEventArgs $eventArgs): void {
-        if($this->isEnabled === false) {
-            return;
-        }
-
         $entity = $eventArgs->getObject();
 
         if(!$entity instanceof Attendance) {

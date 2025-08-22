@@ -192,8 +192,12 @@
                     <div class="list-group list-group-flush">
                         {% for info in lessonInfo %}
                             <div class="list-group-item">
-                                <div class="text-muted">
-                                    <i class="fas fa-calendar-alt"></i> {{ info.from|format_date }} - {{ info.until|format_date }}
+                                <div>
+                                    <span class="text-muted">
+                                        <i class="fas fa-calendar-alt"></i> {{ info.from|format_date }} - {{ info.until|format_date }}
+                                    </span>
+
+                                    <span class="badge text-bg-secondary">{{ info.type|enum }}</span>
                                 </div>
 
                                 {{ info.content|markdown }}

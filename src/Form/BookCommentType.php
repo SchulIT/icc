@@ -36,8 +36,8 @@ class BookCommentType extends AbstractType {
                 'multiple' => true,
             ])
             ->add('canStudentAndParentsView', CheckboxType::class, [
-                'label' => 'label.comment_can_student_and_parents_view.label',
-                'help' => 'label.comment_can_student_and_parents_view.help',
+                'label' => 'comments.can_student_and_parents_view.label',
+                'help' => 'comments.can_student_and_parents_view.help',
                 'required' => false,
                 'disabled' => $this->bookSettings->getAlwaysMakeCommentsVisibleForStudentAndParents()
             ]);

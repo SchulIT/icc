@@ -2481,6 +2481,9 @@ reports:
 
 comments:
     label: Kommentare
+    can_student_and_parents_view:
+        label: Lernende und Eltern können Kommentar einsehen
+        help: Wenn diese Option aktiv ist, können Lernende und ihre Eltern diesen Kommentar einsehen. Eltern werden entsprechend benachrichtig, wenn sie dies aktiviert haben.
 
 parents_day:
     label: Elternsprechtag

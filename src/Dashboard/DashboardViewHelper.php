@@ -208,7 +208,7 @@ class DashboardViewHelper {
         $section = $this->sectionResolver->getSectionForDate($dateTime);
 
         $this->addMessages($this->messageRepository->findBy(MessageScope::Messages, $userType, $dateTime, $studyGroups), $view);
-        $this->addSubstitutions($this->filterSubstitutionsByGrade($this->substitutionRepository->findAllForStudyGroups($studyGroups, $dateTime), $student->getGrade($section)), $view, false);
+        $this->addSubstitutions($this->filterSubstitutionsByGrade($this->substitutionRepository->findAllForStudyGroups($this->studyGroupHelper->getStudyGroups([$student])->toArray(), $dateTime), $student->getGrade($section)), $view, false);
         $this->addExams($this->examRepository->findAllByStudents($students, $dateTime, true), $view, null, false);
         $this->addInfotexts($dateTime, $view);
         $this->addAbsentStudyGroup($this->absenceRepository->findAllStudyGroups($dateTime), $view);

@@ -22,9 +22,9 @@ class FancyUserStringConverter {
 
         $label .= ' ';
 
-        if($user->isStudent()) {
+        if($user->isStudent() && $user->getStudents()->count() > 0) {
             $label = $this->studentStringConverter->convert($user->getStudents()->first(), true) .' ';
-        } if($user->isParent()) {
+        } if($user->isParent() && $user->getStudents()->count() > 0) {
             $students = $user->getStudents()->map(fn(Student $student) => $this->studentStringConverter->convert($student, true))->toArray();
 
             $label .= sprintf('(%s)', $this->translator->trans('label.parent_of', ['%students%' => implode('; ', $students)]));

@@ -53,7 +53,7 @@ readonly class BildungsloginImporter {
             $password = $infoArray['password'];
 
             /** @var Student|null $student */
-            $student = $students[$username] ?? null;
+            $student = $students[$studentId] ?? null;
 
             if($student === null) {
                 continue;

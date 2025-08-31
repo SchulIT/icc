@@ -29,6 +29,10 @@ readonly class BildungsloginImporter {
             $username = $record['username'];
             $externalId = $record['record_uid'];
 
+            if($record['action'] !== 'A' && $record['action'] !== 'M') {
+                continue;
+            }
+
             $map[$username] = [
                 'id' => $externalId,
             ];
@@ -50,7 +54,11 @@ readonly class BildungsloginImporter {
 
         foreach($map as $username => $infoArray) {
             $studentId = $infoArray['id'];
-            $password = $infoArray['password'];
+            $password = $infoArray['password'] ?? null;
+
+            if($password === null) {
+                continue;
+            }
 
             /** @var Student|null $student */
             $student = $students[$studentId] ?? null;

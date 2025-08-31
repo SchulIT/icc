@@ -13,9 +13,12 @@ class StudentLearningManagementSystemInformationRepository extends AbstractTrans
             ->findAll();
     }
 
-    public function findByLms(LearningManagementSystem $lms): array {
+    public function findOneByStudentAndLms(Student $student, LearningManagementSystem $lms): ?StudentLearningManagementSystemInformation {
         return $this->em->getRepository(StudentLearningManagementSystemInformation::class)
-            ->findBy(['lms' => $lms]);
+            ->findOneBy([
+                'student' => $student,
+                'lms' => $lms
+            ]);
     }
 
     public function findByStudent(Student $student): array {

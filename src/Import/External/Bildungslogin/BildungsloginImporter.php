@@ -3,21 +3,20 @@
 namespace App\Import\External\Bildungslogin;
 
 use App\Entity\Student;
-use App\Entity\StudentLearningManagementSystemInformation;
-use App\Repository\StudentLearningManagementInformationRepositoryInterface;
+use App\Import\External\CreateOrUpdateLmsStudentInfoMessage;
 use App\Repository\StudentRepositoryInterface;
 use App\Utils\ArrayUtils;
 use League\Csv\Reader;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 readonly class BildungsloginImporter {
 
-    public function __construct(private StudentLearningManagementInformationRepositoryInterface $repository,
-                                private StudentRepositoryInterface $studentRepository) {
+    public function __construct(private StudentRepositoryInterface $studentRepository, private MessageBusInterface $messageBus) {
 
     }
 
 
-    public function import(ImportRequest $request): void {
+    public function importAsync(ImportRequest $request): void {
         $summaryReader = Reader::createFromString($request->summaryCsv->getContent());
         $this->configureReader($summaryReader);
 
@@ -44,45 +43,26 @@ readonly class BildungsloginImporter {
             }
         }
 
-        $existingData = ArrayUtils::createArrayWithKeys(
-            $this->repository->findByLms($request->lms),
-            fn(StudentLearningManagementSystemInformation $information) => $information->getStudent()->getExternalId()
-        );
-
         $students = ArrayUtils::createArrayWithKeys(
             $this->studentRepository->findAll(),
             fn(Student $student) => $student->getExternalId()
         );
 
-        $this->repository->beginTransaction();
-
         foreach($map as $username => $infoArray) {
             $studentId = $infoArray['id'];
             $password = $infoArray['password'];
 
-            if(isset($existingData[$username])) {
-                $info = $existingData[$username];
-            } else {
-                $student = $students[$studentId] ?? null;
+            /** @var Student|null $student */
+            $student = $students[$username] ?? null;
 
-                if($student === null) {
-                    continue;
-                }
-
-                $info = (new StudentLearningManagementSystemInformation())
-                    ->setStudent($student)
-                    ->setLms($request->lms);
+            if($student === null) {
+                continue;
             }
 
-            $info->setUsername($username);
-            $info->setPassword($password);
-            $info->setIsConsented(true);
-            $info->setIsConsentObtained(true);
-
-            $this->repository->persist($info);
+            $this->messageBus->dispatch(
+                new CreateOrUpdateLmsStudentInfoMessage($student->getId(), $request->lms->getId(), $username, $password)
+            );
         }
-
-        $this->repository->commit();
     }
 
     private function configureReader(Reader $reader): void {

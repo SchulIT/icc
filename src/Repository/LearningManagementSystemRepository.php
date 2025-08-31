@@ -6,6 +6,11 @@ use App\Entity\LearningManagementSystem;
 
 class LearningManagementSystemRepository extends AbstractTransactionalRepository implements LearningManagementSystemRepositoryInterface {
 
+    public function findOneById(int $id): ?LearningManagementSystem {
+        return $this->em->getRepository(LearningManagementSystem::class)
+            ->findOneBy(['id' => $id]);
+    }
+
     public function findAll(): array {
         return $this->em->getRepository(LearningManagementSystem::class)
             ->findBy([], ['name' => 'asc']);

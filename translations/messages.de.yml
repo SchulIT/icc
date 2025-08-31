@@ -346,6 +346,7 @@ label:
     shared_with:
         label: Geteilt mit
         help: Personen in dieser Liste können die Checkliste einsehen und bearbeiten (jedoch nicht löschen).
+    delimiter: Trennzeichen
 
 markdown:
     label: Markdown
@@ -2460,7 +2461,7 @@ import:
     bilo:
       csv:
         label: Bildungslogin-Zugangsdaten
-        success: Erfolgreich importiert
+        success: Erfolgreich importiert - die Zugänge werden asynchron in den nächsten Minuten in die Datenbank eingepflegt.
         summary:
           label: summary.csv
           help: Die vom Bildungslogin-Importer erstellte summary.csv muss hier angegeben werden. Diese ist wichtig zur Zuordnung von Benutzernamen zu Kindern.
@@ -2470,7 +2471,7 @@ import:
 
     westermann_zvs:
       label: Westermann (ZVS)-Zugangsdaten
-      success: Erfolgreich importiert
+      success: Erfolgreich importiert - die Zugänge werden asynchron in den nächsten Minuten in die Datenbank eingepflegt.
 
       csv:
         label: CSV-Datei

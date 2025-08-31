@@ -75,7 +75,7 @@ class StudentLearningManagementSystemInformationCrudController extends AbstractC
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            $importer->import($importRequest);
+            $importer->importAsync($importRequest);
 
             $this->addFlash('success', 'import.bilo.csv.success');
             return $this->redirect(
@@ -95,8 +95,8 @@ class StudentLearningManagementSystemInformationCrudController extends AbstractC
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            $importer->import($importRequest);
-            $this->addFlash('success', 'import.westermann.csv.success');
+            $importer->importAsync($importRequest);
+            $this->addFlash('success', 'import.westermann_zvs.success');
 
             return $this->redirect(
                 $this->urlGenerator->setController(StudentLearningManagementSystemInformationCrudController::class)->setAction(Action::INDEX)->generateUrl()
@@ -105,7 +105,7 @@ class StudentLearningManagementSystemInformationCrudController extends AbstractC
 
         return $this->render('admin/ea/form.html.twig', [
             'form' => $form->createView(),
-            'header' => 'import.westermann.csv.label'
+            'header' => 'import.westermann_zvs.label'
         ]);
     }
 }

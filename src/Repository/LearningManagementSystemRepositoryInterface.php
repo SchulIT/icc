@@ -6,6 +6,8 @@ use App\Entity\LearningManagementSystem;
 
 interface LearningManagementSystemRepositoryInterface extends TransactionalRepositoryInterface {
 
+    public function findOneById(int $id): ?LearningManagementSystem;
+
     public function findAll(): array;
 
     public function persist(LearningManagementSystem $lms): void;

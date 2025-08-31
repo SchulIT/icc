@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\LearningManagementSystem;
+use App\Entity\Student;
 use App\Entity\StudentLearningManagementSystemInformation;
 
 interface StudentLearningManagementInformationRepositoryInterface extends TransactionalRepositoryInterface {
@@ -17,6 +18,12 @@ interface StudentLearningManagementInformationRepositoryInterface extends Transa
      * @return StudentLearningManagementSystemInformation[]
      */
     public function findByLms(LearningManagementSystem $lms): array;
+
+    /**
+     * @param Student $student
+     * @return StudentLearningManagementSystemInformation[]
+     */
+    public function findByStudent(Student $student): array;
 
     public function persist(StudentLearningManagementSystemInformation $information): void;
 

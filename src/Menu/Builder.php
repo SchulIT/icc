@@ -11,6 +11,7 @@ use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\WikiArticleRepositoryInterface;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\ChatVoter;
+use App\Security\Voter\CredentialsVoter;
 use App\Security\Voter\ListsVoter;
 use App\Security\Voter\ParentsDayAppointmentVoter;
 use App\Security\Voter\ResourceReservationVoter;
@@ -71,6 +72,14 @@ class Builder {
 
         $this->plansMenu($menu);
         $this->listsMenu($menu);
+
+        if($this->featureManager->isFeatureEnabled(Feature::LMS) && $this->authorizationChecker->isGranted(CredentialsVoter::ViewAny)) {
+            $menu
+                ->addChild('credentials.label', [
+                    'route' => 'credentials'
+                ])
+                ->setExtra('icon', 'fas fa-key');
+        }
 
         if($this->featureManager->isFeatureEnabled(Feature::Documents)) {
             $menu->addChild('documents.label', [

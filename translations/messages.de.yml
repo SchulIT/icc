@@ -2848,3 +2848,7 @@ students:
             label: Information löschen
             confirm: 'Soll die Information über %student% wirklich gelöscht werden?'
             success: Information erfolgreich gelöscht
+
+credentials:
+  label: Zugänge
+  empty: Aktuell sind keine Zugänge hinterlegt.

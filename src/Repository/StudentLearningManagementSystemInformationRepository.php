@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\LearningManagementSystem;
+use App\Entity\Student;
 use App\Entity\StudentLearningManagementSystemInformation;
 
 class StudentLearningManagementSystemInformationRepository extends AbstractTransactionalRepository implements StudentLearningManagementInformationRepositoryInterface {
@@ -15,6 +16,11 @@ class StudentLearningManagementSystemInformationRepository extends AbstractTrans
     public function findByLms(LearningManagementSystem $lms): array {
         return $this->em->getRepository(StudentLearningManagementSystemInformation::class)
             ->findBy(['lms' => $lms]);
+    }
+
+    public function findByStudent(Student $student): array {
+        return $this->em->getRepository(StudentLearningManagementSystemInformation::class)
+            ->findBy(['student' => $student]);
     }
 
     public function persist(StudentLearningManagementSystemInformation $information): void {

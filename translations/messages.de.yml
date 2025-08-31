@@ -2468,6 +2468,13 @@ import:
           label: password.csv
           help: Die vom Bildungslogin-Importer erstellte password.csv muss hier angegeben werden. Diese enthält die Passwörter.
 
+    westermann_zvs:
+      label: Westermann (ZVS)-Zugangsdaten
+      success: Erfolgreich importiert
+
+      csv:
+        label: CSV-Datei
+        help: Eine komma-separierte CSV-Datei mit den Kopfzeilen Benutzername und Kennwort. Der Benutzername muss dabei der schulischen E-Mail-Adresse entsprechen.
 
 comingsoon:
     label: in Planung

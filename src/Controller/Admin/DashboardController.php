@@ -11,6 +11,7 @@ use App\Entity\LearningManagementSystem;
 use App\Entity\PrivacyCategory;
 use App\Entity\Room;
 use App\Entity\Student;
+use App\Entity\StudentLearningManagementSystemInformation;
 use App\Entity\StudyGroup;
 use App\Entity\Substitution;
 use App\Entity\TimetableLesson;
@@ -55,6 +56,7 @@ class DashboardController extends AbstractDashboardController
             MenuItem::section('SchILD-NRW'),
             MenuItem::linkToCrud('Datenschutzkategorien', 'fas fa-user-shield', PrivacyCategory::class),
             MenuItem::linkToCrud('Lernplattformen', 'fas fa-mail-bulk', LearningManagementSystem::class),
+            MenuItem::linkToCrud('Lernplattform-Zustimmungen', 'fas fa-mail-bulk', StudentLearningManagementSystemInformation::class),
 
             MenuItem::section('Vertretungsplan'),
             MenuItem::linkToCrud('Absenzen', 'fas fa-user-times', Absence::class),

@@ -1,0 +1,12 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% form_theme form '@EasyAdmin/crud/form_theme.html.twig' %}
+
+{% block content_title %}{{ header|trans }}{% endblock %}
+
+{% block main %}
+{{ form_start(form) }}
+{{ form_widget(form) }}
+{{ form_end(form) }}
+
+{% endblock %}

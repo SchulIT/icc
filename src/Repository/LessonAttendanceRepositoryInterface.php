@@ -79,6 +79,14 @@ interface LessonAttendanceRepositoryInterface {
      */
     public function findByStudentAndDateRange(Student $student, DateTime $start, DateTime $end, bool $includeEvents): array;
 
+    /**
+     * Counts the total number of student attendances
+     * @return int
+     */
+    public function countAnyByStudent(Student $student): int;
+
+    public function removeAnyStudentAttendance(Student $student): int;
+
     public function persist(Attendance $attendance): void;
 
     public function remove(Attendance $attendance): void;

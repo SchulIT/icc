@@ -855,6 +855,12 @@ admin:
     ea:
         label: EasyAdmin
 
+        students:
+            remove_attendance:
+                label: Anwesenheiten löschen
+                confirm: "Sollen wirklich alle Anwesenheiten von %lastname%, %firstname% gelöscht werden? Diese Aktion kann nicht rückgängig gemacht werden."
+                success: "Alle %count% Anwesenheiten von %lastname%, %firstname% gelöscht"
+
     headers:
         information: Informationen
         core: Stammdaten

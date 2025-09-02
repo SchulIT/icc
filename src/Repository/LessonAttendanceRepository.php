@@ -10,6 +10,7 @@ use App\Entity\Student;
 use App\Entity\Tuition;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
+use Override;
 
 class LessonAttendanceRepository extends AbstractRepository implements LessonAttendanceRepositoryInterface {
 
@@ -199,5 +200,26 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
 
     public function findByStudentAndDateRange(Student $student, DateTime $start, DateTime $end, bool $includeEvents): array {
         return $this->findByStudent($student, $start, $end, $includeEvents);
+    }
+
+    #[Override]
+    public function countAnyByStudent(Student $student): int {
+        return $this->em->createQueryBuilder()
+            ->select('COUNT(1)')
+            ->from(Attendance::class, 'a')
+            ->where('a.student = :student')
+            ->setParameter('student', $student->getId())
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    #[Override]
+    public function removeAnyStudentAttendance(Student $student): int {
+        return $this->em->createQueryBuilder()
+            ->delete(Attendance::class, 'a')
+            ->where('a.student = :student')
+            ->setParameter('student', $student->getId())
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 }

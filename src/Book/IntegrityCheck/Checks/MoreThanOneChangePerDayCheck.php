@@ -39,7 +39,7 @@ class MoreThanOneChangePerDayCheck implements IntegrityCheckInterface {
 
         $current = clone $start;
         while($current <= $end) {
-            $attendancesForToday = $this->lessonAttendanceRepository->findByStudentAndDateRange($student, $current, $current);
+            $attendancesForToday = $this->lessonAttendanceRepository->findByStudentAndDateRange($student, $current, $current, true);
             $this->sorter->sort($attendancesForToday, AttendanceStrategy::class);
 
             $changes = 0;

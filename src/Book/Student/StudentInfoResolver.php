@@ -23,12 +23,11 @@ class StudentInfoResolver extends AbstractResolver {
     }
 
     public function resolveStudentInfo(Student $student, Section $section, array $tuitions = [], bool $includeEvents = false): StudentInfo {
-        $attendances = $this->getAttendanceRepository()->findByStudent($student, $section->getStart(), $section->getEnd(), $tuitions);
+        $attendances = $this->getAttendanceRepository()->findByStudent($student, $section->getStart(), $section->getEnd(), $includeEvents, $tuitions);
 
         $eventLessonCount = 0;
         if($includeEvents === true) {
             $eventAttendances = $this->getAttendanceRepository()->findByStudentEvents($student, $section->getStart(), $section->getEnd());
-            $attendances = array_merge($attendances, $eventAttendances);
             $eventLessonCount = count($eventAttendances);
         }
 

@@ -14,8 +14,8 @@ class AbsenceExcuseResolver extends AbstractResolver {
     /**
      * @param Tuition[] $tuitions
      */
-    public function resolve(Student $student, DateTime $start, DateTime $end, array $tuitions = [ ]): StudentInfo {
-        $absent = $this->getAttendanceRepository()->findAbsentByStudent($student, $start, $end, $tuitions);
+    public function resolve(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]): StudentInfo {
+        $absent = $this->getAttendanceRepository()->findAbsentByStudent($student, $start, $end, $includeEvents, $tuitions);
         $excuseNotes = $this->getExcuseNoteRepository()->findByStudent($student);
 
         $excuseCollections = $this->computeExcuseCollections($excuseNotes);
@@ -29,9 +29,9 @@ class AbsenceExcuseResolver extends AbstractResolver {
      * @param Tuition[] $tuitions
      * @return StudentInfo[]
      */
-    public function resolveBulk(array $students, DateTime $start, DateTime $end, array $tuitions = [ ]): array {
+    public function resolveBulk(array $students, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]): array {
         $absent = ArrayUtils::createArrayWithKeys(
-            $this->getAttendanceRepository()->findAbsentByStudents($students, $start, $end, $tuitions),
+            $this->getAttendanceRepository()->findAbsentByStudents($students, $start, $end, $includeEvents, $tuitions),
             fn(LessonAttendanceEntity $a) => $a->getStudent()->getId(),
             true
         );

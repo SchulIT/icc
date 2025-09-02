@@ -21,10 +21,11 @@ interface LessonAttendanceRepositoryInterface {
      * @param Student $student
      * @param DateTime $start
      * @param DateTime $end
+     * @param bool $includeEvents
      * @param Tuition[] $tuitions
      * @return Attendance[]
      */
-    public function findByStudent(Student $student, DateTime $start, DateTime $end, array $tuitions = [ ]): array;
+    public function findByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]): array;
 
     /**
      * @param Student $student
@@ -38,26 +39,28 @@ interface LessonAttendanceRepositoryInterface {
      * @param Student $student
      * @param DateTime $start
      * @param DateTime $end
+     * @param bool $includeEvents
      * @param Tuition[] $tuitions
      * @return Attendance[]
      */
-    public function findLateByStudent(Student $student, DateTime $start, DateTime $end, array $tuitions = [ ]): array;
+    public function findLateByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]): array;
 
     /**
      * @param Student $student
      * @param DateTime $start
      * @param DateTime $end
+     * @param bool $includeEvents
      * @param Tuition[] $tuitions
      * @return Attendance[]
      */
-    public function findAbsentByStudent(Student $student, DateTime $start, DateTime $end, array $tuitions = [ ]): array;
+    public function findAbsentByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]): array;
 
     /**
      * @param Student[] $students
      * @param Tuition[] $tuitions
      * @return Attendance[]
      */
-    public function findAbsentByStudents(array $students, DateTime $start, DateTime $end, array $tuitions = [ ]): array;
+    public function findAbsentByStudents(array $students, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]): array;
 
     /**
      * @param Student[] $students
@@ -70,10 +73,11 @@ interface LessonAttendanceRepositoryInterface {
      * @param Student $student
      * @param DateTime $start
      * @param DateTime $end
+     * @param bool $includeEvents
      * @return Attendance[]
      * @deprecated Use findByStudent with parameter tuitions = [ ]
      */
-    public function findByStudentAndDateRange(Student $student, DateTime $start, DateTime $end): array;
+    public function findByStudentAndDateRange(Student $student, DateTime $start, DateTime $end, bool $includeEvents): array;
 
     public function persist(Attendance $attendance): void;
 

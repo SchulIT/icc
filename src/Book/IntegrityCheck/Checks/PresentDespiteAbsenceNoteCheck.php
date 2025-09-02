@@ -29,7 +29,7 @@ class PresentDespiteAbsenceNoteCheck implements IntegrityCheckInterface {
     public function check(Student $student, DateTime $start, DateTime $end): array {
         $violations = [ ];
 
-        $attendances = $this->attendanceRepository->findByStudentAndDateRange($student, $start, $end);
+        $attendances = $this->attendanceRepository->findByStudentAndDateRange($student, $start, $end, true);
 
         /** @var array<string, Attendance> $presentAttendances */
         $presentAttendances = ArrayUtils::createArrayWithKeys(

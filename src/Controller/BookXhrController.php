@@ -244,7 +244,7 @@ class BookXhrController extends AbstractController {
             $attendances = [ ];
             /** @var Attendance $attendance */
             foreach($entry->getAttendances() as $attendance) {
-                $excuseInfo = $excuseResolver->resolve($attendance->getStudent(), $lesson->getDate(), $lesson->getDate(), [ $entry->getTuition() ]);
+                $excuseInfo = $excuseResolver->resolve($attendance->getStudent(), $lesson->getDate(), $lesson->getDate(), false, [ $entry->getTuition() ]);
                 $excuses = $excuseInfo->getExcuseCollectionForLesson($attendance);
 
                 $attendances[] = [

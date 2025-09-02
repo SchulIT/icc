@@ -144,7 +144,7 @@ class BookStudentsParentsReportController extends AbstractController {
 
             $events = $bookEventRepository->findByStudent($studentFilterView->getCurrentStudent(), $min, $max);
 
-            foreach($lessonAttendanceRepository->findByStudentAndDateRange($studentFilterView->getCurrentStudent(), $min, $max) as $attendance) {
+            foreach($lessonAttendanceRepository->findByStudentAndDateRange($studentFilterView->getCurrentStudent(), $min, $max, true) as $attendance) {
                 if($attendance->getEntry() !== null && !in_array($attendance->getEntry(), $entries)) {
                     $entries[] = $attendance->getEntry();
                 }

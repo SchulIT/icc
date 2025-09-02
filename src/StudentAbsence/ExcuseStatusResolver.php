@@ -37,7 +37,7 @@ class ExcuseStatusResolver {
 
         /** @var Attendance[] $attendances */
         $attendances = ArrayUtils::createArrayWithKeys(
-            $this->lessonAttendanceRepository->findByStudentAndDateRange($absence->getStudent(), $absence->getFrom()->getDate(), $absence->getUntil()->getDate()),
+            $this->lessonAttendanceRepository->findByStudentAndDateRange($absence->getStudent(), $absence->getFrom()->getDate(), $absence->getUntil()->getDate(), true),
             function(Attendance $attendance) {
                 $keys = [];
 

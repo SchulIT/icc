@@ -18,7 +18,7 @@ class MoreThanOneAttendancesAtTheSameTimeCheck implements IntegrityCheckInterfac
     public function check(Student $student, DateTime $start, DateTime $end): array {
         $violations = [ ];
 
-        $attendances = $this->attendanceRepository->findByStudentAndDateRange($student, $start, $end);
+        $attendances = $this->attendanceRepository->findByStudentAndDateRange($student, $start, $end, true);
         $lessonKeys = [ ];
 
         foreach($attendances as $attendance) {

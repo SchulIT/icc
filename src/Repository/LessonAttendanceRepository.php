@@ -98,7 +98,7 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
             ->setParameter('end', $end);
     }
 
-    private function applyTuition(QueryBuilder $queryBuilder, array $tuitions): QueryBuilder {
+    private function applyTuition(QueryBuilder $queryBuilder, array $tuitions, bool $includeEvents): QueryBuilder {
         if(count($tuitions) === 0) {
             return $queryBuilder;
         }
@@ -112,7 +112,7 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
 
         $ids = array_map(fn(Tuition $tuition) => $tuition->getId(), $tuitions);
 
-        if(count($tuitions) !== 1) {
+        if($includeEvents === true) {
             $queryBuilder
                 ->andWhere(
                     $queryBuilder->expr()->orX(
@@ -136,11 +136,11 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
         return $queryBuilder;
     }
 
-    public function findByStudent(Student $student, DateTime $start, DateTime $end, array $tuitions = [ ]): array {
+    public function findByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]): array {
         $qb = $this->getDefaultQueryBuilder()
             ->where('s.id = :student')
             ->setParameter('student', $student->getId());
-        $this->applyTuition($qb, $tuitions);
+        $this->applyTuition($qb, $tuitions, $includeEvents);
         $this->applyDateRange($qb, $start, $end);
 
         return $qb->getQuery()->getResult();
@@ -157,31 +157,31 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
         return $qb->getQuery()->getResult();
     }
 
-    public function findLateByStudent(Student $student, DateTime $start, DateTime $end, array $tuitions = [ ]): array {
+    public function findLateByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]): array {
         $qb = $this->getDefaultQueryBuilder()
             ->where('s.id = :student')
             ->andWhere('a.type = :type')
             ->setParameter('student', $student->getId())
             ->setParameter('type', AttendanceType::Late);
-        $this->applyTuition($qb, $tuitions);
+        $this->applyTuition($qb, $tuitions, $includeEvents);
         $this->applyDateRange($qb, $start, $end);
 
         return $qb->getQuery()->getResult();
     }
 
-    public function findAbsentByStudent(Student $student, DateTime $start, DateTime $end, array $tuitions = [ ]): array {
+    public function findAbsentByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]): array {
         $qb = $this->getDefaultQueryBuilder()
             ->where('s.id = :student')
             ->andWhere('a.type = :type')
             ->setParameter('student', $student)
             ->setParameter('type', AttendanceType::Absent);
-        $this->applyTuition($qb, $tuitions);
+        $this->applyTuition($qb, $tuitions, $includeEvents);
         $this->applyDateRange($qb, $start, $end);
 
         return $qb->getQuery()->getResult();
     }
 
-    public function findAbsentByStudents(array $students, DateTime $start, DateTime $end, array $tuitions = [ ]): array {
+    public function findAbsentByStudents(array $students, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]): array {
         $studentIds = array_map(fn(Student $student) => $student->getId(), $students);
 
         $qb = $this->getDefaultQueryBuilder();
@@ -191,13 +191,13 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
             ->andWhere('a.type = :type')
             ->setParameter('students', $studentIds)
             ->setParameter('type', AttendanceType::Absent);
-        $this->applyTuition($qb, $tuitions);
+        $this->applyTuition($qb, $tuitions, $includeEvents);
         $this->applyDateRange($qb, $start, $end);
 
         return $qb->getQuery()->getResult();
     }
 
-    public function findByStudentAndDateRange(Student $student, DateTime $start, DateTime $end): array {
-        return $this->findByStudent($student, $start, $end);
+    public function findByStudentAndDateRange(Student $student, DateTime $start, DateTime $end, bool $includeEvents): array {
+        return $this->findByStudent($student, $start, $end, $includeEvents);
     }
 }

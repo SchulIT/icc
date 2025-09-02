@@ -238,7 +238,7 @@ class BookController extends AbstractController {
 
                 $students = $gradeFilterView->getCurrentGrade()->getMemberships()->filter(fn(GradeMembership $membership) => $membership->getSection()->getId() === $sectionFilterView->getCurrentSection()->getId())->map(fn(GradeMembership $membership) => $membership->getStudent())->toArray();
                 $tuitions = $tuitionRepository->findAllByGrades([$gradeFilterView->getCurrentGrade()], $sectionFilterView->getCurrentSection(), true);
-                $info = $absenceExcuseResolver->resolveBulk($students, $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd(), $tuitions);
+                $info = $absenceExcuseResolver->resolveBulk($students, $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd(), true, $tuitions);
 
                 if($sectionFilterView->getCurrentSection() !== null) {
                     $responsibilities = $responsibilityRepository->findAllByGrade($gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection());
@@ -250,7 +250,7 @@ class BookController extends AbstractController {
                 $overview = $entryOverviewHelper->computeOverviewForTuition($tuitionFilterView->getCurrentTuition(), $selectedDate, (clone $selectedDate)->modify('+1 month')->modify('-1 day'));
 
                 $students = $tuitionFilterView->getCurrentTuition()->getStudyGroup()->getMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudent());
-                $info = $absenceExcuseResolver->resolveBulk($students->toArray(), $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd(), [ $tuitionFilterView->getCurrentTuition() ]);
+                $info = $absenceExcuseResolver->resolveBulk($students->toArray(), $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd(), false, [ $tuitionFilterView->getCurrentTuition() ]);
 
                 if($sectionFilterView->getCurrentSection() !== null && $tuitionFilterView->getCurrentTuition()->getStudyGroup()->getGrades()->count() === 1) {
                     $responsibilities = $responsibilityRepository->findAllByGrade($tuitionFilterView->getCurrentTuition()->getStudyGroup()->getGrades()->first(), $sectionFilterView->getCurrentSection());
@@ -279,7 +279,7 @@ class BookController extends AbstractController {
                     }
                 }
 
-                $info = $absenceExcuseResolver->resolveBulk($students, $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd(), $tuitions);
+                $info = $absenceExcuseResolver->resolveBulk($students, $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd(), false, $tuitions);
                 $studentExtraInfo = $studentInformationRepository->findByStudents($students, StudentInformationType::Lessons, $selectedDate, (clone $selectedDate)->modify('+6 days'));
             }
         }
@@ -644,7 +644,7 @@ class BookController extends AbstractController {
             $entries = array_merge($entries, $entryRepository->findAllByTuition($tuition, $min, $max));
         }
 
-        foreach($lessonAttendanceRepository->findByStudentAndDateRange($student, $min, $max) as $attendance) {
+        foreach($lessonAttendanceRepository->findByStudentAndDateRange($student, $min, $max, true) as $attendance) {
             if($attendance->getEntry() !== null && !in_array($attendance->getEntry(), $entries)) {
                 $entries[] = $attendance->getEntry();
             } else if($attendance->getEvent() !== null && !in_array($attendance->getEvent(), $events)) {

@@ -28,7 +28,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class StudentCrudController extends AbstractCrudController
 {
 
-    public function __construct(private readonly LessonAttendanceRepositoryInterface $attendanceRepository, private readonly AdminUrlGenerator $urlGenerator, private readonly AdminUrlGenerator $adminUrlGenerator) {
+    public function __construct(private readonly LessonAttendanceRepositoryInterface $attendanceRepository, private readonly AdminUrlGenerator $adminUrlGenerator) {
 
     }
 

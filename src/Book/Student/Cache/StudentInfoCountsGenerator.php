@@ -17,7 +17,7 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 class StudentInfoCountsGenerator {
 
-    private const string KEY_PATTERN = 'book.student_info.counts.%d.s-%d.%s-%d';
+    private const string KEY_PATTERN = 'book.student_info.counts.%d.section-%d.%s-%d';
 
     public const int LIFETIME_IN_SECONDS = 1800; // 30min
 
@@ -26,12 +26,17 @@ class StudentInfoCountsGenerator {
                                 private readonly TuitionRepositoryInterface $tuitionRepository,
                                 private readonly DateHelper $dateHelper) {     }
 
+    private function getShortClassname(object $object): string {
+        $pos = strrpos(get_class($object), '\\');
+        return substr(get_class($object), $pos + 1);
+    }
+
     private function getKey(Student $student, Section $section, Grade|Teacher|Tuition $context): string {
         return sprintf(
             self::KEY_PATTERN,
             $student->getId(),
             $section->getId(),
-            strtolower(get_class($context)),
+            strtolower($this->getShortClassname($student)),
             $context->getId()
         );
     }

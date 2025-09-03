@@ -22,7 +22,7 @@ class ChatSeenByHelper {
         }
 
         foreach($chat->getMessages() as $message) {
-            if(!$message->getSeenBy()->contains($user) && $message->getCreatedBy()->getId() !== $user->getId()) {
+            if(!$message->getSeenBy()->contains($user) && $message->getCreatedBy()?->getId() !== $user->getId()) {
                 $message->addSeenBy($user);
                 $this->messageRepository->persist($message);
             }

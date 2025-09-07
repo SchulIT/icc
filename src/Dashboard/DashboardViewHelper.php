@@ -413,15 +413,14 @@ class DashboardViewHelper {
 
                 $absentStudents = $computeAbsences ? $this->computeAbsentStudents($students, $lesson, $substitution->getDate(), [], $tuition) : [ ];
                 $timetableLesson = $this->findTimetableLesson($substitution, $lesson);
+
                 $additionalInfo = [ ];
-
-                if($substitution->getStudyGroups()->count() === 1 || $substitution->getReplacementStudyGroups()->count() === 1) {
-                    $studyGroup = $substitution->getReplacementStudyGroups()->count() === 1 ? $substitution->getReplacementStudyGroups()->first() : $substitution->getStudyGroups()->first();
-
-                    if($studyGroup !== false && $studyGroup !== null) {
-                        $additionalInfo = $this->timetableLessonAdditionalInformationRepository->findBy($substitution->getDate(), $studyGroup, $lesson);
-                    }
+                $affectedStudyGroups = array_merge($substitution->getStudyGroups()->toArray(), $substitution->getReplacementStudyGroups()->toArray());
+                foreach($affectedStudyGroups as $studyGroup) {
+                    $additionalInfo = array_merge($this->timetableLessonAdditionalInformationRepository->findBy($substitution->getDate(), $studyGroup, $lesson), $additionalInfo);
                 }
+
+                $additionalInfo = ArrayUtils::unique($additionalInfo);
 
                 $studentInfo = [ ];
 

@@ -43,6 +43,19 @@ class BookCommentType extends AbstractType {
             ]);
 
         $builder
+            ->addEventListener(FormEvents::POST_SET_DATA, function(FormEvent $event) {
+                $form = $event->getForm();
+                $comment = $event->getData();
+
+                if($comment->getId() !== null && $form->has('canStudentAndParentsView')) {
+                    $form->add('canStudentAndParentsView', CheckboxType::class, [
+                        'label' => 'comments.can_student_and_parents_view.label',
+                        'help' => 'comments.can_student_and_parents_view.help',
+                        'required' => false,
+                        'disabled' => true
+                    ]);
+                }
+            })
             ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
                 $form = $event->getForm();
 

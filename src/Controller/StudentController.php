@@ -17,6 +17,7 @@ use App\Repository\PrivacyCategoryRepositoryInterface;
 use App\Repository\ReturnItemRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
+use App\Repository\UserRepositoryInterface;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\ListsVoter;
 use App\Security\Voter\StudentVoter;
@@ -79,6 +80,7 @@ class StudentController extends AbstractController {
                             PrivacyCategoryRepositoryInterface                $privacyCategoryRepository,
                             SectionFilter                                     $sectionFilter,
                             FeatureManager                                    $featureManager,
+                            UserRepositoryInterface $userRepository,
                             Sorter                                            $sorter,
                             Request                                           $request): Response {
         $this->denyAccessUnlessGranted(StudentVoter::Show, $student);
@@ -130,6 +132,15 @@ class StudentController extends AbstractController {
             }
         }
 
+        $studentUsers = array_map(
+            fn(User $user) => $user->getUuid()->toString(),
+            $userRepository->findAllStudentsByStudents([$student])
+        );
+        $parentUsers = array_map(
+            fn(User $user) => $user->getUuid()->toString(),
+            $userRepository->findAllParentsByStudents([$student])
+        );
+
         return $this->render('student/show.html.twig', [
             'student' => $student,
             'grade' => $grade,
@@ -142,6 +153,8 @@ class StudentController extends AbstractController {
             'returnItems' => $returnItems,
             'tuitions' => $tuitions,
             'privacyCategories' => $privacyCategories,
+            'studentUsers' => $studentUsers,
+            'parentUsers' => $parentUsers
         ]);
     }
 }

@@ -2841,6 +2841,11 @@ students:
     label: Lernende
     button: Gesamt-Übersicht
 
+    show:
+        chat:
+            student: Private Nachricht an Kind
+            parents: Private Nachricht an Eltern
+
     extra:
         label: Zusätzliche Informationen
         help: Hier können zeitlich begrenzte Informationen zu Lernenden (bspw. Maßnahmen, Krankheitsinfos, ...) hinterlegt werden. Es gilt den Datenschutz zu beachten.

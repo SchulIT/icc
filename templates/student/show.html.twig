@@ -51,6 +51,22 @@
                             </tr>
                         </tbody>
                     </table>
+
+                    {% if is_granted('is-chat-enabled') and (studentUsers|length > 0 or parentUsers|length > 0) %}
+                    <div class="card-footer">
+                        {% if studentUsers|length > 0 %}
+                            <a href="{{ path('new_chat', { recipients: studentUsers }) }}" class="btn btn-outline-primary btn-sm">
+                                <i class="fa-solid fa-comments"> </i> {{ 'students.show.chat.student'|trans }}
+                            </a>
+                        {% endif %}
+
+                        {% if parentUsers|length > 0 %}
+                            <a href="{{ path('new_chat', { recipients: parentUsers }) }}" class="btn btn-outline-primary btn-sm">
+                                <i class="fa-solid fa-comments"> </i> {{ 'students.show.chat.parents'|trans }}
+                            </a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
                 </div>
 
                 {% if tuitions|length > 0 %}

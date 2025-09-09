@@ -49,6 +49,16 @@
                             <i class="fas fa-user-graduate"></i> {{ student|student(true) }} <br>
                             {% endfor %}
                         </p>
+
+                        <p>
+                            {% if comment.canStudentAndParentsView %}
+                                <i class="fas fa-check"></i>
+                            {% else %}
+                                <i class="fas fa-times"></i>
+                            {% endif %}
+
+                            {{ 'comments.can_student_and_parents_view.label'|trans }}
+                        </p>
                     </div>
                 </div>
             </div>

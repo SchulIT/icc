@@ -42,6 +42,16 @@
                             {% for student in comment.students %}
                                 <i class="fas fa-user-graduate"></i> {{ student|student }}
                             {% endfor %}
+
+                            <span class="badge text-bg-primary">
+                                {% if comment.canStudentAndParentsView %}
+                                    <i class="fas fa-check"></i>
+                                {% else %}
+                                    <i class="fas fa-times"></i>
+                                {% endif %}
+
+                                {{ 'comments.can_student_and_parents_view.label'|trans }}
+                            </span>
                         </div>
                         <div class="card-body">
                             {{ comment.text }}

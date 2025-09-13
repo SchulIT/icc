@@ -14,7 +14,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
 #[AsCommand('app:book:generate:lesson_count', description: 'Veranlasst das asynchrone Berechnen von gehaltenen bzw. fehlenden Stunden pro Unterricht. Berücksichtigt Unterrichte im als aktuell ausgewählten Schuljahresabschnitt.')]
-#[AsCronTask('*/15 * * * *')]
+#[AsCronTask('*/30 * * * *')]
 readonly class RegenerateBookLessonCountCommand {
 
     public function __construct(private TuitionRepositoryInterface $tuitionRepository,

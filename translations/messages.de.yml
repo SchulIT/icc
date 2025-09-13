@@ -932,6 +932,9 @@ admin:
             return_item:
                 label: Rückgaben
                 help: Aktiviert die Rückgabefunktion. Damit können Rückgaben (bspw. im Hinblick auf eine Handyregelung) verwaltet werden.
+            consents:
+                label: Einwilligungen (SchILD NRW)
+                help: Aktiviert eine Ansicht für Lernende und Eltern, in der die hinterlegten Einwilligungen (Datenschutz und Lernplattformen) anzeigt. Voraussetzung ist, dass diese Daten importiert werden und mindestens das Datenschutz- oder Lernplattformen-Feature (oder beide) aktiviert sind.
 
 
         import:
@@ -1206,6 +1209,18 @@ admin:
             can_edit_or_remove:
                 label: Bearbeiten/Löschen erlaubt für
                 help: Legt die Benutzergruppen fest, die ihre eigenen Nachrichten bearbeiten bzw. löschen dürfen.
+
+        consents:
+            label: Einwilligungen
+            show_privacy:
+                label: Datenschutz-Einwilligungen anzeigen
+                help: Wenn diese Option aktiv ist, werden die Datenschutz-Einwilligungen auf der Seite angezeigt (sofern das Feature aktiv ist).
+            show_lms:
+                label: Lernplattform-Einwilligungen anzeigen
+                help: Wenn diese Option aktiv ist, werden die Lernplattform-Einwilligungen auf der Seite angezeigt (sofern das Feature aktiv ist).
+            text:
+                label: Informationstext
+                help: Kurzer Informationstext, der oberhalb angezeigt wird. Hier kann z.B. auf die Datenschutz-Dokumente verwiesen werden.
 
     timetable:
         label: Stundenplan
@@ -2864,3 +2879,6 @@ students:
 credentials:
   label: Zugänge
   empty: Aktuell sind keine Zugänge hinterlegt.
+
+consents:
+  label: Einwilligungen

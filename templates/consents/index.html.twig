@@ -1,0 +1,99 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'consents.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% if info is not empty %}
+                    <div class="bs-callout bs-callout-info">
+                        <h5>{{ 'info.label'|trans }}</h5>
+
+                        {{ info|markdown }}
+                    </div>
+                {% endif %}
+
+                {% if isPrivacyEnabled %}
+                    {% if privacyCategories|length > 0 %}
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-0">{{ 'lists.privacy.label'|trans }}</h5>
+                            </div>
+
+                            <div class="list-group list-group-flush">
+                                {% for category in privacyCategories %}
+                                    <div class="list-group-item">
+                                        <p class="mb-0">
+                                            {% if student.approvedPrivacyCategories.contains(category) %}
+                                                <i class="fas fa-check-circle text-success"></i>
+                                            {% else %}
+                                                <i class="fas fa-times-circle text-danger"></i>
+                                            {% endif %}
+                                            {{ category.label }}
+                                        </p>
+                                        {% if category.description is not empty %}
+                                            <p class="text-muted mt-1">{{ category.description }}</p>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+
+                {% if isLmsEnabled %}
+                    {% if learningManagementSystems|length > 0 %}
+
+                        <div class="card">
+                            <div class="card-body border-bottom">
+                                <h5 class="card-title mb-0">{{ 'label.lms'|trans }}</h5>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped table-hover card-table">
+                                    <thead>
+                                    <tr>
+                                        <th>{{ 'label.lms'|trans }}</th>
+                                        <th>{{ 'label.consented'|trans }}</th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    {% for lms in learningManagementSystems %}
+                                        <tr>
+                                            <td>{{ lms.name }}</td>
+                                            <td>
+                                                {% if lmsConsents[lms.id] is defined and lmsConsents[lms.id].isConsented %}
+                                                    <i class="fas fa-check-circle text-success"></i>
+                                                {% else %}
+                                                    <i class="fas fa-times-circle text-danger"></i>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            <div class="col-md-3 sticky-sidebar">
+                <div class="card">
+                    <div class="card-body">
+                        {% include "_filter/student.html.twig" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

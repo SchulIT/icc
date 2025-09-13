@@ -15,6 +15,8 @@ enum Feature: string {
     case Book = "book";
     case GradeBook = "grade_book";
     case Messages = "messages";
-
     case ReturnItem = "return_item";
+
+    #[Requires(features: [Feature::LMS, Feature::Privacy], requirement: Requirement::Any)]
+    case Consents = 'consents';
 }

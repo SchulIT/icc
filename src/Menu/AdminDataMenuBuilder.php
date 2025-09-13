@@ -176,6 +176,13 @@ class AdminDataMenuBuilder extends AbstractMenuBuilder {
                     ->setExtra('icon', 'fa-solid fa-repeat');
             }
 
+            if($this->featureManager->isFeatureEnabled(Feature::Consents)) {
+                $root->addChild('admin.consents.label', [
+                    'route' => 'admin_consents'
+                ])
+                    ->setExtra('icon', 'fas fa-signature');
+            }
+
             if($this->featureManager->isFeatureEnabled(Feature::StudentAbsence) || $this->featureManager->isFeatureEnabled(Feature::TeacherAbsence)) {
                 $root->addChild('admin.headers.absence', [])
                     ->setExtra('isHeader', true);

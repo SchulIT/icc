@@ -81,6 +81,14 @@ class Builder {
                 ->setExtra('icon', 'fas fa-key');
         }
 
+        if($user->isStudentOrParent() && $this->featureManager->isFeatureEnabled(Feature::Consents)) {
+            $menu
+                ->addChild('consents.label', [
+                    'route' => 'student_consents'
+                ])
+                ->setExtra('icon', 'fa-solid fa-signature');
+        }
+
         if($this->featureManager->isFeatureEnabled(Feature::Documents)) {
             $menu->addChild('documents.label', [
                 'route' => 'documents'

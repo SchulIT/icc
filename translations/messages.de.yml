@@ -2478,6 +2478,12 @@ import:
                 info: Die Ausgabe muss ein bestimmtes Format einhalten, damit es eingelesen werden kann. Dieses kann in Untis über "Import/Export" > "Untis" > "Formate/Fenstergruppen/Ribbon" > "Eingabeformat Import" importiert werden.
                 download: Format herunterladen (Ziel speichern unter)
 
+        html_alternative:
+            label: Stundenplan (Alt.)
+            info: Hier können die HTML-Stundenpläne wochenspezifisch importiert werden. Diese können über den Drucken-Dialog > "HTML-Ausg." erzeugt werden. Dazu muss vorab das entsprechende Format (Ex-F-HTML für Fächerpläne oder Ex-K-HTML für Klassenpläne) ausgewählt werden.
+            label_subjects: Fächerpläne (%week%)
+            label_grades: Klassenpläne (%week%)
+
 
     bilo:
       csv:

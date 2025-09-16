@@ -13,41 +13,59 @@ use App\Request\Data\TimetableLessonsData;
 use App\Settings\UntisHtmlSettings;
 use App\Settings\UntisSettings;
 use App\Untis\Html\HtmlParseException;
-use DateTime;
-use Symfony\Component\Stopwatch\Stopwatch;
+use DateMalformedStringException;
 
-class TimetableImporter {
-    public function __construct(private Importer $importer, private TimetableLessonsImportStrategy $strategy, private TimetableReader $reader,
+readonly class TimetableImporter {
+    public function __construct(private Importer  $importer, private TimetableLessonsImportStrategy $strategy, private TimetableReader $reader,
                                 private TimetableWeekRepositoryInterface $weekRepository, private TimetableLessonCombiner $lessonCombiner,
                                 private Grouper $grouper, private UntisSettings $settings, private UntisHtmlSettings $htmlSettings)
     {
     }
 
     /**
-     * @param string[] $gradeLessonsHtml
-     * @param string[] $subjectLessonsHtml
+     * @param ImportRequest $importRequest
+     * @return ImportResult
      * @throws HtmlParseException
-     * @throws ImportException
+     * @throws ImportException|DateMalformedStringException
      */
-    public function import(array $gradeLessonsHtml, array $subjectLessonsHtml, DateTime $start, DateTime $end): ImportResult {
+    public function import(ImportRequest $importRequest): ImportResult {
         $lessons = [ ];
+        $countWeeks = count($this->weekRepository->findAll());
 
-        foreach($gradeLessonsHtml as $html) {
-            $result = $this->reader->readHtml($html, TimetableType::Grade);
-            $lessons = array_merge(
-                $lessons,
-                $this->lessonCombiner->combine($result->getLessons())
-            );
+        foreach($importRequest->timetables as $timetable) {
+            $tempLessons = [ ];
+
+            foreach($timetable->gradeLessons as $html) {
+                $result = $this->reader->readHtml($html, TimetableType::Grade);
+                $tempLessons = array_merge(
+                    $tempLessons,
+                    $this->lessonCombiner->combine($result->getLessons())
+                );
+            }
+
+            foreach($timetable->subjectLessons as $html) {
+                $result = $this->reader->readHtml($html, TimetableType::Subject);
+                $tempLessons = array_merge($tempLessons,
+                    $this->lessonCombiner->combine($result->getLessons())
+                );
+            }
+
+            $this->applyWeekOverrides($tempLessons);
+
+            foreach($tempLessons as $lesson) {
+                $lesson->setWeeks(
+                    array_intersect($lesson->getWeeks(), $timetable->weeks)
+                );
+            }
+
+
+            if($countWeeks > 1) {
+                $tempLessons = array_filter($tempLessons, fn(Lesson $lesson) => count($lesson->getWeeks()) > 0); // just in case...
+            }
+
+            $lessons = array_merge($lessons, $tempLessons);
         }
 
-        foreach($subjectLessonsHtml as $html) {
-            $result = $this->reader->readHtml($html, TimetableType::Subject);
-            $lessons = array_merge($lessons,
-                $this->lessonCombiner->combine($result->getLessons())
-            );
-        }
-
-        $this->applyWeekOverrides($lessons);
 
         $groups = $this->grouper->group($lessons, LessonStrategy::class);
 
@@ -77,8 +95,8 @@ class TimetableImporter {
          * ]
          */
         $weekMatrix = [ ];
-        $current = clone $start;
-        while($current <= $end) {
+        $current = clone $importRequest->start;
+        while($current <= $importRequest->end) {
             $current->setTime(0, 0);
 
             $week = $weeksMap[(int)$current->format('W')];
@@ -142,8 +160,8 @@ class TimetableImporter {
         }
 
         $data = new TimetableLessonsData();
-        $data->setStartDate($start);
-        $data->setEndDate($end);
+        $data->setStartDate($importRequest->start);
+        $data->setEndDate($importRequest->end);
         $data->setLessons($lessonsToImport);
 
         return $this->importer->replaceImport($data, $this->strategy);

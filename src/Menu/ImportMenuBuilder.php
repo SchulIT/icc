@@ -61,6 +61,11 @@ class ImportMenuBuilder extends AbstractMenuBuilder {
                 'route' => 'import_untis_timetable_html'
             ])
                 ->setExtra('icon', 'far fa-clock');
+
+            $menu->addChild('import.timetable.html_alternative.label', [
+                'route' => 'import_untis_timetable_html_alternative'
+            ])
+                ->setExtra('icon', 'far fa-clock');
         }
 
         return $root;

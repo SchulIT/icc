@@ -4,12 +4,17 @@ namespace App\Controller;
 
 use App\Converter\EnumStringConverter;
 use App\Entity\Student;
+use App\Entity\TimetableWeek;
 use App\Form\Import\Untis\RoomImportType;
+use App\Form\Import\Untis\TimetableHtmlAlternativeImportType;
 use App\Form\Import\Untis\WeekOverrideType;
 use App\Form\TextCollectionEntryType;
+use App\Repository\TimetableWeekRepositoryInterface;
 use App\Request\ValidationFailedException;
 use App\Settings\UntisHtmlSettings;
 use App\Untis\Gpu\Room\RoomImporter;
+use App\Untis\Html\Timetable\ImportRequest;
+use App\Untis\Html\Timetable\ImportRequestTimetable;
 use App\Untis\StudentId\StudentIdGenerator;
 use App\Untis\StudentIdFormat;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
@@ -467,8 +472,8 @@ class UntisImportController extends AbstractController {
         ]);
     }
 
-    #[Route(path: '/timetable/html', name: 'import_untis_timetable_html')]
-    public function timetableHtml(Request $request, HtmlTimetableImporter $importer, TranslatorInterface $translator): Response {
+    #[Route(path: '/timetable/html/normal', name: 'import_untis_timetable_html')]
+    public function timetableHtml(Request $request, HtmlTimetableImporter $importer, TranslatorInterface $translator, TimetableWeekRepositoryInterface $weekRepository): Response {
         $form = $this->createForm(TimetableHtmlImportType::class);
         $form->handleRequest($request);
 
@@ -487,8 +492,12 @@ class UntisImportController extends AbstractController {
             try {
                 $gradesHtml = $grades !== null ? $this->readZip($grades) : [ ];
                 $subjectsHtml = $subjects !== null ? $this->readZip($subjects) : [ ];
+                $weeks = array_map(
+                    fn(TimetableWeek $week) => $week->getKey(),
+                    $weekRepository->findAll()
+                );
 
-                $result = $importer->import($gradesHtml, $subjectsHtml, $start, $end);
+                $result = $importer->import(new ImportRequest($start, $end, [ new ImportRequestTimetable($weeks, $gradesHtml, $subjectsHtml) ]));
 
                 $this->addFlash('success', $translator->trans('import.timetable.html.result', [
                     '%added%' => count($result->getAdded())
@@ -504,6 +513,53 @@ class UntisImportController extends AbstractController {
         }
 
         return $this->render('import/timetable_html.html.twig', [
+            'form' => $form->createView(),
+            'violations' => $violations
+        ]);
+    }
+
+    #[Route(path: '/timetable/html/alternative', name: 'import_untis_timetable_html_alternative')]
+    public function timetableHtmlAlternative(Request $request, HtmlTimetableImporter $importer, TranslatorInterface $translator, TimetableWeekRepositoryInterface $weekRepository): Response {
+        $form = $this->createForm(TimetableHtmlAlternativeImportType::class, [], [
+            'weeks' => $weekRepository->findAll()
+        ]);
+        $form->handleRequest($request);
+
+        $violations = [ ];
+
+        if($form->isSubmitted() && $form->isValid()) {
+            /** @var DateTime $start */
+            $start = $form->get('start')->getData();
+            /** @var DateTime $end */
+            $end = $form->get('end')->getData();
+
+            try {
+                $timetableParts = [ ];
+
+                foreach($weekRepository->findAll() as $week) {
+                    $timetableParts[] = new ImportRequestTimetable(
+                        [ $week->getKey() ],
+                        $this->readZip($form->get('grades_' . $week->getKey())->getData()),
+                        $this->readZip($form->get('subjects_' . $week->getKey())->getData()),
+                    );
+                }
+
+                $result = $importer->import(new ImportRequest($start, $end, $timetableParts));
+
+                $this->addFlash('success', $translator->trans('import.timetable.html.result', [
+                    '%added%' => count($result->getAdded())
+                ]));
+
+                return $this->redirectToRoute('import_untis_timetable_html_alternative');
+            } catch (ValidationFailedException $e) {
+                $violations = $e->getViolations();
+            }
+            catch (HtmlParseException|ImportException $exception) {
+                $this->addFlash('error', $exception->getMessage());
+            }
+        }
+
+        return $this->render('import/timetable_html_alternative.html.twig', [
             'form' => $form->createView(),
             'violations' => $violations
         ]);

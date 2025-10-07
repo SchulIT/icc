@@ -130,4 +130,47 @@ class ReturnItemRepository extends AbstractRepository implements ReturnItemRepos
             ->getQuery()
             ->getResult();
     }
+
+    #[Override]
+    public function countForRange(DateTime $start, DateTime $end, ?ReturnItemType $type = null): int {
+        $qb = $this->em->createQueryBuilder()
+            ->select('COUNT(i)')
+            ->from(ReturnItem::class, 'i')
+            ->leftJoin('i.type', 't')
+            ->where('i.createdAt >= :start')
+            ->andWhere('i.createdAt <= :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end);
+
+        if($type !== null) {
+            $qb->andWhere('t.id = :type')
+                ->setParameter('type', $type->getId());
+        }
+
+        return $qb
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    #[Override]
+    public function findForRange(DateTime $start, DateTime $end, ?ReturnItemType $type = null): array {
+        $qb = $this->em->createQueryBuilder()
+            ->select(['i', 's', 't'])
+            ->from(ReturnItem::class, 'i')
+            ->leftJoin('i.type', 't')
+            ->leftJoin('i.student', 's')
+            ->where('i.createdAt >= :start')
+            ->andWhere('i.createdAt <= :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end);
+
+        if($type !== null) {
+            $qb->andWhere('t.id = :type')
+                ->setParameter('type', $type->getId());
+        }
+
+        return $qb
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -64,12 +64,22 @@
 
             {% if sidebarEnabled %}
             <div class="col-md-3 sticky-sidebar">
-                {% if is_granted('new-return-item')%}
+                {% set canCreate = is_granted('new-return-item') %}
+                {% set canViewStatistics = is_granted('return-item-statistics') %}
+
+                {% if canCreate or canViewStatistics %}
                     <div class="card">
                         <div class="list-group list-group-flush">
-                            <a href="{{ path('add_return_item') }}" class="list-group-item list-group-item-action">
-                                <i class="fas fa-plus"></i> {{ 'return_items.add.label'|trans }}
-                            </a>
+                            {% if canCreate %}
+                                <a href="{{ path('add_return_item') }}" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-plus"></i> {{ 'return_items.add.label'|trans }}
+                                </a>
+                            {% endif %}
+                            {% if canViewStatistics %}
+                                <a href="{{ path('return_items_statistics') }}" class="list-group-item list-group-item-action">
+                                    <i class="fa-solid fa-chart-simple"></i> {{ 'return_items.statistics.label'|trans }}
+                                </a>
+                            {% endif %}
                         </div>
                     </div>
                 {% endif %}

@@ -2856,6 +2856,12 @@ return_items:
         returned:
             header: Rückgabe erfolgt
             text: "Die Rückgabe erfolgte am %date% um %time% durch %user%"
+    statistics:
+        label: Statistik
+        generated_info: Diese Statistik wurde %date% generiert.
+        count:
+          all: Anzahl Rückgaben
+          students: Anzahl Lernende
 
 
 students:

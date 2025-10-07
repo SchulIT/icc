@@ -83,6 +83,14 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
             ->getResult();
     }
 
+    public function findAllByIds(array $ids): array {
+        $qb = $this->getDefaultQueryBuilder()
+            ->andWhere('s.id IN (:ids)')
+            ->setParameter('ids', $ids);
+
+        return $qb->getQuery()->getResult();
+    }
+
     /**
      * @inheritDoc
      */

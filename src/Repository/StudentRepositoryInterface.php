@@ -47,6 +47,12 @@ interface StudentRepositoryInterface extends TransactionalRepositoryInterface {
     public function findAllByNameAndBirthday(string $firstname, string $lastname, DateTime $dateTime): array;
 
     /**
+     * @param int[] $ids
+     * @return Student[]
+     */
+    public function findAllByIds(array $ids): array;
+
+    /**
      * @param string[] $externalIds
      * @return Student[]
      */

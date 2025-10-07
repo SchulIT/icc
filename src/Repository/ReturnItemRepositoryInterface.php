@@ -40,6 +40,16 @@ interface ReturnItemRepositoryInterface {
      */
     public function countNonReturnedForStudents(array $students): int;
 
+    public function countForRange(DateTime $start, DateTime $end, ReturnItemType|null $type = null): int;
+
+    /**
+     * @param DateTime $start
+     * @param DateTime $end
+     * @param ReturnItemType|null $type
+     * @return ReturnItem[]
+     */
+    public function findForRange(DateTime $start, DateTime $end, ReturnItemType|null $type = null): array;
+
     public function persist(ReturnItem $returnItem): void;
 
     public function remove(ReturnItem $returnItem): void;

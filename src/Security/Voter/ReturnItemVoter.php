@@ -18,15 +18,15 @@ class ReturnItemVoter extends Voter {
     public const string Edit = 'edit';
     public const string Remove = 'remove';
     public const string Show = 'show';
-
     public const string Return = 'return';
+    public const string Statistics = 'return-item-statistics';
 
     public function __construct(private readonly AccessDecisionManagerInterface $accessDecisionManager, private readonly FeatureManager $featureManager) {
 
     }
 
     protected function supports(string $attribute, mixed $subject): bool {
-        return $attribute === self::New ||
+        return $attribute === self::New || $attribute === self::Statistics ||
             ($subject instanceof ReturnItem && in_array($attribute, [self::Edit, self::Remove, self::Show, self::Return]));
     }
 
@@ -48,6 +48,9 @@ class ReturnItemVoter extends Voter {
 
             case self::Return:
                 return $this->canReturn($subject, $token);
+
+            case self::Statistics:
+                return $this->canViewStatistics($token);
 
             default:
                 throw new LogicException('This code should not be executed.!');
@@ -100,5 +103,9 @@ class ReturnItemVoter extends Voter {
         }
 
         return false;
+    }
+
+    private function canViewStatistics(TokenInterface $token): bool {
+        return $this->accessDecisionManager->decide($token, ['ROLE_RETURN_ITEM_CREATOR']);
     }
 }

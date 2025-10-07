@@ -4,17 +4,23 @@ namespace App\Controller;
 
 use App\Entity\GradeMembership;
 use App\Entity\ReturnItem;
-use App\Entity\User;
+use App\Entity\Student;
 use App\Feature\Feature;
 use App\Feature\IsFeatureEnabled;
 use App\Form\ReturnItemType;
+use App\Http\Attribute\MapDateFromQuery;
 use App\Repository\ReturnItemRepositoryInterface;
+use App\Repository\StudentRepositoryInterface;
+use App\ReturnItem\Statistics;
+use App\ReturnItem\StatisticsGenerator;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\ReturnItemVoter;
+use App\Utils\ArrayUtils;
 use App\View\Filter\GradeFilter;
 use App\View\Filter\GradeFilterView;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\StudentFilterView;
+use DateTime;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -78,6 +84,42 @@ class ReturnItemController extends AbstractController {
             'limit' => $limit,
             'studentFilter' => $studentFilterView,
             'gradeFilter' => $gradeFilterView
+        ]);
+    }
+
+    #[Route('/statistics', name: 'return_items_statistics')]
+    public function statistics(#[MapDateFromQuery] DateTime|null $start, #[MapDateFromQuery] DateTime|null $end,
+                               SectionResolverInterface $sectionResolver, StatisticsGenerator $generator,
+                               StudentRepositoryInterface $studentRepository): Response {
+        $this->denyAccessUnlessGranted(ReturnItemVoter::Statistics);
+
+        $currentSection = $sectionResolver->getCurrentSection();
+        if($start === null) {
+            $start = $currentSection?->getStart();
+        }
+
+        if($end === null) {
+            $end = $currentSection?->getEnd();
+        }
+
+        /** @var Statistics|null $statistics */
+        $statistics = null;
+        /** @var array<int, Student> $students */
+        $students = [ ];
+
+        if($start !== null && $end !== null) {
+            $statistics = $generator->getStatistics($start, $end, null);
+            $students = ArrayUtils::createArrayWithKeys(
+                $studentRepository->findAllByIds($statistics->getStudentIds()),
+                fn(Student $student): int => $student->getId()
+            );
+        }
+
+        return $this->render('returns/statistics.html.twig', [
+            'start' => $start->format('Y-m-d'),
+            'end' => $end->format('Y-m-d'),
+            'statistics' => $statistics,
+            'students' => $students
         ]);
     }
 

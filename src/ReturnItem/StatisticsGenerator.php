@@ -47,7 +47,7 @@ readonly class StatisticsGenerator {
             }
 
             usort($rows, function(Row $a, Row $b) {
-                return $a->itemsCount - $b->itemsCount;
+                return $b->itemsCount - $a->itemsCount;
             });
 
             return new Statistics(

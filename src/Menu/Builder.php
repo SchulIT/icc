@@ -48,6 +48,7 @@ class Builder {
         $menu = $this->factory->createItem('root')
             ->setChildrenAttribute('class', 'navbar-nav me-auto');
 
+        /** @var User $user */
         $user = $this->tokenStorage->getToken()?->getUser();
 
         $menu->addChild('dashboard.label', [

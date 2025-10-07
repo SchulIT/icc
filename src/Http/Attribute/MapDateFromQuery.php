@@ -14,6 +14,6 @@ class MapDateFromQuery extends ValueResolver {
         bool $disabled = false,
         string $resolver = DateFromQueryValueResolver::class
     ) {
-        parent::__construct($disabled, $resolver);
+        parent::__construct($resolver, $disabled);
     }
 }

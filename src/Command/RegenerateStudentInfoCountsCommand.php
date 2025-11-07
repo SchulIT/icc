@@ -15,7 +15,7 @@ use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
 #[AsCommand('app:book:generate:student_info', description: 'Veranlasst das asynchrone Berechnen der Lernenden-Übersichten (nur Zahlen) für die entsprechenden Übersichten.')]
-##[AsCronTask('*/20 * * * *')]
+#[AsCronTask('*/20 * * * *')]
 readonly class RegenerateStudentInfoCountsCommand {
     public function __construct(private GradeRepositoryInterface $gradeRepository,
                                 private TeacherRepositoryInterface $teacherRepository,

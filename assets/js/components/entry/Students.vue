@@ -199,7 +199,7 @@
                         @click.prevent="minusMinute(attendance)">
                   <i class="fa fa-minus"></i>
                 </button>
-                <input type="number" :value="attendance.minutes" class="form-control border-warning" style="max-width: 70px" min="0">
+                <input type="number" v-model.number="attendance.minutes" class="form-control border-warning" style="max-width: 70px" min="0">
                 <span class="border-top border-bottom border-warning align-self-stretch align-items-center d-flex px-2">
                   <span>min</span>
                 </span>

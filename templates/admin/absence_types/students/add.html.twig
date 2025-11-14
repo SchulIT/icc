@@ -2,6 +2,10 @@
 
 {% block title %}{{ 'admin.absence_types.add.label'|trans }}{% endblock %}
 
+{% block post_javascript %}
+    <script src="{{ asset('build/collection.js') }}"></script>
+{% endblock %}
+
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>

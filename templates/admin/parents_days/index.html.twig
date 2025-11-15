@@ -47,6 +47,11 @@
                                     </button>
 
                                     <div class="dropdown-menu dropdown-menu-end">
+                                        <a href="{{ path('import_parents_day_teacher_rooms', { uuid: day.uuid }) }}" class="dropdown-item">
+                                            <i class="fas fa-upload"></i> {{ 'admin.parents_day.teacher_room.import.label'|trans }}
+                                        </a>
+
+                                        <div class="dropdown-divider"></div>
                                         <a href="{{ path('edit_parents_day', { uuid: day.uuid })}}" class="dropdown-item">
                                             <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
                                         </a>

@@ -2,6 +2,7 @@
 
 namespace App\ParentsDay;
 
+use App\Entity\Room;
 use App\Entity\Teacher;
 use App\Entity\Tuition;
 
@@ -18,7 +19,8 @@ class TeacherItem {
                                 private readonly bool $isAppointmentNotNecessary,
                                 private readonly array $comments = [ ],
                                 private readonly array $tuitions = [ ],
-                                private readonly ?string $userUuid = null) {
+                                private readonly ?string $userUuid = null,
+                                private readonly ?Room $room = null) {
 
     }
 
@@ -58,5 +60,9 @@ class TeacherItem {
 
     public function getUserUuid(): ?string {
         return $this->userUuid;
+    }
+
+    public function getRoom(): ?Room {
+        return $this->room;
     }
 }

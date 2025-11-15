@@ -3,17 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\ParentsDay;
-use App\Entity\ParentsDayAppointment;
 use App\Feature\Feature;
 use App\Feature\IsFeatureEnabled;
 use App\Form\ParentsDayType;
+use App\Import\External\ParentsDayTeacherRoom\ImportRequest;
+use App\Import\External\ParentsDayTeacherRoom\ImportRequestType;
+use App\Import\External\ParentsDayTeacherRoom\ParentsDayTeacherRoomImporter;
 use App\Repository\ParentsDayRepositoryInterface;
-use App\Security\Voter\AppointmentVoter;
-use App\Security\Voter\ParentsDayAppointmentVoter;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -90,6 +89,28 @@ class ParentsDayAdminController extends AbstractController {
         return $this->render('admin/parents_days/remove.html.twig', [
             'form' => $form->createView(),
             'parents_day' => $parentsDay
+        ]);
+    }
+
+    #[Route('/{uuid}/import/rooms', name: 'import_parents_day_teacher_rooms')]
+    public function importTeacherRooms(
+        #[MapEntity(mapping: ['uuid' => 'uuid'])] ParentsDay $parentsDay,
+        Request $request,
+        ParentsDayTeacherRoomImporter $importer
+    ): Response {
+        $importRequest = new ImportRequest();
+        $importRequest->parentsDay = $parentsDay;
+        $form = $this->createForm(ImportRequestType::class, $importRequest);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $result = $importer->import($importRequest);
+            $this->addFlash('success', 'admin.parents_day.import.success');
+            return $this->redirectToRoute('admin_parents_days');
+        }
+
+        return $this->render('admin/parents_days/import_teacher_rooms.html.twig', [
+            'form' => $form->createView(),
         ]);
     }
 }

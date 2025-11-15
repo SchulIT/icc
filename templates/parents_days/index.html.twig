@@ -76,7 +76,9 @@
 
                                         {% if appointment.students|length > 0 %}
                                             {% for teacher in appointment.teachers %}
+                                                {% set room = get_room_for_teacher(teacher, parentsDayFilter.currentParentsDay) %}
                                                 <i class="fas fa-chalkboard-teacher"></i> {{ teacher|teacher }}
+                                                {% if room is not null %}<span class="badge text-bg-primary">{{ room.name }}</span>{% endif %}
                                             {% endfor %}
                                         {% endif %}
                                     {% else %}
@@ -159,6 +161,10 @@
                                 <div class="list-group-item d-flex {% if item.alreadyBooked %}bg-success-subtle{% elseif item.appointmentRequested %}bg-danger-subtle{% endif %}">
                                     <div class="flex-fill align-self-center">
                                         {{ item.teacher|teacher }}
+
+                                        {% if item.room is not null %}
+                                            <span class="badge text-bg-primary">{{ item.room.name }}</span>
+                                        {% endif %}
 
                                         {% if item.isGradeTeacher %}
                                             <span class="badge text-bg-primary">{{ 'lists.study_groups.grade_teacher'|trans }}</span>

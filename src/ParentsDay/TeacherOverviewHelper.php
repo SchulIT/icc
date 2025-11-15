@@ -4,9 +4,11 @@ namespace App\ParentsDay;
 
 use App\Entity\GradeTeacher;
 use App\Entity\ParentsDay;
+use App\Entity\ParentsDayTeacherRoom;
 use App\Entity\Student;
 use App\Repository\ParentsDayAppointmentRepositoryInterface;
 use App\Repository\ParentsDayParentalInformationRepositoryInterface;
+use App\Repository\ParentsDayTeacherRoomRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use App\Section\SectionResolverInterface;
@@ -18,6 +20,7 @@ class TeacherOverviewHelper {
     public function __construct(private readonly SectionResolverInterface $sectionResolver,
                                 private readonly ParentsDayAppointmentRepositoryInterface $appointmentRepository,
                                 private readonly ParentsDayParentalInformationRepositoryInterface $parentalInformationRepository,
+                                private readonly ParentsDayTeacherRoomRepositoryInterface $teacherRoomRepository,
                                 private readonly TuitionRepositoryInterface $tuitionRepository,
                                 private readonly UserRepositoryInterface $userRepository,
                                 private readonly Sorter $sorter) {
@@ -101,6 +104,7 @@ class TeacherOverviewHelper {
                 $comments[$teacher->getId()] ?? [ ],
                 $teacherToTuitionsMap[$teacher->getId()] ?? [ ],
                 $userUuid,
+                $this->teacherRoomRepository->findRoomByTeacherAndParentsDay($teacher, $parentsDay)
             );
         }
 

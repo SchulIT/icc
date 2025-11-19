@@ -7,7 +7,7 @@ use App\Entity\User;
 
 class StudentAbsenceNotification extends Notification {
     public function __construct(string $type, User $recipient, string $subject, string $content, ?string $link, ?string $linkText, private readonly StudentAbsence $absence) {
-        parent::__construct($type, $recipient, $subject, $content, $link, $linkText);
+        parent::__construct($type, $recipient, $subject, $content, $link, $linkText, skipDeliveryCheck: $recipient->getId() === null);
     }
     
     public function getAbsence(): StudentAbsence {

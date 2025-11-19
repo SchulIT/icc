@@ -47,7 +47,7 @@ readonly class EmailNotificationHandler implements NotificationHandlerInterface 
         }
 
         // Check delivery options
-        if($this->deliveryDecider->decide($notification->getRecipient(), $notification->getType(), NotificationDeliveryTarget::Email) !== true) {
+        if($notification->isSkipDeliveryCheck() === false && $this->deliveryDecider->decide($notification->getRecipient(), $notification->getType(), NotificationDeliveryTarget::Email) !== true) {
             return;
         }
 

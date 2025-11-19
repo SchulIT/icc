@@ -10,7 +10,7 @@ class Notification {
     private DateTime $createdAt;
 
     public function __construct(private readonly string $type, private readonly User $recipient, private readonly string $subject, private readonly string $content,
-                                private ?string $link, private readonly ?string $linkText, private readonly array $namesToErase = [ ]) {
+                                private ?string $link, private readonly ?string $linkText, private readonly array $namesToErase = [ ], private readonly bool $skipDeliveryCheck = false) {
         $this->createdAt = new DateTime();
     }
 
@@ -68,5 +68,9 @@ class Notification {
         }
 
         return $content;
+    }
+
+    public function isSkipDeliveryCheck(): bool {
+        return $this->skipDeliveryCheck;
     }
 }

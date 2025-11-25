@@ -177,7 +177,7 @@ class AdminDataMenuBuilder extends AbstractMenuBuilder {
             }
 
             if($this->featureManager->isFeatureEnabled(Feature::Consents)) {
-                $root->addChild('admin.consents.label', [
+                $root->addChild('admin.settings.consents.label', [
                     'route' => 'admin_consents'
                 ])
                     ->setExtra('icon', 'fas fa-signature');

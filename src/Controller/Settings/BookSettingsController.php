@@ -35,6 +35,8 @@ class BookSettingsController extends AbstractController {
             'attr' => [
                 'data-choice' => 'true'
             ],
+            'required' => false,
+            'empty_data' => [ ],
             'data' => $settings->getGradesGradeTeacherExcuses()
         ])
             ->add('grades_tuition_teacher_excuses', ChoiceType::class, [
@@ -45,6 +47,8 @@ class BookSettingsController extends AbstractController {
                 'attr' => [
                     'data-choice' => 'true'
                 ],
+                'required' => false,
+                'empty_data' => [ ],
                 'data' => $settings->getGradesTuitionTeacherExcuses()
             ])
             ->add('exclude_student_status', CollectionType::class, [

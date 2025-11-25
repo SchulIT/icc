@@ -39,7 +39,9 @@ readonly class ReturnItemReturnedEventSubscriber implements NotifierInterface, E
                 self::getKey(),
                 $user,
                 $this->translator->trans('return_item.returned.title', [], 'email'),
-                $this->translator->trans('return_item.returned.content', [], 'email'),
+                $this->translator->trans('return_item.returned.content', [
+                    '%type%' => $event->getReturnItem()->getType()->getDisplayName()
+                ], 'email'),
                 $this->urlGenerator->generate('show_return_item', ['uuid' => $event->getReturnItem()->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL),
                 $this->translator->trans('return_item.link', [], 'email')
             );

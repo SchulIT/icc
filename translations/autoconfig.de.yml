@@ -1,0 +1,54 @@
+roles:
+  ROLE_USER: Benutzer
+  ROLE_ADMIN: Administrator
+  ROLE_SUPER_ADMIN: App-Verwalter
+  ROLE_MESSAGE_CREATOR: Darf Mitteilungen erstellen
+  ROLE_MESSAGE_PRIORITY: Darf Mitteilungen mit Priorität erstellen
+  ROLE_MESSAGE_ADMIN: Mitteilungs-Administrator
+  ROLE_DOCUMENTS_ADMIN: Dokumenten-Administrator
+  ROLE_APPOINTMENTS_ADMIN: Termine-Administrator
+  ROLE_WIKI_ADMIN: Wiki-Administrator
+
+  ROLE_EXAMS_CREATOR: Darf Klausuren erstellen
+  ROLE_EXAMS_ADMIN: Klausuren-Administrator
+
+  ROLE_KIOSK: Kiosk-Benutzer
+  ROLE_APPOINTMENT_CREATOR: Darf Termine erstellen
+
+  ROLE_BOOK_ENTRY_CREATOR: Unterrichtsbuch (schreibend)
+  ROLE_BOOK_VIEWER: Unterrichtsbuch (lesend)
+
+  ROLE_SHOW_BIRTHDAY: Geburtstage anzeigen (Lernende)
+  ROLE_IMPORTER: Darf Daten importieren
+
+  ROLE_STUDENT_ABSENCE_VIEWER: Darf Absenzen von Lernenden einsehen
+  ROLE_STUDENT_ABSENCE_CREATOR: Darf Absenzen von Lernenden erstellen
+  ROLE_STUDENT_ABSENCE_APPROVER: Darf Absenzen von Lernenden genehmigen
+
+  ROLE_TEACHER_ABSENCE_MANAGER: Darf Absenzen von Lehrkräften verwalten
+  ROLE_TEACHER_ABSENCE_VIEWER: Darf Absenzen von Lehrkräften einsehen
+
+  ROLE_MESSAGE_VIEWER: Darf alle Mitteilungen lesen
+  ROLE_DOCUMENT_VIEWER: Darf alle Dokumente einsehen
+  ROLE_APPOINTMENT_VIEWER: Darf alle Termine einsehen
+  ROLE_EXAM_VIEWER: Darf alle Klausuren einsehen
+
+  ROLE_RESOURCE_RESERVATION_VIEWER: Darf alle Reservierungen einsehen
+  ROLE_RESOURCE_RESERVATION_CREATOR: Darf Reservierungen erstellen
+
+  ROLE_LISTS_VIEWER: Darf Listen (Unterrichte, Lerngruppen, ...) einsehen
+  ROLE_LISTS_EXPORTER: Darf Listen exportieren
+
+  ROLE_TOOLS: Darf Tools nutzen
+
+  ROLE_CHAT_MOD: Darf private Nachrichten moderieren
+
+  ROLE_ALLOWED_TO_SWITCH: Darf Benutzer wechseln
+
+  ROLE_RETURN_ITEM_CREATOR: Darf Rückgaben erstellen
+
+  ROLE_STUDENT_VIEWER: Darf Lernendenübersicht einsehen
+
+role_attribute:
+  display_name: ICC Rollen
+  description: Rollen im ICC

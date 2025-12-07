@@ -1,5 +1,4 @@
 ambta_doctrine_encrypt:
   encryptor_class: Defuse
-  secret_directory_path: ~
   secret: '%env(base64:DB_SECRET)%'
-  wrap_exceptions: true
+  enable_secret_generation: false

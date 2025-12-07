@@ -1,7 +1,7 @@
 ### --- First Stage: Base Image --- ###
 
 # Use the official PHP image with FPM as the base image
-FROM php:8.3-fpm-alpine AS base
+FROM php:8.4-fpm-alpine AS base
 
 LABEL maintainer="SchulIT" \ 
       description="ICC - Webbasiertes Schulinformationssystem mit Vertretungs-, Klausur-, Stundenplan, Mitteilungen, Abwesenheitsmeldungen, digitale Klassenbücher uvm."

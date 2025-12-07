@@ -4,7 +4,7 @@ $enable-negative-margins: true;
 @import '~bootstrap/scss/bootstrap';
 
 // Import (and override) variables
-@import '../../vendor/schulit/common-bundle/Resources/assets/css/variables.scss';
+@import '../../vendor/schulit/common-bundle/assets/css/variables.scss';
 
 // Import FontAwesome
 @import '../../node_modules/@fortawesome/fontawesome-free/scss/fontawesome';
@@ -13,8 +13,8 @@ $enable-negative-margins: true;
 @import '../../node_modules/@fortawesome/fontawesome-free/scss/brands';
 
 // Import SchulIT design
-@import '../../vendor/schulit/common-bundle/Resources/assets/css/layout.scss';
-@import '../../vendor/schulit/common-bundle/Resources/assets/css/callouts.scss';
+@import '../../vendor/schulit/common-bundle/assets/css/layout.scss';
+@import '../../vendor/schulit/common-bundle/assets/css/callouts.scss';
 
 @media screen and (max-width:768px) {
   header#page-header {

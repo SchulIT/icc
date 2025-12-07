@@ -6,10 +6,6 @@ lightsaml_sp:
     resource: "@LightSamlSpBundle/Resources/config/routing.yml"
     prefix: saml
 
-common:
-    resource: "@CommonBundle/Controller"
-    type: attribute
-
 logout:
     path: /logout
 
@@ -41,11 +37,6 @@ composer:
     resource: "@ComposerDependencyListBundle/Controller"
     type: attribute
     prefix: /dependencies
-
-dh_doctrine_audit:
-    resource: "@DHAuditorBundle/Controller/"
-    type: attribute
-    prefix: /admin
 
 _bazinga_jstranslation:
     resource: "@BazingaJsTranslationBundle/Resources/config/routing/routing.yml"

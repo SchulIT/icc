@@ -4,7 +4,7 @@ $enable-negative-margins: true;
 @import '~bootstrap/scss/bootstrap';
 
 // Import (and override) variables
-@import '../../vendor/schulit/common-bundle/Resources/assets/css/variables.scss';
+@import '../../vendor/schulit/common-bundle/assets/css/variables.scss';
 
 // Import FontAwesome
 @import '../../node_modules/@fortawesome/fontawesome-free/scss/fontawesome';
@@ -13,11 +13,11 @@ $enable-negative-margins: true;
 @import '../../node_modules/@fortawesome/fontawesome-free/scss/brands';
 
 // Import SchoolIT design
-@import '../../vendor/schulit/common-bundle/Resources/assets/css/variables.scss';
-@import '../../vendor/schulit/common-bundle/Resources/assets/css/layout.scss';
+@import '../../vendor/schulit/common-bundle/assets/css/variables.scss';
+@import '../../vendor/schulit/common-bundle/assets/css/layout.scss';
 
 // Import Bootstrap 4 Card Tables
-@import '../../vendor/schulit/common-bundle/Resources/assets/css/nested-card-tables.scss';
+@import '../../vendor/schulit/common-bundle/assets/css/nested-card-tables.scss';
 
 html,
 body {

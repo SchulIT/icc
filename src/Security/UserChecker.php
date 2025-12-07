@@ -6,6 +6,7 @@ use App\Entity\IcsAccessToken;
 use App\Entity\User;
 use App\Entity\UserType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Event\AuthenticationSuccessEvent;
 use Symfony\Component\Security\Core\Exception\AccountStatusException;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
@@ -25,7 +26,7 @@ class UserChecker implements UserCheckerInterface {
         
     }
 
-    public function checkPostAuth(UserInterface $user): void {
+    public function checkPostAuth(UserInterface $user, TokenInterface|null $token = null): void {
         if($user instanceof IcsAccessToken) {
             $user = $user->getUser();
         }

@@ -10,11 +10,13 @@ common:
         logo: "%env(APP_LOGO)%"
         small_logo: "%env(APP_SMALLLOGO)%"
         logo_link: 'dashboard'
-    locales: "%locales%"
-    menu: mainMenu
-    disable:
-      cron: true
-      autoconfig: true
+
+    autoconfig:
+        entity_id: "%env(SAML_ENTITY_ID)%"
+        app_name: "%env(APP_NAME)%"
+        app_icon: "fa-solid fa-bus"
+        saml_cert_file: '%sp_cert_file%'
+        role_hierarchy: '%security.role_hierarchy.roles%'
 
 services:
     SchulIT\CommonBundle\Monolog\DatabaseHandler:

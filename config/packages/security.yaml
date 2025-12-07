@@ -28,6 +28,7 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        - { path: ^/authenticated, roles: PUBLIC_ACCESS }
         - { path: ^/logout/success, roles: PUBLIC_ACCESS }
         - { path: ^/saml/(login|discovery|metadata.xml)$, roles: PUBLIC_ACCESS }
         - { path: ^/auth/error, roles: PUBLIC_ACCESS }

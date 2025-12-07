@@ -27,6 +27,31 @@ const app = createApp({
     }
 });
 
+let axiosWithoutInterceptors = axios.create();
+axiosWithoutInterceptors.interceptors.request.clear();
+
+let lastAuthCheck = new Date().getTime();
+let checkIntervalInMilliseconds = 1 * 60 * 1000;
+
+axios.interceptors.request.use(
+    async function (config) {
+        let authenticated = await axiosWithoutInterceptors.get('/authenticated');
+        if(authenticated.data.authenticated === true) {
+            lastAuthCheck = new Date().getTime();
+            return config;
+        }
+
+        location.reload();
+    },
+    function (error) {
+        return Promise.reject(error);
+    },
+    {
+        synchronous: false,
+        runWhen: () => lastAuthCheck < (new Date().getTime() - checkIntervalInMilliseconds)
+    }
+);
+
 app.use(Translations);
 app.use(VueAxios, axios);
 app.mount('#app');

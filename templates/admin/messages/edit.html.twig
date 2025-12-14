@@ -73,7 +73,7 @@
             <i class="fa fa-chevron-{% if not form.group_confirmations.vars.valid %}up{% else %}down{% endif%} indicator align-self-center"></i>
         </div>
 
-        <div class="card-body {% if form.group_confirmations.vars.valid %}collapse{% endif%}" id="container-confirmations">
+        <div class="card-body {% if not form.group_confirmations.mustConfirm.vars.checked %}collapse{% endif%}" id="container-confirmations">
             {% for child in form.group_confirmations %}
                 {{ form_row(child) }}
             {% endfor %}
@@ -87,7 +87,7 @@
             <i class="fa fa-chevron-{% if not form.group_download.vars.valid %}up{% else %}down{% endif%} indicator align-self-center"></i>
         </div>
 
-        <div class="card-body {% if form.group_download.vars.valid %}collapse{% endif%}" id="container-downloads">
+        <div class="card-body {% if not form.group_download.isDownloadsEnabled.vars.checked %}collapse{% endif%}" id="container-downloads">
             {% for child in form.group_download %}
                 {{ form_row(child) }}
             {% endfor %}
@@ -101,7 +101,7 @@
             <i class="fa fa-chevron-{% if not form.group_upload.vars.valid %}up{% else %}down{% endif%} indicator align-self-center"></i>
         </div>
 
-        <div class="card-body {% if form.group_upload.vars.valid %}collapse{% endif%}" id="container-uploads">
+        <div class="card-body {% if not form.group_upload.isUploadsEnabled.vars.checked %}collapse{% endif%}" id="container-uploads">
             {{ form_row(form.group_upload.isUploadsEnabled) }}
             {{ form_row(form.group_upload.uploadEnabledUserTypes) }}
             {{ form_row(form.group_upload.uploadEnabledStudyGroups) }}
@@ -130,7 +130,7 @@
             <i class="fa fa-chevron-{% if not form.group_poll.vars.valid %}up{% else %}down{% endif%} indicator align-self-center"></i>
         </div>
 
-        <div class="card-body {% if form.group_poll.vars.valid %}collapse{% endif%}" id="container-poll">
+        <div class="card-body {% if not form.group_poll.isPollEnabled.vars.checked %}collapse{% endif%}" id="container-poll">
             {{ form_row(form.group_poll.isPollEnabled) }}
             {{ form_row(form.group_poll.allowPollRevote) }}
             {{ form_row(form.group_poll.pollUserTypes) }}

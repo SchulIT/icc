@@ -116,6 +116,8 @@
                     </span>
                 </div>
 
+                {{ _self.healthInfo(item.anyStudentWithHealthInfo) }}
+
                 <a href="{{ path('show_exam', { uuid: exam.uuid }) }}" class="btn btn-outline-primary btn-sm align-self-center">
                     {{ 'label.details'|trans }}
                 </a>
@@ -270,6 +272,8 @@
                             {% endif %}
                         </div>
                     </div>
+
+                    {{ _self.healthInfo(item.anyStudentWithHealthInfo) }}
 
                     {% if lesson.tuition is not null and lesson.tuition.isBookEnabled and is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
                         {% set editAction = null %}
@@ -450,6 +454,9 @@
                         {% endif %}
                     </div>
                 </div>
+
+                {{ _self.healthInfo(item.anyStudentWithHealthInfo) }}
+
                 {% set timetableLesson = item.timetableLesson %}
                 {% if timetableLesson is not null and timetableLesson.tuition is not null and timetableLesson.tuition.isBookEnabled and is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
                     {% set editAction = null %}
@@ -524,6 +531,14 @@
         {{ _self.absences(item.absentStudentGroups, item.absentStudentsCount, substitution.uuid ~ lesson|replace({'.': '', '/': ''}), item.students|length ) }}
         {{ _self.studentInfo(item.studentInfo, substitution.uuid) }}
     </div>
+{% endmacro %}
+
+{% macro healthInfo(hasStudentsWithHealthInfo) %}
+    {% if settings.dashboard.healthUrl is not empty and hasStudentsWithHealthInfo and is_granted('new-student-info') %}
+        <a href="{{ settings.dashboard.healthUrl }}" target="_blank" class="btn btn-outline-secondary btn-sm align-self-center me-n2">
+            <i class="fa-solid fa-notes-medical"></i>
+        </a>
+    {% endif %}
 {% endmacro %}
 
 {% macro additionalInfo(additionalInformation, lesson) %}

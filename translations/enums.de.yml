@@ -72,3 +72,4 @@ student_id_format:
 student_information_type:
   lessons: Unterricht
   exams: Klausuren
+  health: Gesundheit

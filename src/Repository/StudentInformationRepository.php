@@ -10,6 +10,7 @@ use App\Entity\StudyGroup;
 use App\Entity\StudentInformationType;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
+use Override;
 
 class StudentInformationRepository extends AbstractRepository implements StudentInformationRepositoryInterface {
 
@@ -43,6 +44,18 @@ class StudentInformationRepository extends AbstractRepository implements Student
         }
 
         return $qb;
+    }
+
+    #[Override]
+    public function countByStudents(array $students, ?StudentInformationType $type, ?DateTime $from = null, ?DateTime $until = null): int {
+        $ids = array_map(fn(Student $student) => $student->getId(), $students);
+
+        $qb = $this->getDefaultQueryBuilder($type, $from, $until);
+        $qb->select('COUNT(DISTINCT i.id)');
+        $qb->andWhere('s.id IN(:students)')
+            ->setParameter('students', $ids);
+
+        return $qb->getQuery()->getSingleScalarResult();
     }
 
     public function findByStudents(array $students, StudentInformationType|null $type, DateTime|null $from = null, DateTime|null $until = null): array {

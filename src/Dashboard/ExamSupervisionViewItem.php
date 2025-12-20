@@ -17,8 +17,8 @@ class ExamSupervisionViewItem extends AdditionalExtraAwareViewItem {
      * @param AbsentStudentGroup[] $absentStudentGroups
      * @param StudentInformation[] $studentInfo
      */
-    public function __construct($examOrExams, array $absentStudentGroups, array $studentInfo) {
-        parent::__construct($absentStudentGroups, $studentInfo);
+    public function __construct($examOrExams, array $absentStudentGroups, array $studentInfo, bool $hasAnyStudentWithHealthInfo) {
+        parent::__construct($absentStudentGroups, $studentInfo, $hasAnyStudentWithHealthInfo);
 
         if(is_array($examOrExams)) {
             $this->exams = $examOrExams;

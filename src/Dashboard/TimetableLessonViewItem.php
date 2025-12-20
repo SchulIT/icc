@@ -19,8 +19,8 @@ class TimetableLessonViewItem extends AdditionalExtraAwareViewItem {
      * @param StudentInformation[] $studentInfo
      * @param TimetableLessonAdditionalInformation[] $additionalInformation
      */
-    public function __construct(private readonly ?TimetableLesson $lesson, array $absentStudentGroups, array $studentInfo, private readonly array $additionalInformation) {
-        parent::__construct($absentStudentGroups, $studentInfo);
+    public function __construct(private readonly ?TimetableLesson $lesson, array $absentStudentGroups, array $studentInfo, private readonly array $additionalInformation, bool $hasAnyStudentWithHealthInfo) {
+        parent::__construct($absentStudentGroups, $studentInfo, $hasAnyStudentWithHealthInfo);
     }
 
     public function getLesson(): ?TimetableLesson {

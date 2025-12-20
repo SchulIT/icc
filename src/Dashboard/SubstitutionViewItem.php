@@ -19,8 +19,8 @@ class SubstitutionViewItem extends AdditionalExtraAwareViewItem {
      * @param TimetableLesson|null $lesson
      * @param TimetableLessonAdditionalInformation[] $additionalInformation
      */
-    public function __construct(private readonly Substitution $substitution, private readonly bool $isFreeLessonType, private readonly array $students, array $absentStudentGroups, array $studentInfo, private readonly ?TimetableLesson $lesson, private readonly array $additionalInformation) {
-        parent::__construct($absentStudentGroups, $studentInfo);
+    public function __construct(private readonly Substitution $substitution, private readonly bool $isFreeLessonType, private readonly array $students, array $absentStudentGroups, array $studentInfo, private readonly ?TimetableLesson $lesson, private readonly array $additionalInformation, bool $hasAnyStudentWithHealthInfo) {
+        parent::__construct($absentStudentGroups, $studentInfo, $hasAnyStudentWithHealthInfo);
     }
 
     public function isFreeLesson(): bool {

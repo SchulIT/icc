@@ -9,12 +9,15 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Url;
+use function RectorPrefix202304\React\Promise\all;
 
 #[Route(path: '/admin/settings')]
 #[IsGranted('ROLE_ADMIN')]
@@ -106,6 +109,16 @@ class DashboardSettingsController extends AbstractController {
                 'constraints' => [
                     new GreaterThanOrEqual(0)
                 ]
+            ])
+            ->add('health_url', UrlType::class, [
+                'label' => 'admin.settings.dashboard.health.url',
+                'help' => 'admin.settings.dashboard.health.url',
+                'required' => false,
+                'constraints' => [
+                    new NotBlank(allowNull: true),
+                    new Url()
+                ],
+                'data' => $dashboardSettings->getHealthUrl(),
             ]);
 
         $form = $builder->getForm();
@@ -136,6 +149,9 @@ class DashboardSettingsController extends AbstractController {
                 },
                 'future_days' => function($days) use ($dashboardSettings) {
                     $dashboardSettings->setNumberFutureDays($days);
+                },
+                'health_url' => function($url) use ($dashboardSettings) {
+                    $dashboardSettings->setHealthUrl($url);
                 }
             ];
 

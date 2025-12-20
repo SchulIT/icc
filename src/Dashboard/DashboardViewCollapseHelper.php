@@ -230,7 +230,7 @@ class DashboardViewCollapseHelper {
 
         // ADD FREE HOURS
         if(count($lesson->getItems()) === 0) {
-            $lesson->addItem(new TimetableLessonViewItem(null, [ ], [ ],  []));
+            $lesson->addItem(new TimetableLessonViewItem(null, [ ], [ ],  [], false));
         }
 
         // ADD ALL ITEMS THAT HAVE NOT BEEN TAKING CONSIDERATION
@@ -307,7 +307,7 @@ class DashboardViewCollapseHelper {
 
         $firstView = array_shift($lessonViews);
 
-        $view = new TimetableLessonViewItem($firstView->getLesson(), $absentGroups, $studentInfo, $firstView->getAdditionalInformation());
+        $view = new TimetableLessonViewItem($firstView->getLesson(), $absentGroups, $studentInfo, $firstView->getAdditionalInformation(), $firstView->hasAnyStudentWithHealthInfo());
 
         foreach($lessonViews as $lessonView) {
             $view->addAdditionalLesson($lessonView->getLesson());

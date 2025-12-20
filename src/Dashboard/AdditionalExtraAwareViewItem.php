@@ -11,7 +11,7 @@ abstract class AdditionalExtraAwareViewItem extends AbstractViewItem {
      * @param AbsentStudentGroup[] $absentStudentGroups
      * @param StudentInformation[] $studentInfo
      */
-    public function __construct(private readonly array $absentStudentGroups, private readonly array $studentInfo)
+    public function __construct(private readonly array $absentStudentGroups, private readonly array $studentInfo, private readonly bool $hasAnyStudentWithHealthInfo)
     {
     }
 
@@ -27,6 +27,10 @@ abstract class AdditionalExtraAwareViewItem extends AbstractViewItem {
      */
     public function getStudentInfo(): array {
         return $this->studentInfo;
+    }
+
+    public function hasAnyStudentWithHealthInfo(): bool {
+        return $this->hasAnyStudentWithHealthInfo;
     }
 
     public function getAbsentStudentsCount(): int {

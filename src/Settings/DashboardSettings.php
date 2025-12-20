@@ -73,5 +73,11 @@ class DashboardSettings extends AbstractSettings {
         $this->setValue('dashboard.days.future', $futureDays);
     }
 
+    public function getHealthUrl(): ?string {
+        return $this->getValue('dashboard.health.url', null);
+    }
 
+    public function setHealthUrl(?string $healthUrl): void {
+        $this->setValue('dashboard.health.url', $healthUrl);
+    }
 }

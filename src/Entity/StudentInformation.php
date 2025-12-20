@@ -23,9 +23,9 @@ class StudentInformation {
     #[Assert\NotNull]
     private ?Student $student;
 
-    #[ORM\Column(type: 'text', nullable: false)]
-    #[Assert\NotBlank]
-    private ?string $content;
+    #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\NotBlank(allowNull: true)]
+    private ?string $content = null;
 
     #[ORM\Column(name: '`from`', type: 'date')]
     private DateTime $from;

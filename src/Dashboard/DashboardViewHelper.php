@@ -321,6 +321,13 @@ class DashboardViewHelper {
                 }
             }
 
+            $hasAnyStudentWithHealthInfo = $this->bookStudentInformationRepository->countByStudents(
+                $lesson->getTuition()->getStudyGroup()->getMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudent())->toArray(),
+                StudentInformationType::Health,
+                $lesson->getDate(),
+                $lesson->getDate()
+            );
+
             if($lesson->getTuition() !== null) {
                 $lessonStudents = $lesson
                     ->getTuition()
@@ -336,7 +343,8 @@ class DashboardViewHelper {
                 if($lesson->getTuition()?->getStudyGroup() !== null) {
                     $additionalInfo = $this->timetableLessonAdditionalInformationRepository->findBy($lesson->getDate(), $lesson->getTuition()->getStudyGroup(), $lessonNumber);
                 }
-                $dashboardView->addItem($lessonNumber, new TimetableLessonViewItem($lesson, $absentStudents, $studentInfo, $additionalInfo));
+
+                $dashboardView->addItem($lessonNumber, new TimetableLessonViewItem($lesson, $absentStudents, $studentInfo, $additionalInfo, $hasAnyStudentWithHealthInfo));
             }
         }
     }
@@ -346,7 +354,7 @@ class DashboardViewHelper {
 
         for($i = 1; $i <= $numberOfLessons; $i++) {
             if(!in_array($i, $lessons)) {
-                $view->addItem($i, new TimetableLessonViewItem(null, [], [],  []));
+                $view->addItem($i, new TimetableLessonViewItem(null, [], [],  [], false));
             }
         }
 
@@ -366,7 +374,7 @@ class DashboardViewHelper {
             }
 
             if($hasLessonEntry === false && $lessonNumber <= $this->timetableSettings->getMaxLessons()) {
-                $view->addItem($lessonNumber, new TimetableLessonViewItem(null, [], [], []));
+                $view->addItem($lessonNumber, new TimetableLessonViewItem(null, [], [], [], false));
             }
         }
     }
@@ -398,7 +406,7 @@ class DashboardViewHelper {
             $isFreeLesson = in_array($substitution->getType(), $freeTypes);
 
             if($substitution->startsBefore()) {
-                $dashboardView->addItemBefore($substitution->getLessonStart(), new SubstitutionViewItem($substitution, $isFreeLesson, [ ], [ ], [ ], null, []));
+                $dashboardView->addItemBefore($substitution->getLessonStart(), new SubstitutionViewItem($substitution, $isFreeLesson, [ ], [ ], [ ], null, [], false));
 
                 if($substitution->getLessonEnd() - $substitution->getLessonStart() === 0) {
                     // Do not expand more lessons when the end is the same lesson as the beginning
@@ -421,6 +429,7 @@ class DashboardViewHelper {
                 }
 
                 $additionalInfo = ArrayUtils::unique($additionalInfo);
+                $hasAnyStudentWithHealthInfo = $this->bookStudentInformationRepository->countByStudents($students, StudentInformationType::Exams, $substitution->getDate(), $substitution->getDate());
 
                 $studentInfo = [ ];
 
@@ -430,10 +439,10 @@ class DashboardViewHelper {
                     }
                 }
 
-                $dashboardView->addItem($lesson, new SubstitutionViewItem($substitution, $isFreeLesson, $students, $absentStudents, $studentInfo, $timetableLesson, $additionalInfo));
+                $dashboardView->addItem($lesson, new SubstitutionViewItem($substitution, $isFreeLesson, $students, $absentStudents, $studentInfo, $timetableLesson, $additionalInfo, $hasAnyStudentWithHealthInfo));
 
                 if($teacher !== null && $substitution->getTeachers()->contains($teacher) && $substitution->getReplacementTeachers()->count() > 0 && !$substitution->getReplacementTeachers()->contains($teacher)) {
-                    $dashboardView->addAdditionalItem($lesson, new SubstitutionViewItem($substitution, false, $students, $absentStudents, $studentInfo, $timetableLesson, $additionalInfo));
+                    $dashboardView->addAdditionalItem($lesson, new SubstitutionViewItem($substitution, false, $students, $absentStudents, $studentInfo, $timetableLesson, $additionalInfo, $hasAnyStudentWithHealthInfo));
                 }
             }
         }
@@ -506,6 +515,7 @@ class DashboardViewHelper {
                 $examStudents = $exam->getStudents()->map(fn(ExamStudent $student) => $student->getStudent())->toArray();
                 $absentStudents = $computeAbsences ? $this->computeAbsentStudents($examStudents, $lesson, $exam->getDate(), [ ExamStudentsResolver::class ]) : [ ];
                 $studentInfo = [];
+                $hasAnyStudentWithHealthInfo = $this->bookStudentInformationRepository->countByStudents($examStudents, StudentInformationType::Health, $exam->getDate(), $exam->getDate());
 
                 foreach($this->bookStudentInformationRepository->findByStudents($examStudents, StudentInformationType::Exams, $exam->getDate(), $exam->getDate()) as $info) {
                     if($this->authorizationChecker->isGranted(StudentInformationVoter::Show, $info)) {
@@ -515,14 +525,14 @@ class DashboardViewHelper {
 
                 if($teacher !== null) {
                     if(in_array($teacher->getId(), $tuitionTeacherIds)) {
-                        $dashboardView->addItem($lesson, new ExamViewItem($exam, $absentStudents, $studentInfo));
+                        $dashboardView->addItem($lesson, new ExamViewItem($exam, $absentStudents, $studentInfo, $hasAnyStudentWithHealthInfo));
                     }
 
                     if(isset($supervisions[$lesson]) && $supervisions[$lesson] === $teacher->getId()) {
-                        $dashboardView->addItem($lesson, new ExamSupervisionViewItem($exam, $absentStudents, $studentInfo));
+                        $dashboardView->addItem($lesson, new ExamSupervisionViewItem($exam, $absentStudents, $studentInfo, $hasAnyStudentWithHealthInfo));
                     }
                 } else {
-                    $dashboardView->addItem($lesson, new ExamViewItem($exam, $absentStudents, $studentInfo));
+                    $dashboardView->addItem($lesson, new ExamViewItem($exam, $absentStudents, $studentInfo, $hasAnyStudentWithHealthInfo));
                 }
             }
         }

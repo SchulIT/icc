@@ -1070,6 +1070,9 @@ admin:
             future_days:
                 label: Anzahl der zukünftigen Tage
                 help: Gibt die Anzahl der zukünftigen Tage an, die auf der Übersicht oben in der Leiste angezeigt werden.
+            health_url:
+                label: URL zu Gesundheitsinformationen
+                help: Ein Knopf mit einem Link zu der genannten Seite wird eingeblendet, sofern für mindestens ein Schüler oder eine Schülerin des Unterrichts bzw. der Klausur ein Hinweis vom Typ "Gesundheit" hinterlegt ist.
 
         student_absences:
             label: Abwesenheitsmeldungen

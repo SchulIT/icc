@@ -9,4 +9,5 @@ twig:
     globals:
         config: '@SchulIT\CommonBundle\Twig\ConfigVariable'
         user: '@App\Twig\UserVariable'
+        settings: '@App\Twig\SettingsVariable'
         profile_url: "%env(IDP_PROFILE_URL)%"

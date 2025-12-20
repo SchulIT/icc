@@ -14,6 +14,15 @@ interface StudentInformationRepositoryInterface {
 
     /**
      * @param Student[] $students
+     * @param StudentInformationType|null $type
+     * @param DateTime|null $from
+     * @param DateTime|null $until
+     * @return int
+     */
+    public function countByStudents(array $students, StudentInformationType|null $type, DateTime|null $from = null, DateTime|null $until = null): int;
+
+    /**
+     * @param Student[] $students
      * @param DateTime|null $from
      * @param DateTime|null $until
      * @return StudentInformation[]

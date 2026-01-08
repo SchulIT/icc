@@ -430,7 +430,7 @@ class DashboardViewHelper {
                 }
 
                 $additionalInfo = ArrayUtils::unique($additionalInfo);
-                $hasAnyStudentWithHealthInfo = $this->bookStudentInformationRepository->countByStudents($students, StudentInformationType::Exams, $substitution->getDate(), $substitution->getDate()) > 0 && $this->authorizationChecker->isGranted(StudentVoter::ShowAny);
+                $hasAnyStudentWithHealthInfo = $this->bookStudentInformationRepository->countByStudents($students, StudentInformationType::Health, $substitution->getDate(), $substitution->getDate()) > 0 && $this->authorizationChecker->isGranted(StudentVoter::ShowAny);
 
                 $studentInfo = [ ];
 

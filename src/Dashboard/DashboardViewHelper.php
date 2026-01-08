@@ -326,7 +326,7 @@ class DashboardViewHelper {
                 StudentInformationType::Health,
                 $lesson->getDate(),
                 $lesson->getDate()
-            );
+            ) > 0;
 
             if($lesson->getTuition() !== null) {
                 $lessonStudents = $lesson
@@ -429,7 +429,7 @@ class DashboardViewHelper {
                 }
 
                 $additionalInfo = ArrayUtils::unique($additionalInfo);
-                $hasAnyStudentWithHealthInfo = $this->bookStudentInformationRepository->countByStudents($students, StudentInformationType::Exams, $substitution->getDate(), $substitution->getDate());
+                $hasAnyStudentWithHealthInfo = $this->bookStudentInformationRepository->countByStudents($students, StudentInformationType::Exams, $substitution->getDate(), $substitution->getDate()) > 0;
 
                 $studentInfo = [ ];
 
@@ -515,7 +515,7 @@ class DashboardViewHelper {
                 $examStudents = $exam->getStudents()->map(fn(ExamStudent $student) => $student->getStudent())->toArray();
                 $absentStudents = $computeAbsences ? $this->computeAbsentStudents($examStudents, $lesson, $exam->getDate(), [ ExamStudentsResolver::class ]) : [ ];
                 $studentInfo = [];
-                $hasAnyStudentWithHealthInfo = $this->bookStudentInformationRepository->countByStudents($examStudents, StudentInformationType::Health, $exam->getDate(), $exam->getDate());
+                $hasAnyStudentWithHealthInfo = $this->bookStudentInformationRepository->countByStudents($examStudents, StudentInformationType::Health, $exam->getDate(), $exam->getDate()) > 0;
 
                 foreach($this->bookStudentInformationRepository->findByStudents($examStudents, StudentInformationType::Exams, $exam->getDate(), $exam->getDate()) as $info) {
                     if($this->authorizationChecker->isGranted(StudentInformationVoter::Show, $info)) {

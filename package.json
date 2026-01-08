@@ -26,7 +26,7 @@
         "bazinga-translator": "^7.0.0",
         "bootstrap": "5.3.0",
         "browserify-fs": "^1.0.0",
-        "choices.js": "^9.0.0",
+        "choices.js": "^11.0.0",
         "clipboard": "^2.0.4",
         "core-js": "^3.31.0",
         "dropzone": "^5.7.0",

@@ -36,7 +36,9 @@ class StudyGroupCsvExporter {
             $this->translator->trans('label.lastname'),
             $this->translator->trans('label.firstname'),
             $this->translator->trans('label.grade'),
-            $this->translator->trans('label.email')
+            $this->translator->trans('label.email'),
+            $this->translator->trans('label.birthday'),
+            $this->translator->trans('label.gender')
         ];
 
         $memberships = $studyGroup->getMemberships()->toArray();
@@ -50,8 +52,10 @@ class StudyGroupCsvExporter {
             $rows[] = [
                 $membership->getStudent()->getLastname(),
                 $membership->getStudent()->getFirstname(),
-                $grade !== null ? $grade->getName() : null,
-                $membership->getStudent()->getEmail()
+                $grade?->getName(),
+                $membership->getStudent()->getEmail(),
+                $membership->getStudent()->getBirthday()?->format('Y-m-d'),
+                $membership->getStudent()->getGender()->value
             ];
         }
 

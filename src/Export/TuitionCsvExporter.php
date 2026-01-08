@@ -36,6 +36,8 @@ class TuitionCsvExporter {
             $this->translator->trans('label.birthday'),
             $this->translator->trans('label.grade'),
             $this->translator->trans('label.email'),
+            $this->translator->trans('label.birthday'),
+            $this->translator->trans('label.gender'),
             $this->translator->trans('label.type')
         ];
 
@@ -53,6 +55,8 @@ class TuitionCsvExporter {
                 $membership->getStudent()->getBirthday()?->format('Y-m-d'),
                 $grade?->getName(),
                 $membership->getStudent()->getEmail(),
+                $membership->getStudent()->getBirthday()?->format('Y-m-d'),
+                $membership->getStudent()->getGender()->value,
                 $membership->getType()
             ];
         }

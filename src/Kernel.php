@@ -2,7 +2,6 @@
 
 namespace App;
 
-use App\DependencyInjection\Compiler\RemoveCleanupCommandPass;
 use App\DependencyInjection\Compiler\RemoveDumpCommandPass;
 use App\DependencyInjection\Compiler\RemovePcntlEventSubscriberPass;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
@@ -18,7 +17,6 @@ class Kernel extends BaseKernel
         /** @var SecurityExtension $extension */
         $extension = $container->getExtension('security');
         $container->addCompilerPass(new RemoveDumpCommandPass());
-        $container->addCompilerPass(new RemoveCleanupCommandPass());
         $container->addCompilerPass(new RemovePcntlEventSubscriberPass());
     }
 }

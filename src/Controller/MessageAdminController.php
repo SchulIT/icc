@@ -23,7 +23,7 @@ use App\Message\MessageConfirmationViewHelper;
 use App\Message\MessageDownloadView;
 use App\Message\MessageDownloadViewHelper;
 use App\Message\MessageFileUploadViewHelper;
-use App\Message\PollResultViewHelper;
+use App\Message\Poll\PollResultViewHelper;
 use App\Repository\MessageFileUploadRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
@@ -483,7 +483,6 @@ class MessageAdminController extends AbstractController {
 
         return $exporter->getCsvResponse($message);
     }
-
 
     #[Route(path: '/{uuid}/remove/xhr', name: 'xhr_remove_message')]
     public function removeXhr(#[MapEntity(mapping: ['uuid' => 'uuid'])] Message $message, #[JsonPayload] RemoveMessageRequest $request): Response {

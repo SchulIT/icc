@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Message;
+namespace App\Message\Poll;
 
 use App\Entity\Message;
 use App\Entity\MessagePollChoice;
@@ -35,6 +35,10 @@ class PollVoteHelper {
         return null;
     }
 
+    /**
+     * @param MessagePollVote|null $vote
+     * @return MessagePollChoice[]
+     */
     public function getRankedChoices(?MessagePollVote $vote): array {
         if($vote === null) {
             return [ ];

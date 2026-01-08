@@ -19,7 +19,7 @@ use App\Form\MessagePollVoteType;
 use App\Form\MessageUploadType;
 use App\Grouping\Grouper;
 use App\Grouping\MessageWeekStrategy;
-use App\Message\PollVoteHelper;
+use App\Message\Poll\PollVoteHelper;
 use App\Repository\MessageFileUploadRepositoryInterface;
 use App\Repository\MessageRepositoryInterface;
 use App\Repository\UserRepositoryInterface;

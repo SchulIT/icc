@@ -523,6 +523,9 @@ class Message implements Stringable {
         return $this->pollStudyGroups;
     }
 
+    /**
+     * @return Collection<MessagePollChoice>
+     */
     public function getPollChoices(): Collection {
         return $this->pollChoices;
     }
@@ -540,6 +543,9 @@ class Message implements Stringable {
         $this->pollVotes->add($vote);
     }
 
+    /**
+     * @return Collection<MessagePollVote>
+     */
     public function getPollVotes(): Collection {
         return $this->pollVotes;
     }

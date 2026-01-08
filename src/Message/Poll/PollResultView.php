@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Message;
+namespace App\Message\Poll;
 
 use App\Entity\MessagePollVote;
 use App\Entity\Student;

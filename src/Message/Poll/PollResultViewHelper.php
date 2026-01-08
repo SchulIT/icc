@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Message;
+namespace App\Message\Poll;
 
 use App\Entity\Message;
 use App\Entity\MessagePollVote;
 use App\Entity\UserType;
 use App\Entity\UserTypeEntity;
+use App\Message\Poll\PollResultView;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TeacherRepositoryInterface;
 use App\Repository\UserRepositoryInterface;

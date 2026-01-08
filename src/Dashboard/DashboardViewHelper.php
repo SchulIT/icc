@@ -322,12 +322,15 @@ class DashboardViewHelper {
                 }
             }
 
-            $hasAnyStudentWithHealthInfo = $this->bookStudentInformationRepository->countByStudents(
-                $lesson->getTuition()->getStudyGroup()->getMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudent())->toArray(),
-                StudentInformationType::Health,
-                $lesson->getDate(),
-                $lesson->getDate()
-            ) > 0 && $this->authorizationChecker->isGranted(StudentVoter::ShowAny);
+            $hasAnyStudentWithHealthInfo = false;
+            if($lesson->getTuition() !== null && $lesson->getTuition()->getStudyGroup() !== null) {
+                $hasAnyStudentWithHealthInfo = $this->bookStudentInformationRepository->countByStudents(
+                        $lesson->getTuition()->getStudyGroup()->getMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudent())->toArray(),
+                        StudentInformationType::Health,
+                        $lesson->getDate(),
+                        $lesson->getDate()
+                    ) > 0 && $this->authorizationChecker->isGranted(StudentVoter::ShowAny);
+            }
 
             if($lesson->getTuition() !== null) {
                 $lessonStudents = $lesson

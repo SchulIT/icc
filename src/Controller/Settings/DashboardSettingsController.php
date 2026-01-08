@@ -17,7 +17,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Url;
-use function RectorPrefix202304\React\Promise\all;
 
 #[Route(path: '/admin/settings')]
 #[IsGranted('ROLE_ADMIN')]

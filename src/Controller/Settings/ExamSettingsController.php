@@ -48,8 +48,8 @@ class ExamSettingsController extends AbstractController {
                 'label' => 'admin.settings.exams.window.label',
                 'help' => 'admin.settings.exams.window.help',
                 'constraints' => [
-                    new Type(['type' => 'integer']),
-                    new GreaterThanOrEqual(['value' => 0])
+                    new Type(type: 'integer'),
+                    new GreaterThanOrEqual(0)
                 ],
                 'data' => $examSettings->getTimeWindowForStudents()
             ])
@@ -57,8 +57,8 @@ class ExamSettingsController extends AbstractController {
                 'label' => 'admin.settings.exams.window.supervisions.label',
                 'help' => 'admin.settings.exams.window.supervisions.help',
                 'constraints' => [
-                    new Type(['type' => 'integer']),
-                    new GreaterThanOrEqual(['value' => 0])
+                    new Type(type: 'integer'),
+                    new GreaterThanOrEqual(0)
                 ],
                 'data' => $examSettings->getTimeWindowForStudentsToSeeSupervisions()
             ])

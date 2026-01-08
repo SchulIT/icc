@@ -57,8 +57,8 @@ class TimetableSettingsController extends AbstractController {
                 'label' => 'admin.settings.timetable.max_lessons.label',
                 'help' => 'admin.settings.timetable.max_lessons.help',
                 'constraints' => [
-                    new Type(['type' => 'integer']),
-                    new GreaterThanOrEqual(['value' => 0])
+                    new Type(type: 'integer'),
+                    new GreaterThanOrEqual(0)
                 ],
                 'data' => $timetableSettings->getMaxLessons()
             ])

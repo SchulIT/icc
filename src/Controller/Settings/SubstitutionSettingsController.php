@@ -31,8 +31,8 @@ class SubstitutionSettingsController extends AbstractController {
                 'label' => 'admin.settings.substitutions.number_of_ahead_substitutions.label',
                 'help' => 'admin.settings.substitutions.number_of_ahead_substitutions.help',
                 'constraints' => [
-                    new Type(['type' => 'integer']),
-                    new GreaterThanOrEqual(['value' => 0])
+                    new Type(type: 'integer'),
+                    new GreaterThanOrEqual(0)
                 ],
                 'data' => $substitutionSettings->getNumberOfAheadDaysForSubstitutions()
             ])

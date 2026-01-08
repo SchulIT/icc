@@ -3,6 +3,7 @@
 namespace App\Csv;
 
 use Exception;
+use League\Csv\Bom;
 use League\Csv\Writer;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -17,12 +18,12 @@ class CsvHelper {
      * @throws Exception
      */
     public function getCsvContent(array $fields, string $separator = ';'): string {
-        $writer = Writer::createFromPath('php://temp', 'w');
-        $writer->setOutputBOM(Writer::BOM_UTF8);
+        $writer = Writer::from('php://temp', 'w');
+        $writer->setOutputBOM(Bom::Utf8);
         $writer->setDelimiter($separator);
         $writer->insertAll($fields);
 
-        return $writer->getContent();
+        return $writer->toString();
     }
 
     /**
@@ -33,7 +34,7 @@ class CsvHelper {
      * @param string $separator The separator which is used to separate the values (default: ;)
      * @throws Exception
      */
-    public function getCsvResponse(string $filename, array $fields, $separator = ';'): Response {
+    public function getCsvResponse(string $filename, array $fields, string $separator = ';'): Response {
         $csv = $this->getCsvContent($fields, $separator);
 
         $response = new Response($csv);

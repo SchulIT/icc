@@ -109,7 +109,7 @@ class SupervisionImporterTest extends TestCase {
             ]);
 
         $supervisionsImporter = new SupervisionImporter($importer, $strategy, $reader, $this->getUntisSettings());
-        $supervisionsImporter->import(Reader::createFromString(''), $start, $end);
+        $supervisionsImporter->import(Reader::fromString(''), $start, $end);
 
 
     }

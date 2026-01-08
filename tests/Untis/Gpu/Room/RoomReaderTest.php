@@ -14,7 +14,7 @@ class RoomReaderTest extends TestCase {
 GPU;
 
         $reader = new RoomReader();
-        $rooms = $reader->readGpu(Reader::createFromString($gpu));
+        $rooms = $reader->readGpu(Reader::fromString($gpu));
 
         $this->assertCount(2, $rooms);
 

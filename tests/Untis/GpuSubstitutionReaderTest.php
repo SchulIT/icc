@@ -21,7 +21,7 @@ class GpuSubstitutionReaderTest extends TestCase {
 14;"20190807";1;;3922;"Stü";"Kal";"En";;"De";;"SH";"KL6";;"2. M1~2. M1+S~2. M2";;"Urlaub";2;"2. M1~2. M1+S~2. M2"; S;201908011452;" -"
 GPU;
         $reader = new SubstitutionReader();
-        $substitutions = $reader->readGpu(Reader::createFromString(trim($lines)));
+        $substitutions = $reader->readGpu(Reader::fromString(trim($lines)));
 
         $this->assertEquals(3, count($substitutions));
 

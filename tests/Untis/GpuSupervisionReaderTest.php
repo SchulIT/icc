@@ -16,7 +16,7 @@ class GpuSupervisionReaderTest extends TestCase {
 "S1";"HauGe";1;4;20;"24~25~31~32~39~40";
 GPU;
         $reader = new SupervisionReader();
-        $supervisions = $reader->readGpu(Reader::createFromString($line));
+        $supervisions = $reader->readGpu(Reader::fromString($line));
 
         $this->assertEquals(1, count($supervisions));
 
@@ -33,7 +33,7 @@ GPU;
 "S1";"HauGe";1;4;20";
 GPU;
         $reader = new SupervisionReader();
-        $supervisions = $reader->readGpu(Reader::createFromString($line));
+        $supervisions = $reader->readGpu(Reader::fromString($line));
 
         $this->assertEquals(1, count($supervisions));
 

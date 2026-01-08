@@ -122,7 +122,7 @@ class GpuExamImporterTest extends TestCase {
             }));
 
         $gpuExamImporter = new ExamImporter($importer, $strategy, $this->getExamReaderMock(), $this->getTuitionReaderMock(), $settings, $this->getStudentIdGeneratorMock(), $this->getStudentRepository());
-        $gpuExamImporter->import(Reader::createFromString(''), Reader::createFromString(''), new DateTime('2021-01-01'), new DateTime('2021-08-01'), true);
+        $gpuExamImporter->import(Reader::fromString(''), Reader::fromString(''), new DateTime('2021-01-01'), new DateTime('2021-08-01'), true);
     }
 
     public function testImportStudentsFromTuitionAlwaysImportTrueAndIgnoreRegExpMatching() {
@@ -151,7 +151,7 @@ class GpuExamImporterTest extends TestCase {
             }));
 
         $gpuExamImporter = new ExamImporter($importer, $strategy, $this->getExamReaderMock(), $this->getTuitionReaderMock(), $settings, $this->getStudentIdGeneratorMock(), $this->getStudentRepository());
-        $gpuExamImporter->import(Reader::createFromString(''), Reader::createFromString(''), new DateTime('2021-01-01'), new DateTime('2021-08-01'), true);
+        $gpuExamImporter->import(Reader::fromString(''), Reader::fromString(''), new DateTime('2021-01-01'), new DateTime('2021-08-01'), true);
     }
 
     public function testImportStudentsFromTuitionNotAlwaysImportTrueAndIgnoreRegExpNotMatching() {
@@ -179,7 +179,7 @@ class GpuExamImporterTest extends TestCase {
             }));
 
         $gpuExamImporter = new ExamImporter($importer, $strategy, $this->getExamReaderMock(), $this->getTuitionReaderMock(), $settings, $this->getStudentIdGeneratorMock(), $this->getStudentRepository());
-        $gpuExamImporter->import(Reader::createFromString(''), Reader::createFromString(''), new DateTime('2021-01-01'), new DateTime('2021-08-01'), true);
+        $gpuExamImporter->import(Reader::fromString(''), Reader::fromString(''), new DateTime('2021-01-01'), new DateTime('2021-08-01'), true);
     }
 
     public function testImportStudentsFromTuitionNotAlwaysImportTrueAndIgnoreRegExpMatching() {
@@ -208,7 +208,7 @@ class GpuExamImporterTest extends TestCase {
             }));
 
         $gpuExamImporter = new ExamImporter($importer, $strategy, $this->getExamReaderMock(), $this->getTuitionReaderMock(), $settings, $this->getStudentIdGeneratorMock(), $this->getStudentRepository());
-        $gpuExamImporter->import(Reader::createFromString(''), Reader::createFromString(''), new DateTime('2021-01-01'), new DateTime('2021-08-01'), true);
+        $gpuExamImporter->import(Reader::fromString(''), Reader::fromString(''), new DateTime('2021-01-01'), new DateTime('2021-08-01'), true);
     }
 
 

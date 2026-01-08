@@ -46,6 +46,7 @@ readonly class FirstComeFirstServeAssignmentStrategy implements AssignmentStrate
             foreach($ranked as $choice) {
                 if($assignmentCounts[$choice->getId()] < $choice->getMaximum()) {
                     $assigned[] = $vote;
+                    $assignmentCounts[$choice->getId()]++;
                     $vote->setAssignedChoice($choice);
                     $this->messagePollVoteRepository->persist($vote);
                     break;

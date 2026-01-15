@@ -6,6 +6,7 @@ use App\Book\Student\StudentInfoResolver;
 use App\Entity\GradeTeacher;
 use App\Entity\Student;
 use App\Entity\User;
+use App\Entity\UserType;
 use App\Feature\Feature;
 use App\Feature\FeatureManager;
 use App\Grouping\Grouper;
@@ -21,6 +22,7 @@ use App\Repository\UserRepositoryInterface;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\ListsVoter;
 use App\Security\Voter\StudentVoter;
+use App\Settings\ChatSettings;
 use App\Sorting\BookCommentDateStrategy;
 use App\Sorting\SortDirection;
 use App\Sorting\Sorter;
@@ -81,6 +83,8 @@ class StudentController extends AbstractController {
                             SectionFilter                                     $sectionFilter,
                             FeatureManager                                    $featureManager,
                             UserRepositoryInterface $userRepository,
+                            ChatSettings $chatSettings,
+                            #[CurrentUser] User $user,
                             Sorter                                            $sorter,
                             Request                                           $request): Response {
         $this->denyAccessUnlessGranted(StudentVoter::Show, $student);
@@ -96,6 +100,7 @@ class StudentController extends AbstractController {
         $returnItems = [ ];
         $privacyCategories = [ ];
         $grade = null;
+        $teacherPrivateMessageLink = null;
 
         if($this->isGranted(ListsVoter::Privacy) && $featureManager->isFeatureEnabled(Feature::Privacy)) {
             $privacyCategories = $privacyCategoryRepository->findAll();
@@ -130,6 +135,20 @@ class StudentController extends AbstractController {
             if($this->isGranted('ROLE_RETURN_ITEM_CREATOR') && $featureManager->isFeatureEnabled(Feature::ReturnItem)) {
                 $returnItems = $returnItemRepository->findByStudent($student, $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd());
             }
+
+            $teachers = [ ];
+            foreach($tuitions as $tuition) {
+                $teachers = array_merge($teachers, $tuition->getTeachers()->toArray());
+            }
+
+            if(in_array(UserType::Teacher, $chatSettings->getAllowedRecipients($user->getUserType())) && in_array($user->getUserType(), $chatSettings->getEnabledUserTypes())) {
+                $users = $userRepository->findAllTeachers($teachers);
+                $uuids = array_map(fn(User $user) => $user->getUuid(), $users);
+
+                $teacherPrivateMessageLink = $this->generateUrl('new_chat', [
+                    'recipients' => $uuids,
+                ]);
+            }
         }
 
         $studentUsers = array_map(
@@ -154,7 +173,8 @@ class StudentController extends AbstractController {
             'tuitions' => $tuitions,
             'privacyCategories' => $privacyCategories,
             'studentUsers' => $studentUsers,
-            'parentUsers' => $parentUsers
+            'parentUsers' => $parentUsers,
+            'teacherPrivateMessageLink' => $teacherPrivateMessageLink,
         ]);
     }
 }

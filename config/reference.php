@@ -1487,6 +1487,11 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *     dump_destination?: scalar|null, // A stream URL where dumps should be written to. // Default: null
  *     theme?: "dark"|"light", // Changes the color of the dump() output when rendered directly on the templating. "dark" (default) or "light". // Default: "dark"
  * }
+ * @psalm-type MakerConfig = array{
+ *     root_namespace?: scalar|null, // Default: "App"
+ *     generate_final_classes?: bool, // Default: true
+ *     generate_final_entities?: bool, // Default: false
+ * }
  * @psalm-type ComposerDependencyListConfig = array{
  *     lock_file?: scalar|null, // Default: "%kernel.project_dir%/composer.lock"
  *     list_template?: scalar|null, // Default: "@ComposerDependencyList/list.html.twig"
@@ -1678,12 +1683,6 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         visibility?: scalar|null,
  *         directory_visibility?: scalar|null,
  *     }>,
- * }
- * @psalm-type DamaDoctrineTestConfig = array{
- *     enable_static_connection?: mixed, // Default: true
- *     enable_static_meta_data_cache?: bool, // Default: true
- *     enable_static_query_cache?: bool, // Default: true
- *     connection_keys?: list<mixed>,
  * }
  * @psalm-type JmsSerializerConfig = array{
  *     twig_enabled?: scalar|null, // Default: "default"
@@ -2168,10 +2167,11 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         expired_worker_ttl?: int, // How long to keep expired workers in cache (in seconds). // Default: 3600
  *     },
  * }
- * @psalm-type MakerConfig = array{
- *     root_namespace?: scalar|null, // Default: "App"
- *     generate_final_classes?: bool, // Default: true
- *     generate_final_entities?: bool, // Default: false
+ * @psalm-type DamaDoctrineTestConfig = array{
+ *     enable_static_connection?: mixed, // Default: true
+ *     enable_static_meta_data_cache?: bool, // Default: true
+ *     enable_static_query_cache?: bool, // Default: true
+ *     connection_keys?: list<mixed>,
  * }
  * @psalm-type ConfigType = array{
  *     imports?: ImportsConfig,

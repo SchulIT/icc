@@ -65,6 +65,12 @@
                                 <i class="fa-solid fa-comments"> </i> {{ 'students.show.chat.parents'|trans }}
                             </a>
                         {% endif %}
+
+                        {% if teacherPrivateMessageLink is not null %}
+                            <a href="{{ teacherPrivateMessageLink }}" class="btn btn-outline-primary btn-sm">
+                                <i class="fa-solid fa-comments"> </i> {{ 'students.show.chat.teachers'|trans }}
+                            </a>
+                        {% endif %}
                     </div>
                     {% endif %}
                 </div>

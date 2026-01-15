@@ -2886,6 +2886,7 @@ students:
         chat:
             student: Private Nachricht an Kind
             parents: Private Nachricht an Eltern
+            teachers: Private Nachricht an Fachlehrkräfte
 
     extra:
         label: Zusätzliche Informationen

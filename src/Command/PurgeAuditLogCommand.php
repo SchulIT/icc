@@ -19,14 +19,14 @@ readonly class PurgeAuditLogCommand {
     public function __invoke(SymfonyStyle $style, OutputInterface $output): int {
         /** @var Table[] $tables */
         $tables = array_filter(
-            $this->em->getConnection()->createSchemaManager()->listTables(),
-            fn(Table $table) => u($table->getName())->endsWith('_audit'));
+            $this->em->getConnection()->createSchemaManager()->introspectTables(),
+            fn(Table $table) => u($table->getObjectName()->toString())->trim('"')->endsWith('_audit'));
 
         $style->section(sprintf('Leere %d Audit-Tabellen', count($tables)));
 
         foreach($tables as $table) {
-            $style->writeln('> Leere ' . $table->getName());
-            $this->em->getConnection()->executeQuery('DELETE FROM ' . $table->getName());
+            $style->writeln('> Leere ' . $table->getObjectName()->toString());
+            $this->em->getConnection()->executeQuery('DELETE FROM ' . $table->getObjectName()->toSQL($this->em->getConnection()->getDatabasePlatform()));
         }
 
         $style->success('Fertig');

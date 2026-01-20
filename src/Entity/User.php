@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
+use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Ignore;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,6 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[UniqueEntity(fields: ['username'])]
 #[ORM\Entity]
+#[Auditable]
 class User implements UserInterface, Stringable {
 
     use IdTrait;
@@ -71,6 +74,7 @@ class User implements UserInterface, Stringable {
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
     #[ORM\ManyToMany(targetEntity: Message::class)]
+    #[Ignore]
     private $dismissedMessages;
 
     #[ORM\Column(type: 'boolean')]
@@ -84,6 +88,7 @@ class User implements UserInterface, Stringable {
 
     #[Assert\Length(max: 255)]
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Ignore]
     private ?string $pushoverToken = null;
 
     /**

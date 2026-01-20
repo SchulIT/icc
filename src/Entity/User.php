@@ -95,6 +95,7 @@ class User implements UserInterface, Stringable {
      * @var string[]
      */
     #[ORM\Column(type: 'json')]
+    #[Ignore]
     private array $data = [ ];
 
     public function __construct() {

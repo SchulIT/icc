@@ -6,7 +6,6 @@ use App\Converter\StudyGroupStringConverter;
 use App\Entity\AttendanceExcuseStatus;
 use App\Entity\DateLesson;
 use App\Entity\Exam;
-use App\Entity\ExcuseNote;
 use App\Entity\StudentAbsence;
 use App\Entity\StudentAbsenceAttachment;
 use App\Entity\StudentAbsenceMessage;
@@ -27,7 +26,6 @@ use App\Grouping\StudentAbsenceTuitionGroup;
 use App\Http\FlysystemFileResponse;
 use App\Repository\AppointmentRepositoryInterface;
 use App\Repository\ExamRepositoryInterface;
-use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\StudentAbsenceRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\StudyGroupRepositoryInterface;
@@ -43,6 +41,7 @@ use App\Sorting\Sorter;
 use App\Sorting\StudentAbsenceTuitionGroupStrategy;
 use App\Sorting\StudyGroupStrategy;
 use App\StudentAbsence\ApprovalHelper;
+use App\StudentAbsence\AssociatedExcuseNoteManager;
 use App\StudentAbsence\ExcuseStatusResolver;
 use App\Timetable\TimetableTimeHelper;
 use App\View\Filter\GradeFilter;
@@ -58,12 +57,12 @@ use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route(path: '/absence/students')]
@@ -383,8 +382,18 @@ class StudentAbsenceController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}', name: 'show_student_absence')]
-    public function show(#[MapEntity(mapping: ['uuid' => 'uuid'])] StudentAbsence $absence, StudentAbsenceSettings $settings, Request $request, StudentAbsenceRepositoryInterface $repository, ExamRepositoryInterface $examRepository,
-                         AppointmentRepositoryInterface $appointmentRepository, Sorter $sorter, ExcuseStatusResolver $excuseNoteStatusResolver, SectionResolverInterface $sectionResolver): Response {
+    public function show(
+        #[MapEntity(mapping: ['uuid' => 'uuid'])] StudentAbsence $absence,
+        StudentAbsenceSettings $settings,
+        Request $request,
+        StudentAbsenceRepositoryInterface $repository,
+        ExamRepositoryInterface $examRepository,
+        AppointmentRepositoryInterface $appointmentRepository,
+        Sorter $sorter,
+        ExcuseStatusResolver $excuseNoteStatusResolver,
+        SectionResolverInterface $sectionResolver,
+        AssociatedExcuseNoteManager $excuseNoteManager
+    ): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::View, $absence);
 
         $message = new StudentAbsenceMessage();
@@ -426,12 +435,17 @@ class StudentAbsenceController extends AbstractController {
             'exams' => $exams,
             'appointments' => $appointments,
             'excuseStatus' => $excuseNoteStatusResolver->getStatus($absence),
+            'associatedExcuseNotes' => $excuseNoteManager->getAssociatedExcuseNotes($absence),
             'section' => $sectionResolver->getSectionForDate($absence->getFrom()->getDate())
         ]);
     }
 
     #[Route(path: '/{uuid}/excuse_note', name: 'add_excuse_note_from_absence')]
-    public function createExcuseNote(#[MapEntity(mapping: ['uuid' => 'uuid'])] StudentAbsence $absence, Request $request, ExcuseNoteRepositoryInterface $excuseNoteRepository) {
+    public function createExcuseNote(
+        #[MapEntity(mapping: ['uuid' => 'uuid'])] StudentAbsence $absence,
+        Request $request,
+        AssociatedExcuseNoteManager $excuseNoteManager
+    ): RedirectResponse {
         $this->denyAccessUnlessGranted(ExcuseNoteVoter::New);
 
         /** @var User $user */
@@ -441,24 +455,10 @@ class StudentAbsenceController extends AbstractController {
             $this->addFlash('error', 'CSRF token invalid.');
         } else if($absence->getType()->getBookExcuseStatus() === AttendanceExcuseStatus::Excused) {
             $this->addFlash('success', 'absences.students.show.create_excuse_note.not_necessary');
+        } else if($user->getTeacher() === null) {
+            $this->addFlash('error', 'absences.students.show.create_excuse_note.teacher_required');
         } else {
-            $comment = 'student_absence:' . $absence->getUuid()->toString();
-            $existingNotes = $excuseNoteRepository->findByStudentAndComment($absence->getStudent(), $comment);
-
-            if(count($existingNotes) === 0) {
-                $excuseNote = (new ExcuseNote())
-                    ->setStudent($absence->getStudent())
-                    ->setComment($comment);
-            } else {
-                $excuseNote = array_shift($existingNotes);
-            }
-
-            $excuseNote
-                ->setFrom($absence->getFrom())
-                ->setUntil($absence->getUntil())
-                ->setExcusedBy($user->getTeacher());
-
-            $excuseNoteRepository->persist($excuseNote);
+            $excuseNoteManager->createOrUpdateExcuseNote($absence, $user->getTeacher());
             $this->addFlash('success', 'book.excuse_note.add.success');
         }
 

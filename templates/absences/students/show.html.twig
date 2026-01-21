@@ -264,6 +264,48 @@
                     {% endif %}
                 {% endif %}
 
+                {% if associatedExcuseNotes|length > 0 %}
+                    <div class="card">
+                        <div class="list-group list-group-flush">
+                            {% for excuseNote in associatedExcuseNotes %}
+                                <div class="list-group-item">
+                                    <div class="fw-bold"><i class="fas fa-pen-alt"></i> {{ 'absences.students.show.excuse_note.label'|trans }}</div>
+                                    <div>
+                                        <i class="fas fa-calendar-alt"></i>
+                                        <i class="fas fa-arrow-right"></i>
+                                        {{ excuseNote.from.date|format_date }}
+                                        {{ 'label.exam_lessons'|trans({'%start%': excuseNote.from.lesson, '%count%': 0}) }}
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-calendar-alt"></i>
+                                        <i class="fas fa-arrow-left"></i>
+                                        {{ excuseNote.until.date|format_date }}
+                                        {{ 'label.exam_lessons'|trans({'%start%': excuseNote.until.lesson, '%count%': 0}) }}
+                                    </div>
+                                    {% set canEdit = is_granted('edit', excuseNote) %}
+                                    {% set canRemove = is_granted('remove', excuseNote) %}
+
+                                    {% if canEdit or canRemove %}
+                                        <div>
+                                            {% if canEdit %}
+                                                <a href="{{ path('edit_excuse', { uuid: excuseNote.uuid }) }}" class="btn btn-outline-primary btn-sm" title="{{ 'book.excuse_note.edit.label'|trans }}">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            {% endif %}
+
+                                            {% if canRemove %}
+                                                <a href="{{ path('remove_excuse', { uuid: excuseNote.uuid }) }}" class="btn btn-outline-danger btn-sm" title="{{ 'book.excuse_note.remove.label'|trans }}">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
                 {% if absence.type.mustApprove %}
                     <div class="card">
                         <div class="card-body">

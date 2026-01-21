@@ -2045,9 +2045,12 @@ absences:
             affected_appointments:
                 label: Betroffene Termine
                 empty: Laut aktuellem Stand sind keine Termine betroffen.
+            excuse_note:
+                label: Entschuldigung
             create_excuse_note:
                 label: Entschuldigung erstellen
                 not_necessary: Aufgrund der Abwesenheitsart sind betroffene Unterrichtsstunden automatisch entschuldigt. Eine separate Entschuldigung wurde daher nicht angelegt.
+                teacher_required: Nur Lehrkräfte können entschuldigen.
             attachments:
                 empty: Keine Anhänge vorhanden.
                 add: Anhang hinzufügen

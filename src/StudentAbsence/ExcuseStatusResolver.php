@@ -39,17 +39,10 @@ class ExcuseStatusResolver {
         $attendances = ArrayUtils::createArrayWithKeys(
             $this->lessonAttendanceRepository->findByStudentAndDateRange($absence->getStudent(), $absence->getFrom()->getDate(), $absence->getUntil()->getDate(), true),
             function(Attendance $attendance) {
-                $keys = [];
-
-                $start = $attendance->getEntry() !== null ? $attendance->getEntry()->getLessonStart() : $attendance->getEvent()->getLessonStart();
-                $end = $attendance->getEntry() !== null ? $attendance->getEntry()->getLessonEnd() : $attendance->getEvent()->getLessonEnd();
+                $lesson = $attendance->getLesson();
                 $date = $attendance->getEntry() !== null ? $attendance->getEntry()->getLesson()->getDate() : $attendance->getEvent()->getDate();
 
-                for($lesson = $start; $lesson <= $end; $lesson++) {
-                    $keys[] = sprintf('%s-%d', $date->format('Y-m-d'), $lesson);
-                }
-
-                return $keys;
+                return sprintf('%s-%d', $date->format('Y-m-d'), $lesson);
             }
         );
 

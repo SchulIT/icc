@@ -2226,6 +2226,11 @@ book:
         remove_reason:
             timetable: '%student% besucht %tuition% bei %teacher%'
 
+        export:
+            schild_lernabschnittsdaten:
+                label: SchuelerLernabschnittsdaten.dat
+                info: Hier kann die SchuelerLernabschnittsdaten.dat hochgeladen werden, sodass Fehlstunden automatisch eingetragen werden.
+
     missing:
         label: Fehlende Einträge
         empty: Hurra, alles ist vollständig.

@@ -17,6 +17,7 @@ Encore
     .addEntry('zipper', './assets/js/zipper.js')
     .addEntry('display', './assets/js/display.js')
     .addEntry('book', './assets/js/book.js')
+    .addEntry('book-schild-lernabschnittsdaten', './assets/js/book-schild-lernabschnittsdaten.js')
     .addEntry('entry', './assets/js/entry.js')
     .addEntry('export-book', './assets/js/export-book.js')
     .addEntry('close-confirm', './assets/js/close-confirm.js')

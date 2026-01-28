@@ -2,6 +2,8 @@
 
 namespace App\Menu;
 
+use App\Book\Statistics\BookLessonCountGenerator;
+use App\Book\Statistics\MissingEntriesCalculator;
 use App\Entity\User;
 use App\Feature\Feature;
 use App\Feature\FeatureManager;
@@ -40,7 +42,8 @@ class Builder {
                                 private readonly BookSettings $bookSettings,
                                 private readonly ChatMessageRepositoryInterface $chatMessageRepository,
                                 private readonly ReturnItemRepositoryInterface $returnItemRepository,
-                                private readonly FeatureManager $featureManager)
+                                private readonly FeatureManager $featureManager,
+                                private readonly MissingEntriesCalculator $missingEntriesCalculator)
     {
     }
 
@@ -327,7 +330,7 @@ class Builder {
         $currentSection = $this->sectionResolver->getCurrentSection();
 
         if($user instanceof User && $user->getTeacher() !== null && $currentSection !== null) {
-            $count = $this->lessonRepository->countMissingByTeacher($user->getTeacher(), $currentSection->getStart(), $this->dateHelper->getToday());
+            $count = $this->missingEntriesCalculator->countMissingByTeacher($user->getTeacher(), $currentSection->getStart(), $this->dateHelper->getToday());
             $missing->setExtra('count', $count);
         }
 

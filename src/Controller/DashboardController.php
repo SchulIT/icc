@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Book\Statistics\MissingEntriesCalculator;
 use App\Book\Student\StudentInfoResolver;
 use App\Dashboard\DashboardViewCollapseHelper;
 use App\Dashboard\DashboardViewHelper;
@@ -61,6 +62,7 @@ class DashboardController extends AbstractController {
                               SectionResolverInterface $sectionResolver, StudyGroupRepositoryInterface $studyGroupRepository,
                               ParentsDayRepositoryInterface $parentsDayRepository, ChecklistStudentRepositoryInterface $checklistStudentRepository,
                               BookSettings $bookSettings, StudentInfoResolver $studentInfoResolver, TuitionRepositoryInterface $tuitionRepository,
+                              MissingEntriesCalculator $missingEntriesCalculator,
                               FeatureManager $featureManager, Request $request): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -158,7 +160,7 @@ class DashboardController extends AbstractController {
 
         if($featureManager->isFeatureEnabled(Feature::Book) && $user->isTeacher() ) {
             $currentSection = $sectionResolver->getCurrentSection();
-            $missingBookEntries = $lessonEntryRepository->countMissingByTeacher($user->getTeacher(), $currentSection->getStart(), $dateHelper->getToday()->modify('-1 day'));
+            $missingBookEntries = $missingEntriesCalculator->countMissingByTeacher($user->getTeacher(), $currentSection->getStart(), $dateHelper->getToday()->modify('-1 day'));
         }
 
         $checklists = [ ];

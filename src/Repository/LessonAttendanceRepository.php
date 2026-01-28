@@ -73,12 +73,13 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
 
     private function getDefaultQueryBuilder(): QueryBuilder {
         return $this->em->createQueryBuilder()
-            ->select(['a', 'e', 'l', 'ev'])
+            ->select(['a', 'e', 'l', 'ev', 'f'])
             ->from(Attendance::class, 'a')
             ->leftJoin('a.entry', 'e')
             ->leftJoin('a.student', 's')
             ->leftJoin('e.lesson', 'l')
-            ->leftJoin('a.event', 'ev');
+            ->leftJoin('a.event', 'ev')
+            ->leftJoin('a.flags', 'f');
     }
 
     private function applyDateRange(QueryBuilder $queryBuilder, DateTime $start, DateTime $end): QueryBuilder {

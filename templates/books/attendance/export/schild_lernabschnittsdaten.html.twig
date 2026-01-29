@@ -20,15 +20,28 @@
             <div class="col-md-9">
                 <div class="card">
                     <div class="card-body">
-                        <div class="row mb-3">
-                            <label class="col-form-label col-sm-2" for="file">SchuelerLernabschnittsdaten.dat</label>
-                            <div class="col-sm-10">
-                                <input class="form-control" type="file" id="file">
+                        <form>
+                            <div class="row mb-3">
+                                <label class="col-form-label col-sm-2" for="file">SchuelerLernabschnittsdaten.dat</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" type="file" id="file">
 
+                                </div>
                             </div>
-                        </div>
 
-                        <button type="button" id="export" class="btn btn-primary btn-sm" data-endpoint="{{ path('nrw_schild_lernabschnittsdaten_export_json') }}"><i class="fas fa-download"></i> {{ 'book.grades.export.schild_leistungsdaten.button'|trans }}</button>
+                            <div class="row mb-3">
+                                <label class="col-form-label col-sm-2" for="file">{{ 'book.attendance.export.schild_lernabschnittsdaten.until_date.label'|trans }}</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" type="date" id="date">
+
+                                    <div class="form-text mb-0 help-text">
+                                        {{ 'book.attendance.export.schild_lernabschnittsdaten.until_date.help'|trans }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="button" id="export" class="btn btn-primary btn-sm" data-endpoint="{{ path('nrw_schild_lernabschnittsdaten_export_json_bulk') }}"><i class="fas fa-download"></i> {{ 'book.grades.export.schild_leistungsdaten.button'|trans }}</button>
+                        </form>
                     </div>
                 </div>
 

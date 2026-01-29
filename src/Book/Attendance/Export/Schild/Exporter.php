@@ -18,6 +18,16 @@ readonly class Exporter {
 
     }
 
+    public function exportBulk(BulkRequest $bulkRequest): BulkResponse {
+        $bulkResponse = new BulkResponse();
+
+        foreach($bulkRequest->requests as $request) {
+            $bulkResponse->responses[] = $this->export($request);
+        }
+
+        return $bulkResponse;
+    }
+
     public function export(Request $request): Response|ErrorResponse {
         $violations = $this->validator->validate($request);
 
@@ -44,7 +54,7 @@ readonly class Exporter {
         $response->lastname = $request->lastname;
         $response->birthday = $request->birthday;
 
-        $info = $this->studentInfoResolver->resolveStudentInfo($student, $section, includeEvents: true);
+        $info = $this->studentInfoResolver->resolveStudentInfo($student, $section, includeEvents: true, untilDate: $request->untilDate);
 
         $response->absentLessons = $info->getAbsentLessonsCount();
         $response->notExcusedAbsentLessons = $info->getNotExcusedOrNotSetLessonsCount() + $info->getNotExcusedAbsentLessonsCount();

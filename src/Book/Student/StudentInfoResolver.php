@@ -13,6 +13,7 @@ use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Sorting\AttendanceStrategy;
 use App\Sorting\Sorter;
+use DateTime;
 
 class StudentInfoResolver extends AbstractResolver {
 
@@ -22,12 +23,12 @@ class StudentInfoResolver extends AbstractResolver {
         parent::__construct($attendanceRepository, $excuseNoteRepository, $excuseCollectionResolver);
     }
 
-    public function resolveStudentInfo(Student $student, Section $section, array $tuitions = [], bool $includeEvents = false): StudentInfo {
-        $attendances = $this->getAttendanceRepository()->findByStudent($student, $section->getStart(), $section->getEnd(), $includeEvents, $tuitions);
+    public function resolveStudentInfo(Student $student, Section $section, array $tuitions = [], bool $includeEvents = false, DateTime|null $untilDate = null): StudentInfo {
+        $attendances = $this->getAttendanceRepository()->findByStudent($student, $section->getStart(), $untilDate ?? $section->getEnd(), $includeEvents, $tuitions);
 
         $eventLessonCount = 0;
         if($includeEvents === true) {
-            $eventAttendances = $this->getAttendanceRepository()->findByStudentEvents($student, $section->getStart(), $section->getEnd());
+            $eventAttendances = $this->getAttendanceRepository()->findByStudentEvents($student, $section->getStart(), $untilDate ?? $section->getEnd());
             $eventLessonCount = count($eventAttendances);
         }
 
@@ -43,7 +44,7 @@ class StudentInfoResolver extends AbstractResolver {
         $lateAttendanceCollection = $this->computeAttendanceCollectionWithoutExcuses($late);
         $absentAttendanceCollection = $this->computeAttendanceCollection($absent, $excuseCollections);
         $presentAttendanceCollection = $this->computeAttendanceCollectionWithoutExcuses($present);
-        $comments = $this->commentRepository->findAllByDateAndStudent($student, $section->getStart(), $section->getEnd());
+        $comments = $this->commentRepository->findAllByDateAndStudent($student, $section->getStart(), $untilDate ?? $section->getEnd());
 
         return new StudentInfo(
             $student,

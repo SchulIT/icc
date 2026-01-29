@@ -6,6 +6,7 @@ let progressBar = document.getElementById('progress');
 let output = document.getElementById('output');
 
 let fileInput = document.getElementById('file');
+let dateInput = document.getElementById('date');
 
 let button = document.getElementById('export');
 let endpoint = button.getAttribute('data-endpoint');
@@ -13,6 +14,7 @@ let endpoint = button.getAttribute('data-endpoint');
 let batchSize = 40;
 
 button.addEventListener('click', async () => {
+    disableButton();
     clearOutput();
 
     appendOutput('Lese CSV-Datei ein');
@@ -21,7 +23,7 @@ button.addEventListener('click', async () => {
     let data = papa.parse(csvInput, {
         delimiter: '|',
         header: true,
-        dynamicTyping: false
+        dynamicTyping: true
     });
 
     if(data.errors.length > 0) {
@@ -37,57 +39,55 @@ button.addEventListener('click', async () => {
     let requests = [ ];
     let errors = [ ];
 
-    for(let i = 0; i < lines.length; i++) {
-        let line = lines[i];
-        let request = {
-            firstname: line.Vorname,
-            lastname: line.Nachname,
-            birthday: line.Geburtsdatum,
-            year: line.Jahr,
-            section: line.Abschnitt,
-            grade: line.Klasse
-        };
-
-        appendOutput('Frage Anwesenheit von ' + request.lastname +', ' + request.firstname + ' ab');
-
-        requests.push(axios.post(endpoint, request));
-
-        if((i+1) % batchSize === 0){
-            appendOutput('Warte, bis alle Anfragen abgeschlossen sind.');
-            try {
-                let response = await axios.all(requests);
-                responses = responses.concat(response.map(x => x.data));
-            } catch (e) {
-                errors.push(e.response.data.message);
-                appendError(e.response.data.message);
-                console.error(e);
-            }
-
-            setProgress(100.0 * (i / lines.length));
-
-            requests = [ ];
-        }
-    }
-
-    if(requests.length > 0) {
-        appendOutput('Warte, bis alle Anfragen abgeschlossen sind.');
-
-        try {
-            let response = await axios.all(requests);
-            responses = responses.concat(response.map(x => x.data));
-        } catch(e) {
-            errors.push(e.response.data.message);
-            appendError(e.response.data.message);
-            console.error(e);
-        }
-        setProgress(100.0);
-    }
-
     let map = new Map();
 
-    for(let response of responses) {
-        let key = response.firstname + "-" + response.lastname + "-" + response.birthday;
-        map.set(key, response);
+    let idx = 0;
+    while(idx < lines.length) {
+        let bulkRequest = {
+            requests: [ ]
+        };
+
+        let start = idx;
+        let end = Math.min(idx + batchSize, lines.length);
+
+        for(let line of lines.slice(start, end)) {
+            let request = {
+                firstname: line.Vorname,
+                lastname: line.Nachname,
+                birthday: line.Geburtsdatum,
+                year: line.Jahr,
+                section: line.Abschnitt,
+                grade: line.Klasse,
+                until: dateInput.value
+            };
+
+            appendOutput('Frage Anwesenheit von ' + request.lastname +', ' + request.firstname + ' ab');
+            bulkRequest.requests.push(request);
+        }
+
+        appendOutput('[ ' + start + " - " + end + '] Warte, bis alle Anfragen abgeschlossen sind.');
+        let response = await axios.post(endpoint, bulkRequest);
+
+        for(let singleResponse of response.data.responses) {
+            if('message' in singleResponse) {
+                appendError(singleResponse.message);
+                errors.push(singleResponse.message);
+                appendError(singleResponse.message);
+
+                console.error(singleResponse);
+            } else {
+                let key = singleResponse.firstname + "-" + singleResponse.lastname + "-" + singleResponse.birthday;
+                map.set(key, singleResponse);
+            }
+        }
+
+        idx += batchSize;
+
+        if(idx > lines.length) {
+            idx = lines.length;
+        }
+
+        setProgress(100.0 * (idx / lines.length));
     }
 
     appendOutput('Bearbeite Zeilen der SchuelerLeistungsdaten.dat');
@@ -123,6 +123,8 @@ button.addEventListener('click', async () => {
     for(let error of errors) {
         appendError(error);
     }
+
+    enableButton();
 });
 
 
@@ -132,11 +134,11 @@ function setProgress(percent) {
 }
 
 function enableButton() {
-    button.disabled = true;
+    button.disabled = false;
 }
 
 function disableButton() {
-    button.disabled = false;
+    button.disabled = true;
 }
 
 function clearOutput() {

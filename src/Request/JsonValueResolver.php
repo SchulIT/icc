@@ -55,7 +55,7 @@ class JsonValueResolver implements ValueResolverInterface {
             }
 
             return [ $object ];
-        } catch (SerializerException) {
+        } catch (SerializerException $e) {
             throw new BadRequestHttpException('Request body does not contain valid JSON.');
         }
     }

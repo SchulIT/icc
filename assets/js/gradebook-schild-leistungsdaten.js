@@ -56,7 +56,13 @@ button.addEventListener('click', async () => {
 
     appendOutput(lines.length + ' Zeilen eingelesen');
 
-    let uniqueStudents = [... new Map(lines.map(item => [ item.Vorname + "-" + item.Nachname + "-" + item.Geburtsdatum, item])).values()];
+    let studentsMap = new Map();
+    for(let line of lines) {
+        let key = line.Vorname + "-" + line.Nachname + "-" + line.Geburtsdatum;
+        studentsMap.set(key, line);
+    }
+
+    let uniqueStudents = Array.from(studentsMap.values());
     appendOutput(uniqueStudents.length + ' SuS eingelesen');
 
     let errors = [ ];

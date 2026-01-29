@@ -4,8 +4,8 @@ namespace App\Book\Grade\Export\Schild;
 
 use App\Book\Student\StudentInfoResolver;
 use App\Entity\Student as StudentEntity;
-use App\Entity\Tuition as TuitionEntity;
 use App\Entity\StudyGroupType;
+use App\Entity\Tuition as TuitionEntity;
 use App\Entity\TuitionGrade;
 use App\Entity\TuitionGradeCategory;
 use App\Repository\SectionRepositoryInterface;
@@ -15,39 +15,52 @@ use App\Repository\TuitionGradeRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class Exporter {
+readonly class Exporter {
 
-    public function __construct(private readonly ValidatorInterface                      $validator,
-                                private readonly StudentRepositoryInterface              $studentRepository,
-                                private readonly TuitionGradeRepositoryInterface $tuitionGradeRepository,
-                                private readonly TuitionRepositoryInterface $tuitionRepository,
-                                private readonly TuitionGradeCategoryRepositoryInterface $tuitionGradeCategoryRepository,
-                                private readonly StudentInfoResolver $infoResolver,
-                                private readonly SectionRepositoryInterface $sectionRepository) {
+    public function __construct(private ValidatorInterface $validator,
+                                private StudentRepositoryInterface $studentRepository,
+                                private TuitionGradeRepositoryInterface $tuitionGradeRepository,
+                                private TuitionRepositoryInterface $tuitionRepository,
+                                private TuitionGradeCategoryRepositoryInterface $tuitionGradeCategoryRepository,
+                                private StudentInfoResolver $infoResolver,
+                                private SectionRepositoryInterface $sectionRepository) {
 
     }
 
-    /**
-     * @throws ValidationException
-     * @throws StudentNotFoundException
-     * @throws GradeCategoryNotFoundException
-     * @throws SectionNotFoundException
-     */
-    public function export(Request $request): Response {
+    public function exportBulk(BulkRequest $bulkRequest): BulkResponse {
+        $bulkResponse = new BulkResponse();
+
+        foreach($bulkRequest->requests as $request) {
+            $bulkResponse->responses[] = $this->export($request);
+        }
+
+        return $bulkResponse;
+    }
+
+    public function export(Request $request): Response|ErrorResponse {
         $violations = $this->validator->validate($request);
 
         if (count($violations) > 0) {
-            throw new ValidationException($violations);
+            return new ErrorResponse('Anfrage ungültig.');
         }
 
         $section = $this->sectionRepository->findOneByNumberAndYear($request->section, $request->year);
 
         if($section === null) {
-            throw new SectionNotFoundException();
+            return new ErrorResponse(sprintf('Abschnitt %d/%d nicht gefunden.', $request->year, $request->section));
         }
 
-        $student = $this->getStudent($request);
-        $category = $this->getGradeCategory($request);
+        try {
+            $student = $this->getStudent($request);
+        } catch (StudentNotFoundException $e) {
+            return new ErrorResponse(sprintf('Schülerin oder Schüler %s, %s (%s) nicht gefunden: %s', $request->lastname, $request->firstname, $request->birthday->format('d.m.Y'), $e->getReason()));
+        }
+
+        try {
+            $category = $this->getGradeCategory($request);
+        } catch (GradeCategoryNotFoundException $e) {
+            return new ErrorResponse(sprintf('Notenkategorie mit der ID %s nicht gefunden.', $request->grade));
+        }
 
         $response = new Response();
         $response->section = $request->section;

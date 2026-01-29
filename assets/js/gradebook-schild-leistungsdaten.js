@@ -35,6 +35,7 @@ button.addEventListener('click', async () => {
         return;
     }
 
+    disableButton();
     clearOutput();
 
     appendOutput('Lese CSV-Datei ein');
@@ -56,53 +57,59 @@ button.addEventListener('click', async () => {
     appendOutput(lines.length + ' Zeilen eingelesen');
 
     let uniqueStudents = [... new Map(lines.map(item => [ item.firstname + "-" + item.lastname + "-" + item.Geburtsdatum, item])).values()];
-
     appendOutput(uniqueStudents.length + ' SuS eingelesen');
 
-    let responses = [ ];
-    let requests = [ ];
-
-    for(let i = 0; i < uniqueStudents.length; i++) {
-        let line = uniqueStudents[i];
-        let request = {
-            firstname: line.Vorname,
-            lastname: line.Nachname,
-            birthday: line.Geburtsdatum,
-            year: line.Jahr,
-            section: line.Abschnitt,
-            grade: categoryInput.value
-        };
-
-        appendOutput('Frage Noten von ' + request.lastname +', ' + request.firstname + ' ab');
-
-        requests.push(axios.post(endpoint, request));
-
-        if((i+1) % batchSize === 0){
-            appendOutput('Warte, bis alle Anfragen abgeschlossen sind.');
-            let response = await axios.all(requests);
-            responses = responses.concat(response.map(x => x.data));
-
-            setProgress(100.0 * (i / uniqueStudents.length));
-
-            requests = [ ];
-        }
-    }
-
-    if(requests.length > 0) {
-        appendOutput('Warte, bis alle Anfragen abgeschlossen sind.');
-        let response = await axios.all(requests);
-        responses = responses.concat(response.map(x => x.data));
-        setProgress(100.0);
-    }
-
+    let errors = [ ];
     let map = new Map();
 
-    for(let response of responses) {
-        for (let tuition of response.tuitions) {
-            let key = response.firstname + "-" + response.lastname + "-" + response.birthday + "-" + (tuition.subject ?? '') + "-" + (tuition.course ?? '') + "-" + (tuition.teacher ?? '');
+    let idx = 0;
+    while(idx < uniqueStudents.length) {
+        let bulkRequest = {
+            requests: [ ]
+        };
 
-            map.set(key, tuition);
+        let start = idx;
+        let end = Math.min(idx + batchSize, uniqueStudents.length);
+
+        for(let line of uniqueStudents.slice(start, end)) {
+            let request = {
+                firstname: line.Vorname,
+                lastname: line.Nachname,
+                birthday: line.Geburtsdatum,
+                year: line.Jahr,
+                section: line.Abschnitt,
+                grade: categoryInput.value
+            };
+
+            appendOutput('Frage Noten von ' + request.lastname +', ' + request.firstname + ' ab');
+            bulkRequest.requests.push(request);
         }
+
+        appendOutput('[ ' + start + " - " + end + '] Warte, bis alle Anfragen abgeschlossen sind.');
+        let response = await axios.post(endpoint, bulkRequest);
+
+        for(let singleResponse of response.data.responses) {
+            if('message' in singleResponse) {
+                appendError(singleResponse.message);
+                errors.push(singleResponse.message);
+                appendError(singleResponse.message);
+
+                console.error(singleResponse);
+            } else if ('tuitions' in singleResponse) {
+                for(let tuition of singleResponse.tuitions) {
+                    let key = singleResponse.firstname + "-" + singleResponse.lastname + "-" + singleResponse.birthday + "-" + (tuition.subject ?? '') + "-" + (tuition.course ?? '') + "-" + (tuition.teacher ?? '');
+                    map.set(key, tuition);
+                }
+            }
+        }
+
+        idx += batchSize;
+
+        if(idx > lines.length) {
+            idx = lines.length;
+        }
+
+        setProgress(100.0 * (idx / lines.length));
     }
 
     appendOutput('Bearbeite Zeilen der SchuelerLeistungsdaten.dat');
@@ -113,6 +120,7 @@ button.addEventListener('click', async () => {
         let data = map.get(key);
 
         if(data === undefined) {
+            console.log('Key ' + key + ' not found');
             setProgress(100.0 * (i / lines.length));
             continue;
         }
@@ -144,6 +152,12 @@ button.addEventListener('click', async () => {
     saveAs(file);
 
     appendOutput('Fertig');
+
+    for(let error of errors) {
+        appendError(error);
+    }
+
+    enableButton();
 });
 
 
@@ -153,11 +167,11 @@ function setProgress(percent) {
 }
 
 function enableButton() {
-    button.disabled = true;
+    button.disabled = false;
 }
 
 function disableButton() {
-    button.disabled = false;
+    button.disabled = true;
 }
 
 function clearOutput() {
@@ -166,6 +180,10 @@ function clearOutput() {
 
 function appendOutput(text) {
     output.innerHTML += '<br>' + text;
+}
+
+function appendError(text) {
+    appendOutput("⚠ " + text);
 }
 
 function convert(grade) {

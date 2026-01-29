@@ -35,10 +35,7 @@ button.addEventListener('click', async () => {
 
     appendOutput(lines.length + ' Zeilen eingelesen');
 
-    let responses = [ ];
-    let requests = [ ];
     let errors = [ ];
-
     let map = new Map();
 
     let idx = 0;
@@ -150,5 +147,5 @@ function appendOutput(text) {
 }
 
 function appendError(text) {
-    appendOutput("⚠️ " + text);
+    appendOutput("⚠ " + text);
 }

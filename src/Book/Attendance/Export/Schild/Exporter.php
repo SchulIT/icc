@@ -32,7 +32,7 @@ readonly class Exporter {
         $violations = $this->validator->validate($request);
 
         if (count($violations) > 0) {
-            return new ErrorResponse(sprintf('Anfrage ungültig.'));
+            return new ErrorResponse('Anfrage ungültig.');
         }
 
         $section = $this->sectionRepository->findOneByNumberAndYear($request->section, $request->year);

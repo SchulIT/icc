@@ -40,7 +40,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
 
         $code = Response::HTTP_INTERNAL_SERVER_ERROR;
 
-        $this->logger->error('An uncaught exception was thrown.', [
+        $this->logger->error($throwable->getMessage(), [
             'exception' => $throwable
         ]);
 

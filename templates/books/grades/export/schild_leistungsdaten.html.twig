@@ -47,6 +47,17 @@
                         </div>
 
                         <div class="row mb-3">
+                            <label class="col-form-label col-sm-2" for="file">{{ 'book.grades.export.schild_leistungsdaten.until_date.label'|trans }}</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="date" id="date">
+
+                                <div class="form-text mb-0 help-text" style="font-size: 100%">
+                                    {{ 'book.grades.export.schild_leistungsdaten.until_date.help'|trans }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
                             <label class="col-form-label col-sm-2" for="password">{{ 'label.password'|trans }}</label>
                             <div class="col-sm-10">
                                 <input type="password" class="form-control" id="password">
@@ -64,6 +75,21 @@
                                 </div>
                                 <div class="form-text mb-0 help-text" style="font-size: 100%">
                                     {{ 'book.grades.export.schild_leistungsdaten.convert.help'|trans }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-sm-2"></div>
+                            <div class="col-sm-10">
+                                <div class="form-check">
+                                    <input id="grades" class="form-check-input" type="checkbox" value="1" checked>
+                                    <label class="form-check-label" for="grades">
+                                        {{ 'book.grades.export.schild_leistungsdaten.include_grades.label'|trans }}
+                                    </label>
+                                </div>
+                                <div class="form-text mb-0 help-text" style="font-size: 100%">
+                                    {{ 'book.grades.export.schild_leistungsdaten.include_grades.help'|trans }}
                                 </div>
                             </div>
                         </div>

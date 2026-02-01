@@ -37,4 +37,8 @@ class Request {
     #[Serializer\SerializedName('grade')]
     #[Serializer\Type('string')]
     public string $grade;
+
+    #[Serializer\SerializedName('until')]
+    #[Serializer\Type('DateTime<"Y-m-d">')]
+    public DateTime $untilDate;
 }

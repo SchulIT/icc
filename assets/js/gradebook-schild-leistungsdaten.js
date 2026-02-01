@@ -10,7 +10,9 @@ let categoryInput = document.getElementById('category');
 let fileInput = document.getElementById('file');
 let passwordInput = document.getElementById('password');
 let convertInput = document.getElementById('convert');
+let dateInput = document.getElementById('date');
 let includeLessonsInput = document.getElementById('absent_lessons');
+let includeGradesInput = document.getElementById('grades');
 
 let button = document.getElementById('export');
 let endpoint = button.getAttribute('data-endpoint');
@@ -84,7 +86,8 @@ button.addEventListener('click', async () => {
                 birthday: line.Geburtsdatum,
                 year: line.Jahr,
                 section: line.Abschnitt,
-                grade: categoryInput.value
+                grade: categoryInput.value,
+                until: dateInput.value
             };
 
             appendOutput('Frage Noten von ' + request.lastname +', ' + request.firstname + ' ab');
@@ -131,7 +134,7 @@ button.addEventListener('click', async () => {
             continue;
         }
 
-        if(data.grade !== null) {
+        if(includeGradesInput.checked && data.grade !== null) {
             lines[i].Note = await crypto.decrypt(decryptedKey, JSON.parse(data.grade));
 
             if(convertInput.checked) {

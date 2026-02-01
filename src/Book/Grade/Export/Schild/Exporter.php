@@ -79,7 +79,7 @@ readonly class Exporter {
 
             $tuitionResponse->grade = $this->getGradeOrNull($grades, $tuition, $category)?->getEncryptedGrade();
 
-            $info = $this->infoResolver->resolveStudentInfo($student, $section, [$tuition]);
+            $info = $this->infoResolver->resolveStudentInfo($student, $section, [$tuition], untilDate: $request->untilDate);
 
             $tuitionResponse->absentLessons = $info->getAbsentLessonsCount();
             $tuitionResponse->nonExcusedLessons = $info->getNotExcusedOrNotSetLessonsCount();

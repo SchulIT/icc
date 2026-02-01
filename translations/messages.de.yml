@@ -2261,6 +2261,8 @@ book:
             pending: Es wurde noch kein Passwort für die Noten eingetragen. Der PDF-Export enthält keine Noten.
 
 
+
+
     excuse_note:
         label: Entschuldigungen
         add:
@@ -2320,9 +2322,17 @@ book:
                     label: Konvertiere Notenpunkte
                     help: Wenn diese Option aktiv ist, werden Notenpunkte in die zugehörige Note umgewandelt. Also bspw. 15 →  1+, 14 →  1 usw.
 
+                until_date:
+                    label: Stichtag
+                    help: Es werden nur Abwesenheiten bis zu diesem Datum (inklusive) berücksichtigt.
+
+                include_grades:
+                    label: Noten exportieren
+                    help: Wenn diese Option aktiv ist, werden Noten (pro Unterricht) exportiert. Wenn diese Option nicht aktiv ist, werden die Noten aus der SchülerLeistungsdaten.dat beibehalten.
+
                 include_absent_lessons:
                     label: Fehlstunden exportieren
-                    help: Wenn diese Option aktiv ist, werden Fehlstunden (pro Unterricht) exportiert.
+                    help: Wenn diese Option aktiv ist, werden Fehlstunden (pro Unterricht) exportiert. Wenn diese Option nicht aktiv ist, werden die Fehlstunden aus der SchülerLeistungsdaten.dat beibehalten.
                 button: Export starten
 
     integrity_check:

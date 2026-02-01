@@ -1,11 +1,12 @@
 {% extends "main.html.twig" %}
 
-{% block title %}{{ 'book.grades.label'|trans }}{% endblock %}
+{% block title %}{{ 'book.export.zp10.label'|trans }}{% endblock %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
         <li class="breadcrumb-item"><a href="{{ path('book') }}">{{ 'book.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('book_export') }}">{{ 'book.export.label'|trans }}</a> </li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
 {% endblock %}

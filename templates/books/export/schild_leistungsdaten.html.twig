@@ -1,12 +1,12 @@
 {% extends "main.html.twig" %}
 
-{% block title %}{{ 'book.grades.export.schild_leistungsdaten.label'|trans }}{% endblock %}
+{% block title %}{{ 'book.export.schild_leistungsdaten.label'|trans }}{% endblock %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
         <li class="breadcrumb-item"><a href="{{ path('book') }}">{{ 'book.label'|trans }}</a></li>
-        <li class="breadcrumb-item"><a href="{{ path('gradebook') }}">{{ 'book.grades.label'|trans }}</a> </li>
+        <li class="breadcrumb-item"><a href="{{ path('book_export') }}">{{ 'book.export.label'|trans }}</a> </li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
 {% endblock %}
@@ -47,12 +47,12 @@
                         </div>
 
                         <div class="row mb-3">
-                            <label class="col-form-label col-sm-2" for="file">{{ 'book.grades.export.schild_leistungsdaten.until_date.label'|trans }}</label>
+                            <label class="col-form-label col-sm-2" for="file">{{ 'book.export.schild_leistungsdaten.until_date.label'|trans }}</label>
                             <div class="col-sm-10">
                                 <input class="form-control" type="date" id="date">
 
                                 <div class="form-text mb-0 help-text" style="font-size: 100%">
-                                    {{ 'book.grades.export.schild_leistungsdaten.until_date.help'|trans }}
+                                    {{ 'book.export.schild_leistungsdaten.until_date.help'|trans }}
                                 </div>
                             </div>
                         </div>
@@ -70,11 +70,11 @@
                                 <div class="form-check">
                                     <input id="convert" class="form-check-input" type="checkbox" value="1">
                                     <label class="form-check-label" for="convert">
-                                        {{ 'book.grades.export.schild_leistungsdaten.convert.label'|trans }}
+                                        {{ 'book.export.schild_leistungsdaten.convert.label'|trans }}
                                     </label>
                                 </div>
                                 <div class="form-text mb-0 help-text" style="font-size: 100%">
-                                    {{ 'book.grades.export.schild_leistungsdaten.convert.help'|trans }}
+                                    {{ 'book.export.schild_leistungsdaten.convert.help'|trans }}
                                 </div>
                             </div>
                         </div>
@@ -85,11 +85,11 @@
                                 <div class="form-check">
                                     <input id="grades" class="form-check-input" type="checkbox" value="1" checked>
                                     <label class="form-check-label" for="grades">
-                                        {{ 'book.grades.export.schild_leistungsdaten.include_grades.label'|trans }}
+                                        {{ 'book.export.schild_leistungsdaten.include_grades.label'|trans }}
                                     </label>
                                 </div>
                                 <div class="form-text mb-0 help-text" style="font-size: 100%">
-                                    {{ 'book.grades.export.schild_leistungsdaten.include_grades.help'|trans }}
+                                    {{ 'book.export.schild_leistungsdaten.include_grades.help'|trans }}
                                 </div>
                             </div>
                         </div>
@@ -100,18 +100,18 @@
                                 <div class="form-check">
                                     <input id="absent_lessons" class="form-check-input" type="checkbox" value="1" checked>
                                     <label class="form-check-label" for="absent_lessons">
-                                        {{ 'book.grades.export.schild_leistungsdaten.include_absent_lessons.label'|trans }}
+                                        {{ 'book.export.schild_leistungsdaten.include_absent_lessons.label'|trans }}
                                     </label>
                                 </div>
                                 <div class="form-text mb-0 help-text" style="font-size: 100%">
-                                    {{ 'book.grades.export.schild_leistungsdaten.include_absent_lessons.help'|trans }}
+                                    {{ 'book.export.schild_leistungsdaten.include_absent_lessons.help'|trans }}
                                 </div>
                             </div>
                         </div>
 
                         <input type="hidden" name="key" value="{{ key }}" id="key">
 
-                        <button type="button" id="export" class="btn btn-primary btn-sm" data-endpoint="{{ path('nrw_schild_leistungsdaten_export_json_bulk') }}"><i class="fas fa-download"></i> {{ 'book.grades.export.schild_leistungsdaten.button'|trans }}</button>
+                        <button type="button" id="export" class="btn btn-primary btn-sm" data-endpoint="{{ path('nrw_schild_leistungsdaten_export_json_bulk') }}"><i class="fas fa-download"></i> {{ 'book.export.schild_leistungsdaten.button'|trans }}</button>
                     </div>
                 </div>
 
@@ -133,7 +133,7 @@
                             <i class="fas fa-info-circle"></i> {{ 'info.label'|trans }}
                         </h5>
 
-                        <p>{{ 'book.grades.export.schild_leistungsdaten.info'|trans }}</p>
+                        <p>{{ 'book.export.schild_leistungsdaten.info'|trans }}</p>
                     </div>
                 </div>
             </div>

@@ -169,6 +169,22 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ path('nrw_schild_leistungsdaten_export') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-download"></i> {{ 'book.export.schild_leistungsdaten.label'|trans }} <span class="badge text-bg-secondary">{{ 'book.export.nrw'|trans }}</span>
+                        </a>
+
+                        <a href="{{ path('nrw_schild_lernabschnittsdaten_export') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-download"></i> {{ 'book.export.schild_lernabschnittsdaten.label'|trans }} <span class="badge text-bg-secondary">{{ 'book.export.nrw'|trans }}</span>
+                        </a>
+
+                        <a href="{{ path('nrw_zp10') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-table"></i> {{ 'book.export.zp10.label'|trans }} <span class="badge text-bg-secondary">{{ 'book.export.nrw'|trans }}</span>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

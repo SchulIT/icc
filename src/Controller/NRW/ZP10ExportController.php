@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[AsController]
-#[Route('/book/gradebook/zp10')]
+#[Route('/book/export/zp10')]
 class ZP10ExportController extends AbstractController {
     #[Route('', name: 'nrw_zp10')]
     public function zp10(Request $request, Exporter $exporter, ConfigurationGuesser $configurationGuesser, ValidatorInterface $validator, TuitionGradebookSettings $gradebookSettings): Response {
@@ -30,7 +30,7 @@ class ZP10ExportController extends AbstractController {
             $view = $exporter->createView($configuration);
         }
 
-        return $this->render('books/grades/export/zp10.html.twig', [
+        return $this->render('books/export/zp10.html.twig', [
             'form' => $form->createView(),
             'view' => $view,
             'key' => $gradebookSettings->getEncryptedMasterKey(),

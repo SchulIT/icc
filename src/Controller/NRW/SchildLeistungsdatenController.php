@@ -14,12 +14,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/book/gradebook/schild')]
+#[Route('/book/export/schild/leistungsdaten')]
 class SchildLeistungsdatenController extends AbstractController {
 
     #[Route('', name: 'nrw_schild_leistungsdaten_export')]
     public function index(TuitionGradeCategoryRepositoryInterface $categoryRepository, TuitionGradebookSettings $gradebookSettings): Response {
-        return $this->render('books/grades/export/schild_leistungsdaten.html.twig', [
+        return $this->render('books/export/schild_leistungsdaten.html.twig', [
             'categories' => $categoryRepository->findAll(),
             'key' => $gradebookSettings->getEncryptedMasterKey(),
             'ttl' => $gradebookSettings->getTtlForSessionStorage(),

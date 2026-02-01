@@ -1,11 +1,12 @@
 {% extends "main.html.twig" %}
 
-{% block title %}{{ 'book.attendance.export.schild_lernabschnittsdaten.label'|trans }}{% endblock %}
+{% block title %}{{ 'book.export.schild_lernabschnittsdaten.label'|trans }}{% endblock %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
         <li class="breadcrumb-item"><a href="{{ path('book') }}">{{ 'book.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('book_export') }}">{{ 'book.export.label'|trans }}</a> </li>
         <li class="breadcrumb-item">{{ block('title') }}</li>
     </ol>
 {% endblock %}
@@ -30,17 +31,17 @@
                             </div>
 
                             <div class="row mb-3">
-                                <label class="col-form-label col-sm-2" for="file">{{ 'book.attendance.export.schild_lernabschnittsdaten.until_date.label'|trans }}</label>
+                                <label class="col-form-label col-sm-2" for="file">{{ 'book.export.schild_lernabschnittsdaten.until_date.label'|trans }}</label>
                                 <div class="col-sm-10">
                                     <input class="form-control" type="date" id="date">
 
                                     <div class="form-text mb-0 help-text">
-                                        {{ 'book.attendance.export.schild_lernabschnittsdaten.until_date.help'|trans }}
+                                        {{ 'book.export.schild_lernabschnittsdaten.until_date.help'|trans }}
                                     </div>
                                 </div>
                             </div>
 
-                            <button type="button" id="export" class="btn btn-primary btn-sm" data-endpoint="{{ path('nrw_schild_lernabschnittsdaten_export_json_bulk') }}"><i class="fas fa-download"></i> {{ 'book.grades.export.schild_leistungsdaten.button'|trans }}</button>
+                            <button type="button" id="export" class="btn btn-primary btn-sm" data-endpoint="{{ path('nrw_schild_lernabschnittsdaten_export_json_bulk') }}"><i class="fas fa-download"></i> {{ 'book.export.schild_leistungsdaten.button'|trans }}</button>
                         </form>
                     </div>
                 </div>
@@ -63,7 +64,7 @@
                             <i class="fas fa-info-circle"></i> {{ 'info.label'|trans }}
                         </h5>
 
-                        <p>{{ 'book.attendance.export.schild_lernabschnittsdaten.info'|trans }}</p>
+                        <p>{{ 'book.export.schild_lernabschnittsdaten.info'|trans }}</p>
                     </div>
                 </div>
             </div>

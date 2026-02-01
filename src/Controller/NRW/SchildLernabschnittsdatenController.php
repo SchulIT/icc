@@ -14,12 +14,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Throwable;
 
-#[Route('/book/attendance/schild')]
+#[Route('/book/export/schild/lernabschnittsdaten')]
 class SchildLernabschnittsdatenController extends AbstractController {
 
     #[Route('', name: 'nrw_schild_lernabschnittsdaten_export')]
     public function index(): Response {
-        return $this->render('books/attendance/export/schild_lernabschnittsdaten.html.twig');
+        return $this->render('books/export/schild_lernabschnittsdaten.html.twig');
     }
 
     #[Route('/json', name: 'nrw_schild_lernabschnittsdaten_export_json')]

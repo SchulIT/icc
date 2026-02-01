@@ -2226,14 +2226,6 @@ book:
         remove_reason:
             timetable: '%student% besucht %tuition% bei %teacher%'
 
-        export:
-            schild_lernabschnittsdaten:
-                label: SchuelerLernabschnittsdaten.dat
-                info: Hier kann die SchuelerLernabschnittsdaten.dat hochgeladen werden, sodass Fehlstunden automatisch eingetragen werden.
-
-                until_date:
-                    label: Stichtag
-                    help: Es werden nur Abwesenheiten bis zu diesem Datum (inklusive) berücksichtigt.
 
     missing:
         label: Fehlende Einträge
@@ -2260,8 +2252,38 @@ book:
             success: Passwort erfolgreich angewendet, der PDF-Export enthält Noten.
             pending: Es wurde noch kein Passwort für die Noten eingetragen. Der PDF-Export enthält keine Noten.
 
+        nrw: NRW
 
+        schild_leistungsdaten:
+            label: SchILD Leistungsdaten-Export
+            info: Hier kann eine SchILD Leistungsdaten.dat hochgeladen werden, sodass Noten und Fehlstunden automatisch eingetragen werden.
+            convert:
+                label: Konvertiere Notenpunkte
+                help: Wenn diese Option aktiv ist, werden Notenpunkte in die zugehörige Note umgewandelt. Also bspw. 15 →  1+, 14 →  1 usw.
 
+            until_date:
+                label: Stichtag
+                help: Es werden nur Abwesenheiten bis zu diesem Datum (inklusive) berücksichtigt.
+
+            include_grades:
+                label: Noten exportieren
+                help: Wenn diese Option aktiv ist, werden Noten (pro Unterricht) exportiert. Wenn diese Option nicht aktiv ist, werden die Noten aus der SchülerLeistungsdaten.dat beibehalten.
+
+            include_absent_lessons:
+                label: Fehlstunden exportieren
+                help: Wenn diese Option aktiv ist, werden Fehlstunden (pro Unterricht) exportiert. Wenn diese Option nicht aktiv ist, werden die Fehlstunden aus der SchülerLeistungsdaten.dat beibehalten.
+            button: Export starten
+
+        schild_lernabschnittsdaten:
+            label: SchILD Lernabschnittsdaten-Export
+            info: Hier kann die SchuelerLernabschnittsdaten.dat hochgeladen werden, sodass Fehlstunden automatisch eingetragen werden.
+
+            until_date:
+                label: Stichtag
+                help: Es werden nur Abwesenheiten bis zu diesem Datum (inklusive) berücksichtigt.
+
+        zp10:
+            label: NRW ZP10-Übersicht
 
     excuse_note:
         label: Entschuldigungen
@@ -2315,25 +2337,7 @@ book:
             info: Die Excel-Datei ist mit demselben Passwort verschlüsselt, das auch hier eingegeben werden muss.
             download: Download
 
-            schild_leistungsdaten:
-                label: SchILD Leistungsdaten-Export
-                info: Hier kann eine SchILD Leistungsdaten.dat hochgeladen werden, sodass Noten und Fehlstunden automatisch eingetragen werden.
-                convert:
-                    label: Konvertiere Notenpunkte
-                    help: Wenn diese Option aktiv ist, werden Notenpunkte in die zugehörige Note umgewandelt. Also bspw. 15 →  1+, 14 →  1 usw.
 
-                until_date:
-                    label: Stichtag
-                    help: Es werden nur Abwesenheiten bis zu diesem Datum (inklusive) berücksichtigt.
-
-                include_grades:
-                    label: Noten exportieren
-                    help: Wenn diese Option aktiv ist, werden Noten (pro Unterricht) exportiert. Wenn diese Option nicht aktiv ist, werden die Noten aus der SchülerLeistungsdaten.dat beibehalten.
-
-                include_absent_lessons:
-                    label: Fehlstunden exportieren
-                    help: Wenn diese Option aktiv ist, werden Fehlstunden (pro Unterricht) exportiert. Wenn diese Option nicht aktiv ist, werden die Fehlstunden aus der SchülerLeistungsdaten.dat beibehalten.
-                button: Export starten
 
     integrity_check:
         label: Plausibilitätscheck

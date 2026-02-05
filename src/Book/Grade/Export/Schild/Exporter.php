@@ -82,7 +82,7 @@ readonly class Exporter {
             $info = $this->infoResolver->resolveStudentInfo($student, $section, [$tuition], untilDate: $request->untilDate);
 
             $tuitionResponse->absentLessons = $info->getAbsentLessonsCount();
-            $tuitionResponse->nonExcusedLessons = $info->getNotExcusedOrNotSetLessonsCount();
+            $tuitionResponse->nonExcusedLessons = $info->getNotExcusedOrNotSetLessonsCount() + $info->getNotExcusedAbsentLessonsCount();
 
             foreach($tuition->getTeachers() as $teacher) {
                 $tuitionResponseClone = clone $tuitionResponse;

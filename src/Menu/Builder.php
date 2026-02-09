@@ -35,7 +35,6 @@ class Builder {
     public function __construct(private readonly FactoryInterface $factory,
                                 private readonly AuthorizationCheckerInterface $authorizationChecker,
                                 private readonly WikiArticleRepositoryInterface $wikiRepository,
-                                private readonly TimetableLessonRepositoryInterface $lessonRepository,
                                 private readonly TokenStorageInterface $tokenStorage,
                                 private readonly DateHelper $dateHelper,
                                 private readonly SectionResolverInterface $sectionResolver,

@@ -23,7 +23,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[Route(path: '/book/excuses')]
 class ExcuseNoteController extends AbstractController {
 
-    private const ItemsPerPage = 25;
+    private const int ItemsPerPage = 25;
 
     public function __construct(private readonly ExcuseNoteRepositoryInterface $repository)
     {
@@ -89,7 +89,9 @@ class ExcuseNoteController extends AbstractController {
             $this->repository->persist($excuse);
 
             $this->addFlash('success', 'book.excuse_note.add.success');
-            return $this->redirectToRoute('excuse_notes');
+            return $this->redirectToRoute('excuse_notes', [
+                'student' => $excuse->getStudent()->getUuid()
+            ]);
         }
 
         return $this->render('books/excuse_note/add.html.twig', [
@@ -108,7 +110,9 @@ class ExcuseNoteController extends AbstractController {
             $this->repository->persist($excuse);
 
             $this->addFlash('success', 'book.excuse_note.edit.success');
-            return $this->redirectToRoute('excuse_notes');
+            return $this->redirectToRoute('excuse_notes', [
+                'student' => $excuse->getStudent()->getUuid()
+            ]);
         }
 
         return $this->render('books/excuse_note/edit.html.twig', [
@@ -138,7 +142,9 @@ class ExcuseNoteController extends AbstractController {
             $this->repository->remove($excuse);
             $this->addFlash('success', 'book.excuse_note.remove.success');
 
-            return $this->redirectToRoute('excuse_notes');
+            return $this->redirectToRoute('excuse_notes', [
+                'student' => $excuse->getStudent()->getUuid()
+            ]);
         }
 
         return $this->render('books/excuse_note/remove.html.twig', [

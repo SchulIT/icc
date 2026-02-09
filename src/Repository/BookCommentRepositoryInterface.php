@@ -19,6 +19,8 @@ interface BookCommentRepositoryInterface {
      */
     public function findAllByDateAndStudent(Student $student, DateTime $start, DateTime $end): array;
 
+    public function countByDateAndStudent(Student $student, DateTime $start, DateTime $end): int;
+
     /**
      * @param Grade $grade
      * @param Section $section

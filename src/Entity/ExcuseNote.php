@@ -6,6 +6,8 @@ use App\Validator\DateIsNotInPast;
 use App\Validator\DateLessonGreaterThan;
 use DateTime;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -41,8 +43,16 @@ class ExcuseNote {
     #[ORM\JoinColumn]
     private ?Teacher $excusedBy = null;
 
+    /**
+     * @var Collection<Attendance>
+     */
+    #[ORM\ManyToMany(targetEntity: Attendance::class, mappedBy: 'associatedExcuses', cascade: ['persist'], orphanRemoval: true)]
+    private Collection $associatedAttendances;
+
     public function __construct() {
         $this->uuid = Uuid::uuid4();
+
+        $this->associatedAttendances = new ArrayCollection();
     }
 
     public function getStudent(): ?Student {
@@ -88,6 +98,21 @@ class ExcuseNote {
     public function setExcusedBy(?Teacher $excusedBy): ExcuseNote {
         $this->excusedBy = $excusedBy;
         return $this;
+    }
+
+    public function addAssociatedAttendance(Attendance $attendance): void {
+        $this->associatedAttendances->add($attendance);
+    }
+
+    public function removeAssociatedAttendance(Attendance $attendance): void {
+        $this->associatedAttendances->removeElement($attendance);
+    }
+
+    /**
+     * @return Collection<Attendance>
+     */
+    public function getAssociatedAttendances(): Collection {
+        return $this->associatedAttendances;
     }
 
     /**

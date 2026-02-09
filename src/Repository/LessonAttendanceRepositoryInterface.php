@@ -2,14 +2,16 @@
 
 namespace App\Repository;
 
-use App\Entity\DateLesson;
 use App\Entity\Attendance;
+use App\Entity\AttendanceFlag;
 use App\Entity\LessonEntry;
 use App\Entity\Student;
 use App\Entity\Tuition;
 use DateTime;
 
 interface LessonAttendanceRepositoryInterface {
+
+    public function findOneById(int $id): ?Attendance;
 
     public function countAbsent(LessonEntry $entry): int;
 
@@ -84,6 +86,38 @@ interface LessonAttendanceRepositoryInterface {
      * @return int
      */
     public function countAnyByStudent(Student $student): int;
+
+    /**
+     * @param Tuition[] $tuitions
+     */
+    public function countAllByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]): int;
+
+    /**
+     * @param Tuition[] $tuitions
+     */
+    public function countPresentByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]): int;
+
+    /**
+     * @param Tuition[] $tuitions
+     */
+    public function countAbsentByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]): int;
+
+    /**
+     * @param Tuition[] $tuitions
+     */
+    public function countLateMinutesByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]): int;
+
+    /**
+     * @param Tuition[] $tuitions
+     */
+    public function countNotExcusedLessonsCountByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]): int;
+
+    /**
+     * @param Tuition[] $tuitions
+     */
+    public function countExcuseStatusNotSetByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]): int;
+
+    public function countFlagByStudent(AttendanceFlag $flag, Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]);
 
     public function removeAnyStudentAttendance(Student $student): int;
 

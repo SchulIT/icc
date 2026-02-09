@@ -3,6 +3,7 @@
 namespace App\Book\Grade\Export\Schild;
 
 use App\Book\Student\StudentInfoResolver;
+use App\Book\Student\StudentStatisticsCounterResolver;
 use App\Entity\Student as StudentEntity;
 use App\Entity\StudyGroupType;
 use App\Entity\Tuition as TuitionEntity;
@@ -22,7 +23,7 @@ readonly class Exporter {
                                 private TuitionGradeRepositoryInterface $tuitionGradeRepository,
                                 private TuitionRepositoryInterface $tuitionRepository,
                                 private TuitionGradeCategoryRepositoryInterface $tuitionGradeCategoryRepository,
-                                private StudentInfoResolver $infoResolver,
+                                private StudentStatisticsCounterResolver $studentStatisticsCounterResolver,
                                 private SectionRepositoryInterface $sectionRepository) {
 
     }
@@ -79,10 +80,10 @@ readonly class Exporter {
 
             $tuitionResponse->grade = $this->getGradeOrNull($grades, $tuition, $category)?->getEncryptedGrade();
 
-            $info = $this->infoResolver->resolveStudentInfo($student, $section, [$tuition], untilDate: $request->untilDate);
+            $counter = $this->studentStatisticsCounterResolver->resolve($student, $section, [$tuition], untilDate: $request->untilDate);
 
-            $tuitionResponse->absentLessons = $info->getAbsentLessonsCount();
-            $tuitionResponse->nonExcusedLessons = $info->getNotExcusedOrNotSetLessonsCount() + $info->getNotExcusedAbsentLessonsCount();
+            $tuitionResponse->absentLessons = $counter->absentLessonsCount;
+            $tuitionResponse->nonExcusedLessons = $counter->notExcusedLessonsCount + $counter->excuseStatusNotSetLessonsCount;
 
             foreach($tuition->getTeachers() as $teacher) {
                 $tuitionResponseClone = clone $tuitionResponse;

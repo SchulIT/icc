@@ -9,6 +9,8 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 
 interface ExcuseNoteRepositoryInterface {
 
+    public function findOneById(int $id): ?ExcuseNote;
+
     /**
      * @param Student[] $students
      * @param DateTime $date
@@ -44,6 +46,11 @@ interface ExcuseNoteRepositoryInterface {
      * @return ExcuseNote[]
      */
     public function findByStudents(array $students): array;
+
+    /**
+     * @return ExcuseNote[]
+     */
+    public function findAll(): array;
 
     public function persist(ExcuseNote $note): void;
 

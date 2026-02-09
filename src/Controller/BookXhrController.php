@@ -7,11 +7,11 @@ use App\Book\AttendanceSuggestion\SuggestionResolver;
 use App\Book\Lesson\LessonCancelHelper;
 use App\Book\Student\AbsenceExcuseResolver;
 use App\Book\StudentsResolver;
+use App\Entity\Attendance;
 use App\Entity\AttendanceExcuseStatus;
+use App\Entity\AttendanceFlag;
 use App\Entity\AttendanceType;
 use App\Entity\Grade;
-use App\Entity\Attendance;
-use App\Entity\AttendanceFlag;
 use App\Entity\LessonEntry;
 use App\Entity\Section;
 use App\Entity\Student;
@@ -36,14 +36,14 @@ use App\Request\Book\CancelLessonRequest;
 use App\Request\Book\UpdateAttendanceRequest;
 use App\Request\JsonPayload;
 use App\Response\Book\AttendanceSuggestion;
+use App\Response\Book\Grade as GradeResponse;
 use App\Response\Book\RemoveSuggestion;
 use App\Response\Book\Student as StudentResponse;
-use App\Response\Book\StudyGroupStudents;
-use App\Response\Book\Teacher as TeacherResponse;
-use App\Response\Book\Subject as SubjectResponse;
-use App\Response\Book\Tuition as TuitionResponse;
-use App\Response\Book\Grade as GradeResponse;
 use App\Response\Book\StudyGroup as StudyGroupResponse;
+use App\Response\Book\StudyGroupStudents;
+use App\Response\Book\Subject as SubjectResponse;
+use App\Response\Book\Teacher as TeacherResponse;
+use App\Response\Book\Tuition as TuitionResponse;
 use App\Response\ViolationList;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\AttendanceVoter;
@@ -56,7 +56,6 @@ use DateTime;
 use JMS\Serializer\SerializerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -210,7 +209,7 @@ class BookXhrController extends AbstractController {
     #[OA\Parameter(name: 'end', description: 'Ende der Unterrichtsstunde', in: 'query')]
     #[Route(path: '/entry', name: 'xhr_lesson_entry', methods: ['GET'])]
     public function entry(Request $request, TimetableLessonRepositoryInterface $lessonRepository, SuggestionResolver $suggestionResolver,
-                          SerializerInterface $serializer, AbsenceExcuseResolver $excuseResolver, BookSettings $settings,
+                          SerializerInterface $serializer,
                           RemoveSuggestionResolver $removeSuggestionResolver, StudentsResolver $studentsResolver, LessonAttendanceFlagRepositoryInterface $attendanceFlagRepository): Response {
         $this->denyAccessUnlessGranted(LessonEntryVoter::New);
 
@@ -244,9 +243,6 @@ class BookXhrController extends AbstractController {
             $attendances = [ ];
             /** @var Attendance $attendance */
             foreach($entry->getAttendances() as $attendance) {
-                $excuseInfo = $excuseResolver->resolve($attendance->getStudent(), $lesson->getDate(), $lesson->getDate(), false, [ $entry->getTuition() ]);
-                $excuses = $excuseInfo->getExcuseCollectionForLesson($attendance);
-
                 $attendances[] = [
                     'student' => $this->getStudent($attendance->getStudent()),
                     'minutes' => $attendance->getLateMinutes(),
@@ -254,7 +250,7 @@ class BookXhrController extends AbstractController {
                     'comment' => $attendance->getComment(),
                     'excuse_status' => $attendance->getExcuseStatus()->value,
                     'zero_absent_lesson' => $attendance->isZeroAbsentLesson(),
-                    'has_excuses' => $excuses->count() > 0,
+                    'has_excuses' => $attendance->getAssociatedExcuses()->count() > 0,
                     'type' => $attendance->getType()->value,
                     'flags' => $attendance->getFlags()->map(fn(AttendanceFlag $flag) => $flag->getId())->toArray()
                 ];

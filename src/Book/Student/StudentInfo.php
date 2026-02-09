@@ -2,30 +2,25 @@
 
 namespace App\Book\Student;
 
-use App\Entity\BookComment;
-use App\Entity\AttendanceExcuseStatus;
 use App\Entity\AttendanceFlag;
-use App\Entity\AttendanceType;
+use App\Entity\BookComment;
 use App\Entity\Student;
-use App\Entity\Attendance as LessonAttendanceEntity;
 use DateTime;
 
-class StudentInfo {
+readonly class StudentInfo {
 
     /**
      * @param LessonAttendance[] $lateLessonAttendances
      * @param LessonAttendance[] $absentLessonAttendances
      * @param LessonAttendance[] $presentLessonAttendances
      * @param BookComment[] $comments
-     * @param AttendanceFlagCount[] $attendanceFlagCounts
      */
-    public function __construct(private readonly Student $student,
-                                private readonly int $totalLessonsCount,
-                                private readonly array $lateLessonAttendances,
-                                private readonly array $absentLessonAttendances,
-                                private readonly array $presentLessonAttendances,
-                                private readonly array $comments,
-                                private readonly array $attendanceFlagCounts)
+    public function __construct(private Student $student,
+                                private StudentStatisticsCounter $counter,
+                                private array $lateLessonAttendances,
+                                private array $absentLessonAttendances,
+                                private array $presentLessonAttendances,
+                                private array $comments)
     {
     }
 
@@ -34,7 +29,7 @@ class StudentInfo {
     }
 
     public function getTotalLessonsCount(): int {
-        return $this->totalLessonsCount;
+        return $this->counter->totalLessonsCount;
     }
 
     /**
@@ -59,53 +54,19 @@ class StudentInfo {
     }
 
     public function getLateMinutesCount(): int {
-        return array_sum(
-            array_map(
-                fn(LessonAttendance $attendance) => $attendance->getAttendance()->getLateMinutes(),
-                $this->getLateLessonAttendances()
-            )
-        );
+        return $this->counter->lateMinutes;
     }
 
     public function getAbsentLessonsCount(): int {
-        return array_sum(
-            array_map(
-                fn(LessonAttendance $attendance) => $attendance->getAttendance()->getType() === AttendanceType::Absent
-                    && $attendance->getAttendance()->isZeroAbsentLesson() === false ? 1 : 0,
-                $this->getAbsentLessonAttendances()
-            )
-        );
+        return $this->counter->absentLessonsCount;
     }
 
-    public function getNotExcusedOrNotSetLessonsCount(): int {
-        return array_sum(
-            array_map(
-                fn(LessonAttendance $attendance) => $attendance->getAttendance()->getExcuseStatus() === AttendanceExcuseStatus::NotSet
-                    && $attendance->getExcuses()->count() === 0
-                    && $attendance->getAttendance()->isZeroAbsentLesson() === false ? 1 : 0,
-                $this->getAbsentLessonAttendances()
-            )
-        );
+    public function getExcuseStatusNotSetLessonsCount(): int {
+        return $this->counter->excuseStatusNotSetLessonsCount;
     }
 
     public function getNotExcusedAbsentLessonsCount(): int {
-        return array_sum(
-            array_map(
-                fn(LessonAttendance $attendance) => $attendance->getAttendance()->getExcuseStatus() === AttendanceExcuseStatus::NotExcused
-                    && $attendance->getExcuses()->count() === 0,
-                $this->getAbsentLessonAttendances()
-            )
-        );
-    }
-
-    public function getExcuseCollectionForLesson(LessonAttendanceEntity $attendance): ExcuseCollection {
-        foreach($this->absentLessonAttendances as $absentLessonAttendance) {
-            if($absentLessonAttendance->getAttendance() === $attendance) {
-                return $absentLessonAttendance->getExcuses();
-            }
-        }
-
-        return new ExcuseCollection(clone $attendance->getEntry()->getLesson()->getDate(), $attendance->getEntry()->getLessonStart());
+        return $this->counter->notExcusedLessonsCount;
     }
 
     public function getAbsentAttendance(DateTime $dateTime, int $lessonNumber): ?LessonAttendance {
@@ -139,11 +100,11 @@ class StudentInfo {
      * @return AttendanceFlagCount[]
      */
     public function getAttendanceFlagCounts(): array {
-        return $this->attendanceFlagCounts;
+        return $this->counter->attendanceFlagCounts;
     }
 
     public function getAttendanceFlagCount(AttendanceFlag $flag): ?AttendanceFlagCount {
-        foreach($this->attendanceFlagCounts as $attendanceFlagCount) {
+        foreach($this->counter->attendanceFlagCounts as $attendanceFlagCount) {
             if($attendanceFlagCount->getFlag()->getId() === $flag->getId()) {
                 return $attendanceFlagCount;
             }

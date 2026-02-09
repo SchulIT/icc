@@ -3,33 +3,27 @@
 namespace App\Controller;
 
 use App\Book\Statistics\MissingEntriesCalculator;
-use App\Book\Student\StudentInfoResolver;
+use App\Book\Student\StudentStatisticsCounterResolver;
 use App\Dashboard\DashboardViewCollapseHelper;
 use App\Dashboard\DashboardViewHelper;
-use App\Entity\GradeMembership;
 use App\Entity\Section;
 use App\Entity\Substitution;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Feature\Feature;
 use App\Feature\FeatureManager;
-use App\Repository\BookIntegrityCheckViolationRepositoryInterface;
 use App\Repository\ChecklistStudentRepositoryInterface;
 use App\Repository\ImportDateTypeRepositoryInterface;
 use App\Repository\NotificationRepositoryInterface;
 use App\Repository\ParentsDayRepositoryInterface;
 use App\Repository\SectionRepositoryInterface;
-use App\Repository\StudyGroupRepositoryInterface;
-use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use App\Section\SectionResolverInterface;
 use App\Security\Voter\ChecklistStudentVoter;
-use App\Security\Voter\ParentsDayAppointmentVoter;
 use App\Settings\BookSettings;
 use App\Settings\DashboardSettings;
 use App\Settings\TimetableSettings;
-use App\Utils\EnumArrayUtils;
 use App\View\Filter\RoomFilter;
 use App\View\Filter\StudentFilter;
 use App\View\Filter\TeacherFilter;
@@ -57,11 +51,11 @@ class DashboardController extends AbstractController {
                               DashboardViewHelper $dashboardViewHelper, DashboardViewCollapseHelper $dashboardViewMergeHelper,
                               DateHelper $dateHelper, DashboardSettings $settings, TimetableSettings $timetableSettings, SectionRepositoryInterface $sectionRepository,
                               UserRepositoryInterface $userRepository, ImportDateTypeRepositoryInterface $importDateTypeRepository,
-                              NotificationRepositoryInterface $notificationRepository, TimetableLessonRepositoryInterface $lessonEntryRepository,
-                              BookIntegrityCheckViolationRepositoryInterface $bookIntegrityCheckViolationRepository,
-                              SectionResolverInterface $sectionResolver, StudyGroupRepositoryInterface $studyGroupRepository,
+                              NotificationRepositoryInterface $notificationRepository,
+                              SectionResolverInterface $sectionResolver,
                               ParentsDayRepositoryInterface $parentsDayRepository, ChecklistStudentRepositoryInterface $checklistStudentRepository,
-                              BookSettings $bookSettings, StudentInfoResolver $studentInfoResolver, TuitionRepositoryInterface $tuitionRepository,
+                              StudentStatisticsCounterResolver $studentStatisticsCounterResolver,
+                              BookSettings $bookSettings, TuitionRepositoryInterface $tuitionRepository,
                               MissingEntriesCalculator $missingEntriesCalculator,
                               FeatureManager $featureManager, Request $request): Response {
         /** @var User $user */
@@ -181,8 +175,8 @@ class DashboardController extends AbstractController {
         if($user->isStudentOrParent() && $bookSettings->isAttendanceVisibleForStudentsAndParentsEnabled()) {
             foreach($user->getStudents() as $student) {
                 $tuitions = $tuitionRepository->findAllByStudents([$student], $sectionResolver->getCurrentSection());
-                $studentInfo = $studentInfoResolver->resolveStudentInfo($student, $sectionResolver->getCurrentSection(), $tuitions);
-                $excuseStatusNotSetCount[$student->getId()] = $studentInfo->getNotExcusedOrNotSetLessonsCount();
+                $studentInfo = $studentStatisticsCounterResolver->resolve($student, $sectionResolver->getCurrentSection(), $tuitions);
+                $excuseStatusNotSetCount[$student->getId()] = $studentInfo->excuseStatusNotSetLessonsCount;
             }
         }
 

@@ -8,9 +8,9 @@ use App\Entity\AttendanceFlag;
 use DateTime;
 use JsonSerializable;
 
-class LessonAttendance implements JsonSerializable {
+readonly class LessonAttendance implements JsonSerializable {
 
-    public function __construct(private DateTime $date, private int $lesson, private LessonAttendanceEntity $attendance, private ExcuseCollection $excuses)
+    public function __construct(private DateTime $date, private int $lesson, private LessonAttendanceEntity $attendance)
     {
     }
 
@@ -27,7 +27,7 @@ class LessonAttendance implements JsonSerializable {
     }
 
     public function isExcused(): bool {
-        if($this->getExcuses()->count() > 0) {
+        if($this->getAttendance()->getAssociatedExcuses()->count() > 0) {
             return true;
         }
 
@@ -42,15 +42,11 @@ class LessonAttendance implements JsonSerializable {
         return false;
     }
 
-    public function getExcuses(): ExcuseCollection {
-        return $this->excuses;
-    }
-
     public function jsonSerialize(): array {
         return [
             'date' => $this->date->format('c'),
             'lesson' => $this->getLesson(),
-            'has_excuses' => count($this->excuses) > 0,
+            'has_excuses' => $this->getAttendance()->getAssociatedExcuses()->count() > 0,
             'entry' => $this->attendance->getEntry()?->getUuid()->toString(),
             'event' => $this->attendance->getEvent()?->getUuid()->toString(),
             'attendance' => [

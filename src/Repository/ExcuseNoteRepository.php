@@ -6,8 +6,14 @@ use App\Entity\ExcuseNote;
 use App\Entity\Student;
 use DateTime;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Override;
 
 class ExcuseNoteRepository extends AbstractRepository implements ExcuseNoteRepositoryInterface {
+
+    public function findOneById(int $id): ?ExcuseNote {
+        return $this->em->getRepository(ExcuseNote::class)
+            ->findOneBy(['id' => $id]);
+    }
 
     public function findByStudent(Student $student): array {
         return $this->em->getRepository(ExcuseNote::class)
@@ -109,5 +115,11 @@ class ExcuseNoteRepository extends AbstractRepository implements ExcuseNoteRepos
             ->setFirstResult($offset);
 
         return $paginator;
+    }
+
+    #[Override]
+    public function findAll(): array {
+        return $this->em->getRepository(ExcuseNote::class)
+            ->findAll();
     }
 }

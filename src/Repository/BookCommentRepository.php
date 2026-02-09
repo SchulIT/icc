@@ -8,6 +8,7 @@ use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\Tuition;
 use DateTime;
+use Override;
 
 class BookCommentRepository extends AbstractRepository implements BookCommentRepositoryInterface {
 
@@ -27,6 +28,22 @@ class BookCommentRepository extends AbstractRepository implements BookCommentRep
             ->setParameter('student', $student->getId());
 
         return $qb->getQuery()->getResult();
+    }
+
+    #[Override]
+    public function countByDateAndStudent(Student $student, DateTime $start, DateTime $end): int {
+        return $this->em->createQueryBuilder()
+            ->select('COUNT(1)')
+            ->from(BookComment::class, 'c')
+            ->leftJoin('c.students', 's')
+            ->where('s.id = :student')
+            ->andWhere('c.date >= :start')
+            ->andWhere('c.date <= :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->setParameter('student', $student->getId())
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     public function findAllByDateAndGrade(Grade $grade, Section $section, DateTime $start, DateTime $end): array {

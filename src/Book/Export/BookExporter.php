@@ -170,7 +170,7 @@ class BookExporter {
                     ->setStudent($this->castStudent($student, $section, $tuition))
                     ->setLateMinutesCount($info->getLateMinutesCount())
                     ->setAbsentLessonsCount($info->getAbsentLessonsCount())
-                    ->setExcuseStatusNotSetLessonCount($info->getNotExcusedOrNotSetLessonsCount())
+                    ->setExcuseStatusNotSetLessonCount($info->getExcuseStatusNotSetLessonsCount())
                     ->setNotExcusedAbsentLessonCount($info->getNotExcusedAbsentLessonsCount())
                     ->setFlagCounts($counts)
             );

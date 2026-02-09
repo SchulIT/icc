@@ -2,14 +2,15 @@
 
 namespace App\Entity;
 
+use App\Form\LessonEntryType;
 use DateTime;
+use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Stringable;
-use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Ramsey\Uuid\Uuid;
+use Stringable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[Auditable]
@@ -54,6 +55,15 @@ class Attendance implements JsonSerializable, Stringable {
     private AttendanceExcuseStatus $excuseStatus = AttendanceExcuseStatus::NotSet;
 
     /**
+     * @var Collection<ExcuseNote>
+     */
+    #[ORM\ManyToMany(targetEntity: ExcuseNote::class, inversedBy: 'associatedAttendances')]
+    #[ORM\JoinTable]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    private Collection $associatedExcuses;
+
+    /**
      * @var Collection<AttendanceFlag>
      */
     #[ORM\ManyToMany(targetEntity: AttendanceFlag::class)]
@@ -65,6 +75,7 @@ class Attendance implements JsonSerializable, Stringable {
     public function __construct() {
         $this->uuid = Uuid::uuid4();
         $this->flags = new ArrayCollection();
+        $this->associatedExcuses = new ArrayCollection();
     }
 
     public function getType(): AttendanceType {
@@ -149,6 +160,34 @@ class Attendance implements JsonSerializable, Stringable {
         return $this;
     }
 
+    public function getAssociatedExcuses(): Collection {
+        return $this->associatedExcuses;
+    }
+
+    public function addAssociatedExcuse(ExcuseNote $excuseNote): void {
+        $this->associatedExcuses->add($excuseNote);
+    }
+
+    public function removeAssociatedExcuse(ExcuseNote $excuseNote): void {
+        $this->associatedExcuses->removeElement($excuseNote);
+    }
+
+    public function isExcused(): bool {
+        if($this->type !== AttendanceType::Absent) {
+            return true;
+        }
+
+        if($this->isZeroAbsentLesson()) {
+            return true;
+        }
+
+        if($this->excuseStatus === AttendanceExcuseStatus::Excused) {
+            return true;
+        }
+
+        return $this->associatedExcuses->count() > 0;
+    }
+
     public function addFlag(AttendanceFlag $flag): void {
         $this->flags->add($flag);
     }
@@ -178,7 +217,8 @@ class Attendance implements JsonSerializable, Stringable {
             'excuse_status' => $this->getExcuseStatus()->value,
             'comment' => $this->getComment(),
             'flags' => $this->flags->map(fn(AttendanceFlag $flag) => $flag->getId())->toArray(),
-            'lesson' => $this->getLesson()
+            'lesson' => $this->getLesson(),
+            'has_excuses' => $this->associatedExcuses->count() > 0,
         ];
     }
 

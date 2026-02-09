@@ -78,7 +78,7 @@
                                             {{ student.lastname }}, {{ student.firstname }}
                                         {% endif %}
                                     </td>
-                                    {% set comments = studentInfo.numComments %}
+                                    {% set comments = studentInfo.commentsCount %}
                                     <td class="align-middle {% if comments > 0 %}bg-warning{% endif %} nowrap">
                                         <i class="fas fa-comments"></i>
 
@@ -95,26 +95,26 @@
                                         </a>
                                     </td>
 
-                                    <td class="align-middle {% if studentInfo.absentLessons > 0 %}bg-warning{% endif %} nowrap">
+                                    <td class="align-middle {% if studentInfo.absentLessonsCount > 0 %}bg-warning{% endif %} nowrap">
                                         <i class="fas fa-user-times"></i>
 
                                         <a href="{{ path('book_student_attendance', { student: student.uuid }|merge(currentFilter)) }}">
-                                            {{ studentInfo.absentLessons }} / {{ studentInfo.totalLessons }}
+                                            {{ studentInfo.absentLessonsCount }} / {{ studentInfo.totalLessonsCount }}
                                         </a>
                                     </td>
 
-                                    {% set nonExcusedCount = studentInfo.notExcusedLessons %}
+                                    {% set nonExcusedCount = studentInfo.notExcusedLessonsCount %}
                                     <td class="align-middle {% if nonExcusedCount > 0 %}bg-danger text-white{% endif%} nowrap">
                                         <i class="fas fa-exclamation-circle"></i> {{ nonExcusedCount }}
                                     </td>
 
-                                    {% set nonSetCount = studentInfo.notSetLessons %}
+                                    {% set nonSetCount = studentInfo.excuseStatusNotSetLessonsCount %}
                                     <td class="align-middle {% if nonSetCount > 0 %}bg-danger text-white{% endif%} nowrap">
                                         <i class="fas fa-exclamation-circle"></i> {{ nonSetCount }}
                                     </td>
 
                                     {% for flag in flags %}
-                                        {% set count = studentInfo.flags[flag.id] ?? 0 %}
+                                        {% set count = studentInfo.attendanceFlagCounts[flag.id] ?? 0 %}
                                         <td class="align-middle nowrap">
                                             <span class="fa-stack fa-1x" title="{{ flag.description }}">
                                                 <i class="{{ flag.icon }} fa-stack-1x"></i>
@@ -123,7 +123,7 @@
                                                 {% endif %}
                                             </span>
 
-                                            {{ count }}
+                                            {{ count.count }}
                                         </td>
                                     {% endfor %}
 
@@ -139,10 +139,6 @@
                                                 <i class="fas fa-graduation-cap"></i>
                                             </a>
                                         {% endif %}
-
-                                        <button type="button" class="btn btn-outline-secondary btn-sm" title="{{ studentInfo.createdAt|format_datetime }}">
-                                            <i class="fas fa-clock text-muted"></i>
-                                        </button>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -201,21 +197,6 @@
                         </div>
                     </div>
                 {% endif %}
-
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-info-circle"></i> {{ 'info.label'|trans }}</h5>
-                        <p>{{ 'book.students.cache.info'|trans }}</p>
-
-                        <form method="post">
-                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('regenerate') }}">
-
-                            <button type="submit" class="btn btn-primary btn-sm">
-                                {{ 'book.students.cache.regenerate.button'|trans }}
-                            </button>
-                        </form>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

@@ -2,7 +2,6 @@
 
 namespace App\StudentAbsence;
 
-use App\Book\Student\ExcuseCollection;
 use App\Entity\DateLesson;
 use App\Entity\Attendance;
 use App\Entity\AttendanceExcuseStatus;
@@ -11,9 +10,9 @@ use App\Entity\LessonEntry;
 use App\Entity\StudentAbsence;
 use App\Entity\TimetableLesson;
 
-class ExcuseStatusItem {
+readonly class ExcuseStatusItem {
 
-    public function __construct(private readonly DateLesson $dateLesson, private readonly ?ExcuseCollection $excuseCollection, private readonly ?Attendance $attendance, private readonly ?StudentAbsence $absence, private readonly ?TimetableLesson $timetableLesson, private readonly ?LessonEntry $entry) {
+    public function __construct(private DateLesson $dateLesson, private ?Attendance $attendance, private ?StudentAbsence $absence, private ?TimetableLesson $timetableLesson, private ?LessonEntry $entry) {
 
     }
 
@@ -22,13 +21,6 @@ class ExcuseStatusItem {
      */
     public function getDateLesson(): DateLesson {
         return $this->dateLesson;
-    }
-
-    /**
-     * @return ?ExcuseCollection
-     */
-    public function getCollection(): ?ExcuseCollection {
-        return $this->excuseCollection;
     }
 
     /**
@@ -73,7 +65,7 @@ class ExcuseStatusItem {
             return true;
         }
 
-        if($this->excuseCollection !== null && count($this->excuseCollection) > 0) {
+        if($this->attendance->getAssociatedExcuses()->count() > 0) {
             return true;
         }
 

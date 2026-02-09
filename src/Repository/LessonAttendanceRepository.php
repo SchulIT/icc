@@ -2,8 +2,9 @@
 
 namespace App\Repository;
 
-use App\Entity\DateLesson;
 use App\Entity\Attendance;
+use App\Entity\AttendanceExcuseStatus;
+use App\Entity\AttendanceFlag;
 use App\Entity\AttendanceType;
 use App\Entity\LessonEntry;
 use App\Entity\Student;
@@ -13,6 +14,11 @@ use Doctrine\ORM\QueryBuilder;
 use Override;
 
 class LessonAttendanceRepository extends AbstractRepository implements LessonAttendanceRepositoryInterface {
+
+    public function findOneById(int $id): ?Attendance {
+        return $this->em->getRepository(Attendance::class)
+            ->findOneBy(['id' => $id ]);
+    }
 
     public function findAbsentByStudentsAndDate(array $students, DateTime $dateTime): array {
         $studentIds = array_map(fn(Student $student) => $student->getId(), $students);
@@ -220,6 +226,130 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
             ->delete(Attendance::class, 'a')
             ->where('a.student = :student')
             ->setParameter('student', $student->getId())
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+
+    private function getCounterQueryBuilder(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = []): QueryBuilder {
+        $qb = $this->em->createQueryBuilder()
+            ->select('COUNT(1)')
+            ->from(Attendance::class, 'a')
+            ->leftJoin('a.entry', 'e')
+            ->leftJoin('a.event', 'ev')
+            ->leftJoin('e.lesson', 'l')
+            ->leftJoin('a.student', 's')
+            ->where('s.id = :student')
+            ->setParameter('student', $student->getId());
+
+        $this->applyDateRange($qb, $start, $end);
+        $this->applyTuition($qb, $tuitions, $includeEvents);
+
+        return $qb;
+    }
+
+    #[Override]
+    public function countAllByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = []): int {
+        return $this->getCounterQueryBuilder($student, $start, $end, $includeEvents, $tuitions)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    #[Override]
+    public function countPresentByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = []): int {
+        $qb = $this->getCounterQueryBuilder($student, $start, $end, $includeEvents, $tuitions);
+
+        return $qb
+            ->andWhere(
+                $qb->expr()->orX(
+                    'a.type IN (:types)',
+                    'a.isZeroAbsentLesson = true'
+                )
+            )
+            ->setParameter('types', [AttendanceType::Present, AttendanceType::Late])
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    #[Override]
+    public function countAbsentByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = []): int {
+        return $this->getCounterQueryBuilder($student, $start, $end, $includeEvents, $tuitions)
+            ->andWhere('a.type IN (:types)')
+            ->andWhere('a.isZeroAbsentLesson = false')
+            ->setParameter('types', [ AttendanceType::Absent ])
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    #[Override]
+    public function countLateMinutesByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = []): int {
+        return $this->getCounterQueryBuilder($student, $start, $end, $includeEvents, $tuitions)
+            ->select('SUM(a.lateMinutes)')
+            ->andWhere('a.type = :type')
+            ->setParameter('type', AttendanceType::Late)
+            ->getQuery()
+            ->getSingleScalarResult() ?? 0;
+    }
+
+    #[Override]
+    public function countNotExcusedLessonsCountByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = []): int {
+        return $this->getCounterQueryBuilder($student, $start, $end, $includeEvents, $tuitions)
+            ->select('COUNT(1)')
+            ->andWhere('a.type = :type')
+            ->setParameter('type', AttendanceType::Absent)
+            ->andWhere('a.isZeroAbsentLesson = false')
+            ->andWhere('a.excuseStatus = :excuseStatus')
+            ->setParameter('excuseStatus', AttendanceExcuseStatus::NotExcused)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    #[Override]
+    public function countExcuseStatusNotSetByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = []): int {
+        $qb = $this->getCounterQueryBuilder($student, $start, $end, $includeEvents, $tuitions);
+
+        return $qb
+            ->select('COUNT(1)')
+            ->andWhere('a.type = :type')
+            ->setParameter('type', AttendanceType::Absent)
+            ->andWhere('a.isZeroAbsentLesson = false')
+            ->andWhere('a.excuseStatus = :excuseStatus')
+            ->setParameter('excuseStatus', AttendanceExcuseStatus::NotSet)
+            ->andWhere(
+                $qb->expr()->in(
+                    'a.id',
+                    $this->em->createQueryBuilder()
+                        ->select('aInnerInner.id')
+                        ->from(Attendance::class, 'aInnerInner')
+                        ->leftJoin('aInnerInner.associatedExcuses', 'eInnerInner')
+                        ->where('aInnerInner.student = :student')
+                        ->andWhere('eInnerInner.id IS NULL')
+                        ->getDQL()
+                )
+            )
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    #[Override]
+    public function countFlagByStudent(AttendanceFlag $flag, Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = []) {
+        $qb = $this->getCounterQueryBuilder($student, $start, $end, $includeEvents, $tuitions);
+
+        $qb->andWhere(
+            $qb->expr()->in(
+                'a.id',
+                $this->em->createQueryBuilder()
+                    ->select('aInnerInner.id')
+                    ->from(Attendance::class, 'aInnerInner')
+                    ->leftJoin('aInnerInner.flags', 'fInnerInner')
+                    ->where('aInnerInner.student = :student')
+                    ->andWhere('fInnerInner.id = :flag')
+                    ->getDQL()
+            )
+        )
+            ->setParameter('flag', $flag->getId());
+
+        return $qb
             ->getQuery()
             ->getSingleScalarResult();
     }

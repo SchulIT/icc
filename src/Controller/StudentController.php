@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Book\Student\StudentInfoResolver;
+use App\Book\Student\StudentStatisticsCounterResolver;
 use App\Entity\GradeTeacher;
 use App\Entity\Student;
 use App\Entity\User;
@@ -76,7 +77,6 @@ class StudentController extends AbstractController {
     public function student(#[MapEntity(mapping: ['uuid' => 'uuid'])] Student $student, BookCommentRepositoryInterface $bookCommentRepository,
                             StudentInformationRepositoryInterface             $bookStudentInformationRepository,
                             ReturnItemRepositoryInterface                     $returnItemRepository,
-                            StudentInfoResolver                               $studentInfoResolver,
                             LessonAttendanceFlagRepositoryInterface           $attendanceFlagRepository,
                             TuitionRepositoryInterface                        $tuitionRepository,
                             PrivacyCategoryRepositoryInterface                $privacyCategoryRepository,
@@ -86,6 +86,7 @@ class StudentController extends AbstractController {
                             ChatSettings $chatSettings,
                             #[CurrentUser] User $user,
                             Sorter                                            $sorter,
+                            StudentStatisticsCounterResolver $studentStatisticsCounterResolver,
                             Request                                           $request): Response {
         $this->denyAccessUnlessGranted(StudentVoter::Show, $student);
 
@@ -96,7 +97,7 @@ class StudentController extends AbstractController {
         $gradeTeachers = [ ];
         $tuitions = [ ];
         $attendanceFlags = $attendanceFlagRepository->findAll();
-        $studentInfo = null;
+        $counter = null;
         $returnItems = [ ];
         $privacyCategories = [ ];
         $grade = null;
@@ -128,7 +129,7 @@ class StudentController extends AbstractController {
             }
 
             if($this->isGranted('ROLE_BOOK_VIEWER') && $featureManager->isFeatureEnabled(Feature::Book)) {
-                $studentInfo = $studentInfoResolver->resolveStudentInfo($student, $sectionFilterView->getCurrentSection(), $tuitions);
+                $counter = $studentStatisticsCounterResolver->resolve($student, $sectionFilterView->getCurrentSection(), $tuitions);
                 $lessonInfo = $bookStudentInformationRepository->findByStudents([$student], null, $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd());
             }
 
@@ -165,7 +166,7 @@ class StudentController extends AbstractController {
             'grade' => $grade,
             'gradeTeachers' => $gradeTeachers,
             'comments' => $comments,
-            'studentInfo' => $studentInfo,
+            'studentInfo' => $counter,
             'sectionFilter' => $sectionFilterView,
             'attendanceFlags' => $attendanceFlags,
             'lessonInfo' => $lessonInfo,

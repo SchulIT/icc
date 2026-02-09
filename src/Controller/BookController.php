@@ -4,19 +4,13 @@ namespace App\Controller;
 
 use App\Book\EntryOverviewHelper;
 use App\Book\Export\BookExporter;
-use App\Book\IntegrityCheck\CachedIntegrityCheckRunner;
 use App\Book\IntegrityCheck\IntegrityCheckRunner;
-use App\Book\IntegrityCheck\IntegrityCheckTeacherFilter;
 use App\Book\IntegrityCheck\Persistence\ViolationsResolver;
 use App\Book\Lesson;
 use App\Book\Statistics\BookLessonCountGenerator;
-use App\Book\Statistics\GenerateBookLessonCountMessage;
-use App\Book\Student\AbsenceExcuseResolver;
-use App\Book\Student\Cache\CacheWarmupHelper;
-use App\Book\Student\Cache\GenerateStudentInfoCountsMessage;
-use App\Book\Student\Cache\StudentInfoCountsGenerator;
-use App\Book\Student\StudentInfo;
 use App\Book\Student\StudentInfoResolver;
+use App\Book\Student\StudentStatisticsCounter;
+use App\Book\Student\StudentStatisticsCounterResolver;
 use App\Book\StudentsResolver;
 use App\Entity\Attendance;
 use App\Entity\AttendanceExcuseStatus;
@@ -47,12 +41,12 @@ use App\Grouping\TuitionGradeStrategy;
 use App\Messenger\RunIntegrityCheckMessage;
 use App\Repository\BookCommentRepositoryInterface;
 use App\Repository\BookIntegrityCheckViolationRepositoryInterface;
-use App\Repository\StudentInformationRepositoryInterface;
 use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\GradeResponsibilityRepositoryInterface;
 use App\Repository\LessonAttendanceFlagRepositoryInterface;
 use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Repository\LessonEntryRepositoryInterface;
+use App\Repository\StudentInformationRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
@@ -205,7 +199,8 @@ class BookController extends AbstractController {
     #[Route(path: '/entry', name: 'book')]
     public function index(SectionFilter                          $sectionFilter, GradeFilter $gradeFilter, TuitionFilter $tuitionFilter, TeacherFilter $teacherFilter,
                           TuitionRepositoryInterface             $tuitionRepository, ExcuseNoteRepositoryInterface $excuseNoteRepository, DateHelper $dateHelper, Request $request,
-                          EntryOverviewHelper                    $entryOverviewHelper, AbsenceExcuseResolver $absenceExcuseResolver, BookSettings $settings,
+                          EntryOverviewHelper                    $entryOverviewHelper, BookSettings $settings,
+                          StudentStatisticsCounterResolver $studentStatisticsCounterResolver,
                           GradeResponsibilityRepositoryInterface $responsibilityRepository, LessonEntryRepositoryInterface $lessonEntryRepository, StudentInformationRepositoryInterface $studentInformationRepository): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -239,7 +234,7 @@ class BookController extends AbstractController {
 
                 $students = $gradeFilterView->getCurrentGrade()->getMemberships()->filter(fn(GradeMembership $membership) => $membership->getSection()->getId() === $sectionFilterView->getCurrentSection()->getId())->map(fn(GradeMembership $membership) => $membership->getStudent())->toArray();
                 $tuitions = $tuitionRepository->findAllByGrades([$gradeFilterView->getCurrentGrade()], $sectionFilterView->getCurrentSection(), true);
-                $info = $absenceExcuseResolver->resolveBulk($students, $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd(), true, $tuitions);
+                $info = $studentStatisticsCounterResolver->resolveBulk($students, $sectionFilterView->getCurrentSection(), $tuitions, true, $sectionFilterView->getCurrentSection()->getEnd());
 
                 if($sectionFilterView->getCurrentSection() !== null) {
                     $responsibilities = $responsibilityRepository->findAllByGrade($gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection());
@@ -251,7 +246,7 @@ class BookController extends AbstractController {
                 $overview = $entryOverviewHelper->computeOverviewForTuition($tuitionFilterView->getCurrentTuition(), $selectedDate, (clone $selectedDate)->modify('+1 month')->modify('-1 day'));
 
                 $students = $tuitionFilterView->getCurrentTuition()->getStudyGroup()->getMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudent());
-                $info = $absenceExcuseResolver->resolveBulk($students->toArray(), $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd(), false, [ $tuitionFilterView->getCurrentTuition() ]);
+                $info = $studentStatisticsCounterResolver->resolveBulk($students->toArray(), $sectionFilterView->getCurrentSection(), [ $tuitionFilterView->getCurrentTuition() ], true, $sectionFilterView->getCurrentSection()->getEnd());
 
                 if($sectionFilterView->getCurrentSection() !== null && $tuitionFilterView->getCurrentTuition()->getStudyGroup()->getGrades()->count() === 1) {
                     $responsibilities = $responsibilityRepository->findAllByGrade($tuitionFilterView->getCurrentTuition()->getStudyGroup()->getGrades()->first(), $sectionFilterView->getCurrentSection());
@@ -280,7 +275,7 @@ class BookController extends AbstractController {
                     }
                 }
 
-                $info = $absenceExcuseResolver->resolveBulk($students, $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd(), false, $tuitions);
+                $info = $studentStatisticsCounterResolver->resolveBulk($students, $sectionFilterView->getCurrentSection(), $tuitions, true, $sectionFilterView->getCurrentSection()->getEnd());
                 $studentExtraInfo = $studentInformationRepository->findByStudents($students, StudentInformationType::Lessons, $selectedDate, (clone $selectedDate)->modify('+6 days'));
             }
         }
@@ -293,33 +288,33 @@ class BookController extends AbstractController {
                 ->toArray();
         }
 
-        $missingExcuses = array_filter($info, function(StudentInfo $info) use ($teacherFilterView, $teacherGrades, $sectionFilterView, $settings) {
+        $missingExcuses = array_filter($info, function(StudentStatisticsCounter $info) use ($teacherFilterView, $teacherGrades, $sectionFilterView, $settings) {
             if($teacherFilterView->getCurrentTeacher() === null) {
-                return $info->getNotExcusedOrNotSetLessonsCount() > 0;
+                return $info->excuseStatusNotSetLessonsCount > 0;
             }
 
             // When filter view is active, check settings first
-            $studentGrade = $info->getStudent()->getGrade($sectionFilterView->getCurrentSection())?->getId();
+            $studentGrade = $info->student->getGrade($sectionFilterView->getCurrentSection())?->getId();
 
             if($studentGrade === null) {
                 // fallback (this should not happen)
-                return $info->getNotExcusedOrNotSetLessonsCount() > 0;
+                return $info->excuseStatusNotSetLessonsCount > 0;
             }
 
             $isStudentInTeacherGrade = count(array_intersect([$studentGrade], $teacherGrades)) > 0;
 
             if(in_array($studentGrade, $settings->getGradesGradeTeacherExcuses()) && $isStudentInTeacherGrade) {
-                return $info->getNotExcusedOrNotSetLessonsCount() > 0;
+                return $info->excuseStatusNotSetLessonsCount > 0;
             }
 
             if(in_array($studentGrade, $settings->getGradesTuitionTeacherExcuses()) && $isStudentInTeacherGrade !== true) {
-                return $info->getNotExcusedOrNotSetLessonsCount() > 0;
+                return $info->excuseStatusNotSetLessonsCount > 0;
             }
 
             return false;
         });
         $missingExcuseCount = array_sum(
-            array_map(fn(StudentInfo $info) => $info->getNotExcusedOrNotSetLessonsCount(), $missingExcuses));
+            array_map(fn(StudentStatisticsCounter $info) => $info->excuseStatusNotSetLessonsCount, $missingExcuses));
 
         $weekStarts = [ ];
         $monthStarts = [ ];
@@ -520,9 +515,9 @@ class BookController extends AbstractController {
     }
 
     #[Route(path: '/student', name: 'book_students')]
-    public function students(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TuitionFilter $tuitionFilter, TeacherFilter $teacherFilter, MessageBusInterface $messageBus,
-                             TuitionRepositoryInterface $tuitionRepository, StudentRepositoryInterface $studentRepository, LessonAttendanceFlagRepositoryInterface $flagRepository, StudentInfoResolver $studentInfoResolver,
-                             Sorter $sorter, StudentsResolver $studentsResolver, Request $request, StudentInfoCountsGenerator $studentInfoCountsGenerator, CacheWarmupHelper $cacheWarmupHelper): Response {
+    public function students(SectionFilter $sectionFilter, GradeFilter $gradeFilter, TuitionFilter $tuitionFilter, TeacherFilter $teacherFilter,
+                             TuitionRepositoryInterface $tuitionRepository, StudentRepositoryInterface $studentRepository, LessonAttendanceFlagRepositoryInterface $flagRepository,
+                             Sorter $sorter, StudentsResolver $studentsResolver, StudentStatisticsCounterResolver $studentStatisticsCounterResolver, Request $request): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -539,42 +534,16 @@ class BookController extends AbstractController {
         $tuitions = [ ];
         $context = null;
         if($gradeFilterView->getCurrentGrade() !== null && $sectionFilterView->getCurrentSection() !== null) {
-            $context = $gradeFilterView->getCurrentGrade();
             $tuitions = $tuitionRepository->findAllByGrades([$gradeFilterView->getCurrentGrade()], $sectionFilterView->getCurrentSection(), true);
             $paginator = $studentRepository->getStudentsByGradePaginator(self::StudentsPerPage, $page, $gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection());
         } else if($tuitionFilterView->getCurrentTuition() !== null) {
-            $context = $tuitionFilterView->getCurrentTuition();
             $tuitions = [$tuitionFilterView->getCurrentTuition()];
             $paginator = $studentsResolver->resolvePaginated(self::StudentsPerPage, $page, $tuitionFilterView->getCurrentTuition(), false, true);
         } else if($teacherFilterView->getCurrentTeacher() !== null) {
-            $context = $teacherFilterView->getCurrentTeacher();
             $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
             $studyGroups = array_map(fn(Tuition $tuition) => $tuition->getStudyGroup(), $tuitions);
 
             $paginator = $studentRepository->getStudentsByStudyGroupsPaginator(self::StudentsPerPage, $page, $studyGroups);
-        }
-
-        if($sectionFilterView->getCurrentSection() !== null && $request->isMethod(Request::METHOD_POST) && $this->isCsrfTokenValid('regenerate', $request->request->get('_csrf_token'))) {
-            foreach($tuitions as $tuition) {
-                $messageBus->dispatch(new GenerateBookLessonCountMessage($tuition->getId()));
-            }
-
-            if($gradeFilterView->getCurrentGrade() !== null) {
-                $cacheWarmupHelper->warmupGrade($gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection());
-            } else if($tuitionFilterView->getCurrentTuition() !== null) {
-                $cacheWarmupHelper->warmupTuition($tuitionFilterView->getCurrentTuition(), $sectionFilterView->getCurrentSection());
-            } else if($teacherFilterView->getCurrentTeacher() !== null) {
-                $cacheWarmupHelper->warmupTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
-            }
-
-            $this->addFlash('success', 'book.students.cache.regenerate.success');
-            return $this->redirectToRoute('book_students', [
-                'section' => $sectionFilterView->getCurrentSection()->getUuid()->toString(),
-                'tuition' => $tuitionFilterView->getCurrentTuition()?->getUuid()->toString(),
-                'grade' => $gradeFilterView->getCurrentGrade()?->getUuid()->toString(),
-                'teacher' => $teacherFilterView->getCurrentTeacher()?->getUuid()->toString(),
-                'page' => $page
-            ]);
         }
 
         $students = !is_array($paginator) ? iterator_to_array($paginator->getIterator()) : $paginator;
@@ -584,7 +553,7 @@ class BookController extends AbstractController {
         $info = [ ];
 
         foreach($students as $student) {
-            $info[$student->getId()] = $studentInfoCountsGenerator->generate($student, $sectionFilterView->getCurrentSection(), $context);
+            $info[$student->getId()] = $studentStatisticsCounterResolver->resolve($student, $sectionFilterView->getCurrentSection(), $tuitions, true);
         }
 
         return $this->render('books/students.html.twig', [

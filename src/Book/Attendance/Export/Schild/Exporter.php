@@ -2,7 +2,7 @@
 
 namespace App\Book\Attendance\Export\Schild;
 
-use App\Book\Student\StudentInfoResolver;
+use App\Book\Student\StudentStatisticsCounterResolver;
 use App\Entity\Student as StudentEntity;
 use App\Repository\SectionRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
@@ -12,7 +12,7 @@ readonly class Exporter {
     public function __construct(
         private ValidatorInterface $validator,
         private StudentRepositoryInterface $studentRepository,
-        private StudentInfoResolver $studentInfoResolver,
+        private StudentStatisticsCounterResolver $studentStatisticsCounterResolver,
         private SectionRepositoryInterface $sectionRepository
     ) {
 
@@ -54,10 +54,10 @@ readonly class Exporter {
         $response->lastname = $request->lastname;
         $response->birthday = $request->birthday;
 
-        $info = $this->studentInfoResolver->resolveStudentInfo($student, $section, includeEvents: true, untilDate: $request->untilDate);
+        $counter = $this->studentStatisticsCounterResolver->resolve($student, $section, includeEvents: true, untilDate: $request->untilDate);
 
-        $response->absentLessons = $info->getAbsentLessonsCount();
-        $response->notExcusedAbsentLessons = $info->getNotExcusedOrNotSetLessonsCount() + $info->getNotExcusedAbsentLessonsCount();
+        $response->absentLessons = $counter->absentLessonsCount;
+        $response->notExcusedAbsentLessons = $counter->notExcusedLessonsCount + $counter->excuseStatusNotSetLessonsCount;
 
         return $response;
     }

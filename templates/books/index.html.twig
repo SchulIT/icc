@@ -136,7 +136,7 @@
                                                 <li>
                                                     <a href="{{ path('book_student_attendance', currentFilter|merge({ student: info.student.uuid.toString })) }}">
                                                         <i class="fas fa-user-graduate"></i> {{ info.student|student }}
-                                                        <span class="badge text-bg-danger rounded-pill">{{ info.notExcusedOrNotSetLessonsCount }}</span>
+                                                        <span class="badge text-bg-danger rounded-pill">{{ info.excuseStatusNotSetLessonsCount }}</span>
                                                     </a>
                                                 </li>
                                             {% endfor %}

@@ -594,7 +594,7 @@ class BookController extends AbstractController {
         } else if($teacherFilterView->getCurrentTeacher() !== null) {
             $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
         } else if($gradeFilterView->getCurrentGrade() !== null) {
-            $tuitions = [];
+            $tuitions = $tuitionRepository->findAllByStudents([$student], $sectionFilterView->getCurrentSection());
             $includeEvents = true;
         }
 

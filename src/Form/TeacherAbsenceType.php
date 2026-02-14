@@ -31,7 +31,11 @@ class TeacherAbsenceType extends AbstractType {
                 'placeholder' => 'label.choose'
             ])
             ->add('from', DateLessonType::class, [
-                'label' => 'label.from'
+                'label' => 'label.from',
+                'attr' => [
+                    'data-correct-start-target' => '[from][date]',
+                    'data-correct-end-target' => '[until][date]'
+                ]
             ])
             ->add('until', DateLessonType::class, [
                 'label' => 'label.until'

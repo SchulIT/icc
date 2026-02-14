@@ -88,7 +88,11 @@ class StudentAbsenceType extends AbstractType {
                 }
             ])
             ->add('from', DateLessonType::class, [
-                'label' => 'absences.students.add.absent_from'
+                'label' => 'absences.students.add.absent_from',
+                'attr' => [
+                    'data-correct-start-target' => '[from][date]',
+                    'data-correct-end-target' => '[until][date]'
+                ]
             ])
             ->add('until', DateLessonType::class, [
                 'label' => 'absences.students.add.absent_until'

@@ -484,8 +484,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-
-
             let icon = button.querySelector('i');
 
             if(icon === null) {
@@ -503,5 +501,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    for(let $div of document.querySelectorAll('[data-correct-end-target]')) {
+
+        let $form = $div.closest('form');
+        let $start = $form.querySelector('[name$="' + $div.getAttribute('data-correct-start-target') + '"]')
+        let $end = $form.querySelector('[name$="' + $div.getAttribute('data-correct-end-target') + '"]')
+
+        $start.addEventListener('change', function(event) {
+            if($start.value > $end.value) {
+                $end.value = $start.value;
+            }
+        });
+    }
 });
 

@@ -60,12 +60,22 @@
                 {% block substitutions %}{% endblock %}
             </div>
             <div class="col-md-3 sticky-sidebar">
-                {% if is_granted('ROLE_ADMIN') %}
+                {% if is_granted('ROLE_ADMIN') or is_granted('view-overtime') %}
                     <div class="card">
                         <div class="list-group list-group-flush">
-                            <a href="{{ path('admin_settings_substitutions') }}" class="list-group-item list-group-item-action">
-                                <i class="fa fa-wrench"></i> {{ 'admin.settings.label'|trans }}
-                            </a>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <a href="{{ path('admin_settings_substitutions') }}" class="list-group-item list-group-item-action">
+                                    <i class="fa fa-wrench"></i> {{ 'admin.settings.label'|trans }}
+                                </a>
+                            {% endif %}
+
+                            {% if is_granted('view-overtime') %}
+                                <a href="{{ path('overtime') }}" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-clock"></i> {{ 'plans.substitutions.overtime.label'|trans }}
+
+                                    <span class="badge text-bg-warning">{{ 'experimental.label'|trans }}</span>
+                                </a>
+                            {% endif %}
                         </div>
                     </div>
                 {% endif %}

@@ -1,0 +1,259 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'plans.substitutions.overtime.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('substitutions') }}">{{ 'plans.substitutions.label'|trans }}</a> </li>
+        <li class="breadcrumb-item active">
+            {{ block('title') }}
+
+            <span class="badge text-bg-warning">{{ 'experimental.label'|trans }}</span>
+        </li>
+    </ol>
+{% endblock %}
+
+{% import "_macros/replacement.html.twig" as _macro %}
+
+{% block content %}
+    {% set currentFilter = {
+        section: sectionFilter.currentSection.uuid,
+        teacher: teacherFilter.currentTeacher != null ? teacherFilter.currentTeacher.uuid : null
+    } %}
+
+    <div class="bs-callout bs-callout-warning">
+        <h5>{{ 'experimental.title'|trans }}</h5>
+        <p>{{ 'experimental.info'|trans }}</p>
+    </div>
+
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-pills card-header-pills flex-fill">
+                            {% for month in months %}
+                                <li class="nav-item ">
+                                    <a href="{{ path('overtime', currentFilter|merge({'start': month.start.format('Y-m-d'), 'end': month.end.format('Y-m-d')})) }}" class="nav-link {% if start.format('Ymd') == month.start.format('Ymd') %} active{% endif %}">
+                                        <i class="fas fa-calendar"></i> {{ ('date.months.'~month.start.format('n'))|trans }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    {% if overview != null %}
+                        <div class="list-group list-group-flush">
+                            {% for date in overview.dayList %}
+                                {% set day = overview.day(date) %}
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 pointer" data-toggle="table-collapse" data-target="#date{{ day.date.format('Ymd') }}">
+                                        <div class="date column-200">
+                                            {{ ('date.days.'~day.date.format('w'))|trans }},
+                                            {{ day.date|format_date }}
+                                        </div>
+
+                                        <div class="flex-fill">
+                                            <i class="fas fa-clock"></i> {{ day.timetable|length }}
+
+                                            <span class="badge {% if day.substitutions|length == 0 %}text-bg-success{% else %}text-bg-warning{% endif %} ms-2">
+                                                <i class="fas fa-random"></i> {{ day.substitutions|length }}
+                                            </span>
+
+                                            <span class="badge {% if day.examSupervisions|length == 0 %}text-bg-success{% else %}text-bg-warning{% endif %} ms-2">
+                                                <i class="fas fa-edit"></i> {{ day.examSupervisions|length }}
+                                            </span>
+
+                                            <i class="far fa-calendar ms-2"></i> {{ day.appointments|length }}
+                                        </div>
+
+                                        <div>
+                                            <i class="fas fa-chevron-down indicator"></i>
+                                        </div>
+                                    </div>
+
+                                    <div class="collapse" id="date{{ day.date.format('Ymd') }}">
+                                        <div class="container-fluid px-0">
+                                            <div class="row">
+                                                {% if day.timetable|length > 0 %}
+                                                    <div class="col-md mt-2">
+                                                        <div class="list-group">
+                                                            {% for lesson in day.timetable %}
+                                                                <div class="list-group-item">
+                                                                    <span class="badge text-bg-primary">
+                                                                        <i class="fas fa-clock"></i>
+                                                                    </span>
+
+                                                                    {{ 'label.substitution_lessons'|trans({'%start%': lesson.lessonStart, '%end%': lesson.lessonEnd, '%count%': lesson.lessonEnd - lesson.lessonStart}) }}
+
+                                                                    <span class="badge text-bg-primary">
+                                                                        {{ lesson.subjectName }}
+                                                                    </span>
+
+                                                                    {{ lesson.grades|grades }}
+                                                                </div>
+                                                            {% endfor %}
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+
+                                                {% if day.substitutions|length > 0 %}
+                                                    <div class="col-md mt-2">
+                                                        <div class="list-group">
+                                                            {% for substitution in day.substitutions %}
+                                                                <div class="list-group-item">
+                                                                    <span class="badge text-bg-primary">
+                                                                        <i class="fas fa-random"></i>
+                                                                    </span>
+
+                                                                    {% set duration = substitution.lessonEnd - substitution.lessonStart %}
+                                                                    {% if substitution.startsBefore %}
+                                                                        {{ substitution.lessonStart|before_lesson }}
+                                                                    {% else %}
+                                                                        {{ 'label.substitution_lessons'|trans({'%start%': substitution.lessonStart, '%end%': substitution.lessonEnd, '%count%': duration }) }}
+                                                                    {% endif %}
+
+                                                                    <span class="badge text-bg-primary">{{ substitution.type|upper }}</span>
+
+                                                                    {{ _macro.replacement(substitution.studyGroups|studygroups, substitution.replacementStudyGroups|studygroups(true, substitution.replacementGrades)) }}
+
+                                                                    {% if substitution.replacementGrades|length > 0 and substitution.replacementStudyGroups|length == 0 %}
+                                                                        ⟶
+                                                                        {{ substitution.replacementGrades|grades }}
+                                                                    {% endif %}
+
+                                                                    <div>
+                                                                        {{ _macro.replacement(substitution.roomsAsString, substitution.replacementRoomsAsString) }}
+                                                                    </div>
+
+                                                                    <div>
+                                                                        {{ _macro.replacement(substitution.subject, substitution.replacementSubject) }}
+                                                                    </div>
+
+                                                                    <div>
+                                                                        {{ _macro.replacement(substitution.teachers|teachers(false, true), substitution.replacementTeachers|teachers(false, true)) }}
+                                                                    </div>
+                                                                </div>
+                                                            {% endfor %}
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+
+                                                {% if day.examSupervisions|length > 0 %}
+                                                    <div class="col-md mt-2">
+                                                        <div class="list-group">
+                                                            {% for supervision in day.examSupervisions %}
+                                                                {% set exam = supervision.exam %}
+                                                                <div class="list-group-item">
+                                                                    <span class="badge text-bg-primary">
+                                                                        <i class="fas fa-edit"></i>
+                                                                    </span>
+
+                                                                    {{ 'label.substitution_lessons'|trans({'%start%': supervision.lesson, '%end%': supervision.lesson, '%count%': 0 }) }}
+
+                                                                    {% for tuition in exam.tuitions %}
+                                                                        <div class="d-flex flex-wrap align-self-center mb-1">
+                                                                            <span>
+                                                                                <span class="badge text-bg-primary">{{ tuition.name|upper }}</span>
+                                                                                <span class="mx-1"></span>
+                                                                            </span>
+                                                                                                                                <span>
+                                                                                <i class="fa fa-users"></i> {{ tuition.studyGroup.grades|grades }}
+                                                                                <span class="mx-1"></span>
+                                                                            </span>
+                                                                                                                                <span>
+                                                                                <i class="fa fa-graduation-cap"></i> {% for teacher in tuition.teachers %}{{ teacher|teacher }}{% if not loop.last %}, {% endif %}{% endfor %}
+                                                                                <span class="mx-1"></span>
+                                                                            </span>
+                                                                        </div>
+                                                                    {% endfor %}
+                                                                </div>
+                                                            {% endfor %}
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+
+                                                {% if day.appointments|length > 0 %}
+                                                    <div class="col-md mt-2">
+                                                        <div class="list-group">
+                                                            {% for appointment in day.appointments %}
+                                                                <div class="list-group-item">
+                                                                    <span class="badge text-bg-primary">
+                                                                        <i class="far fa-calendar"></i>
+                                                                    </span>
+
+                                                                    <span class="badge me-3 my-1" style="background: {{ appointment.category.color }}; color: {{ foreground(appointment.category.color) }}">
+                                                                        {{ appointment.category.name|upper }}
+                                                                    </span>
+
+                                                                    <div>
+                                                                        {% set icon = "fa-calendar-alt" %}
+                                                                        {% if appointment.isAllDay %}
+                                                                            {% set start = appointment.start|format_date %}
+                                                                        {% elseif appointment.duration.d is same as(0) %}
+                                                                            {% set start = appointment.start|format_time %}
+                                                                            {% set icon = "fa-clock" %}
+                                                                        {% else %}
+                                                                            {% set start = appointment.start|format_datetime %}
+                                                                        {% endif %}
+                                                                        {% if appointment.end is not null %}
+                                                                            {% if appointment.isAllDay %}
+                                                                                {% set end = appointment.end.modify('-1 second')|format_date %}
+                                                                            {% elseif appointment.duration.d is same as(0) %}
+                                                                                {% set end = appointment.end|format_time %}
+                                                                            {% else %}
+                                                                                {% set end = appointment.end|format_datetime %}
+                                                                            {% endif %}
+
+                                                                            {% set date = 'date.range'|trans({'%from%': start, '%to%': end }) %}
+                                                                        {% else %}
+                                                                            {% set date = start %}
+                                                                        {% endif %}
+
+                                                                        {{ date }}
+                                                                    </div>
+
+                                                                    <div>
+                                                                        {{ appointment.title }}
+                                                                    </div>
+
+                                                                    {% if appointment.studyGroups|length > 0 %}
+                                                                        <div>
+                                                                            <span>
+                                                                                <i class="fa fa-users"></i>
+                                                                                {{ appointment.studyGroups|studygroups(true) }}
+                                                                                <span class="mx-1"></span>
+                                                                            </span>
+                                                                        </div>
+                                                                    {% endif %}
+                                                                </div>
+                                                            {% endfor %}
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <a class="btn btn-outline-primary btn-sm mt-2" href="{{ path('dashboard', { teacher: teacherFilter.currentTeacher.uuid, date: day.date.format('Y-m-d')}) }}" target="_blank">
+                                            <i class="fas fa-external-link"></i> {{ 'dashboard.label'|trans }}
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-md-3 sticky-sidebar">
+                <div class="card">
+                    <div class="card-body">
+                        {% include "_filter/section.html.twig" %}
+                        {% include "_filter/teacher.html.twig" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

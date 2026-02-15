@@ -562,6 +562,9 @@ plans:
             study_groups: Abwesende Lerngruppen
             rooms: Gesperrte Räume
 
+        overtime:
+            label: Mehrarbeitsübersicht
+
     appointments:
         label: Terminplan
         loading: Termine laden...

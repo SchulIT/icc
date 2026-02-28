@@ -36,6 +36,13 @@ readonly class AttendancePersistOrUpdateSubscriber {
             return;
         }
 
+        $uof = $eventArgs->getObjectManager()->getUnitOfWork();
+        $changeset = $uof->getEntityChangeSet($entity);
+
+        if(count($changeset) === 0) {
+            return;
+        }
+
         $this->messageBus->dispatch(new AssociateAttendanceMessage($entity->getId()));
     }
 }

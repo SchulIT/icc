@@ -38,6 +38,13 @@ readonly class ExcuseNotePersistOrUpdateSubscriber {
             return;
         }
 
+        $uow = $eventArgs->getObjectManager()->getUnitOfWork();
+        $changeset = $uow->getEntityChangeSet($entity);
+
+        if(count($changeset) === 0) {
+            return;
+        }
+
         $this->messageBus->dispatch(new AssociateExcuseNoteMessage($entity->getId()));
     }
 }

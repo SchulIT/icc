@@ -65,7 +65,7 @@ readonly class ExcuseStatusItem {
             return true;
         }
 
-        if($this->attendance->getAssociatedExcuses()->count() > 0) {
+        if($this->attendance !== null && $this->attendance->getAssociatedExcuses()->count() > 0) {
             return true;
         }
 

@@ -2136,154 +2136,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         expired_worker_ttl?: int|Param, // How long to keep expired workers in cache (in seconds). // Default: 3600
  *     },
  * }
- * @psalm-type DoctrineDoctorConfig = array{
- *     enabled?: bool|Param, // Enable or disable Doctrine Doctor // Default: true
- *     analysis?: array{
- *         exclude_third_party_entities?: bool|Param, // Exclude entities from vendor/ directory during analysis (recommended for cleaner reports) // Default: true
- *         exclude_paths?: list<scalar|Param|null>,
- *     },
- *     analyzers?: array{
- *         n_plus_one?: array{
- *             enabled?: bool|Param, // Default: true
- *             threshold?: int|Param, // Minimum number of similar queries to trigger N+1 detection // Default: 5
- *         },
- *         slow_query?: array{
- *             enabled?: bool|Param, // Default: true
- *             threshold?: int|Param, // Threshold in milliseconds for slow query detection // Default: 100
- *         },
- *         missing_index?: array{
- *             enabled?: bool|Param, // Default: true
- *             slow_query_threshold?: int|Param, // Only run EXPLAIN on queries slower than this (ms) // Default: 50
- *             explain_queries?: bool|Param, // Execute EXPLAIN to detect missing indexes // Default: true
- *             min_rows_scanned?: int|Param, // Minimum rows scanned to suggest an index // Default: 1000
- *         },
- *         hydration?: array{
- *             enabled?: bool|Param, // Default: true
- *             row_threshold?: int|Param, // Number of rows to consider for hydration analysis // Default: 99
- *             critical_threshold?: int|Param, // Number of rows to mark as critical // Default: 999
- *         },
- *         eager_loading?: array{
- *             enabled?: bool|Param, // Default: true
- *             join_threshold?: int|Param, // Maximum number of JOINs before warning // Default: 4
- *             critical_join_threshold?: int|Param, // Number of JOINs to mark as critical // Default: 7
- *         },
- *         find_all?: array{
- *             enabled?: bool|Param, // Enable findAll() detection // Default: true
- *             threshold?: int|Param, // Maximum number of rows before flagging as issue // Default: 99
- *         },
- *         entity_manager_clear?: array{
- *             enabled?: bool|Param, // Enable EntityManager::clear() detection for batch operations // Default: true
- *             batch_size_threshold?: int|Param, // Minimum number of INSERT/UPDATE operations to trigger detection // Default: 20
- *         },
- *         get_reference?: array{
- *             enabled?: bool|Param, // Enable getReference() optimization detection // Default: true
- *             threshold?: int|Param, // Minimum number of simple SELECT by ID queries to suggest getReference() // Default: 2
- *         },
- *         flush_in_loop?: array{
- *             enabled?: bool|Param, // Enable flush() in loop detection (anti-pattern) // Default: true
- *             flush_count_threshold?: int|Param, // Minimum number of flush calls to trigger detection // Default: 5
- *             time_window_ms?: int|Param, // Time window in milliseconds to consider flushes as being in a loop // Default: 1000
- *         },
- *         lazy_loading?: array{
- *             enabled?: bool|Param, // Enable lazy loading in loop detection // Default: true
- *             threshold?: int|Param, // Minimum number of lazy load queries to trigger detection // Default: 10
- *         },
- *         dql_injection?: array{
- *             enabled?: bool|Param, // Enable DQL/SQL injection vulnerability detection (security) // Default: true
- *         },
- *         bulk_operation?: array{
- *             enabled?: bool|Param, // Enable bulk operation optimization detection // Default: true
- *             threshold?: int|Param, // Minimum number of UPDATE/DELETE to suggest bulk operations // Default: 20
- *         },
- *         strict_mode?: array{
- *             enabled?: bool|Param, // Check MySQL/MariaDB SQL strict moconfiguration // Default: true
- *         },
- *         charset?: array{
- *             enabled?: bool|Param, // Check database charset (utf8 vs utf8mb4) // Default: true
- *         },
- *         inno_db_engine?: array{
- *             enabled?: bool|Param, // Check if tables use InnoDB engine // Default: true
- *         },
- *         connection_pooling?: array{
- *             enabled?: bool|Param, // Analyze connection pool configuration // Default: true
- *         },
- *         collection_initialization?: array{
- *             enabled?: bool|Param, // Detect uninitialized entity collections // Default: true
- *         },
- *         cascade_configuration?: array{
- *             enabled?: bool|Param, // Analyze cascaconfiguration on associations // Default: true
- *         },
- *         sensitive_data_exposure?: array{
- *             enabled?: bool|Param, // Detect sensitive data exposure in serialization // Default: true
- *         },
- *         insecure_random?: array{
- *             enabled?: bool|Param, // Detect insecure random generators for security operations // Default: true
- *         },
- *         sql_injection_raw_queries?: array{
- *             enabled?: bool|Param, // Detect SQL injection vulnerabilities in raw queries // Default: true
- *         },
- *         foreign_key_mapping?: array{
- *             enabled?: bool|Param, // Detect foreign keys mapped as primitives instead of object relations // Default: true
- *         },
- *         partial_object?: array{
- *             enabled?: bool|Param, // Detect queries loading full entities when partial objects would be more efficient // Default: true
- *             threshold?: int|Param, // Minimum number of queries to trigger detection // Default: 5
- *         },
- *         dto_hydration?: array{
- *             enabled?: bool|Param, // Detect aggregation queries that should use DTO hydration // Default: true
- *         },
- *         cascade_all?: array{
- *             enabled?: bool|Param, // Detect dangerous cascade="all" usage // Default: true
- *         },
- *         cascade_persist_independent?: array{
- *             enabled?: bool|Param, // Detect cascade="persist" on independent entities (risk of duplicates) // Default: true
- *         },
- *         missing_orphan_removal?: array{
- *             enabled?: bool|Param, // Detect composition relationships without orphanRemoval // Default: true
- *         },
- *         cascade_remove_independent?: array{
- *             enabled?: bool|Param, // Detect cascade="remove" on independent entities (data loss risk) // Default: true
- *         },
- *         bidirectional_consistency?: array{
- *             enabled?: bool|Param, // Detect inconsistencies in bidirectional associations // Default: true
- *         },
- *         orphan_removal_no_cascade?: array{
- *             enabled?: bool|Param, // Detect orphanRemoval without cascade="remove" // Default: true
- *         },
- *         ondelete_mismatch?: array{
- *             enabled?: bool|Param, // Detect mismatches between ORM cascade and database onDelete // Default: true
- *         },
- *         join_optimization?: array{
- *             enabled?: bool|Param, // Detect suboptimal JOIN usage (LEFT JOIN on NOT NULL, too many JOINs, unused JOINs) // Default: true
- *             max_joins_recommended?: int|Param, // Maximum recommended number of JOINs in a single query // Default: 5
- *             max_joins_critical?: int|Param, // Number of JOINs to mark as critical // Default: 8
- *         },
- *         cartesian_product?: array{
- *             enabled?: bool|Param, // Detect cartesian product from multiple collection JOINs // Default: true
- *             n1_collection_threshold?: int|Param, // Minimum N+1 queries per collection to consider it a risk group // Default: 3
- *         },
- *         doctrine_cache?: array{
- *             enabled?: bool|Param, // Detect ArrayCache in production (causes 50-80% performance loss) // Default: true
- *         },
- *         naming_convention?: array{
- *             enabled?: bool|Param, // Detect naming convention violations (tables/columns should be snake_case) // Default: true
- *         },
- *         missing_embeddable_opportunity?: array{
- *             enabled?: bool|Param, // Detect groups of properties that should be refactored into Embeddables (Address, Money, PersonName, etc.) // Default: true
- *         },
- *         blameable_trait?: array{
- *             enabled?: bool|Param, // Detect missing blameable/timestampable traits and bad practices in existing implementations // Default: true
- *         },
- *     },
- *     profiler?: array{
- *         show_in_toolbar?: bool|Param, // Show Doctrine Doctor in the Symfony profiler toolbar // Default: true
- *         show_debug_info?: bool|Param, // Show debug information (for bundle maintainers and debugging purposes) // Default: false
- *     },
- *     debug?: array{ // Debug settings for contributors and advanced users
- *         enabled?: bool|Param, // Enable debug mode (verbose logging, detailed error messages). Keep disabled for production. // Default: false
- *         internal_logging?: bool|Param, // Enable internal logging for Doctrine Doctor analyzers. Can add ~133ms overhead. Enable only for debugging. // Default: false
- *     },
- * }
  * @psalm-type ConfigType = array{
  *     imports?: ImportsConfig,
  *     parameters?: ParametersConfig,
@@ -2345,7 +2197,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         twig_component?: TwigComponentConfig,
  *         chrisguitarguy_request_id?: ChrisguitarguyRequestIdConfig,
  *         zenstruck_messenger_monitor?: ZenstruckMessengerMonitorConfig,
- *         doctrine_doctor?: DoctrineDoctorConfig,
  *     },
  *     "when@prod"?: array{
  *         imports?: ImportsConfig,
@@ -2409,7 +2260,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         twig_component?: TwigComponentConfig,
  *         chrisguitarguy_request_id?: ChrisguitarguyRequestIdConfig,
  *         zenstruck_messenger_monitor?: ZenstruckMessengerMonitorConfig,
- *         doctrine_doctor?: DoctrineDoctorConfig,
  *     },
  *     ...<string, ExtensionType|array{ // extra keys must follow the when@%env% pattern or match an extension alias
  *         imports?: ImportsConfig,

@@ -1,16 +1,4 @@
 {
-    "ahmed-bhs/doctrine-doctor": {
-        "version": "2.1",
-        "recipe": {
-            "repo": "github.com/symfony/recipes-contrib",
-            "branch": "main",
-            "version": "0.1",
-            "ref": "0a0c0e3972f784e628c4f759d2fb446e9eeb4959"
-        },
-        "files": [
-            "config/packages/doctrine_doctor.yaml"
-        ]
-    },
     "beberlei/doctrineextensions": {
         "version": "v1.3.0"
     },

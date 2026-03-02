@@ -81,7 +81,6 @@
         "zenstruck/messenger-monitor-bundle": "^0.5.1"
     },
     "require-dev": {
-        "ahmed-bhs/doctrine-doctor": "*",
         "dama/doctrine-test-bundle": "^8.0",
         "league/flysystem-memory": "^3.0",
         "phpstan/extension-installer": "^1.1",

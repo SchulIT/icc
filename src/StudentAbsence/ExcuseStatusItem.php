@@ -12,7 +12,14 @@ use App\Entity\TimetableLesson;
 
 readonly class ExcuseStatusItem {
 
-    public function __construct(private DateLesson $dateLesson, private ?Attendance $attendance, private ?StudentAbsence $absence, private ?TimetableLesson $timetableLesson, private ?LessonEntry $entry) {
+    public function __construct(
+        private DateLesson $dateLesson,
+        private ?Attendance $attendance,
+        private ?StudentAbsence $absence,
+        private array $excuses,
+        private ?TimetableLesson $timetableLesson,
+        private ?LessonEntry $entry
+    ) {
 
     }
 
@@ -62,6 +69,10 @@ readonly class ExcuseStatusItem {
         }
 
         if($this->absence->getType()->getBookExcuseStatus() === AttendanceExcuseStatus::Excused) {
+            return true;
+        }
+
+        if(count($this->excuses) > 0) {
             return true;
         }
 

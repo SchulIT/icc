@@ -8,6 +8,7 @@ use App\Entity\AttendanceType;
 use App\Entity\LessonEntry;
 use App\Entity\StudentAbsence;
 use App\Entity\TimetableLesson;
+use App\Repository\ExcuseNoteRepositoryInterface;
 use App\Repository\LessonAttendanceRepositoryInterface;
 use App\Repository\TimetableLessonRepositoryInterface;
 use App\Utils\ArrayUtils;
@@ -15,6 +16,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 readonly class ExcuseStatusResolver {
     public function __construct(private LessonAttendanceRepositoryInterface $lessonAttendanceRepository,
+                                private ExcuseNoteRepositoryInterface $excuseNoteRepository,
                                 private DateLessonExpander $dateLessonExpander,
                                 private TimetableLessonRepositoryInterface $lessonRepository) {
     }
@@ -43,12 +45,13 @@ readonly class ExcuseStatusResolver {
         foreach($lessonsToExcuse as $dateLesson) {
             $key = sprintf('%s-%d', $dateLesson->getDate()->format('Y-m-d'), $dateLesson->getLesson());
             $attendance = $attendances[$key] ?? null;
+            $excuses = $this->excuseNoteRepository->findByStudentAndDateAndLesson($absence->getStudent(), $dateLesson->getDate(), $dateLesson->getLesson());
 
             /** @var TimetableLesson|null $timetableLesson */
             $timetableLesson = $timetableLessons->findFirst(fn(int $idx, TimetableLesson $lesson) => $lesson->getDate() == $dateLesson->getDate() && $lesson->getLessonStart() <= $dateLesson->getLesson() && $dateLesson->getLesson() <= $lesson->getLessonEnd());
             $entry = $timetableLesson?->getEntries()->findFirst(fn(int $idx, LessonEntry $entry) => $entry->getLessonStart() <= $dateLesson->getLesson() && $dateLesson->getLesson() <= $entry->getLessonEnd());
 
-            $items[] = new ExcuseStatusItem($dateLesson, $attendance, $absence, $timetableLesson, $entry);
+            $items[] = new ExcuseStatusItem($dateLesson, $attendance, $absence, $excuses, $timetableLesson, $entry);
         }
 
         return new ExcuseStatus($items);

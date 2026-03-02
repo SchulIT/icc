@@ -20,6 +20,14 @@ interface ExcuseNoteRepositoryInterface {
 
     /**
      * @param Student $student
+     * @param DateTime $date
+     * @param int $lessonNumber
+     * @return ExcuseNote[]
+     */
+    public function findByStudentAndDateAndLesson(Student $student, DateTime $date, int $lessonNumber): array;
+
+    /**
+     * @param Student $student
      * @param string $comment
      * @return ExcuseNote[]
      */

@@ -122,4 +122,45 @@ class ExcuseNoteRepository extends AbstractRepository implements ExcuseNoteRepos
         return $this->em->getRepository(ExcuseNote::class)
             ->findAll();
     }
+
+    #[Override]
+    public function findByStudentAndDateAndLesson(Student $student, DateTime $date, int $lessonNumber): array {
+        $qb = $this->em->createQueryBuilder();
+        $qb->select(['n', 's'])
+            ->from(ExcuseNote::class, 'n')
+            ->leftJoin('n.student', 's')
+            ->where('s.id = :student')
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->andX( // only one day
+                        'n.from.date = n.until.date',
+                        'n.from.date = :date',
+                        'n.from.lesson <= :lesson',
+                        'n.until.lesson >= :lesson'
+                    ),
+                    $qb->expr()->andX( // range and request is first day
+                        'n.from.date < n.until.date',
+                        'n.from.date = :date',
+                        'n.from.lesson <= :lesson',
+                        'n.until.lesson >= :lesson'
+                    ),
+                    $qb->expr()->andX( // range and request is last day
+                        'n.from.date < n.until.date',
+                        'n.until.date = :date',
+                        'n.from.lesson <= :lesson',
+                        'n.until.lesson >= :lesson'
+                    ),
+                    $qb->expr()->andX( // range and request is somewhere in between
+                        'n.from.date < n.until.date',
+                        'n.from.date < :date',
+                        'n.until.date > :date',
+                    )
+                )
+            )
+            ->setParameter('student', $student->getId())
+            ->setParameter('lesson', $lessonNumber)
+            ->setParameter('date', $date);
+
+        return $qb->getQuery()->getResult();
+    }
 }

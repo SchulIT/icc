@@ -333,6 +333,11 @@ class Builder {
             $missing->setExtra('count', $count);
         }
 
+        $book->addChild('book.open_absences.label', [
+            'route' => 'open_absences'
+        ])
+            ->setExtra('icon', 'fa-solid fa-list-check');
+
         $book->addChild('book.students.label', [
             'route' => 'book_students'
         ])

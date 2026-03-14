@@ -1,0 +1,74 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'book.open_absences.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('book') }}">{{ 'book.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {% set currentFilter = {
+        section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null,
+        grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null,
+        tuition: tuitionFilter.currentTuition ? tuitionFilter.currentTuition.uuid.toString : null,
+        teacher: teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : null
+    } %}
+
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-header">
+                        {{ block('title') }}
+
+                        <span class="badge text-bg-primary rounded-pill">
+                            {{ missingExcusesCount }}
+                        </span>
+                    </div>
+
+                    <div class="list-group list-group-flush">
+                        {% for info in statistics %}
+                            <a href="{{ path('book_student_attendance', currentFilter|merge({ student: info.student.uuid.toString })) }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-user-graduate"></i> {{ info.student|student }}
+
+                                {% if info.excuseStatusNotSetLessonsCount > 0 %}
+                                    <span class="badge text-bg-danger rounded-pill">{{ info.excuseStatusNotSetLessonsCount }}</span>
+                                {% else %}
+                                    <span class="badge text-bg-success rounded-pill">{{ info.excuseStatusNotSetLessonsCount }}</span>
+                                {% endif %}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {% include '@Common/includes/pagination.html.twig' with {
+                    currentFilters: currentFilter,
+                    currentPage: page,
+                    paginationPath: 'open_absences',
+                    lastPage: pages,
+                    showAlwaysFirstAndLast: true
+                } only %}
+            </div>
+
+            <div class="col-md-3 sticky-sidebar">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="{{ path('open_absences') }}" method="get">
+                            {% include "_filter/section.html.twig" %}
+
+                            {% include "_filter/grade.html.twig" %}
+
+                            {% include "_filter/teacher.html.twig" %}
+
+                            {% include "_filter/tuition.html.twig" %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

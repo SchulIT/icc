@@ -2177,6 +2177,9 @@ book:
         entry: Fach/Kurs laut Eintrag
         substitution: Fach/Kurs laut Vertretung
 
+    open_absences:
+        label: Offene Fehlstunden
+
     students:
         label: Lernendenübersicht
         comments: Kommentare

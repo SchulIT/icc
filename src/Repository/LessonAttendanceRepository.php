@@ -293,13 +293,27 @@ class LessonAttendanceRepository extends AbstractRepository implements LessonAtt
 
     #[Override]
     public function countNotExcusedLessonsCountByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = []): int {
-        return $this->getCounterQueryBuilder($student, $start, $end, $includeEvents, $tuitions)
+        $qb = $this->getCounterQueryBuilder($student, $start, $end, $includeEvents, $tuitions);
+
+        return $qb
             ->select('COUNT(1)')
             ->andWhere('a.type = :type')
             ->setParameter('type', AttendanceType::Absent)
             ->andWhere('a.isZeroAbsentLesson = false')
             ->andWhere('a.excuseStatus = :excuseStatus')
             ->setParameter('excuseStatus', AttendanceExcuseStatus::NotExcused)
+            ->andWhere(
+                $qb->expr()->in(
+                    'a.id',
+                    $this->em->createQueryBuilder()
+                        ->select('aInnerInner.id')
+                        ->from(Attendance::class, 'aInnerInner')
+                        ->leftJoin('aInnerInner.associatedExcuses', 'eInnerInner')
+                        ->where('aInnerInner.student = :student')
+                        ->andWhere('eInnerInner.id IS NULL')
+                        ->getDQL()
+                )
+            )
             ->getQuery()
             ->getSingleScalarResult();
     }

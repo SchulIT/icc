@@ -1,0 +1,71 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% form_theme form '@EasyAdmin/crud/form_theme.html.twig' %}
+
+{% block page_title %}{{ header|trans }}{% endblock %}
+{% block content_title %}{{ header|trans }}{% endblock %}
+{% block page_actions %}
+    <button class="btn btn-primary action-save" type="submit" value="save" data-action-name="save" onclick="document.{{ form.vars.name }}.submit();">
+        <span class="btn-label"><span class="action-label">{{ action|trans }}</span></span>
+    </button>
+{% endblock %}
+
+{% block main %}
+{{ form_start(form) }}
+{{ form_widget(form) }}
+{{ form_end(form) }}
+
+    {% if result != null %}
+        <h2>{{ 'check.westermann_zsv.needs_action'|trans }} <span class="badge text-bg-primary">{{ result.needsAction|length }}</span> </h2>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Westermann</th>
+                <th>ICC</th>
+                <th>{{ 'label.consented'|trans }}</th>
+                <th></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for match in result.needsAction %}
+                <tr>
+                    <td>
+                        {% if match.schueler is not null %}
+                            {{ match.schueler.name1 }} {{ match.schueler.vorname }} ({{ match.schueler.username }})
+                        {% else %}
+                            <span class="badge text-bg-warning">{{ 'label.not_available'|trans }}</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if match.student is not null %}
+                            {{ match.student|student(true) }}
+                        {% else %}
+                            <span class="badge text-bg-warning">{{ 'label.not_available'|trans }}</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if match.isConsented %}
+                            <i class="fas fa-check-circle text-success"></i>
+                        {% else %}
+                            <i class="fas fa-times-circle text-danger"></i>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        <ul>
+                            {% for action in match.actions %}
+                                <li>{{ action.messageKey|trans(action.messageParameters) }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+{% endblock %}

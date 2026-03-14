@@ -24,9 +24,6 @@ class ImportRequestType extends AbstractType {
             ->add('passwordsCsv', FileType::class, [
                 'label' => 'import.bilo.csv.password.label',
                 'help' => 'import.bilo.csv.password.help',
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'actions.save',
             ]);
     }
 }

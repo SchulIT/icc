@@ -24,9 +24,6 @@ class ImportRequestType extends AbstractType {
             ])
             ->add('delimiter', TextType::class, [
                 'label' => 'label.delimiter'
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'actions.save',
             ]);
     }
 }

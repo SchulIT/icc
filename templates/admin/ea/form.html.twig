@@ -2,7 +2,13 @@
 
 {% form_theme form '@EasyAdmin/crud/form_theme.html.twig' %}
 
+{% block page_title %}{{ header|trans }}{% endblock %}
 {% block content_title %}{{ header|trans }}{% endblock %}
+{% block page_actions %}
+    <button class="btn btn-primary action-save" type="submit" value="save" data-action-name="save" onclick="document.{{ form.vars.name }}.submit();">
+        <span class="btn-label"><span class="action-label">{{ action|trans }}</span></span>
+    </button>
+{% endblock %}
 
 {% block main %}
 {{ form_start(form) }}

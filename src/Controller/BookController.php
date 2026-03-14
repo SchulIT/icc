@@ -86,6 +86,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 #[Route(path: '/book')]
 #[IsFeatureEnabled(Feature::Book)]
@@ -196,6 +197,31 @@ class BookController extends AbstractController {
         return [ ];
     }
 
+    public function openAbsences(
+        #[CurrentUser] User $user,
+        SectionFilter $sectionFilter,
+        GradeFilter $gradeFilter,
+        TuitionFilter $tuitionFilter,
+        TeacherFilter $teacherFilter,
+        StudentStatisticsCounterResolver $studentStatisticsCounterResolver,
+        Request $request
+    ): Response {
+        $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
+        $gradeFilterView = $gradeFilter->handle($request->query->get('grade'), $sectionFilterView->getCurrentSection(), $user);
+        $tuitionFilterView = $tuitionFilter->handle($request->query->get('tuition'), $sectionFilterView->getCurrentSection(), $user);
+        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher'), $sectionFilterView->getCurrentSection(), $user, $gradeFilterView->getCurrentGrade() === null && $tuitionFilterView->getCurrentTuition() === null);
+
+        $info = null;
+
+        if($gradeFilterView->getCurrentGrade() !== null) {
+
+        } else if($tuitionFilterView->getCurrentTuition() !== null) {
+
+        } else if($teacherFilterView->getCurrentTeacher() !== null) {
+
+        }
+    }
+
     #[Route(path: '/entry', name: 'book')]
     public function index(SectionFilter                          $sectionFilter, GradeFilter $gradeFilter, TuitionFilter $tuitionFilter, TeacherFilter $teacherFilter,
                           TuitionRepositoryInterface             $tuitionRepository, ExcuseNoteRepositoryInterface $excuseNoteRepository, DateHelper $dateHelper, Request $request,
@@ -275,7 +301,7 @@ class BookController extends AbstractController {
                     }
                 }
 
-                $info = $studentStatisticsCounterResolver->resolveBulk($students, $sectionFilterView->getCurrentSection(), $tuitions, true, $sectionFilterView->getCurrentSection()->getEnd());
+                //$info = $studentStatisticsCounterResolver->resolveBulk($students, $sectionFilterView->getCurrentSection(), $tuitions, true, $sectionFilterView->getCurrentSection()->getEnd());
                 $studentExtraInfo = $studentInformationRepository->findByStudents($students, StudentInformationType::Lessons, $selectedDate, (clone $selectedDate)->modify('+6 days'));
             }
         }

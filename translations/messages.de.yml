@@ -386,6 +386,8 @@ actions:
     send: abschicken
     download: herunterladen
     rename: umbenennen
+    check: prüfen
+    import: importieren
 
 modal:
     close: Schließen
@@ -2145,7 +2147,7 @@ book:
             button: Stunden als Entfall markieren
         comment:
             label: Bemerkungen zur Lerngruppe
-            help: Bitte hier keine Kommentare zu einzelnen Schülerinenn und Schülern hinterlassen. Stattdessen die Kommentar-Funktion verwenden.
+            help: Bitte hier keine Kommentare zu einzelnen Schülerinnen und Schülern hinterlassen. Stattdessen die Kommentar-Funktion verwenden.
         redirect_to_last:
             error:
                 not_found: Es wurde kein Eintrag gefunden.
@@ -2938,3 +2940,14 @@ credentials:
 
 consents:
   label: Einwilligungen
+
+check:
+    westermann_zsv:
+        label: Westermann ZSV Prüfung
+        needs_action: Handlung notwendig
+        all: Alle
+
+        consent_missing: Einwilligung nicht erteilt
+        grade_inconsistent: 'Klasse stimmt nicht überein (Westermann: "%westermann%", ICC: "%grade%")'
+        account_missing: Kein Westermann-Account vorhanden
+        student_missing: Schüler/Schülerin nicht mehr vorhanden

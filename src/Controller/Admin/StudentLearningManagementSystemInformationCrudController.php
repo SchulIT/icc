@@ -9,6 +9,9 @@ use App\Import\External\Bildungslogin\ImportRequestType as BildungsloginImportRe
 use App\Import\External\WestermannZsv\ImportRequest as WestermannImportRequest;
 use App\Import\External\WestermannZsv\ImportRequestType as WestermannImportRequestType;
 use App\Import\External\WestermannZsv\WestermannZvsImporter;
+use App\Tools\WestermannZvs\CheckRequest;
+use App\Tools\WestermannZvs\CheckRequestType;
+use App\Tools\WestermannZvs\WestermannZvsChecker;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -46,9 +49,14 @@ class StudentLearningManagementSystemInformationCrudController extends AbstractC
             ->linkToCrudAction('importWestermannZvs')
             ->createAsGlobalAction();
 
+        $westermannCheckAction = Action::new('checkwestermann', 'Westermann ZVS abgleichen', 'fas fa-check')
+            ->linkToCrudAction('checkWestermann')
+            ->createAsGlobalAction();
+
         return $actions
             ->add(Crud::PAGE_INDEX, $biloImportAction)
-            ->add(Crud::PAGE_INDEX, $westermannImportAction);
+            ->add(Crud::PAGE_INDEX, $westermannImportAction)
+            ->add(Crud::PAGE_INDEX, $westermannCheckAction);
     }
 
     public function configureFields(string $pageName): iterable {
@@ -85,7 +93,8 @@ class StudentLearningManagementSystemInformationCrudController extends AbstractC
 
         return $this->render('admin/ea/form.html.twig', [
             'form' => $form->createView(),
-            'header' => 'import.bilo.csv.label'
+            'header' => 'import.bilo.csv.label',
+            'action' => 'actions.import'
         ]);
     }
 
@@ -105,7 +114,27 @@ class StudentLearningManagementSystemInformationCrudController extends AbstractC
 
         return $this->render('admin/ea/form.html.twig', [
             'form' => $form->createView(),
-            'header' => 'import.westermann_zvs.label'
+            'header' => 'import.westermann_zvs.label',
+            'action' => 'actions.import'
+        ]);
+    }
+
+    public function checkWestermann(Request $request, WestermannZvsChecker $checker): Response {
+        $checkRequest = new CheckRequest();
+        $form = $this->createForm(CheckRequestType::class, $checkRequest);
+        $form->handleRequest($request);
+
+        $result = null;
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $result = $checker->check($checkRequest);
+        }
+
+        return $this->render('admin/ea/westermann_zsv_check.html.twig', [
+            'form' => $form->createView(),
+            'header' => 'check.westermann_zsv.label',
+            'action' => 'actions.check',
+            'result' => $result
         ]);
     }
 }

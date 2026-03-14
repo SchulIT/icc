@@ -5,6 +5,8 @@ namespace App\Tools\WestermannZvs;
 use App\Repository\StudentLearningManagementSystemInformationRepository;
 use App\Repository\StudentRepositoryInterface;
 use App\Section\SectionResolverInterface;
+use App\Sorting\Sorter;
+use App\Sorting\StudentStrategy;
 use App\Tools\WestermannZvs\Check\Action;
 use App\Tools\WestermannZvs\Check\CheckInterface;
 use App\Utils\ArrayUtils;
@@ -18,7 +20,8 @@ readonly class WestermannZvsChecker {
         private SerializerInterface $serializer,
         private SectionResolverInterface $sectionResolver,
         private StudentRepositoryInterface $studentRepository,
-        private StudentLearningManagementSystemInformationRepository $studentLearningManagementSystemInformationRepository
+        private StudentLearningManagementSystemInformationRepository $studentLearningManagementSystemInformationRepository,
+        private Sorter $sorter
     ) {
 
     }
@@ -31,6 +34,7 @@ readonly class WestermannZvsChecker {
         );
 
         $students = $this->studentRepository->findAllBySection($this->sectionResolver->getCurrentSection());
+        $this->sorter->sort($students, StudentStrategy::class);
 
         $result = new Result();
 
@@ -39,13 +43,12 @@ readonly class WestermannZvsChecker {
             $username = $student->getEmail();
 
             $zvsStudent = $zvsStudents[$username] ?? null;
-            $consent = $this->studentLearningManagementSystemInformationRepository->findOneByStudentAndLms($student, $checkRequest->lms);
 
             $match = new StudentMatch();
             $match->username = $username;
             $match->schueler = $zvsStudent;
             $match->student = $student;
-            $match->isConsented = $consent?->isConsented() ?? false;
+            $match->isConsented = $this->studentLearningManagementSystemInformationRepository->isConsentedByStudentAndLms($student, $checkRequest->lms);
 
             foreach($this->checks as $check) {
                 $action = $check->needAction($match);

@@ -21,9 +21,29 @@ class StudentLearningManagementSystemInformationRepository extends AbstractTrans
             ]);
     }
 
+    public function findAllByLms(LearningManagementSystem $lms): array {
+        return $this->em->getRepository(StudentLearningManagementSystemInformation::class)
+            ->findBy([
+                'lms' => $lms
+            ]);
+    }
+
     public function findByStudent(Student $student): array {
         return $this->em->getRepository(StudentLearningManagementSystemInformation::class)
             ->findBy(['student' => $student]);
+    }
+
+    public function isConsentedByStudentAndLms(Student $student, LearningManagementSystem $lms): bool {
+        return $this->em->createQueryBuilder()
+            ->select('COUNT(1)')
+            ->from(StudentLearningManagementSystemInformation::class, 'i')
+            ->where('i.student = :student')
+            ->andWhere('i.lms = :lms')
+            ->andWhere('i.isConsented = true')
+            ->setParameter('student', $student)
+            ->setParameter('lms', $lms)
+            ->getQuery()
+            ->getSingleScalarResult() > 0;
     }
 
     public function persist(StudentLearningManagementSystemInformation $information): void {

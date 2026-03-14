@@ -13,7 +13,15 @@ interface StudentLearningManagementInformationRepositoryInterface extends Transa
      */
     public function findAll(): array;
 
+    /**
+     * @param LearningManagementSystem $lms
+     * @return StudentLearningManagementSystemInformation[]
+     */
+    public function findAllByLms(LearningManagementSystem $lms): array;
+
     public function findOneByStudentAndLms(Student $student, LearningManagementSystem $lms): ?StudentLearningManagementSystemInformation;
+
+    public function isConsentedByStudentAndLms(Student $student, LearningManagementSystem $lms): bool;
 
     /**
      * @param Student $student

@@ -675,6 +675,10 @@ class BookController extends AbstractController {
         foreach($lessonAttendanceRepository->findByStudentAndDateRange($student, $min, $max, true) as $attendance) {
             if($attendance->getEntry() !== null && !in_array($attendance->getEntry(), $entries)) {
                 $entries[] = $attendance->getEntry();
+
+                if($attendance->getEntry()->getTuition() !== null && !in_array($attendance->getEntry()->getTuition(), $tuitions)) {
+                    $tuitions[] = $attendance->getEntry()->getTuition();
+                }
             } else if($attendance->getEvent() !== null && !in_array($attendance->getEvent(), $events)) {
                 $events[] = $attendance->getEvent();
             }

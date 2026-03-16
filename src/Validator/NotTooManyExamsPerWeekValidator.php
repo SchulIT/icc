@@ -53,7 +53,13 @@ class NotTooManyExamsPerWeekValidator extends AbstractExamConstraintValidator {
             }
 
             $section = $this->sectionResolver->getSectionForDate($value->getDate());
-            if($numberOfExams > $this->examSettings->getMaximumNumberOfExamsPerWeek($student->getGrade($section))) {
+            $grade = $student->getGrade($section);
+
+            if($grade === null) {
+                return;
+            }
+
+            if($numberOfExams > $this->examSettings->getMaximumNumberOfExamsPerWeek($grade)) {
                 $this->context
                     ->buildViolation($constraint->message)
                     ->setParameter('{{ student }}', $this->studentStringConverter->convert($student))

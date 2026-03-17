@@ -15,54 +15,34 @@ use function Symfony\Component\String\u;
 #[AsCommand('app:audit:cleanup', 'Leert das Audit-Log für Entitäten, die importiert werden, um Speicherplatz zu sparen.')]
 #[AsCronTask('@daily')]
 readonly class CleanupAuditLogCommand {
-    private const array ListOfTables = [
-        'grade_membership',
-        'free_timespan',
-        'infotext',
-        'student',
-        'study_group',
-        'study_group_membership',
-        'substitution',
-        'subject',
-        'teacher',
-        'timetable_lesson',
-        'timetable_supervision',
-        'tuition'
-    ];
 
     public function __construct(private int $retentionDays, private EntityManagerInterface $em, private DateHelper $dateHelper) { }
 
     public function __invoke(SymfonyStyle $style, OutputInterface $output): int {
         $auditTables = array_filter(
-            $this->em->getConnection()->createSchemaManager()->listTables(),
-            fn(Table $table) => u($table->getName())->endsWith('_audit')
+            $this->em->getConnection()->createSchemaManager()->introspectTables(),
+            fn(Table $table) => u($table->getObjectName()->getUnqualifiedName()->getValue())->endsWith('_audit')
         );
 
-        $auditTableNames = array_map(fn(Table $table) => $table->getName(), $auditTables);
+        $auditTableNames = array_map(fn(Table $table): string => $table->getObjectName()->getUnqualifiedName()->getValue(), $auditTables);
 
-        $style->section(sprintf('Leere %d Audit-Tabellen', count(self::ListOfTables)));
+        $style->section(sprintf('Leere %d Audit-Tabellen', count($auditTableNames)));
 
         if($this->retentionDays === 0) {
             $style->success('Als Wert für die Aufbewahrung wurde 0 eingetragen, behalte vollständiges Auditlog.');
             return 0;
         }
 
-        foreach(self::ListOfTables as $table) {
-            $auditTable = u($table)->append('_audit')->toString();
-            $style->writeln('> Leere ' . $auditTable);
-
-            if(!in_array($auditTable, $auditTableNames)) {
-                $style->warning(sprintf('Tabelle %s existiert nicht, überspringe', $auditTable));
-                continue;
-            }
+        foreach($auditTableNames as $table) {
+            $style->writeln('> Leere ' . $table);
 
             $this->em->getConnection()->executeQuery(
-                'DELETE FROM ' . $auditTable . ' WHERE created_at < ?',
+                'DELETE FROM ' . $table . ' WHERE created_at < ?',
                 [
                     $this->dateHelper->getToday()->modify(sprintf('-%d days', $this->retentionDays))->format('Y-m-d')
                 ]
             );
-            $this->em->getConnection()->executeQuery('OPTIMIZE TABLE ' . $auditTable);
+            $this->em->getConnection()->executeQuery('OPTIMIZE TABLE ' . $table);
         }
 
         $style->success('Fertig');

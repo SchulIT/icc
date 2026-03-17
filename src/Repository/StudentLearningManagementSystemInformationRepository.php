@@ -35,15 +35,28 @@ class StudentLearningManagementSystemInformationRepository extends AbstractTrans
 
     public function isConsentedByStudentAndLms(Student $student, LearningManagementSystem $lms): bool {
         return $this->em->createQueryBuilder()
-            ->select('COUNT(1)')
-            ->from(StudentLearningManagementSystemInformation::class, 'i')
-            ->where('i.student = :student')
-            ->andWhere('i.lms = :lms')
-            ->andWhere('i.isConsented = true')
-            ->setParameter('student', $student)
-            ->setParameter('lms', $lms)
-            ->getQuery()
-            ->getSingleScalarResult() > 0;
+                ->select('COUNT(1)')
+                ->from(StudentLearningManagementSystemInformation::class, 'i')
+                ->where('i.student = :student')
+                ->andWhere('i.lms = :lms')
+                ->andWhere('i.isConsented = true')
+                ->setParameter('student', $student)
+                ->setParameter('lms', $lms)
+                ->getQuery()
+                ->getSingleScalarResult() > 0;
+    }
+
+    public function isPasswordSetByStudentAndLms(Student $student, LearningManagementSystem $lms): bool {
+        return $this->em->createQueryBuilder()
+                ->select('COUNT(1)')
+                ->from(StudentLearningManagementSystemInformation::class, 'i')
+                ->where('i.student = :student')
+                ->andWhere('i.lms = :lms')
+                ->andWhere('i.password IS NOT NULL')
+                ->setParameter('student', $student)
+                ->setParameter('lms', $lms)
+                ->getQuery()
+                ->getSingleScalarResult() > 0;
     }
 
     public function persist(StudentLearningManagementSystemInformation $information): void {

@@ -14,6 +14,8 @@ class StudentMatch {
 
     public bool $isConsented = false;
 
+    public bool $isPasswordSet = false;
+
     public array $actions = [ ];
 
     public bool $needsAction = false;

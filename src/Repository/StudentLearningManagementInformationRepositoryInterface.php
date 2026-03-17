@@ -23,6 +23,8 @@ interface StudentLearningManagementInformationRepositoryInterface extends Transa
 
     public function isConsentedByStudentAndLms(Student $student, LearningManagementSystem $lms): bool;
 
+    public function isPasswordSetByStudentAndLms(Student $student, LearningManagementSystem $lms): bool;
+
     /**
      * @param Student $student
      * @return StudentLearningManagementSystemInformation[]

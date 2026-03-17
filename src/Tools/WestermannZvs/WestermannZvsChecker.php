@@ -49,6 +49,7 @@ readonly class WestermannZvsChecker {
             $match->schueler = $zvsStudent;
             $match->student = $student;
             $match->isConsented = $this->studentLearningManagementSystemInformationRepository->isConsentedByStudentAndLms($student, $checkRequest->lms);
+            $match->isPasswordSet = $this->studentLearningManagementSystemInformationRepository->isPasswordSetByStudentAndLms($student, $checkRequest->lms);
 
             foreach($this->checks as $check) {
                 $action = $check->needAction($match);

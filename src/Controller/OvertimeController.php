@@ -36,12 +36,12 @@ class OvertimeController extends AbstractController {
 
         if($start === null || $end === null) {
             $today = $dateHelper->getToday();
-            $start = $today->setDate($today->format('Y'), $today->format('m'), 1);
+            $start = $today->setDate(intval($today->format('Y')), intval($today->format('m')), 1);
             $end = (clone $start)->add(new DateInterval('P1M'))->sub(new DateInterval('P1D'));
         }
 
         $overview = null;
-        if($start !== null && $end !== null && $teacherFilterView->getCurrentTeacher() !== null) {
+        if($teacherFilterView->getCurrentTeacher() !== null) {
             $overview = $generator->generate($teacherFilterView->getCurrentTeacher(), $start, $end);
         }
 
@@ -64,7 +64,7 @@ class OvertimeController extends AbstractController {
             $end = $tmp;
         }
 
-        $start = (new DateTime())->setDate($start->format('Y'), $start->format('m'), 1);
+        $start = (new DateTime())->setDate(intval($start->format('Y')), intval($start->format('m')), 1);
         while($start < $end) {
             $next = (clone $start)->add(new DateInterval('P1M'));
             $result[] = [

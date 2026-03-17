@@ -44,13 +44,13 @@ readonly class IsGradeConsistentCheck implements CheckInterface {
         ];
 
         foreach($replaceMap as $search => $replace) {
-            $zsvGrade = str_replace($search, $replace, $zsvGrade);
+            $zsvGrade = str_replace('' . $search, $replace, $zsvGrade);
         }
 
         if(!str_contains($actualGrade->getName(), $zsvGrade)) {
             return new Action('check.westermann_zsv.grade_inconsistent', [
                 '%westermann%' => $zsvGrade,
-                '%grade%' => $actualGrade?->getName()
+                '%grade%' => $actualGrade->getName()
             ]);
         }
 

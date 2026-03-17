@@ -66,7 +66,7 @@ class MoreThanOneAttendancesAtTheSameTimeCheck implements IntegrityCheckInterfac
             }
 
             if(($present >= 1 && $absent >= 1) || ($present >= 1 && $present === $count) || ($absent >= 1 && $absent === $count)) {
-                $violations[] = new IntegrityCheckViolation(clone $date, $attendance->getLesson(), $attendance->getEntry() !== null ? $attendance->getEntry()->getLesson() : $attendance->getEvent(), $this->translator->trans('book.integrity_check.checks.more_than_one_attendances_at_the_same_time.violation'));
+                $violations[] = new IntegrityCheckViolation(clone $attendance->getDate(), $attendance->getLesson(), $attendance->getEntry() !== null ? $attendance->getEntry()->getLesson() : $attendance->getEvent(), $this->translator->trans('book.integrity_check.checks.more_than_one_attendances_at_the_same_time.violation'));
             }
         }
 

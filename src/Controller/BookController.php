@@ -238,7 +238,7 @@ class BookController extends AbstractController {
                 $sectionFilterView->getCurrentSection()->getEnd()
             );
         } else if($tuitionFilterView->getCurrentTuition() !== null) {
-            $students = $studentRepository->getStudentsByGradePaginator($limit, $page, $gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection());
+            $students = $studentRepository->getStudentsByStudyGroupsPaginator($limit, $page, [$tuitionFilterView->getCurrentTuition()->getStudyGroup()]);
             $statistics = $studentStatisticsCounterResolver->resolveBulk(
                 iterator_to_array($students->getIterator()),
                 $sectionFilterView->getCurrentSection(),

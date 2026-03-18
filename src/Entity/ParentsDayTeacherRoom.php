@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class ParentsDayTeacherRoom {
 
     #[ORM\Id]
-    #[ORM\ManyToOne(targetEntity: ParentsDay::class, inversedBy: 'teacherRooms')]
+    #[ORM\ManyToOne(targetEntity: ParentsDay::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     #[Assert\NotNull]
     private ParentsDay $parentsDay;

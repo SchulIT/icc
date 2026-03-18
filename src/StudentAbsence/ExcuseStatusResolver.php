@@ -26,6 +26,10 @@ readonly class ExcuseStatusResolver {
             return new ExcuseStatus([]);
         }
 
+        if($absence->getType()->isTypeWithZeroAbsenceLessons() && $absence->getType()->isMustApprove() === false) {
+            return new ExcuseStatus([]);
+        }
+
         $lessonsToExcuse = $this->dateLessonExpander->expandRangeToDateLessons($absence->getFrom(), $absence->getUntil());
         $items = [ ];
 

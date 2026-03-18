@@ -60,12 +60,12 @@ readonly class ExcuseStatusItem {
             return true;
         }
 
-        if($this->timetableLesson === null) {
-            return true;
-        }
-
         if($this->absence->getType()->isMustApprove()) {
             return $this->absence->isApproved();
+        }
+
+        if($this->timetableLesson === null) {
+            return true;
         }
 
         if($this->absence->getType()->getBookExcuseStatus() === AttendanceExcuseStatus::Excused) {

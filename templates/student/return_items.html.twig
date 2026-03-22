@@ -1,0 +1,56 @@
+{% extends 'main.html.twig' %}
+
+{% block title %}{{ student|student }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('students') }}">{{ 'students.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('show_student', { uuid: student.uuid }) }}">{{ block('title') }}</a></li>
+        <li class="breadcrumb-item active">{{ 'students.return_items.label'|trans }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex">
+                <div class="flex-fill">
+                    {% include "student/_navigation.html.twig" with { active: 'return_items' } %}
+                </div>
+
+                <div class="ms-auto align-self-center">
+                    <form method="get">
+                        {% include "_filter/simple/section.html.twig" %}
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {% if returnItems|length > 0 %}
+            <div class="list-group list-group-flush">
+                {% for item in returnItems %}
+                    <a href="{{ path('show_return_item', { uuid: item.uuid }) }}" class="list-group-item list-group-item-action">
+                        <div class="text-muted">
+                            <i class="fas fa-calendar-alt"></i> {{ item.createdAt|format_date }}
+                        </div>
+
+                        {{ item.type.displayName }}
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="card-body">
+                <div class="bs-callout bs-callout-success mb-0">
+                    <i class="fas fa-check-circle"></i> {{ 'return_items.empty'|trans }}
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="card-footer">
+            <a href="{{ path('add_return_item', { student: student.uuid }) }}" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i> {{ 'return_items.add.label'|trans }}
+            </a>
+        </div>
+    </div>
+{% endblock %}

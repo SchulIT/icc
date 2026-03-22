@@ -1,0 +1,53 @@
+{% extends 'main.html.twig' %}
+
+{% block title %}{{ student|student }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('students') }}">{{ 'students.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('show_student', { uuid: student.uuid }) }}">{{ block('title') }}</a></li>
+        <li class="breadcrumb-item active">{{ 'students.tuitions.label'|trans }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex">
+                <div class="flex-fill">
+                    {% include "student/_navigation.html.twig" with { active: 'tuitions' } %}
+                </div>
+
+                <div class="ms-auto align-self-center">
+                    <form method="get">
+                        {% include "_filter/simple/section.html.twig" %}
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="list-group list-group-flush">
+            {% for tuition in tuitions %}
+                <div class="list-group-item d-flex">
+                    <div class="flex-fill align-self-baseline">
+                        {{ tuition.name }}
+
+                        <span class="badge text-bg-primary">{{ tuition.subject.name }}</span>
+
+                        {% for teacher in tuition.teachers %}
+                            <span class="badge text-bg-secondary">
+                                                <i class="fas fa-chalkboard-teacher"></i>
+                                                {{ teacher|teacher }}
+                                            </span>
+                        {% endfor %}
+                    </div>
+                    <a href="{{ path('list_tuition', { uuid: tuition.uuid }) }}" target="_blank" class="btn btn-outline-primary btn-sm align-self-baseline">
+                        <i class="fas fa-external-link"></i>
+                        {{ 'label.details'|trans }}
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

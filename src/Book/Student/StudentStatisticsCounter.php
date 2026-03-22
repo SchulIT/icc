@@ -2,10 +2,11 @@
 
 namespace App\Book\Student;
 
+use App\Entity\AttendanceFlag;
 use App\Entity\Student;
 
 readonly class StudentStatisticsCounter {
-    /*
+    /**
      * @param AttendanceFlagCount[] $attendanceFlagCounts
      */
     public function __construct(
@@ -19,4 +20,14 @@ readonly class StudentStatisticsCounter {
         public int $commentsCount,
         public array $attendanceFlagCounts
     ) { }
+
+    public function getAttendanceFlagCount(AttendanceFlag $flag): int {
+        foreach($this->attendanceFlagCounts as $attendanceFlagCount) {
+            if($attendanceFlagCount->getFlag() === $flag) {
+                return $attendanceFlagCount->getCount();
+            }
+        }
+
+        return 0;
+    }
 }

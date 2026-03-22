@@ -1,0 +1,57 @@
+{% extends 'main.html.twig' %}
+
+{% block title %}{{ student|student }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('students') }}">{{ 'students.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('show_student', { uuid: student.uuid }) }}">{{ block('title') }}</a></li>
+        <li class="breadcrumb-item active">{{ 'students.comments.label'|trans }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex">
+                <div class="flex-fill">
+                    {% include "student/_navigation.html.twig" with { active: 'comments' } %}
+                </div>
+
+                <div class="ms-auto align-self-center">
+                    <form method="get">
+                        {% include "_filter/simple/section.html.twig" %}
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {% if comments|length > 0 %}
+            <div class="list-group list-group-flush">
+                {% for comment in comments %}
+                    <a class="list-group-item list-group-item-action" href="{{ path('show_book_comment', { uuid: comment.uuid }) }}">
+                        <div class="text-muted">
+                            <i class="fas fa-calendar-alt"></i> {{ comment.date|format_date }}
+                            <i class="fas fa-chalkboard-teacher"></i> {{ comment.teacher|teacher }}
+                        </div>
+
+                        {{ comment.text }}
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="card-body">
+                <div class="bs-callout bs-callout-success mb-0">
+                    <i class="fas fa-check-circle"></i> {{ 'book.comment.empty'|trans }}
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="card-footer">
+            <a href="{{ path('add_book_comment', { student: student.uuid }) }}" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i> {{ 'book.comment.add.label'|trans }}
+            </a>
+        </div>
+    </div>
+{% endblock %}

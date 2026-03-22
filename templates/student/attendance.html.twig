@@ -1,0 +1,139 @@
+{% extends 'main.html.twig' %}
+
+{% block title %}{{ student|student }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('students') }}">{{ 'students.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('show_student', { uuid: student.uuid }) }}">{{ block('title') }}</a></li>
+        <li class="breadcrumb-item active">{{ 'students.attendance.label'|trans }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex">
+                <div class="flex-fill">
+                    {% include "student/_navigation.html.twig" with { active: 'attendance' } %}
+                </div>
+
+                <div class="ms-auto align-self-center">
+                    <form method="get">
+                        {% include "_filter/simple/section.html.twig" %}
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body border-bottom">
+            <div class="container-fluid">
+                <div class="row row-cols-xl-4 row-cols-lg-4 g-2 row-cols-md-2 row-cols-1">
+                    <div class="col">
+                        <dt class="text-uppercase text-muted">{{ 'book.students.absent'|trans }}</dt>
+                        <div class="display-6">
+                            {{ studentInfo.absentLessonsCount }} / {{ studentInfo.totalLessonsCount }}
+
+                            <span class="text-muted">
+                                {{ percent(studentInfo.absentLessonsCount, studentInfo.totalLessonsCount)|round(2) }}%
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <dt class="text-uppercase text-muted">{{ 'book.students.not_excused'|trans }}</dt>
+                        <div class="display-6">
+                            {{ studentInfo.notExcusedLessonsCount }}
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <dt class="text-uppercase text-muted">{{ 'book.students.not_set'|trans }}</dt>
+                        <div class="display-6">
+                            {{ studentInfo.excuseStatusNotSetLessonsCount }}
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <dt class="text-uppercase text-muted">{{ 'book.students.late'|trans }}</dt>
+                        <div class="display-6">
+                            {{ 'book.attendance.late_minutes'|trans({'%count%': studentInfo.lateMinutes }) }}
+                        </div>
+                    </div>
+
+                    {% for flag in attendanceFlags %}
+                        <div class="col">
+                            <dt class="text-uppercase text-muted">{{ flag.description }}</dt>
+                            <div class="display-6">
+                                {{ studentInfo.attendanceFlagCount(flag) }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-hover card-table">
+
+                <thead>
+                <tr>
+                    <th>{{ 'label.tuition'|trans }}</th>
+                    <th>{{ 'label.subject'|trans }}</th>
+                    <th>{{ 'label.teachers_simple'|trans }}</th>
+                    <th>{{ 'book.students.absent'|trans }}</th>
+                    <th>{{ 'book.students.not_excused'|trans }}</th>
+                    <th>{{ 'book.students.not_set'|trans }}</th>
+                    <th>{{ 'book.students.late'|trans }}</th>
+                    {% for flag in attendanceFlags %}
+                        <th>{{ flag.description }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+
+                <tbody>
+                {% for tuition in tuitions %}
+                    {% set counter = tuitionCounters[tuition.id] %}
+                    <tr>
+                        <td>{{ tuition.name }}</td>
+                        <td>
+                            {{ tuition?.subject.name }}
+                        </td>
+                        <td class="align-middle">
+                            {% for teacher in tuition.teachers %}
+                                {{ teacher|teacher }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td class="align-middle">
+                            {{ counter.absentLessonsCount }} / {{ counter.totalLessonsCount }}
+
+                            <span class="text-muted">
+                                {{ percent(counter.absentLessonsCount, counter.totalLessonsCount)|round(2) }}%
+                            </span>
+                        </td>
+                        <td class="align-middle">
+                            {{ counter.notExcusedLessonsCount }}
+                        </td>
+                        <td class="align-middle">
+                            {{ counter.excuseStatusNotSetLessonsCount }}
+                        </td>
+                        <td class="align-middle">
+                            {{ 'book.attendance.late_minutes'|trans({'%count%': counter.lateMinutes }) }}
+                        </td>
+                        {% for flag in attendanceFlags %}
+                            <td class="align-middle">{{ counter.attendanceFlagCount(flag) }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card-footer">
+            <a href="{{ path('book_student_attendance', { student: student.uuid, section: sectionFilter.currentSection.uuid }) }}" target="_blank" class="btn btn-primary btn-sm">
+                <i class="fas fa-external-link"></i> {{ 'book.attendance.label'|trans }}
+            </a>
+        </div>
+    </div>
+{% endblock %}

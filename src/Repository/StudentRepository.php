@@ -358,4 +358,43 @@ class StudentRepository extends AbstractTransactionalRepository implements Stude
 
         return $paginator;
     }
+
+    public function findAllPaginated(PaginationQuery $paginationQuery, Section $section, ?string $query = null, ?Grade $grade = null): PaginatedResult {
+        $qb = $this->em->createQueryBuilder()
+            ->select('s')
+            ->from(Student::class, 's')
+            ->orderBy('s.lastname', 'asc')
+            ->addOrderBy('s.firstname', 'asc')
+            ->setParameter('section', $section->getId());
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('sInner.id')
+            ->from(Student::class, 'sInner')
+            ->leftJoin('sInner.sections', 'secInner')
+            ->where('secInner.id = :section');
+
+        if(!empty($query)) {
+            $qbInner->andWhere(
+                $qb->expr()->orX(
+                    's.lastname LIKE :query',
+                    's.firstname LIKE :query'
+                )
+            );
+            $qb->setParameter('query', '%' . $query . '%');
+        }
+
+        if($grade !== null) {
+            $qbInner
+                ->leftJoin('sInner.gradeMemberships', 'smInner')
+                ->andWhere('smInner.grade = :grade');
+
+            $qb->setParameter('grade', $grade->getId());
+        }
+
+        $qb->andWhere(
+            $qb->expr()->in('s.id', $qbInner->getDQL())
+        );
+
+        return PaginatedResult::fromQueryBuilder($qb, $paginationQuery);
+    }
 }

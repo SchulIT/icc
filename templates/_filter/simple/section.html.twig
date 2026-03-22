@@ -1,0 +1,8 @@
+<select name="section" class="form-select form-select-sm" data-trigger="{{ trigger|default("submit") }}">
+    <option value="">{{ 'label.select.section'|trans }}</option>
+    {% for s in sectionFilter.sections %}
+        <option value="{{ s.uuid }}" {% if sectionFilter.currentSection != null and s.uuid == sectionFilter.currentSection.uuid %}selected="selected"{% endif %}>
+            {{ s.displayName }}
+        </option>
+    {% endfor %}
+</select>

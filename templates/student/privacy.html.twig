@@ -1,0 +1,46 @@
+{% extends 'main.html.twig' %}
+
+{% block title %}{{ student|student }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('students') }}">{{ 'students.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('show_student', { uuid: student.uuid }) }}">{{ block('title') }}</a></li>
+        <li class="breadcrumb-item active">{{ 'students.privacy.label'|trans }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex">
+                <div class="flex-fill">
+                    {% include "student/_navigation.html.twig" with { active: 'privacy' } %}
+                </div>
+
+                <div class="ms-auto align-self-center">
+                    {% include "_filter/simple/section.html.twig" %}
+                </div>
+            </div>
+        </div>
+
+        <div class="list-group list-group-flush">
+            {% for category in privacyCategories %}
+                <div class="list-group-item">
+                    <p class="mb-0">
+                        {% if student.approvedPrivacyCategories.contains(category) %}
+                            <i class="fas fa-check-circle text-success"></i>
+                        {% else %}
+                            <i class="fas fa-times-circle text-danger"></i>
+                        {% endif %}
+                        {{ category.label }}
+                    </p>
+                    {% if category.description is not empty %}
+                        <p class="text-muted mt-1">{{ category.description }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

@@ -46,7 +46,8 @@ class HelperExtension extends AbstractExtension {
             new TwigFunction('foreground', [ $this, 'foregroundColor' ]),
             new TwigFunction('validation_errors', [ $this, 'validate' ]),
             new TwigFunction('contains_active_filters', [ $this, 'containsActiveFilters']),
-            new TwigFunction('is_in_datetime_array', [ $this, 'isInDateTimeArray'])
+            new TwigFunction('is_in_datetime_array', [ $this, 'isInDateTimeArray']),
+            new TwigFunction('percent', [ $this, 'percent' ]),
         ];
     }
 
@@ -155,5 +156,13 @@ class HelperExtension extends AbstractExtension {
         }
 
         return false;
+    }
+
+    public function percent(float $value, float $total): float {
+        if($total === 0.0) {
+            return 0;
+        }
+
+        return $value / $total * 100;
     }
 }

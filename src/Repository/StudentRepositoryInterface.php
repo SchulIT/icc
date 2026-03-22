@@ -136,6 +136,15 @@ interface StudentRepositoryInterface extends TransactionalRepositoryInterface {
     public function findAllBySection(Section $section): array;
 
     /**
+     * @param PaginationQuery $paginationQuery
+     * @param Section $section
+     * @param string|null $query
+     * @param Grade|null $grade
+     * @return PaginatedResult<Student>
+     */
+    public function findAllPaginated(PaginationQuery $paginationQuery, Section $section, string|null $query = null, Grade|null $grade = null): PaginatedResult;
+
+    /**
      * @param Student $student
      */
     public function persist(Student $student): void;

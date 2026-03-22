@@ -1,0 +1,78 @@
+{% extends 'main.html.twig' %}
+
+{% block title %}{{ student|student }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('students') }}">{{ 'students.label'|trans }}</a></li>
+        <li class="breadcrumb-item active">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex">
+                <div class="flex-fill">
+                    {% include "student/_navigation.html.twig" with { active: 'general' } %}
+                </div>
+
+                <div class="ms-auto align-self-center">
+                    <form method="get">
+                        {% include "_filter/simple/section.html.twig" %}
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body border-bottom">
+            <div class="container-fluid">
+                <div class="row row-cols-xl-6 row-cols-lg-4 row-cols-md-2 row-cols-1">
+                    <div class="col">
+                        <dt class="text-uppercase text-muted">{{ 'label.firstname'|trans }}</dt>
+                        <dd>{{ student.firstname }}</dd>
+                    </div>
+
+                    <div class="col">
+                        <dt class="text-uppercase text-muted">{{ 'label.lastname'|trans }}</dt>
+                        <dd>{{ student.lastname }}</dd>
+                    </div>
+
+                    <div class="col">
+                        <dt class="text-uppercase text-muted">{{ 'label.gender'|trans }}</dt>
+                        <dd>{{ student.gender|trans }}</dd>
+                    </div>
+
+                    <div class="col">
+                        <dt class="text-uppercase text-muted">{{ 'label.birthday'|trans }}</dt>
+                        <dd>{{ student.birthday|format_date }}</dd>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="container-fluid">
+                <div class="row row-cols-xl-6 row-cols-lg-4 row-cols-md-2 row-cols-1">
+                    <div class="col">
+                        <dt class="text-uppercase text-muted">{{ 'label.status'|trans }}</dt>
+                        <dd>{{ student.status }}</dd>
+                    </div>
+
+                    <div class="col">
+                        <dt class="text-uppercase text-muted">{{ 'label.email'|trans }}</dt>
+                        <dd>
+                            <a href="mailto:{{ student.email }}">{{ student.email }}</a>
+                        </dd>
+                    </div>
+
+                    <div class="col">
+                        <dt class="text-uppercase text-muted">{{ 'label.grade'|trans }}</dt>
+                        <dd>{{ student.grade(sectionFilter.currentSection)?.name }}</dd>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

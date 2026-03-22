@@ -2915,6 +2915,26 @@ return_items:
 students:
     label: Lernende
     button: Gesamt-Übersicht
+    count: '%count% Lernende'
+    query: Nachnamen oder Vornamen suchen
+
+    general:
+        label: Stammdaten
+
+    privacy:
+        label: Datenschutz
+
+    attendance:
+        label: Anwesenheit
+
+    comments:
+        label: Kommentare
+
+    tuitions:
+        label: Unterricht
+
+    return_items:
+        label: Rückgaben
 
     show:
         chat:

@@ -1,0 +1,16 @@
+<select name="grade" id="grade" class="form-select form-select-sm" data-trigger="{{ trigger|default("submit") }}">
+    <option value="">{{ 'label.select.grade'|trans }}</option>
+    {% for g in gradeFilter.grades %}
+        <option value="{{ g.uuid }}" {% if gradeFilter.currentGrade != null and gradeFilter.currentGrade.uuid == g.uuid %}selected="selected"{% endif %}>
+            {{ g.getName() }}
+
+            {% set teachers = [] %}
+            {%- for t in g.teachers|sort_gradeteachers -%}
+                {%- if sectionFilter is defined and sectionFilter.currentSection == t.section -%}
+                    {% set teachers = teachers|merge([t.teacher.acronym]) %}
+                {%- endif -%}
+            {%- endfor -%}
+            {% if teachers|length > 0 %}({{ teachers|join(', ') }}){% endif %}
+        </option>
+    {% endfor %}
+</select>

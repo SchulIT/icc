@@ -141,13 +141,11 @@ class ExcuseNoteRepository extends AbstractRepository implements ExcuseNoteRepos
                     $qb->expr()->andX( // range and request is first day
                         'n.from.date < n.until.date',
                         'n.from.date = :date',
-                        'n.from.lesson <= :lesson',
-                        'n.until.lesson >= :lesson'
+                        'n.from.lesson <= :lesson'
                     ),
                     $qb->expr()->andX( // range and request is last day
                         'n.from.date < n.until.date',
                         'n.until.date = :date',
-                        'n.from.lesson <= :lesson',
                         'n.until.lesson >= :lesson'
                     ),
                     $qb->expr()->andX( // range and request is somewhere in between

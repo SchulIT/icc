@@ -13,16 +13,15 @@ interface ReturnItemRepositoryInterface {
     /**
      * @return PaginatedResult<ReturnItem>
      */
-    public function findAllPaginated(int &$page, int &$limit, ?ReturnItemType $type = null): PaginatedResult;
+    public function findAllPaginated(PaginationQuery $paginationQuery, ?ReturnItemType $type = null): PaginatedResult;
 
     /**
      * @param Student[] $students
-     * @param int $page
-     * @param int $limit
+     * @param PaginationQuery $paginationQuery
      * @param ReturnItemType|null $type
      * @return PaginatedResult<ReturnItem>
      */
-    public function findByStudentsPaginated(array $students, int &$page, int &$limit, ?ReturnItemType $type = null): PaginatedResult;
+    public function findByStudentsPaginated(array $students, PaginationQuery $paginationQuery, ?ReturnItemType $type = null): PaginatedResult;
 
     /**
      * @param Student $student

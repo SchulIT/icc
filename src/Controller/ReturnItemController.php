@@ -9,6 +9,7 @@ use App\Feature\Feature;
 use App\Feature\IsFeatureEnabled;
 use App\Form\ReturnItemType;
 use App\Http\Attribute\MapDateFromQuery;
+use App\Repository\PaginationQuery;
 use App\Repository\ReturnItemRepositoryInterface;
 use App\Repository\StudentRepositoryInterface;
 use App\ReturnItem\Statistics;
@@ -33,54 +34,45 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 #[IsFeatureEnabled(Feature::ReturnItem)]
 class ReturnItemController extends AbstractController {
 
-    public function __construct(RefererHelper $redirectHelper, private readonly ReturnItemRepositoryInterface $repository) {
+    public function __construct(RefererHelper $redirectHelper, private readonly ReturnItemRepositoryInterface $repository, private readonly StudentRepositoryInterface $studentRepository) {
         parent::__construct($redirectHelper);
     }
 
     #[Route('', name: 'return_items')]
-    public function index(StudentFilter $studentFilter, GradeFilter $gradeFilter, Request $request, SectionResolverInterface $sectionResolver, #[CurrentUser] $user): Response {
+    public function index(
+        StudentFilter $studentFilter,
+        GradeFilter $gradeFilter,
+        Request $request,
+        SectionResolverInterface $sectionResolver,
+        #[CurrentUser] $user
+    ): Response {
         $page = $request->query->getInt('page', 1);
-        $limit = $request->query->getInt('limit', 25);
-
-        if($limit > 500 || $limit <= 0) {
-            $limit = 25;
-        }
+        $limit = $request->query->getInt('limit', 10);
 
         $studentFilterView = $studentFilter->handle($request->query->get('student'), $sectionResolver->getCurrentSection(), $user);
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade'), $sectionResolver->getCurrentSection(), $user);
 
-        $items = [ ];
-        $pages = 1;
-
         if($user->isStudentOrParent()) {
-            $result = $this->repository->findByStudentsPaginated($user->getStudents()->toArray(), $page, $limit);
+            $result = $this->repository->findByStudentsPaginated($user->getStudents()->toArray(), new PaginationQuery(page: $page, limit: $limit));
             // reset filters to prevent displaying them
             $studentFilterView = new StudentFilterView([], null, 0);
             $gradeFilterView = new GradeFilterView([], null, []);
         } else {
             if ($studentFilterView->getCurrentStudent() !== null) {
-                $result = $this->repository->findByStudentsPaginated([$studentFilterView->getCurrentStudent()], $page, $limit);
+                $result = $this->repository->findByStudentsPaginated([$studentFilterView->getCurrentStudent()], new PaginationQuery(page: $page, limit: $limit));
             } else {
                 if ($gradeFilterView->getCurrentGrade() !== null) {
-                    $students = $gradeFilterView->getCurrentGrade()->getMemberships()
-                        ->filter(fn(GradeMembership $membership) => $membership->getSection()?->getId() === $sectionResolver->getCurrentSection()?->getId())
-                        ->map(fn(GradeMembership $membership) => $membership->getStudent())
-                        ->toArray();
-
-                    $result = $this->repository->findByStudentsPaginated($students, $page, $limit);
+                    $students = $this->studentRepository->findAllByGrade($gradeFilterView->getCurrentGrade(), $sectionResolver->getCurrentSection());
+                    $result = $this->repository->findByStudentsPaginated($students, new PaginationQuery(page: $page, limit: $limit));
                 } else {
-                    $result = $this->repository->findAllPaginated($page, $limit);
+                    $result = $this->repository->findAllPaginated(new PaginationQuery(page: $page, limit: $limit));
                 }
             }
         }
 
-        $items = $result->result;
-        $pages = ceil((double)$result->totalCount / $limit);
-
         return $this->render('returns/index.html.twig', [
-            'items' => $items,
+            'items' => $result,
             'page' => $page,
-            'pages' => $pages,
             'limit' => $limit,
             'studentFilter' => $studentFilterView,
             'gradeFilter' => $gradeFilterView

@@ -13,15 +13,13 @@ use Override;
 
 class ReturnItemRepository extends AbstractRepository implements ReturnItemRepositoryInterface {
 
-    private function getQueryBuilder(int $page, int $limit, ?ReturnItemType $type = null): QueryBuilder {
+    private function getQueryBuilder(?ReturnItemType $type = null): QueryBuilder {
         $qb = $this->em->createQueryBuilder()
             ->select(['i', 't', 's'])
             ->from(ReturnItem::class, 'i')
             ->leftJoin('i.type', 't')
             ->leftJoin('i.student', 's')
-            ->orderBy('i.createdAt', 'desc')
-            ->setMaxResults($limit)
-            ->setFirstResult(($page - 1) * $limit);
+            ->orderBy('i.createdAt', 'desc');
 
         if($type !== null) {
             $qb->andWhere('t.id = :type')
@@ -32,49 +30,21 @@ class ReturnItemRepository extends AbstractRepository implements ReturnItemRepos
     }
 
     #[Override]
-    public function findByStudentsPaginated(array $students, int &$page, int &$limit, ?ReturnItemType $type = null): PaginatedResult {
-        if($page < 1) {
-            $page = 1;
-        }
-
-        if($limit < 1) {
-            $limit = 25;
-        }
-
+    public function findByStudentsPaginated(array $students, PaginationQuery $paginationQuery, ?ReturnItemType $type = null): PaginatedResult {
         $studentIds = array_map(fn(Student $student) => $student->getId(), $students);
 
-        $query = $this->getQueryBuilder($page, $limit, $type)
+        $qb = $this->getQueryBuilder($type)
             ->andWhere('s.id IN (:studentIds)')
-            ->setParameter('studentIds', $studentIds)
-            ->getQuery();
+            ->setParameter('studentIds', $studentIds);
 
-        $paginator = new Paginator($query, fetchJoinCollection: true);
-
-        return new PaginatedResult(
-            iterator_to_array($paginator),
-            $paginator->count()
-        );
+        return PaginatedResult::fromQueryBuilder($qb, $paginationQuery);
     }
 
     #[Override]
-    public function findAllPaginated(int &$page, int &$limit, ?ReturnItemType $type = null): PaginatedResult {
-        if($page < 1) {
-            $page = 1;
-        }
+    public function findAllPaginated(PaginationQuery $paginationQuery, ?ReturnItemType $type = null): PaginatedResult {
+        $qb = $this->getQueryBuilder($type);
 
-        if($limit < 1) {
-            $limit = 25;
-        }
-
-        $query = $this->getQueryBuilder($page, $limit, $type)
-            ->getQuery();
-
-        $paginator = new Paginator($query, fetchJoinCollection: true);
-
-        return new PaginatedResult(
-            iterator_to_array($paginator),
-            $paginator->count()
-        );
+        return PaginatedResult::fromQueryBuilder($qb, $paginationQuery);
     }
 
     #[Override]

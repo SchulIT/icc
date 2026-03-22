@@ -1,0 +1,22 @@
+{
+    frankenphp {
+        php_ini date.timezone Europe/Berlin
+        php_ini memory_limit 512M
+
+        worker {
+           file ./public/index.php
+           watch
+        }
+    }
+
+    http_port 82
+}
+
+:82 {
+    log
+    encode zstd br gzip
+
+    root ./public/
+
+    php_server
+}

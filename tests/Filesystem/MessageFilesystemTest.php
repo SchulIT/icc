@@ -126,11 +126,11 @@ class MessageFilesystemTest extends TestCase {
     public function testRemoveNonExistingMessageAttachment() {
         $flysystem = $this->getMockBuilder(Filesystem::class)
             ->setConstructorArgs([new InMemoryFilesystemAdapter()])
-            ->setMethods(['deleteDir'])
+            ->onlyMethods(['deleteDirectory'])
             ->getMock();
         $flysystem
             ->expects($this->never())
-            ->method('deleteDir');
+            ->method('deleteDirectory');
 
         $filesystem = $this->getFilesystem($flysystem);
 
@@ -140,11 +140,11 @@ class MessageFilesystemTest extends TestCase {
     public function testInvalidMessage() {
         $flysystem = $this->getMockBuilder(Filesystem::class)
             ->setConstructorArgs([new InMemoryFilesystemAdapter()])
-            ->setMethods(['deleteDir'])
+            ->onlyMethods(['deleteDirectory'])
             ->getMock();
         $flysystem
             ->expects($this->never())
-            ->method('deleteDir');
+            ->method('deleteDirectory');
 
         $filesystem = $this->getFilesystem($flysystem);
 

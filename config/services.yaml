@@ -350,10 +350,3 @@ services:
             $pushoverToken: '%env(PUSHOVER_TOKEN)%'
             $logger: '@monolog.logger.notifications'
 
-when@test:
-    # See https://github.com/DamienHarper/auditor/issues/141#issuecomment-1397949309
-    services:
-        doctrine.orm.entity_manager.abstract:
-            class: '%doctrine.orm.entity_manager.class%'
-            lazy: false
-            abstract: true

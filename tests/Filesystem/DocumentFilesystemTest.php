@@ -123,11 +123,11 @@ class DocumentFilesystemTest extends TestCase {
     public function testRemoveNonExistingDocumentAttachment() {
         $flysystem = $this->getMockBuilder(Filesystem::class)
             ->setConstructorArgs([new InMemoryFilesystemAdapter()])
-            ->setMethods(['deleteDir'])
+            ->onlyMethods(['deleteDirectory'])
             ->getMock();
         $flysystem
             ->expects($this->never())
-            ->method('deleteDir');
+            ->method('deleteDirectory');
 
         $filesystem = $this->getFilesystem($flysystem);
 
@@ -137,11 +137,11 @@ class DocumentFilesystemTest extends TestCase {
     public function testInvalidDocument() {
         $flysystem = $this->getMockBuilder(Filesystem::class)
             ->setConstructorArgs([new InMemoryFilesystemAdapter()])
-            ->setMethods(['deleteDir'])
+            ->onlyMethods(['deleteDirectory'])
             ->getMock();
         $flysystem
             ->expects($this->never())
-            ->method('deleteDir');
+            ->method('deleteDirectory');
 
         $filesystem = $this->getFilesystem($flysystem);
 

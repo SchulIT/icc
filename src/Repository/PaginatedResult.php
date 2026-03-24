@@ -15,16 +15,6 @@ use Traversable;
  */
 class PaginatedResult implements IteratorAggregate {
 
-    public int $totalPages {
-        get {
-            if($this->limit === 0) {
-                return 0;
-            }
-
-            return ceil((float)$this->totalCount / $this->limit);
-        }
-    }
-
     /**
      * @param Traversable<array-key, T> $iterator
      * @param int $totalCount
@@ -40,6 +30,14 @@ class PaginatedResult implements IteratorAggregate {
     #[Override]
     public function getIterator(): Traversable {
         return $this->iterator;
+    }
+
+    public function getTotalPages(): int {
+        if($this->limit === 0) {
+            return 0;
+        }
+
+        return intval(ceil((float)$this->totalCount / $this->limit));
     }
 
     /**

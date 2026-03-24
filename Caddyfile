@@ -9,10 +9,10 @@
         }
     }
 
-    http_port 82
+    http_port {$ICC_PORT:80}
 }
 
-:82 {
+:{$ICC_PORT:80} {
     log
     encode zstd br gzip
 

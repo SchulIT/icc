@@ -73,7 +73,7 @@ readonly class DecryptDatabaseCommand {
         $progress = new ProgressBar($io, count($absences));
 
         $i = 0;
-        $tableName = $this->getTableName(StudentLearningManagementSystemInformation::class);
+        $tableName = $this->getTableName(TeacherAbsence::class);
         $this->entityManager->getConnection()->beginTransaction();
 
         foreach($absences as $absence) {

@@ -2097,12 +2097,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     skip_translation_on_load?: bool|Param, // Default: false
  *     metadata_cache_pool?: scalar|Param|null, // Default: null
  * }
- * @psalm-type AmbtaDoctrineEncryptConfig = array{
- *     encryptor_class?: scalar|Param|null, // Default: "Halite"
- *     secret_directory_path?: scalar|Param|null, // Default: "%kernel.project_dir%"
- *     enable_secret_generation?: bool|Param, // Default: true
- *     secret?: scalar|Param|null, // Default: null
- * }
  * @psalm-type TwigComponentConfig = array{
  *     defaults?: array<string, string|array{ // Default: ["__deprecated__use_old_naming_behavior"]
  *         template_directory?: scalar|Param|null, // Default: "components"
@@ -2161,7 +2155,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     dh_auditor?: DhAuditorConfig,
  *     twig_extra?: TwigExtraConfig,
  *     stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
- *     ambta_doctrine_encrypt?: AmbtaDoctrineEncryptConfig,
  *     twig_component?: TwigComponentConfig,
  *     chrisguitarguy_request_id?: ChrisguitarguyRequestIdConfig,
  *     zenstruck_messenger_monitor?: ZenstruckMessengerMonitorConfig,
@@ -2193,7 +2186,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         dh_auditor?: DhAuditorConfig,
  *         twig_extra?: TwigExtraConfig,
  *         stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
- *         ambta_doctrine_encrypt?: AmbtaDoctrineEncryptConfig,
  *         twig_component?: TwigComponentConfig,
  *         chrisguitarguy_request_id?: ChrisguitarguyRequestIdConfig,
  *         zenstruck_messenger_monitor?: ZenstruckMessengerMonitorConfig,
@@ -2223,7 +2215,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         dh_auditor?: DhAuditorConfig,
  *         twig_extra?: TwigExtraConfig,
  *         stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
- *         ambta_doctrine_encrypt?: AmbtaDoctrineEncryptConfig,
  *         twig_component?: TwigComponentConfig,
  *         chrisguitarguy_request_id?: ChrisguitarguyRequestIdConfig,
  *         zenstruck_messenger_monitor?: ZenstruckMessengerMonitorConfig,
@@ -2256,7 +2247,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         dh_auditor?: DhAuditorConfig,
  *         twig_extra?: TwigExtraConfig,
  *         stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
- *         ambta_doctrine_encrypt?: AmbtaDoctrineEncryptConfig,
  *         twig_component?: TwigComponentConfig,
  *         chrisguitarguy_request_id?: ChrisguitarguyRequestIdConfig,
  *         zenstruck_messenger_monitor?: ZenstruckMessengerMonitorConfig,

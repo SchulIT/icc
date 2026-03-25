@@ -18,7 +18,6 @@
         "doctrine/doctrine-bundle": "^3.0",
         "doctrine/doctrine-migrations-bundle": "^3.0.0",
         "doctrine/orm": "^3.0",
-        "doctrineencryptbundle/doctrine-encrypt-bundle": "^7.0",
         "dragonmantank/cron-expression": "^3.4",
         "easycorp/easyadmin-bundle": "^4.0",
         "eightpoints/guzzle-bundle": "^8.2",

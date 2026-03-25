@@ -1,4 +1,0 @@
-ambta_doctrine_encrypt:
-  encryptor_class: Defuse
-  secret: '%env(base64:DB_SECRET)%'
-  enable_secret_generation: false

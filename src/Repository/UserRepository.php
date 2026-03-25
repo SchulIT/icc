@@ -138,6 +138,32 @@ class UserRepository extends AbstractTransactionalRepository implements UserRepo
             ]);
     }
 
+    public function findAllPaginated(PaginationQuery $paginationQuery, string $query): PaginatedResult {
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('uInner.id')
+            ->from(User::class, 'uInner')
+            ->leftJoin('uInner.students', 'sInner')
+            ->where('uInner.username LIKE :query')
+            ->orWhere('uInner.email LIKE :query')
+            ->orWhere('uInner.firstname LIKE :query')
+            ->orWhere('uInner.lastname LIKE :query')
+            ->orWhere('uInner.uuid LIKE :query')
+            ->orWhere('sInner.email LIKE :query')
+            ->orWhere('sInner.firstname LIKE :query')
+            ->orWhere('sInner.lastname LIKE :query');
+
+        $qb = $this->em->createQueryBuilder();
+
+        $qb
+            ->select(['u', 's'])
+            ->from(User::class, 'u')
+            ->leftJoin('u.students', 's')
+            ->where($qb->expr()->in('u.id', $qbInner->getDQL()))
+            ->setParameter('query', '%' . $query . '%');
+
+        return PaginatedResult::fromQueryBuilder($qb, $paginationQuery);
+    }
+
     /**
      * @inheritDoc
      */

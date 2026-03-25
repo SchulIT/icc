@@ -46,6 +46,7 @@
         "sass": "^1.63.4",
         "sass-loader": "^16.0",
         "simple-datatables": "^2.1.13",
+        "tom-select": "^2.5.2",
         "uglify-js": "^3.8.0",
         "uuid": "^8.1.0",
         "vanilla-picker": "^2.10.0",

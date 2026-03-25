@@ -1,8 +1,14 @@
 {% extends "profile/_profile.twig" %}
 
-{% block title %}{{ 'profile.apps.label'|trans }}{% endblock %}
+{% block title %}{{ 'profile.switch.label'|trans }}{% endblock %}
 
 {% block switch_active %}active{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+
+    <script src="{{ asset('build/autocomplete.js') }}"></script>
+{% endblock %}
 
 {% block profile_card_body %}
     <div class="card-body">
@@ -10,15 +16,7 @@
             <div class="mb-3 row">
                 <label class="col-form-label col-sm-2 required" for="user">{{ 'label.user'|trans}}</label>
                 <div class="col-sm-10">
-                    <select name="_switch_user" id="user" class="form-control" data-choice="true">
-                        {% for group in groups %}
-                            <optgroup label="{{ group.key }}">
-                                {% for user in group.items %}
-                                    <option value="{{ user.idpId }}">{{ user.username }} ({{ user|user }})</option>
-                                {% endfor %}
-                            </optgroup>
-                        {% endfor %}
-                    </select>
+                    <select name="_switch_user" id="user" class="form-control" placeholder="{{ 'label.select.user'|trans }}" data-autocomplete="true" data-autocomplete-url="{{ url('autocomplete_user') }}?q={query}&page={page}"></select>
                 </div>
             </div>
 

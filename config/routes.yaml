@@ -1,6 +1,7 @@
 controllers:
-    resource: ../src/Controller/
+    resource: ../src
     type: attribute
+
 
 lightsaml_sp:
     resource: "@LightSamlSpBundle/Resources/config/routing.yml"

@@ -29,6 +29,7 @@ Encore
     .addEntry('export-student-absences', './assets/js/export-student-absences.js')
     .addEntry('parents_day', './assets/js/parents_day.js')
     .addEntry('chat', './assets/js/chat.js')
+    .addEntry('autocomplete', './assets/js/autocomplete.js')
 
     .configureBabel(() => {}, {
         useBuiltIns: 'usage',

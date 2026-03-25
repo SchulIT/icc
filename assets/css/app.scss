@@ -38,6 +38,9 @@
 // Import datatables
 @import '../../node_modules/simple-datatables/dist/style.css';
 
+// Import Tom Select
+@import '../../node_modules/tom-select/dist/css/tom-select.bootstrap5.css';
+
 /* Editor fixes to make it work with FontAwesome (see https://stackoverflow.com/a/26638216) */
 .md-container {
   .btn-group {

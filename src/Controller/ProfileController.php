@@ -201,14 +201,7 @@ class ProfileController extends AbstractController {
 
     #[Route(path: '/switch', name: 'switch_user')]
     #[IsGranted('ROLE_ALLOWED_TO_SWITCH')]
-    public function switchUser(Grouper $grouper, Sorter $sorter, UserRepositoryInterface $userRepository, SectionResolverInterface $sectionResolver): Response {
-        $users = $userRepository->findAll();
-        $groups = $grouper->group($users, UserTypeAndGradeStrategy::class, ['section' => $sectionResolver->getCurrentSection()]);
-        $sorter->sort($groups, StringGroupStrategy::class);
-        $sorter->sortGroupItems($groups, UserUsernameStrategy::class);
-
-        return $this->render('profile/switch.html.twig', [
-            'groups' => $groups
-        ]);
+    public function switchUser(): Response {
+        return $this->render('profile/switch.html.twig');
     }
 }

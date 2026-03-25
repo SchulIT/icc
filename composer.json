@@ -11,6 +11,7 @@
         "ext-libxml": "*",
         "ext-openssl": "*",
         "ext-zip": "*",
+        "ext-sysvsem": "*",
         "beberlei/doctrineextensions": "^1.2",
         "composer/package-versions-deprecated": "1.11.99.4",
         "damienharper/auditor-bundle": "^6.0",

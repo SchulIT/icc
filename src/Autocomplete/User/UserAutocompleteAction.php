@@ -21,7 +21,7 @@ class UserAutocompleteAction extends AbstractController {
     public function __invoke(
         UserRepositoryInterface $userRepository,
         UserTransformator $transformator,
-        #[MapQueryParameter(name: 'q')] string $query,
+        #[MapQueryParameter(name: 'q')] string|null $query = null,
         #[MapQueryParameter] int|null $page = 1,
         #[MapQueryParameter] int|null $limit = 25,
     ): JsonResponse {

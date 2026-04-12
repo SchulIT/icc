@@ -1465,9 +1465,9 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         logo_link?: scalar|Param|null, // Default: null
  *     },
  *     disable?: array{
- *         cron?: bool|Param, // Default: false
+ *         cron?: bool|Param, // Deprecated: The child node "cron" at path "common.disable.cron" is deprecated. // Default: false
  *         orm?: bool|Param, // Default: false
- *         messenger?: bool|Param, // Default: false
+ *         messenger?: bool|Param, // Deprecated: The child node "messenger" at path "common.disable.messenger" is deprecated. // Default: false
  *         autoconfig?: bool|Param, // Default: false
  *     },
  *     autoconfig?: array{
@@ -1476,6 +1476,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         app_icon?: string|Param,
  *         saml_cert_file?: string|Param,
  *         role_hierarchy?: mixed,
+ *         role_translator?: string|Param, // Default: "SchulIT\\CommonBundle\\Autoconfig\\Roles\\TranslationFileTranslator"
  *         ignore_roles?: list<string|Param>,
  *         role_attribute_name?: string|Param, // Default: "urn:roles"
  *         index_route_name?: string|Param, // Default: "index"
@@ -1564,7 +1565,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *                 timeout?: scalar|Param|null, // Default: 90
  *                 utf8?: bool|Param, // Default: false
  *                 passive?: bool|Param, // Default: true
- *                 transferMode?: scalar|Param|null, // Default: null
+ *                 transferMode?: scalar|Param|null, // Default: 2
  *                 systemType?: scalar|Param|null, // Default: null
  *                 ignorePassiveAddress?: bool|Param|null, // Default: null
  *                 timestampsOnUnixListingsEnabled?: bool|Param, // Default: false
@@ -2040,7 +2041,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *             use_underscore?: bool|Param, // Default: true
  *             unordered_list_markers?: list<scalar|Param|null>,
  *         },
- *         ...<mixed>
+ *         ...<string, mixed>
  *     },
  * }
  * @psalm-type StofDoctrineExtensionsConfig = array{

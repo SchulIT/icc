@@ -4,13 +4,14 @@ namespace App\Tests\Validator;
 
 use App\Validator\Color;
 use App\Validator\ColorValidator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class ColorValidatorTest extends ConstraintValidatorTestCase {
-    public function getValidColors() {
+    public static function getValidColors(): array {
         return [
             ['#000000'],
             ['#ABCDEF'],
@@ -20,7 +21,7 @@ class ColorValidatorTest extends ConstraintValidatorTestCase {
         ];
     }
 
-    public function getInvalidColors() {
+    public static function getInvalidColors(): array {
         return [
             ['000'],
             ['defghi'],
@@ -34,9 +35,7 @@ class ColorValidatorTest extends ConstraintValidatorTestCase {
         $this->validator->validate(null, $constraint);
     }
 
-    /**
-     * @dataProvider getValidColors
-     */
+    #[DataProvider('getInvalidColors')]
     public function testValidColors($color) {
         $constraint = new Color();
 
@@ -51,9 +50,7 @@ class ColorValidatorTest extends ConstraintValidatorTestCase {
         $this->assertNoViolation();
     }
 
-    /**
-     * @dataProvider getInvalidColors
-     */
+    #[DataProvider('getInvalidColors')]
     public function testInvalidColors($color) {
         $constraint = new Color();
 

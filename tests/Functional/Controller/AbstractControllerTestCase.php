@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-abstract class AbstractControllerTest extends WebTestCase {
+abstract class AbstractControllerTestCase extends WebTestCase {
 
     protected KernelBrowser $client;
 
@@ -17,7 +17,7 @@ abstract class AbstractControllerTest extends WebTestCase {
      * @param User $user
      * @param KernelInterface $kernel
      */
-    protected function login(User $user, KernelInterface $kernel) {
+    protected function login(User $user, KernelInterface $kernel): void {
         $this->client->loginUser($user, 'secured');
     }
 }

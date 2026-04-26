@@ -28,6 +28,7 @@ yarn-error.log
 /phpunit.xml
 .phpunit.result.cache
 .phpunit.cache
+clover.xml
 ###< phpunit/phpunit ###
 
 

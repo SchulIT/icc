@@ -14,7 +14,7 @@ use DateTime;
 use Faker\Generator;
 use Ramsey\Uuid\Uuid;
 
-class SickNoteControllerTest extends AbstractControllerTest {
+class SickNoteControllerTestCase extends AbstractControllerTestCase {
 
     private $em;
 

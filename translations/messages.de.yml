@@ -2927,6 +2927,9 @@ students:
     attendance:
         label: Anwesenheit
 
+    grades:
+        label: Noten
+
     comments:
         label: Kommentare
 

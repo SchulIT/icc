@@ -25,6 +25,12 @@
         </li>
 
         <li class="nav-item">
+            <a class="nav-link {% if active|default('general') == 'grades' %}active{% endif %}" href="{{ path('student_grade_details', { uuid: student.uuid, section: sectionFilter.currentSection.uuid }) }}">
+                <i class="fas fa-user-graduate"></i> {{ 'students.grades.label'|trans }}
+            </a>
+        </li>
+
+        <li class="nav-item">
             <a class="nav-link {% if active|default('general') == 'comments' %}active{% endif %}" href="{{ path('student_comments_details', { uuid: student.uuid, section: sectionFilter.currentSection.uuid }) }}">
                 <i class="fas fa-comments"></i> {{ 'students.comments.label'|trans }}
             </a>

@@ -35,7 +35,7 @@ class ColorValidatorTest extends ConstraintValidatorTestCase {
         $this->validator->validate(null, $constraint);
     }
 
-    #[DataProvider('getInvalidColors')]
+    #[DataProvider('getValidColors')]
     public function testValidColors($color) {
         $constraint = new Color();
 

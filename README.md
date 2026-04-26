@@ -1,7 +1,8 @@
 # Information & Communication Center
 
 ![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/schulit/icc/php.yml?style=flat-square)
-![PHP 8.3](https://img.shields.io/badge/PHP-8.3-success.svg?style=flat-square) 
+![PHP 8.4](https://img.shields.io/badge/PHP-8.4-success.svg?style=flat-square)
+![PHP 8.5](https://img.shields.io/badge/PHP-8.5-success.svg?style=flat-square)
 ![AGPL3.0 License](https://img.shields.io/github/license/schulit/icc.svg?style=flat-square)
 
 
@@ -37,7 +38,7 @@ Das Handbuch ist [hier](https://docs.schulit.de/icc) zu finden.
 
 Die Anwendung ist Teil der SchulIT Software Suite und kann kostenlos und auf eigene Gefahr installiert werden.
 
-Das ICC ist eine Symfony 7.2 Anwendung.
+Das ICC ist eine Symfony 7.4 Anwendung.
 
 ## Wichtige Information
 

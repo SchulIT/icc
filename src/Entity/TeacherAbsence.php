@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use Ambta\DoctrineEncryptBundle\Configuration\Encrypted;
 use App\Validator\DateLessonGreaterThan;
 use App\Validator\DateLessonInSection;
 use DateTime;
@@ -39,7 +38,6 @@ class TeacherAbsence {
     private ?TeacherAbsenceType $type;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    #[Encrypted]
     private ?string $message = null;
 
     /**

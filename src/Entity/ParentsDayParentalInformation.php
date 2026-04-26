@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use Ambta\DoctrineEncryptBundle\Configuration\Encrypted;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -41,7 +40,6 @@ class ParentsDayParentalInformation {
 
     #[ORM\Column(type: 'text', nullable: true)]
     #[Assert\Length(max: 255)]
-    #[Encrypted]
     private ?string $comment = null;
 
     public function __construct() {

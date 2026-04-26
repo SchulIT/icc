@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use Ambta\DoctrineEncryptBundle\Configuration\Encrypted;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -30,7 +29,6 @@ class StudentLearningManagementSystemInformation {
 
     #[ORM\Column(type: 'string', nullable: true)]
     #[Assert\Length(max: 255)]
-    #[Encrypted]
     private ?string $password = null;
 
     #[ORM\Column(type: 'boolean')]

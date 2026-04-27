@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace App\Controller\Student;
 
+use App\Book\Statistics\StudentTimetableAttendanceStatisticsGenerator;
 use App\Book\Student\StudentStatisticsCounterResolver;
 use App\Entity\Student;
 use App\Feature\Feature;
-use App\Feature\FeatureManager;
 use App\Feature\IsFeatureEnabled;
 use App\Repository\LessonAttendanceFlagRepositoryInterface;
 use App\Repository\TuitionRepositoryInterface;
 use App\Security\Voter\ListsVoter;
 use App\Security\Voter\StudentVoter;
+use App\Settings\TimetableSettings;
 use App\Sorting\Sorter;
 use App\Sorting\TuitionStrategy;
 use App\View\Filter\SectionFilter;
@@ -32,6 +33,8 @@ class AttendanceDetailAction extends AbstractController {
         TuitionRepositoryInterface $tuitionRepository,
         Sorter $sorter,
         StudentStatisticsCounterResolver $studentStatisticsCounterResolver,
+        StudentTimetableAttendanceStatisticsGenerator $studentTimetableAttendanceStatisticsGenerator,
+        TimetableSettings $timetableSettings,
         #[MapQueryParameter(filter: FILTER_DEFAULT, flags: FILTER_FLAG_EMPTY_STRING_NULL | FILTER_NULL_ON_FAILURE)] string|null $section = null,
     ): Response {
         $this->denyAccessUnlessGranted(StudentVoter::Show, $student);
@@ -50,6 +53,8 @@ class AttendanceDetailAction extends AbstractController {
             $tuitionCounters[$tuition->getId()] = $studentStatisticsCounterResolver->resolve($student, $sectionFilterView->getCurrentSection(), [ $tuition ]);
         }
 
+        $timetableAttendanceStatistics = $studentTimetableAttendanceStatisticsGenerator->getCount($student, $sectionFilterView->getCurrentSection()->getStart(), $sectionFilterView->getCurrentSection()->getEnd());
+
         return $this->render('student/attendance.html.twig', [
             'student' => $student,
             'sectionFilter' => $sectionFilterView,
@@ -57,6 +62,9 @@ class AttendanceDetailAction extends AbstractController {
             'studentInfo' => $counter,
             'tuitions' => $tuitions,
             'tuitionCounters' => $tuitionCounters,
+            'timetableAttendanceStatistics' => $timetableAttendanceStatistics,
+            'maxLessons' => $timetableSettings->getMaxLessons(),
+            'timetableDays' => $timetableSettings->getDays(),
         ]);
     }
 }

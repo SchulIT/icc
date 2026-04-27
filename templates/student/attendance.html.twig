@@ -76,7 +76,6 @@
 
         <div class="table-responsive">
             <table class="table table-striped table-hover card-table">
-
                 <thead>
                 <tr>
                     <th>{{ 'label.tuition'|trans }}</th>
@@ -123,6 +122,45 @@
                         </td>
                         {% for flag in attendanceFlags %}
                             <td class="align-middle">{{ counter.attendanceFlagCount(flag) }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-hover card-table border-top">
+                <thead>
+                <tr>
+                    <th>{{ 'label.lesson'|trans }}</th>
+                    {% for day in timetableDays %}
+                        <th>{{ day|weekday }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+
+                <tbody>
+                {% for lesson in 1..maxLessons %}
+                    <tr>
+                        <td>{{ lesson }}.</td>
+
+                        {% for day in timetableDays %}
+                            {% set counter = timetableAttendanceStatistics.counter(day, lesson) %}
+                            <td>
+                                <div class="mb-1 p-2 rounded {% if counter.lateMinutes > 0 %}text-bg-warning{% else %}text-bg-success{% endif %}">
+                                    <i class="fas fa-user-clock"></i> {{ 'book.attendance.late_minutes'|trans({'%count%': counter.lateMinutes}) }}
+
+                                    {% if counter.totalLate > 0 %}
+                                        <span title="{{ 'students.attendance.timetable.distributed'|trans({'%count%': counter.totalLate}) }}">
+                                            <i class="fas fa-info-circle"></i>
+                                        </span>
+                                    {% endif %}
+                                </div>
+                                <div class="p-2 rounded {% if counter.totalAbsences > 0 %}text-bg-danger{% else %}text-bg-success{% endif %}">
+                                    <i class="fas fa-user-times"></i> {{ counter.totalAbsences }} {% if counter.totalAttendances > 0 %}({{ percent(counter.totalAbsences, counter.totalAttendances)|round(2) }}%){% endif %}
+                                </div>
+                            </td>
                         {% endfor %}
                     </tr>
                 {% endfor %}

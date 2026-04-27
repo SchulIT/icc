@@ -90,6 +90,12 @@
                             {% include "_includes/grade_teachers.html.twig" with { grade: student.grade(sectionFilter.currentSection), section: sectionFilter.currentSection } %}
                         </p>
                     </div>
+
+                    <div class="list-group list-group-flush">
+                        <a href="{{ path('student_attendance_details', { uuid: student.uuid, section: sectionFilter.currentSection.uuid}) }}" class="list-group-item list-group-item-action" target="_blank">
+                            <i class="fas fa-external-link"></i> {{ 'book.students.overview.summary_link'|trans }}
+                        </a>
+                    </div>
                 </div>
 
                 <div class="card">

@@ -559,7 +559,7 @@
                             {% endif %}
                             {% if is_granted('show', student) %}
                                 <a href="{{ path('show_student', { uuid: student.uuid }) }}" class="list-group-item list-group-item-action">
-                                    <i class="fas fa-info-circle"></i> {{ 'student.button'|trans }}
+                                    <i class="fas fa-info-circle"></i> {{ 'dashboard.students.link'|trans }}
                                 </a>
                             {% endif %}
                         </div>

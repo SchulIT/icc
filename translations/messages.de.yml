@@ -467,6 +467,8 @@ dashboard:
     excuse_status_not_set:
         message: Es stehen noch offene Fehlstunden aus. Bitte zeitnah mit der Klassenleitung oder der Fachlehrkraft klären.
         link: Zur Anwesenheitsübersicht
+    students:
+        link: Zusammenfassung anzeigen
 
     additional_information:
         label: Information zur Stunde

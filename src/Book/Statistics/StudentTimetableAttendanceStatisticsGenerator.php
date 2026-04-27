@@ -61,7 +61,7 @@ readonly class StudentTimetableAttendanceStatisticsGenerator {
 
                     $absentAttendances = array_filter(
                         $relevantAttendances,
-                        fn(Attendance $attendance) => $attendance->getType() === AttendanceType::Absent
+                        fn(Attendance $attendance) => $attendance->getType() === AttendanceType::Absent && $attendance->isZeroAbsentLesson() === false
                     );
 
                     $counter[] = new StudentTimetableAttendanceStatisticsCounter(

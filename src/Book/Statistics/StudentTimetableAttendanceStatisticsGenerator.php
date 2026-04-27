@@ -15,7 +15,7 @@ use Symfony\Contracts\Cache\ItemInterface;
 readonly class StudentTimetableAttendanceStatisticsGenerator {
 
     private const string KEY_PATTERN = 'book.students.timetable_attendance_counter.%d.s-%s.e-%s';
-    public const int LIFETIME_IN_SECONDS = 10; // 7200; // 2h
+    public const int LIFETIME_IN_SECONDS = 7200; // 2h
 
     public function __construct(
         private CacheInterface $cache,

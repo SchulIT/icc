@@ -17,6 +17,13 @@
             </a>
         </li>
     {% endif %}
+    {% if is_enabled('checklists') %}
+        <li class="nav-item">
+            <a class="nav-link {% if active|default('general') == 'checklists' %}active{% endif %}" href="{{ path('student_checklists_details', { uuid: student.uuid }) }}">
+                <i class="fa-solid fa-list-check"></i> {{ 'students.checklists.label'|trans }}
+            </a>
+        </li>
+    {% endif %}
     {% if is_granted('ROLE_BOOK_VIEWER') and is_enabled('book') %}
         <li class="nav-item">
             <a class="nav-link {% if active|default('general') == 'attendance' %}active{% endif %}" href="{{ path('student_attendance_details', { uuid: student.uuid, section: sectionFilter.currentSection.uuid }) }}">

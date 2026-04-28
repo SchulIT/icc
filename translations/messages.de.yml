@@ -2939,6 +2939,9 @@ students:
     comments:
         label: Kommentare
 
+    checklists:
+        label: Checklisten
+
     tuitions:
         label: Unterricht
 

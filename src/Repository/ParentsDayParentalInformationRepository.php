@@ -31,7 +31,7 @@ class ParentsDayParentalInformationRepository extends AbstractTransactionalRepos
             ->leftJoin('i.parentsDay', 'p')
             ->where('t.id = :teacher')
             ->andWhere('s.id IN (:students)')
-            ->andWhere('p.id = i.parentsDay')
+            ->andWhere('p.id = :parentsDay')
             ->setParameter('teacher', $teacher)
             ->setParameter('students', $studentIds)
             ->setParameter('parentsDay', $parentsDay)

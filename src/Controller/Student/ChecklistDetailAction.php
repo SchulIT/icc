@@ -3,10 +3,13 @@
 namespace App\Controller\Student;
 
 use App\Controller\AbstractController;
+use App\Entity\Checklist;
+use App\Entity\ChecklistStudent;
 use App\Entity\Student;
 use App\Feature\Feature;
 use App\Feature\IsFeatureEnabled;
 use App\Repository\ChecklistStudentRepositoryInterface;
+use App\Security\Voter\ChecklistVoter;
 use App\View\Filter\SectionFilter;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,6 +28,10 @@ class ChecklistDetailAction extends AbstractController {
         #[MapQueryParameter(filter: FILTER_DEFAULT, flags: FILTER_FLAG_EMPTY_STRING_NULL | FILTER_NULL_ON_FAILURE)] string|null $section = null,
     ): Response {
         $checklists = $checklistStudentRepository->findAllByStudent($student);
+        $checklists = array_filter(
+            $checklists,
+            fn(ChecklistStudent $checklistStudent): bool => $this->isGranted(ChecklistVoter::View, $checklistStudent->getChecklist())
+        );
 
         $sectionFilterView = $sectionFilter->handle($section);
 

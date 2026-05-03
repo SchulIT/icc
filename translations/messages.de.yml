@@ -1711,16 +1711,19 @@ admin:
             label: Elternsprechtag löschen
             success: Elternsprechtag erfolgreich gelöscht
             confirm: 'Soll der Elternsprechtag %title% wirklich gelöscht werden? Alle bereits erstellten Termine werden gelöscht.'
-        teacher_room:
-            import:
-              label: Raumzuordnung für Elternsprechtag importieren
-              success: "Raumzuordnung für %count% Lehrkräfte importiert"
-              csv:
-                  label: CSV-Datei
-                  help: Eine komma-separierte CSV-Datei mit den Spalten für Lehrkräfte und Räume. Die Spaltenüberschriften sind festzulegen.
+        rooms:
+            label: Raumzuordnung
+            success: Raumzuordnung erfolgreich aktualisiert
 
-              teacher_header: Lehrkraft-Spaltenname
-              room_header: Raum-Spaltenname
+            import:
+                label: Raumzuordnung importieren
+                success: "Raumzuordnung für %count% Lehrkräfte importiert"
+                csv:
+                    label: CSV-Datei
+                    help: Eine komma-separierte CSV-Datei mit den Spalten für Lehrkräfte und Räume. Die Spaltenüberschriften sind festzulegen.
+
+                teacher_header: Lehrkraft-Spaltenname
+                room_header: Raum-Spaltenname
 
     chat:
         tags:

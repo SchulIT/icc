@@ -19,17 +19,17 @@ class ImportRequestType extends AbstractType {
                 'disabled' => true
             ])
             ->add('csv', FileType::class, [
-                'label' => 'admin.parents_day.teacher_room.import.csv.label',
-                'help' => 'admin.parents_day.teacher_room.import.csv.help',
+                'label' => 'admin.parents_day.rooms.import.csv.label',
+                'help' => 'admin.parents_day.rooms.import.csv.help',
             ])
             ->add('delimiter', TextType::class, [
                 'label' => 'label.delimiter'
             ])
             ->add('teacherHeader', TextType::class, [
-                'label' => 'admin.parents_day.teacher_room.import.teacher_header'
+                'label' => 'admin.parents_day.rooms.import.teacher_header'
             ])
             ->add('roomHeader', TextType::class, [
-                'label' => 'admin.parents_day.teacher_room.import.room_header'
+                'label' => 'admin.parents_day.rooms.import.room_header'
             ]);
     }
 }

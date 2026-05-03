@@ -1,6 +1,6 @@
 {% extends "admin/_form.html.twig" %}
 
-{% block title %}{{ 'admin.parents_day.teacher_room.import.label'|trans }}{% endblock %}
+{% block title %}{{ 'admin.parents_day.rooms.import.label'|trans }}{% endblock %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
@@ -27,7 +27,7 @@
             <i class="fa fa-upload"></i> {{ 'actions.save'|trans }}
         </button>
 
-        <a href="{{ path('admin_parents_days') }}" class="btn btn-secondary btn-sm">
+        <a href="{{ path('parents_day_teacher_rooms', { uuid: parentsDay.uuid }) }}" class="btn btn-secondary btn-sm">
             <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
         </a>
     </div>

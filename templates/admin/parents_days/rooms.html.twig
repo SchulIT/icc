@@ -1,0 +1,69 @@
+{% extends "admin/_form.html.twig" %}
+
+{% block title %}{{ 'admin.parents_day.rooms.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ 'admin.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_parents_days') }}">{{ 'admin.parents_day.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ parents_day.title }}</li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+
+    <script src="{{ asset('build/collection.js') }}"></script>
+{% endblock %}
+
+{% block inner %}
+    {{ form_start(form) }}
+
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex">
+                <div class="flex-fill align-self-center">
+                    {{ 'label.rooms'|trans }}
+                </div>
+                <div class="ms-auto">
+                    <a href="{{ path('import_parents_day_teacher_rooms', { uuid: parents_day.uuid}) }}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-upload"></i> {{ 'admin.parents_day.rooms.import.label'|trans }}
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+
+            <div data-collection="rooms" data-prototype="{{ form_widget(form.teacherRooms.vars.prototype)|e('html_attr') }}" data-id="{{ form.teacherRooms.vars.id }}">
+                {% for teacherRoom in form.teacherRooms %}
+                    {{ form_widget(teacherRoom) }}
+                {% endfor %}
+            </div>
+
+            {{ form_errors(form.teacherRooms) }}
+            {{ form_help(form.teacherRooms) }}
+
+            {% do form.teacherRooms.setRendered %}
+        </div>
+
+        <div class="card-footer">
+            <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="rooms">
+                <i class="fa fa-plus"></i> {{ 'actions.add'|trans }}
+            </button>
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa fa-save"></i> {{ 'actions.save'|trans }}
+        </button>
+
+        <a href="{{ path('admin_parents_days') }}" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> {{ 'actions.back'|trans }}
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}

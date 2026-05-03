@@ -9,13 +9,21 @@ use App\Form\ParentsDayType;
 use App\Import\External\ParentsDayTeacherRoom\ImportRequest;
 use App\Import\External\ParentsDayTeacherRoom\ImportRequestType;
 use App\Import\External\ParentsDayTeacherRoom\ParentsDayTeacherRoomImporter;
+use App\ParentsDay\Room\ParentsDayRoomsRequest;
+use App\ParentsDay\Room\ParentsDayRoomsRequestType;
 use App\Repository\ParentsDayRepositoryInterface;
+use App\Repository\ParentsDayTeacherRoomRepositoryInterface;
+use App\Sorting\ParentsDayTeacherRoomTeacherStrategy;
+use App\Sorting\Sorter;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/admin/parents_day')]
 #[IsFeatureEnabled(Feature::ParentsDay)]
@@ -25,14 +33,14 @@ class ParentsDayAdminController extends AbstractController {
     }
 
     #[Route('', name: 'admin_parents_days')]
-    public function index() {
+    public function index(): Response {
         return $this->render('admin/parents_days/index.html.twig', [
             'parents_days' => $this->repository->findAll()
         ]);
     }
 
     #[Route('/add', name: 'add_parents_day')]
-    public function add(Request $request) {
+    public function add(Request $request): RedirectResponse|Response {
         $parentsDay = new ParentsDay();
 
         $form = $this->createForm(ParentsDayType::class, $parentsDay);
@@ -51,7 +59,7 @@ class ParentsDayAdminController extends AbstractController {
     }
 
     #[Route('/{uuid}/edit', name: 'edit_parents_day')]
-    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] ParentsDay $parentsDay, Request $request) {
+    public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] ParentsDay $parentsDay, Request $request): RedirectResponse|Response {
         $form = $this->createForm(ParentsDayType::class, $parentsDay);
         $form->handleRequest($request);
 
@@ -92,11 +100,51 @@ class ParentsDayAdminController extends AbstractController {
         ]);
     }
 
+    #[Route('/{uuid}/rooms', name: 'parents_day_teacher_rooms')]
+    public function rooms(
+        #[MapEntity(mapping: ['uuid' => 'uuid'])] ParentsDay $parentsDay,
+        Request $request,
+        ParentsDayTeacherRoomRepositoryInterface $roomRepository,
+        Sorter $sorter,
+        ValidatorInterface $validator
+    ): Response {
+        $rooms = $roomRepository->findAllByParentsDay($parentsDay);
+
+        $sorter->sort($rooms, ParentsDayTeacherRoomTeacherStrategy::class);
+
+        $roomsRequest = new ParentsDayRoomsRequest();
+        $roomsRequest->teacherRooms = $rooms;
+
+        $form = $this->createForm(ParentsDayRoomsRequestType::class, $roomsRequest, [
+            'parents_day' => $parentsDay
+        ]);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid() && $validator->validate($roomsRequest)->count() === 0) {
+            $roomRepository->beginTransaction();
+            foreach($roomsRequest->teacherRooms as $teacherRoom) {
+                $roomRepository->persist($teacherRoom);
+            }
+            $roomRepository->commit();
+
+            $this->addFlash('success', 'admin.parents_day.rooms.success');
+            return $this->redirectToRoute('parents_day_teacher_rooms', [
+                'uuid' => $parentsDay->getUuid()
+            ]);
+        }
+
+        return $this->render('admin/parents_days/rooms.html.twig', [
+            'parents_day' => $parentsDay,
+            'form' => $form->createView(),
+        ]);
+    }
+
     #[Route('/{uuid}/import/rooms', name: 'import_parents_day_teacher_rooms')]
     public function importTeacherRooms(
         #[MapEntity(mapping: ['uuid' => 'uuid'])] ParentsDay $parentsDay,
         Request $request,
-        ParentsDayTeacherRoomImporter $importer
+        ParentsDayTeacherRoomImporter $importer,
+        TranslatorInterface $translator
     ): Response {
         $importRequest = new ImportRequest();
         $importRequest->parentsDay = $parentsDay;
@@ -105,12 +153,20 @@ class ParentsDayAdminController extends AbstractController {
 
         if($form->isSubmitted() && $form->isValid()) {
             $result = $importer->import($importRequest);
-            $this->addFlash('success', 'admin.parents_day.import.success');
+            $this->addFlash('success',
+                $translator->trans(
+                    'admin.parents_day.rooms.import.success',
+                    [
+                        '%count%' => $result->importCount
+                    ]
+                )
+            );
             return $this->redirectToRoute('admin_parents_days');
         }
 
         return $this->render('admin/parents_days/import_teacher_rooms.html.twig', [
             'form' => $form->createView(),
+            'parentsDay' => $parentsDay
         ]);
     }
 }

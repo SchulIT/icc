@@ -365,3 +365,21 @@
         {% endfor %}
     </div>
 {% endblock %}
+
+{%- block parents_day_teacher_room_widget -%}
+    <div class="mb-3">
+        <div class="input-group">
+            {{ form_widget(form.teacher) }}
+            {{ form_widget(form.room) }}
+
+            <button type="button" class="btn btn-danger btn-sm btn-delete float-right" data-selector=".mb-3">
+                <i class="fa fa-trash"></i>
+            </button>
+        </div>
+
+        {{ form_errors(form) }}
+        {{ form_errors(form.teacher) }}
+    </div>
+
+
+{%- endblock -%}

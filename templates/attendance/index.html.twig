@@ -62,6 +62,7 @@
 
                 <attendance-overview :entries="{{ entries|json_encode }}"
                                      :events="{{ events|json_encode }}"
+                                     :missing="[]"
                                      :comments="[]"
                                      :readonly="true"
                                      :attendances="{{ info.presentLessonAttendances|merge(info.lateLessonAttendances)|merge(info.absentLessonAttendances)|json_encode }}"

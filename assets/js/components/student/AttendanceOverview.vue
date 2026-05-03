@@ -29,6 +29,14 @@
                 <template v-for="lesson in days[day]">
                   <td class="align-middle p-0" v-if="lesson !== null">
                     <div class="w-100 d-flex">
+                      <div v-for="missing in lesson.missing"
+                           :class="'flex-fill p-3 text-center align-middle text-bg-secondary'"
+                           :title="missing.subject + ' (' + missing.teachers.join(', ') + ')'">
+                        <div class="d-inline">
+                          <i class="fas fa-question-circle"></i>
+                        </div>
+                      </div>
+
                       <div v-for="event in lesson.events"
                            @click.prevent="edit(event)"
                            @contextmenu.prevent="changeExcuseStatus(event)"
@@ -72,7 +80,7 @@
                          @click.prevent="edit(entry)"
                          @contextmenu.prevent="changeExcuseStatus(entry)"
                          :class="'flex-fill p-3 text-center align-middle ' + (entry.attendance !== null && entry.attendance.attendance.type === 1 ? 'text-bg-success' : '') + (entry.attendance !== null && entry.attendance.attendance.type === 0 ? 'text-bg-danger' : '') + (entry.attendance !== null && entry.attendance.attendance.type === 2 ? 'text-bg-warning' : '') + (entry.entry !== null && entry.entry.is_cancelled ? 'text-bg-secondary' : '') + ' ' + (entry.entry !== null && !entry.entry.is_cancelled && !readonly ? 'pointer' : '')"
-                         :title="entry.entry !== null ? entry.entry.lesson.subject + ' (' + entry.entry.lesson.teachers.join(', ') + ')' + (entry.entry.is_cancelled ? ' [' + entry.entry.cancel_reason + ']' : '') : ''">
+                         :title="(entry.entry !== null ? entry.entry.lesson.subject + ' (' + entry.entry.lesson.teachers.join(', ') + ')' + (entry.entry.is_cancelled ? ' [' + entry.entry.cancel_reason + ']' : '') : '')">
                       <div v-if="entry.entry !== null && entry.entry.is_cancelled" class="d-inline">
                         <i class="far fa-calendar-times"></i>
                       </div>
@@ -313,6 +321,7 @@ export default {
     readonly: Boolean,
     entries: Object,
     events: Array,
+    missing: Array,
     attendances: Array,
     dayGroups: Array,
     maxLessons: Number,
@@ -348,8 +357,19 @@ export default {
           let lessonEntries = {
             'lessonNumber': lessonNumber,
             'entries': [ ],
-            'events': [ ]
+            'events': [ ],
+            'missing': [ ]
           };
+
+          let missing = $this.missing.filter(e => e.date === day && e.start <= lessonNumber && lessonNumber <= e.end);
+
+          for(let lesson of missing) {
+            lessonEntries.missing.push({
+              'lesson': lessonNumber,
+              'subject': lesson.subject,
+              'teachers': lesson.teachers,
+            });
+          }
 
           let events = $this.events.filter(e => e.date === day && e.start <= lessonNumber && lessonNumber <= e.end);
 

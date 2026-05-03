@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Grade;
 use App\Entity\Room;
+use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\Teacher;
 use App\Entity\TimetableLesson;
@@ -138,4 +139,12 @@ interface TimetableLessonRepositoryInterface extends TransactionalRepositoryInte
      * @return TimetableLesson[]
      */
     public function findAllByDate(DateTime $dateTime): array;
+
+    /**
+     * @param Tuition[] $tuitions
+     * @param DateTime $start
+     * @param DateTime $end
+     * @return TimetableLesson[]
+     */
+    public function findMissingLessonsForAttendance(array $tuitions, DateTime $start, DateTime $end): array;
 }

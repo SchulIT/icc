@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Grade;
 use App\Entity\Room;
+use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\Subject;
 use App\Entity\Teacher;
@@ -12,6 +13,7 @@ use App\Entity\Tuition;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Override;
 
 class TimetableLessonRepository extends AbstractTransactionalRepository implements TimetableLessonRepositoryInterface {
 
@@ -503,4 +505,33 @@ class TimetableLessonRepository extends AbstractTransactionalRepository implemen
             ->getOneOrNullResult();
     }
 
+    #[Override]
+    public function findMissingLessonsForAttendance(array $tuitions, DateTime $start, DateTime $end): array {
+        $tuitionIds = array_map(
+            fn(Tuition $tuition) => $tuition->getId(),
+            $tuitions
+        );
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('lInner.id')
+            ->from(TimetableLesson::class, 'lInner')
+            ->leftJoin('lInner.tuition', 'tInner')
+            ->leftJoin('lInner.entries', 'eInner')
+            ->where('tInner.id IN (:tuitions)')
+            ->andWhere('eInner.id IS NULL');
+
+        $qb = $this->em->createQueryBuilder();
+
+        return $qb
+            ->select('l')
+            ->from(TimetableLesson::class, 'l')
+            ->where($qb->expr()->in('l.id', $qbInner->getDQL()))
+            ->setParameter('tuitions', $tuitionIds)
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->andWhere('l.date >= :start')
+            ->andWhere('l.date <= :end')
+            ->getQuery()
+            ->getResult();
+    }
 }

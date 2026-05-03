@@ -629,7 +629,9 @@ class BookController extends AbstractController {
                             StudentInfoResolver $infoResolver, TuitionRepositoryInterface $tuitionRepository,
                             Sorter $sorter, Grouper $grouper, DateHelper $dateHelper, TimetableSettings $timetableSettings,
                             UrlGeneratorInterface $urlGenerator,
-                            LessonEntryRepositoryInterface $entryRepository, LessonAttendanceRepositoryInterface $lessonAttendanceRepository): Response {
+                            LessonEntryRepositoryInterface $entryRepository,
+                                      TimetableLessonRepositoryInterface $timetableLessonRepository,
+                                      LessonAttendanceRepositoryInterface $lessonAttendanceRepository): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -736,6 +738,21 @@ class BookController extends AbstractController {
             $events = [ ];
         }
 
+        $missingLessons = $timetableLessonRepository->findMissingLessonsForAttendance($tuitions, $sectionFilterView->getCurrentSection()->getStart(), $dateHelper->getToday());
+        $missing = [ ];
+
+        foreach($missingLessons as $missingLesson) {
+            $missing[] = [
+                'uuid' => $missingLesson->getUuid()->toString(),
+                'date' => $missingLesson->getDate()->format('c'),
+                'start' => $missingLesson->getLessonStart(),
+                'end' => $missingLesson->getLessonEnd(),
+                'teachers' => $missingLesson->getTeachers()->map(fn(Teacher $teacher) => $teacher->getAcronym())->toArray(),
+                'subject' => $missingLesson->getSubjectName()
+            ];
+        }
+
+
         $info = $infoResolver->resolveStudentInfo($student, $sectionFilterView->getCurrentSection(), $tuitions, includeEvents: $includeEvents);
 
         $days = $this->getListOfDays($min, $max, $timetableSettings->getDays());
@@ -754,7 +771,8 @@ class BookController extends AbstractController {
             'teacherFilter' => $teacherFilterView,
             'numberOfLessons' => $timetableSettings->getMaxLessons(),
             'entries' => array_values($entries),
-            'events' => array_values($events)
+            'events' => array_values($events),
+            'missing' => array_values($missing)
         ]);
     }
 

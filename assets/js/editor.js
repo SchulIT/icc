@@ -1,207 +1,216 @@
-import EasyMDE from 'easymde';
+import {
+    ClassicEditor,
+    Bold,
+    Image,
+    ImageUpload,
+    Italic,
+    Link,
+    Paragraph,
+    Strikethrough,
+    Essentials,
+    BlockQuote,
+    List,
+    Code,
+    CodeBlock,
+    Heading,
+    Markdown,
+    HorizontalLine,
+    Emoji,
+    Mention,
+    Table,
+    TableToolbar,
+    SourceEditing,
+    Plugin, ButtonView,
+    IconLink
+} from 'ckeditor5';
+
 import {Modal} from "bootstrap";
 
-require('../../node_modules/inline-attachment/src/inline-attachment');
-require('../../node_modules/inline-attachment/src/codemirror-4.inline-attachment');
+import deTranslation from 'ckeditor5/translations/de.js';
+import 'ckeditor5/ckeditor5.css';
 
-/*
- * copied and modified from here: https://github.com/Ionaru/easy-markdown-editor/blob/master/src/js/easymde.js
- *
- * The MIT License (MIT)
- * Copyright (c) 2015 Sparksuite, Inc.
- * Copyright (c) 2017 Jeroen Akkerman.
- */
-function insertLink(editor, url) {
-    let cm = editor.codemirror;
-    let stat = getState(cm);
-    let options = editor.options;
-    replaceSelection(cm, stat.link, options.insertTexts.link, url);
-}
+class InsertInternalLink extends Plugin {
+    init() {
+        const editor = this.editor;
 
-/*
- * copied from here: https://github.com/Ionaru/easy-markdown-editor/blob/master/src/js/easymde.js
- *
- * The MIT License (MIT)
- * Copyright (c) 2015 Sparksuite, Inc.
- * Copyright (c) 2017 Jeroen Akkerman.
- */
-function getState(cm, pos) {
-    pos = pos || cm.getCursor('start');
-    let stat = cm.getTokenAt(pos);
-    if (!stat.type) return {};
+        editor.ui.componentFactory.add('internalLink', locale => {
+            const button = new ButtonView(locale);
+            const linkCommand = editor.commands.get('link');
 
-    let types = stat.type.split(' ');
+            button.set({
+                icon: IconLink
+            })
+            button.bind('isOn', 'isEnabled').to(linkCommand, 'value', 'isEnabled');
+            button.bind('label').to(linkCommand, 'value');
 
-    let ret = {},
-        data, text;
-    for (let i = 0; i < types.length; i++) {
-        data = types[i];
-        if (data === 'strong') {
-            ret.bold = true;
-        } else if (data === 'variable-2') {
-            text = cm.getLine(pos.line);
-            if (/^\s*\d+\.\s/.test(text)) {
-                ret['ordered-list'] = true;
-            } else {
-                ret['unordered-list'] = true;
-            }
-        } else if (data === 'atom') {
-            ret.quote = true;
-        } else if (data === 'em') {
-            ret.italic = true;
-        } else if (data === 'quote') {
-            ret.quote = true;
-        } else if (data === 'strikethrough') {
-            ret.strikethrough = true;
-        } else if (data === 'comment') {
-            ret.code = true;
-        } else if (data === 'link') {
-            ret.link = true;
-        } else if (data === 'tag') {
-            ret.image = true;
-        } else if (data.match(/^header(-[1-6])?$/)) {
-            ret[data.replace('header', 'heading')] = true;
-        }
-    }
-    return ret;
-}
+            button.on('execute', () => {
+                const modalUrl = editor.sourceElement.getAttribute('data-modal-url');
+                const modalSelector = editor.sourceElement.getAttribute('data-modal');
+                const $modal = document.querySelector(modalSelector);
 
-/*
- * copied from here: https://github.com/Ionaru/easy-markdown-editor/blob/master/src/js/easymde.js
- *
- * The MIT License (MIT)
- * Copyright (c) 2015 Sparksuite, Inc.
- * Copyright (c) 2017 Jeroen Akkerman.
- */
-function replaceSelection(cm, active, startEnd, url) {
-    let text;
-    let start = startEnd[0];
-    let end = startEnd[1];
-    let startPoint = {},
-        endPoint = {};
-    Object.assign(startPoint, cm.getCursor('start'));
-    Object.assign(endPoint, cm.getCursor('end'));
-    if (url) {
-        start = start.replace('#url#', url);  // url is in start for upload-image
-        end = end.replace('#url#', url);
-    }
-    if (active) {
-        text = cm.getLine(startPoint.line);
-        start = text.slice(0, startPoint.ch);
-        end = text.slice(startPoint.ch);
-        cm.replaceRange(start + end, {
-            line: startPoint.line,
-            ch: 0,
-        });
-    } else {
-        text = cm.getSelection();
-        cm.replaceSelection(start + text + end);
+                if($modal === null) {
+                    console.error('No element found with selector: ' + modalSelector);
+                    return;
+                }
 
-        startPoint.ch += start.length;
-        if (startPoint !== endPoint) {
-            endPoint.ch += start.length;
-        }
-    }
-    cm.setSelection(startPoint, endPoint);
-    cm.focus();
-}
+                const modal = new Modal(modalSelector);
+                const $content = $modal.querySelector('.modal-content');
+                const $iframe = document.createElement('iframe');
+                $iframe.setAttribute('src', modalUrl);
+                $iframe.setAttribute('height', '500');
 
-document.addEventListener('DOMContentLoaded', function(event) {
-    document.querySelectorAll('[data-editor=markdown]').forEach(function(el) {
-        if(el.classList.contains('md-textarea-hidden')) {
-            /*
-             * Somehow, when adding the markdown editor to an textarea,
-             * this event is triggered again (with the hidden textarea)...
-             */
-            return;
-        }
+                $content.innerHTML = '';
+                $content.appendChild($iframe);
 
-        if(el.getAttribute('data-preview') === null) {
-            console.error('You must provide an URL which returns the markdown preview');
-            return;
-        }
+                $iframe.onload = function() {
+                    for(const $a of $iframe.contentWindow.document.querySelectorAll('a[data-insert-link]')) {
+                        $a.addEventListener('click', event => {
+                            event.preventDefault();
 
-        let previewUrl = el.getAttribute('data-preview');
-        let modalSelector = el.getAttribute('data-modal');
-        let linkUrl = el.getAttribute('data-modal-url');
+                            const link = $a.getAttribute('data-insert-link');
+                            const text = $a.getAttribute('data-insert-link-text');
 
-        let options = {
-            autoDownloadFontAwesome: false,
-            autofocus: false,
-            autosave: {
-                enabled: false
-            },
-            element: el,
-            placeholder: '',
-            toolbar: [
-                'bold', 'italic', 'heading', '|', 'unordered-list', 'ordered-list', '|', 'link',
-                {
-                    name: 'internal-link',
-                    action: function(editor) {
-                        if(modalSelector !== null && linkUrl !== null) {
-                            let modal = new Modal(modalSelector);
-                            modal.show();
-                            let modalEl = document.querySelector(modalSelector);
 
-                            let contentEl = modalEl.querySelector('.modal-content');
-                            let iframe = document.createElement('iframe');
-                            iframe.setAttribute('src', linkUrl);
-                            iframe.setAttribute('height', '500');
+                            editor.execute('link', link, {}, text);
 
-                            contentEl.innerHTML = '';
-                            contentEl.appendChild(iframe);
-
-                            iframe.onload = function() {
-                                iframe.contentWindow.document.querySelectorAll('a[data-insert-link]').forEach(function(el) {
-                                    el.addEventListener('click', function(event) {
-                                        event.preventDefault();
-
-                                        let link = el.getAttribute('data-insert-link');
-                                        insertLink(editor, link);
-
-                                        modal.hide();
-                                        contentEl.innerHTML = '';
-                                    });
-                                });
-                            };
-                        }
-                    },
-                    className: 'fas fa-external-link-alt',
-                    title: 'Interner Verweise'
-                },
-                'image', '|', 'preview', 'side-by-side', 'fullscreen', '|', 'guide'
-            ],
-            previewRender: function(text, preview) {
-                let request = new XMLHttpRequest();
-                request.open('POST', previewUrl, true);
-                request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-
-                request.onload = function() {
-                    if(request.status >= 200 && request.status < 400) {
-                        preview.innerHTML = request.responseText;
+                            modal.hide();
+                            $content.innerHTML = '';
+                        })
                     }
-                };
+                }
 
-                request.send(text);
+                modal.show();
+            });
 
-                return 'Laden...';
-            },
-            spellChecker: false,
-            status: false
-        };
+            return button;
+        });
+    }
+}
 
-        let editor = new EasyMDE(options);
+class ImageUploader {
+    constructor(loader, editor) {
+        this.loader = loader;
+        this.editor = editor;
+    }
 
-        if(el.getAttribute('data-upload') !== null) {
-            if (el.getAttribute('data-upload') === "true" || el.getAttribute('data-upload') === 'data-upload') {
-                let inlineAttachmentConfig = {
-                    uploadUrl: el.getAttribute('data-url')
-                };
+    upload() {
+        const url = this.editor.sourceElement.getAttribute('data-url');
+        const csrfToken = this.editor.sourceElement.getAttribute('data-csrf-token');
+        const csrfTokenParameter = this.editor.sourceElement.getAttribute('data-csrf-token-parameter');
 
-                inlineAttachment.editors.codemirror4.attach(editor.codemirror, inlineAttachmentConfig);
-            }
+        return this.loader.file
+            .then(file => new Promise((resolve, reject) => {
+                this.xhr = new XMLHttpRequest();
+                this.xhr.open('POST', url, true);
+                this.xhr.responseType = 'json';
+
+                this.xhr.addEventListener('error', () => reject('Fehler beim Upload.'));
+                this.xhr.addEventListener('abort', () => reject());
+                this.xhr.addEventListener('load', () => {
+                    const response = this.xhr.response;
+
+                    if(!response || response.error) {
+                        return reject(response && response.error ? response.error : 'Fehler beim Upload.');
+                    }
+
+                    resolve({
+                        default: response.filename
+                    });
+                });
+
+                if(this.xhr.upload) {
+                    this.xhr.upload.addEventListener('progress', event => {
+                        if(event.lengthComputable) {
+                            this.loader.uploadTotal = event.total;
+                            this.loader.uploaded = event.loaded;
+                        }
+                    });
+                }
+
+                const data = new FormData();
+                data.append(csrfTokenParameter, csrfToken);
+                data.append('file', file);
+
+                this.xhr.send(data);
+            }));
+    }
+
+    abort() {
+        if(this.xhr) {
+            this.xhr.abort();
         }
+    }
+}
 
-        el.editor = editor;
-    });
-});
+function ImageUploaderPlugin(editor) {
+    editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+        return new ImageUploader(loader, editor);
+    }
+}
+
+for(let el of document.querySelectorAll('[data-editor=markdown]')) {
+    let plugins = [
+            Bold,
+            Italic,
+            Link,
+            Paragraph,
+            Strikethrough,
+            Essentials,
+            BlockQuote,
+            List,
+            Code,
+            CodeBlock,
+            Heading,
+            Markdown,
+            HorizontalLine,
+            Emoji,
+            Mention,
+            Table,
+            TableToolbar,
+            SourceEditing
+    ];
+
+    if(el.getAttribute('data-upload') !== null) {
+        if (el.getAttribute('data-upload') === "true" || el.getAttribute('data-upload') === 'data-upload') {
+            plugins.push(Image);
+            plugins.push(ImageUpload);
+            plugins.push(ImageUploaderPlugin);
+        }
+    }
+
+    if(el.getAttribute('data-modal-url') !== null) {
+        if(el.getAttribute('data-modal') !== null) {
+            plugins.push(InsertInternalLink);
+        }
+    }
+
+    ClassicEditor.create(
+        el,
+        {
+            licenseKey: 'GPL',
+            plugins: plugins,
+            toolbar: [
+                'heading', '|',
+                'bold', 'italic', 'strikethrough', '|',
+                'bulletedList', 'numberedList', '|',
+                'internalLink', 'link', 'emoji', '|',
+                'blockquote', 'insertTable', 'code', 'codeBlock', 'horizontalLine', '|',
+                'sourceEditing', '|',
+                'undo', 'redo',
+            ],
+            table: {
+                defaultHeadings: { rows: 1 },
+                contentToolbar: [ 'tableColumn', 'tableRow' ]
+            },
+            translations: [
+                deTranslation
+            ]
+        }
+    )
+        .then(editor => {
+
+        })
+        .catch(error => {
+            console.error(error);
+        });
+}

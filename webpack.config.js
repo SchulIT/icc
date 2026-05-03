@@ -42,7 +42,7 @@ Encore
 
     .enableSassLoader()
     .enablePostCssLoader()
-    .enableVueLoader()
+    .enableVueLoader(() => {}, { runtimeCompilerBuild: false })
     .enableVersioning(Encore.isProduction())
 
     .addPlugin(new NodePolyfillPlugin())

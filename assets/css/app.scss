@@ -23,6 +23,8 @@
 @import '../../node_modules/codemirror/lib/codemirror.css';
 @import '../../vendor/schulit/common-bundle/assets/css/editor';
 
+@import '../../node_modules/ckeditor5/dist/ckeditor5.css';
+
 // Import choices.js
 @import '../../node_modules/choices.js/src/styles/choices';
 @import '../../vendor/schulit/common-bundle/assets/css/choices-fixes.scss';
@@ -513,9 +515,13 @@ table {
   }
 }
 
-table.sticky-header thead th {
-  position: sticky;
-  top: 0;
+table.sticky-header {
+  position: relative;
+
+  thead th {
+    position: sticky;
+    top: 0;
+  }
 }
 
 .modal-xxl {
@@ -528,4 +534,10 @@ table.sticky-header thead th {
 
 .column-200 {
   width: 200px;
+}
+
+.ck.ck-content {
+  div.alert {
+    @extend .alert;
+  }
 }

@@ -10,15 +10,14 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class MarkdownType extends TextareaType {
 
-    public function __construct(private readonly UrlGeneratorInterface $urlGenerator)
-    {
-    }
+    public function __construct(
+        private readonly UrlGeneratorInterface $urlGenerator
+    ) { }
 
     public function configureOptions(OptionsResolver $resolver): void {
         $resolver
             ->setDefault('upload_enabled', true)
             ->setDefault('upload_url', null)
-            ->setDefault('preview_url', $this->urlGenerator->generate('markdown_preview', [], UrlGeneratorInterface::ABSOLUTE_PATH))
             ->setDefault('required', false)
             ->setDefault('enable_links', true);
     }
@@ -31,7 +30,6 @@ class MarkdownType extends TextareaType {
             'data-language' => 'de',
             'data-upload' => $options['upload_enabled'],
             'data-url' => $options['upload_url'],
-            'data-preview' => $options['preview_url']
         ];
 
         if($options['enable_links']) {

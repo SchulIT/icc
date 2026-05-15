@@ -2,9 +2,9 @@
 
 namespace App\Book;
 
-use App\Entity\LessonEntry;
-use App\Entity\Substitution;
-use App\Entity\TimetableLesson;
+use App\Book\Entity\LessonEntry;
+use App\Substitution\Entity\Substitution;
+use App\Timetable\Entity\TimetableLesson;
 use DateTime;
 
 class Lesson {

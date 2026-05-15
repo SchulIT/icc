@@ -2,10 +2,10 @@
 
 namespace App\Tests\Untis\Html;
 
-use App\Repository\SettingRepositoryInterface;
-use App\Settings\SettingsManager;
-use App\Settings\TimetableSettings;
-use App\Settings\UntisHtmlSettings;
+use App\Framework\Settings\Repository\SettingRepositoryInterface;
+use App\Framework\Settings\SettingsManager;
+use App\Timetable\Settings\TimetableSettings;
+use App\Untis\Settings\UntisHtmlSettings;
 use App\Untis\Html\Substitution\AbsentRoomsInfotextReader;
 use App\Untis\Html\Substitution\AbsentStudyGroupsInfotextReader;
 use App\Untis\Html\Substitution\AbsentTeachersInfotextReader;

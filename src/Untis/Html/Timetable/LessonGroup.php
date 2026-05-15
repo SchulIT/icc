@@ -2,7 +2,7 @@
 
 namespace App\Untis\Html\Timetable;
 
-use App\Grouping\GroupInterface;
+use App\Framework\Grouping\GroupInterface;
 
 class LessonGroup implements GroupInterface {
 

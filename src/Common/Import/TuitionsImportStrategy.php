@@ -1,0 +1,214 @@
+<?php
+
+namespace App\Common\Import;
+
+use App\Common\Entity\Section;
+use App\Common\Entity\StudyGroup;
+use App\Common\Entity\Subject;
+use App\Common\Entity\Teacher;
+use App\Common\Entity\Tuition;
+use App\Common\Repository\SectionRepositoryInterface;
+use App\Common\Repository\StudyGroupRepositoryInterface;
+use App\Common\Repository\SubjectRepositoryInterface;
+use App\Common\Repository\TeacherRepositoryInterface;
+use App\Framework\Import\ImportException;
+use App\Framework\Import\ImportStrategyInterface;
+use App\Framework\Import\SectionNotFoundException;
+use App\Framework\Repository\TransactionalRepositoryInterface;
+use App\Common\Repository\TuitionRepositoryInterface;
+use App\Request\Data\TuitionData;
+use App\Request\Data\TuitionsData;
+use App\Framework\Utils\CollectionUtils;
+use App\Framework\Utils\ArrayUtils;
+
+class TuitionsImportStrategy implements ImportStrategyInterface {
+
+    private bool $isInitialized = false;
+
+    private array $subjectCache = [ ];
+    private array $teacherCache = [ ];
+    private array $studyGroupCache = [ ];
+
+    public function __construct(private TuitionRepositoryInterface $tuitionRepository, private SubjectRepositoryInterface $subjectRepository, private TeacherRepositoryInterface $teacherRepository, private StudyGroupRepositoryInterface $studyGroupRepository, private SectionRepositoryInterface $sectionRepository)
+    {
+    }
+
+    /**
+     * @throws SectionNotFoundException
+     */
+    private function initialize(TuitionsData $requestData) {
+        if($this->isInitialized === true) {
+            return;
+        }
+
+        $section = $this->sectionRepository->findOneByNumberAndYear($requestData->getSection(), $requestData->getYear());
+
+        if($section === null) {
+            throw new SectionNotFoundException($requestData->getSection(), $requestData->getYear());
+        }
+
+        $this->subjectCache = ArrayUtils::createArrayWithKeys(
+            $this->subjectRepository->findAll(),
+            fn(Subject $subject) => [ $subject->getAbbreviation(), $subject->getExternalId() ]
+        );
+
+        $this->teacherCache = ArrayUtils::createArrayWithKeys(
+            $this->teacherRepository->findAllBySection($section),
+            fn(Teacher $teacher) => $teacher->getAcronym()
+        );
+
+        $this->studyGroupCache = ArrayUtils::createArrayWithKeys(
+            $this->studyGroupRepository->findAllBySection($section),
+            fn(StudyGroup $studyGroup) => $studyGroup->getExternalId()
+        );
+
+        $this->isInitialized = true;
+    }
+
+    /**
+     * @param TuitionsData $requestData
+     * @return array<string, Tuition>
+     * @throws SectionNotFoundException
+     */
+    public function getExistingEntities($requestData): array {
+        $section = $this->sectionRepository->findOneByNumberAndYear($requestData->getSection(), $requestData->getYear());
+
+        if($section === null) {
+            throw new SectionNotFoundException($requestData->getSection(), $requestData->getYear());
+        }
+
+        return ArrayUtils::createArrayWithKeys(
+            $this->tuitionRepository->findAllBySection($section),
+            fn(Tuition $tuition) => $tuition->getExternalId()
+        );
+    }
+
+    /**
+     * @param TuitionData $data
+     * @param TuitionsData $requestData
+     * @return Tuition
+     * @throws ImportException
+     */
+    public function createNewEntity($data, $requestData) {
+        $tuition = (new Tuition())
+            ->setExternalId($data->getId());
+        $this->updateEntity($tuition, $data, $requestData);
+
+        return $tuition;
+    }
+
+    /**
+     * @param TuitionData $object
+     * @param array<string, Tuition> $existingEntities
+     * @return Tuition|null
+     */
+    public function getExistingEntity($object, array $existingEntities) {
+        return $existingEntities[$object->getId()] ?? null;
+    }
+
+    /**
+     * @param Tuition $entity
+     */
+    public function getEntityId($entity): int {
+        return $entity->getId();
+    }
+
+    /**
+     * @param Tuition $entity
+     * @param TuitionData $data
+     * @param TuitionsData $requestData
+     * @throws ImportException
+     */
+    public function updateEntity($entity, $data, $requestData): void {
+        $this->initialize($requestData);
+
+        $subject = $this->subjectCache[$data->getSubject()] ?? null;
+
+        if($subject === null) {
+            throw new ImportException(sprintf('Fach "%s" bei Unterricht "%s" wurde nicht gefunden.', $data->getSubject(), $data->getId()));
+        }
+
+        $section = $this->sectionRepository->findOneByNumberAndYear($requestData->getSection(), $requestData->getYear());
+
+        if($section === null) {
+            throw new SectionNotFoundException($requestData->getSection(), $requestData->getYear());
+        }
+
+        $entity->setSection($section);
+
+        $teachers = ArrayUtils::findAllWithKeys($this->teacherCache, $data->getTeachers());
+
+        if(count($teachers) !== count($data->getTeachers())) {
+            $this->throwTeacherIsMissing($data->getTeachers(), $teachers, $data->getId());
+        }
+
+        $studyGroup = $this->studyGroupCache[$data->getStudyGroup()] ?? null;
+
+        if($studyGroup === null) {
+            throw new ImportException(sprintf('Lerngruppe mit der ID "%s" beim Unterricht "%s" wurde nicht gefunden.', $data->getStudyGroup(), $data->getId()));
+        }
+
+        $entity->setSubject($subject);
+        $entity->setStudyGroup($studyGroup);
+        $entity->setName($data->getName());
+        $entity->setDisplayName($data->getDisplayName());
+
+        CollectionUtils::synchronize(
+            $entity->getTeachers(),
+            $teachers,
+            fn(Teacher $teacher) => $teacher->getId()
+        );
+    }
+
+    /**
+     * @param Tuition $entity
+     */
+    public function persist($entity): void {
+        $this->tuitionRepository->persist($entity);
+    }
+
+    /**
+     * @param Tuition $entity
+     */
+    public function remove($entity, $requestData): bool {
+        $this->tuitionRepository->remove($entity);
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getRepository(): TransactionalRepositoryInterface {
+        return $this->tuitionRepository;
+    }
+
+    /**
+     * @param string[] $teachers
+     * @param Teacher[] $foundTeachers
+     * @throws ImportException
+     */
+    private function throwTeacherIsMissing(array $teachers, array $foundTeachers, string $tuitionExternalId) {
+        $foundTeacherAcronyms = array_map(fn(Teacher $teacher) => $teacher->getAcronym(), $foundTeachers);
+
+        foreach($teachers as $teacher) {
+            if(!in_array($teachers, $foundTeacherAcronyms)) {
+                throw new ImportException(sprintf('Lehrkraft "%s" bei Unterricht "%s" wurde nicht gefunden.', $teacher, $tuitionExternalId));
+            }
+        }
+    }
+
+    /**
+     * @param TuitionsData $data
+     * @return TuitionData[]
+     */
+    public function getData($data): array {
+        return $data->getTuitions();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEntityClassName(): string {
+        return Tuition::class;
+    }
+}

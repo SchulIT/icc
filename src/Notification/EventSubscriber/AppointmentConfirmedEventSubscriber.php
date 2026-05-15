@@ -2,9 +2,9 @@
 
 namespace App\Notification\EventSubscriber;
 
-use App\Converter\UserStringConverter;
-use App\Entity\UserType;
-use App\Event\AppointmentConfirmedEvent;
+use App\Common\Converter\UserStringConverter;
+use App\Common\Entity\UserType;
+use App\Appointment\Event\AppointmentConfirmedEvent;
 use App\Notification\AppointmentConfirmedNotification;
 use App\Notification\NotificationService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

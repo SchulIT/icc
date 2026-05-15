@@ -1,0 +1,150 @@
+<?php
+
+namespace App\ReturnItem\Repository;
+
+use App\Framework\Repository\AbstractRepository;
+use App\Framework\Repository\PaginatedResult;
+use App\Framework\Repository\PaginationQuery;
+use App\Common\Entity\Grade;
+use App\ReturnItem\Repository\ReturnItemRepositoryInterface;
+use App\ReturnItem\Entity\ReturnItem;
+use App\ReturnItem\Entity\ReturnItemType;
+use App\Common\Entity\Student;
+use DateTime;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use Override;
+
+class ReturnItemRepository extends AbstractRepository implements ReturnItemRepositoryInterface {
+
+    private function getQueryBuilder(?ReturnItemType $type = null): QueryBuilder {
+        $qb = $this->em->createQueryBuilder()
+            ->select(['i', 't', 's'])
+            ->from(ReturnItem::class, 'i')
+            ->leftJoin('i.type', 't')
+            ->leftJoin('i.student', 's')
+            ->orderBy('i.createdAt', 'desc');
+
+        if($type !== null) {
+            $qb->andWhere('t.id = :type')
+                ->setParameter('type', $type->getId());
+        }
+
+        return $qb;
+    }
+
+    #[Override]
+    public function findByStudentsPaginated(array $students, PaginationQuery $paginationQuery, ?ReturnItemType $type = null): PaginatedResult {
+        $studentIds = array_map(fn(Student $student) => $student->getId(), $students);
+
+        $qb = $this->getQueryBuilder($type)
+            ->andWhere('s.id IN (:studentIds)')
+            ->setParameter('studentIds', $studentIds);
+
+        return PaginatedResult::fromQueryBuilder($qb, $paginationQuery);
+    }
+
+    #[Override]
+    public function findAllPaginated(PaginationQuery $paginationQuery, ?ReturnItemType $type = null): PaginatedResult {
+        $qb = $this->getQueryBuilder($type);
+
+        return PaginatedResult::fromQueryBuilder($qb, $paginationQuery);
+    }
+
+    #[Override]
+    public function persist(ReturnItem $returnItem): void {
+        $this->em->persist($returnItem);
+        $this->em->flush();
+    }
+
+    #[Override]
+    public function remove(ReturnItem $returnItem): void {
+        $this->em->remove($returnItem);
+        $this->em->flush();
+    }
+
+    #[Override]
+    public function countByType(ReturnItemType $type): int {
+        return $this->em->createQueryBuilder()
+            ->select('COUNT(i)')
+            ->from(ReturnItem::class, 'i')
+            ->leftJoin('i.type', 't')
+            ->where('t.id = :type')
+            ->setParameter('type', $type->getId())
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    #[Override]
+    public function countNonReturnedForStudents(array $students): int {
+        $studentIds = array_map(fn(Student $student) => $student->getId(), $students);
+
+        return $this->em->createQueryBuilder()
+            ->select('COUNT(i)')
+            ->from(ReturnItem::class, 'i')
+            ->leftJoin('i.student', 's')
+            ->where('s.id IN (:studentIds)')
+            ->andWhere('i.isReturned = false')
+            ->setParameter('studentIds', $studentIds)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function findByStudent(Student $student, DateTime $start, DateTime $end): array {
+        return $this->em->createQueryBuilder()
+            ->select('i')
+            ->from(ReturnItem::class, 'i')
+            ->leftJoin('i.student', 's')
+            ->where('s.id = :studentId')
+            ->andwhere('i.createdAt >= :start')
+            ->andWhere('i.createdAt <= :end')
+            ->setParameter('studentId', $student->getId())
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getQuery()
+            ->getResult();
+    }
+
+    #[Override]
+    public function countForRange(DateTime $start, DateTime $end, ?ReturnItemType $type = null): int {
+        $qb = $this->em->createQueryBuilder()
+            ->select('COUNT(i)')
+            ->from(ReturnItem::class, 'i')
+            ->leftJoin('i.type', 't')
+            ->where('i.createdAt >= :start')
+            ->andWhere('i.createdAt <= :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end);
+
+        if($type !== null) {
+            $qb->andWhere('t.id = :type')
+                ->setParameter('type', $type->getId());
+        }
+
+        return $qb
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    #[Override]
+    public function findForRange(DateTime $start, DateTime $end, ?ReturnItemType $type = null): array {
+        $qb = $this->em->createQueryBuilder()
+            ->select(['i', 's', 't'])
+            ->from(ReturnItem::class, 'i')
+            ->leftJoin('i.type', 't')
+            ->leftJoin('i.student', 's')
+            ->where('i.createdAt >= :start')
+            ->andWhere('i.createdAt <= :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end);
+
+        if($type !== null) {
+            $qb->andWhere('t.id = :type')
+                ->setParameter('type', $type->getId());
+        }
+
+        return $qb
+            ->getQuery()
+            ->getResult();
+    }
+}

@@ -1,0 +1,127 @@
+<?php
+
+namespace App\Book\Repository;
+
+use App\Book\Entity\Attendance;
+use App\Book\Entity\AttendanceFlag;
+use App\Book\Entity\LessonEntry;
+use App\Common\Entity\Student;
+use App\Common\Entity\Tuition;
+use DateTime;
+
+interface LessonAttendanceRepositoryInterface {
+
+    public function findOneById(int $id): ?Attendance;
+
+    public function countAbsent(LessonEntry $entry): int;
+
+    public function countPresent(LessonEntry $entry): int;
+
+    public function countLate(LessonEntry $entry): int;
+
+    /**
+     * @param Student $student
+     * @param DateTime $start
+     * @param DateTime $end
+     * @param bool $includeEvents
+     * @param Tuition[] $tuitions
+     * @return Attendance[]
+     */
+    public function findByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]): array;
+
+    /**
+     * @param Student $student
+     * @param DateTime $start
+     * @param DateTime $end
+     * @return Attendance[]
+     */
+    public function findByStudentEvents(Student $student, DateTime $start, DateTime $end): array;
+
+    /**
+     * @param Student $student
+     * @param DateTime $start
+     * @param DateTime $end
+     * @param bool $includeEvents
+     * @param Tuition[] $tuitions
+     * @return Attendance[]
+     */
+    public function findLateByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]): array;
+
+    /**
+     * @param Student $student
+     * @param DateTime $start
+     * @param DateTime $end
+     * @param bool $includeEvents
+     * @param Tuition[] $tuitions
+     * @return Attendance[]
+     */
+    public function findAbsentByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]): array;
+
+    /**
+     * @param Student[] $students
+     * @param Tuition[] $tuitions
+     * @return Attendance[]
+     */
+    public function findAbsentByStudents(array $students, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]): array;
+
+    /**
+     * @param Student[] $students
+     * @param DateTime $dateTime
+     * @return Attendance[]
+     */
+    public function findAbsentByStudentsAndDate(array $students, DateTime $dateTime): array;
+
+    /**
+     * @param Student $student
+     * @param DateTime $start
+     * @param DateTime $end
+     * @param bool $includeEvents
+     * @return Attendance[]
+     * @deprecated Use findByStudent with parameter tuitions = [ ]
+     */
+    public function findByStudentAndDateRange(Student $student, DateTime $start, DateTime $end, bool $includeEvents): array;
+
+    /**
+     * Counts the total number of student attendances
+     * @return int
+     */
+    public function countAnyByStudent(Student $student): int;
+
+    /**
+     * @param Tuition[] $tuitions
+     */
+    public function countAllByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]): int;
+
+    /**
+     * @param Tuition[] $tuitions
+     */
+    public function countPresentByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]): int;
+
+    /**
+     * @param Tuition[] $tuitions
+     */
+    public function countAbsentByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]): int;
+
+    /**
+     * @param Tuition[] $tuitions
+     */
+    public function countLateMinutesByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]): int;
+
+    /**
+     * @param Tuition[] $tuitions
+     */
+    public function countNotExcusedLessonsCountByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]): int;
+
+    /**
+     * @param Tuition[] $tuitions
+     */
+    public function countExcuseStatusNotSetByStudent(Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]): int;
+
+    public function countFlagByStudent(AttendanceFlag $flag, Student $student, DateTime $start, DateTime $end, bool $includeEvents, array $tuitions = [ ]);
+
+    public function removeAnyStudentAttendance(Student $student): int;
+
+    public function persist(Attendance $attendance): void;
+
+    public function remove(Attendance $attendance): void;
+}

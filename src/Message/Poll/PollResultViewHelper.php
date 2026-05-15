@@ -2,15 +2,15 @@
 
 namespace App\Message\Poll;
 
-use App\Entity\Message;
-use App\Entity\MessagePollVote;
-use App\Entity\UserType;
-use App\Entity\UserTypeEntity;
+use App\Message\Entity\Message;
+use App\Message\Entity\MessagePollVote;
+use App\Common\Entity\UserType;
+use App\Common\Entity\UserTypeEntity;
 use App\Message\Poll\PollResultView;
-use App\Repository\StudentRepositoryInterface;
-use App\Repository\TeacherRepositoryInterface;
-use App\Repository\UserRepositoryInterface;
-use App\Utils\ArrayUtils;
+use App\Common\Repository\StudentRepositoryInterface;
+use App\Common\Repository\TeacherRepositoryInterface;
+use App\Common\Repository\UserRepositoryInterface;
+use App\Framework\Utils\ArrayUtils;
 
 class PollResultViewHelper {
 

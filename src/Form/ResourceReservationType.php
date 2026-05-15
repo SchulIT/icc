@@ -2,12 +2,15 @@
 
 namespace App\Form;
 
-use App\Converter\TeacherStringConverter;
-use App\Entity\ResourceEntity;
-use App\Entity\Room;
-use App\Entity\Teacher;
-use App\Sorting\ResourceStrategy;
-use App\Sorting\TeacherStrategy;
+use App\Common\Form\Choice\TeacherChoiceType;
+use App\Common\Form\Choice\StudyGroupType;
+use App\Common\Form\Type\SortableEntityType;
+use App\Common\Converter\TeacherStringConverter;
+use App\Common\Entity\ResourceEntity;
+use App\Common\Entity\Room;
+use App\Common\Entity\Teacher;
+use App\Common\Sorting\ResourceStrategy;
+use App\Common\Sorting\TeacherStrategy;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;

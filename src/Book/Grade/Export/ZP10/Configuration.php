@@ -2,8 +2,8 @@
 
 namespace App\Book\Grade\Export\ZP10;
 
-use App\Entity\Section;
-use App\Entity\TuitionGradeCategory;
+use App\Common\Entity\Section;
+use App\Grade\Entity\TuitionGradeCategory;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class Configuration {

@@ -2,16 +2,16 @@
 
 namespace App\StudentAbsence;
 
-use App\Date\DateLessonExpander;
-use App\Entity\Attendance;
-use App\Entity\AttendanceType;
-use App\Entity\LessonEntry;
-use App\Entity\StudentAbsence;
-use App\Entity\TimetableLesson;
-use App\Repository\ExcuseNoteRepositoryInterface;
-use App\Repository\LessonAttendanceRepositoryInterface;
-use App\Repository\TimetableLessonRepositoryInterface;
-use App\Utils\ArrayUtils;
+use App\Framework\Date\DateLessonExpander;
+use App\Book\Entity\Attendance;
+use App\Book\Entity\AttendanceType;
+use App\Book\Entity\LessonEntry;
+use App\StudentAbsence\Entity\StudentAbsence;
+use App\Timetable\Entity\TimetableLesson;
+use App\Book\Repository\ExcuseNoteRepositoryInterface;
+use App\Book\Repository\LessonAttendanceRepositoryInterface;
+use App\Timetable\Repository\TimetableLessonRepositoryInterface;
+use App\Framework\Utils\ArrayUtils;
 use Doctrine\Common\Collections\ArrayCollection;
 
 readonly class ExcuseStatusResolver {

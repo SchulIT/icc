@@ -2,11 +2,11 @@
 
 namespace App\Notification\Delivery;
 
-use App\Entity\User;
+use App\Common\Entity\User;
 use App\Notification\NotificationDeliveryTarget;
-use App\Repository\UserNotificationSettingRepositoryInterface;
-use App\Settings\NotificationSettings;
-use App\Utils\ArrayUtils;
+use App\Notification\Repository\UserNotificationSettingRepositoryInterface;
+use App\Notification\Settings\NotificationSettings;
+use App\Framework\Utils\ArrayUtils;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 readonly class DeliveryDecider {

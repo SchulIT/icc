@@ -2,7 +2,7 @@
 
 namespace App\Dashboard;
 
-use App\Entity\ResourceReservation;
+use App\Room\Entity\ResourceReservation;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class RoomReservationViewItem extends AbstractViewItem {

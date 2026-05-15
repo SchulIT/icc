@@ -2,7 +2,8 @@
 
 namespace App\Form;
 
-use App\Entity\TuitionGradeCategory;
+use App\Common\Form\Choice\TuitionChoiceType;
+use App\Grade\Entity\TuitionGradeCategory;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;

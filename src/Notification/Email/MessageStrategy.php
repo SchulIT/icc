@@ -4,8 +4,8 @@ namespace App\Notification\Email;
 
 use App\Notification\MessageNotification;
 use App\Notification\Notification;
-use App\Settings\NotificationSettings;
-use App\Utils\ArrayUtils;
+use App\Notification\Settings\NotificationSettings;
+use App\Framework\Utils\ArrayUtils;
 
 readonly class MessageStrategy implements EmailStrategyInterface {
 

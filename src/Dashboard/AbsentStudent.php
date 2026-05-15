@@ -2,7 +2,7 @@
 
 namespace App\Dashboard;
 
-use App\Entity\Student;
+use App\Common\Entity\Student;
 
 class AbsentStudent {
 

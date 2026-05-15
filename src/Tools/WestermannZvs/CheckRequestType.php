@@ -2,7 +2,7 @@
 
 namespace App\Tools\WestermannZvs;
 
-use App\Entity\LearningManagementSystem;
+use App\LearningManagementSystem\Entity\LearningManagementSystem;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;

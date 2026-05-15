@@ -2,9 +2,9 @@
 
 namespace App\Notification;
 
-use App\Entity\User;
-use App\Entity\UserNotificationSetting;
-use App\Repository\UserNotificationSettingRepositoryInterface;
+use App\Common\Entity\User;
+use App\Notification\Entity\UserNotificationSetting;
+use App\Notification\Repository\UserNotificationSettingRepositoryInterface;
 
 readonly class UserNotificationSettingSaver {
 

@@ -3,8 +3,8 @@
 namespace App\Timetable;
 
 use Closure;
-use App\Entity\Subject;
-use App\Entity\TimetableLesson as TimetableLessonEntity;
+use App\Common\Entity\Subject;
+use App\Timetable\Entity\TimetableLesson as TimetableLessonEntity;
 
 /**
  * This helper filters lessons which are allowed to be visible due to their subjects.

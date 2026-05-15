@@ -2,7 +2,7 @@
 
 namespace App\Tools;
 
-use App\Entity\Section;
+use App\Common\Entity\Section;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class TuitionReportInput {

@@ -2,17 +2,17 @@
 
 namespace App\Tests\Message;
 
-use App\Entity\Message;
-use App\Entity\Student;
-use App\Entity\StudyGroup;
-use App\Entity\StudyGroupMembership;
-use App\Entity\StudyGroupType;
-use App\Entity\User;
-use App\Entity\UserType;
-use App\Entity\UserTypeEntity;
-use App\Form\UserTypeEntityType;
+use App\Message\Entity\Message;
+use App\Common\Entity\Student;
+use App\Common\Entity\StudyGroup;
+use App\Common\Entity\StudyGroupMembership;
+use App\Common\Entity\StudyGroupType;
+use App\Common\Entity\User;
+use App\Common\Entity\UserType;
+use App\Common\Entity\UserTypeEntity;
+use App\Common\Form\UserTypeEntityType;
 use App\Message\MessageRecipientResolver;
-use App\Repository\UserRepositoryInterface;
+use App\Common\Repository\UserRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 use Reflection;
 use ReflectionClass;

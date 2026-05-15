@@ -2,7 +2,7 @@
 
 namespace App\Tools\WestermannZvs;
 
-use App\Entity\LearningManagementSystem;
+use App\LearningManagementSystem\Entity\LearningManagementSystem;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class CheckRequest {

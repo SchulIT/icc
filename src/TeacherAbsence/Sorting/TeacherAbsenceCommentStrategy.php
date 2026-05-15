@@ -1,0 +1,27 @@
+<?php
+
+namespace App\TeacherAbsence\Sorting;
+
+use App\Framework\Sorting\DateStrategy;
+use App\Framework\Sorting\SortingStrategyInterface;
+use App\TeacherAbsence\Entity\TeacherAbsenceComment;
+
+class TeacherAbsenceCommentStrategy implements SortingStrategyInterface {
+
+    public function __construct(private readonly DateStrategy $dateStrategy) { }
+
+    /**
+     * @param TeacherAbsenceComment $objectA
+     * @param TeacherAbsenceComment $objectB
+     * @return int
+     */
+    public function compare($objectA, $objectB): int {
+        $compareDate = $this->dateStrategy->compare($objectA->getDate(), $objectB->getDate());
+
+        if($compareDate === 0) {
+            return $objectA->getLessonStart() - $objectB->getLessonStart();
+        }
+
+        return $compareDate;
+    }
+}

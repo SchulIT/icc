@@ -2,14 +2,14 @@
 
 namespace App\Untis\Gpu\Exam;
 
-use App\Import\ExamsImportStrategy;
-use App\Import\Importer;
-use App\Import\ImportResult;
-use App\Repository\StudentRepositoryInterface;
+use App\Exam\Import\ExamsImportStrategy;
+use App\Framework\Import\Importer;
+use App\Framework\Import\ImportResult;
+use App\Common\Repository\StudentRepositoryInterface;
 use App\Request\Data\ExamData;
 use App\Request\Data\ExamsData;
 use App\Request\Data\ExamTuition;
-use App\Settings\UntisSettings;
+use App\Untis\Settings\UntisSettings;
 use App\Untis\Gpu\Tuition\Tuition;
 use App\Untis\Gpu\Tuition\TuitionReader;
 use App\Untis\StudentId\StudentIdGenerator;

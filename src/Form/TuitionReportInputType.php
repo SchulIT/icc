@@ -2,10 +2,11 @@
 
 namespace App\Form;
 
-use App\Entity\Section;
-use App\Sorting\SectionDateStrategy;
+use App\Common\Entity\Section;
+use App\Common\Form\Type\SortableEntityType;
+use App\Common\Sorting\SectionDateStrategy;
 use App\Tools\TuitionReport;
-use App\Utils\ArrayUtils;
+use App\Framework\Utils\ArrayUtils;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;

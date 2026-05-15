@@ -2,14 +2,14 @@
 
 namespace App\Message\Poll;
 
-use App\Entity\Message;
-use App\Entity\MessagePollChoice;
-use App\Entity\MessagePollVote;
-use App\Entity\MessagePollVoteRankedChoice;
-use App\Entity\Student;
-use App\Entity\User;
-use App\Repository\MessagePollVoteRepositoryInterface;
-use App\Utils\ArrayUtils;
+use App\Message\Entity\Message;
+use App\Message\Entity\MessagePollChoice;
+use App\Message\Entity\MessagePollVote;
+use App\Message\Entity\MessagePollVoteRankedChoice;
+use App\Common\Entity\Student;
+use App\Common\Entity\User;
+use App\Message\Repository\MessagePollVoteRepositoryInterface;
+use App\Framework\Utils\ArrayUtils;
 use InvalidArgumentException;
 
 class PollVoteHelper {

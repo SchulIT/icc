@@ -2,17 +2,17 @@
 
 namespace App\Dashboard;
 
-use App\Entity\Absence;
-use App\Entity\Appointment;
-use App\Entity\Exam;
-use App\Entity\Infotext;
-use App\Entity\LessonEntry;
-use App\Entity\Message;
-use App\Entity\MessagePriority;
-use App\Entity\ParentsDayAppointment;
-use App\Entity\Student;
-use App\Entity\Substitution;
-use App\Entity\Teacher;
+use App\Substitution\Entity\Absence;
+use App\Appointment\Entity\Appointment;
+use App\Exam\Entity\Exam;
+use App\Substitution\Entity\Infotext;
+use App\Book\Entity\LessonEntry;
+use App\Message\Entity\Message;
+use App\Message\Entity\MessagePriority;
+use App\ParentsDay\Entity\ParentsDayAppointment;
+use App\Common\Entity\Student;
+use App\Substitution\Entity\Substitution;
+use App\Common\Entity\Teacher;
 use DateTime;
 
 class DashboardView {

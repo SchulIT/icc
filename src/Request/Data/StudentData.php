@@ -2,7 +2,7 @@
 
 namespace App\Request\Data;
 
-use App\Entity\Gender;
+use App\Common\Entity\Gender;
 use DateTime;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;

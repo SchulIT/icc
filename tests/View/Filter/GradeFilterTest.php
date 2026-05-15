@@ -2,17 +2,17 @@
 
 namespace App\Tests\View\Filter;
 
-use App\Entity\Grade;
-use App\Entity\Section;
-use App\Entity\Student;
-use App\Entity\User;
-use App\Entity\UserType;
-use App\Repository\GradeRepositoryInterface;
-use App\Repository\TuitionRepositoryInterface;
-use App\Sorting\GradeNameStrategy;
-use App\Sorting\Sorter;
-use App\Sorting\StringStrategy;
-use App\View\Filter\GradeFilter;
+use App\Common\Entity\Grade;
+use App\Common\Entity\Section;
+use App\Common\Entity\Student;
+use App\Common\Entity\User;
+use App\Common\Entity\UserType;
+use App\Common\Repository\GradeRepositoryInterface;
+use App\Common\Repository\TuitionRepositoryInterface;
+use App\Common\Sorting\GradeNameStrategy;
+use App\Framework\Sorting\Sorter;
+use App\Framework\Sorting\StringStrategy;
+use App\Common\View\Filter\GradeFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;

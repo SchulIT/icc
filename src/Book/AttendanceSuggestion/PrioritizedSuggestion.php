@@ -2,7 +2,7 @@
 
 namespace App\Book\AttendanceSuggestion;
 
-use App\Entity\Student;
+use App\Common\Entity\Student;
 use App\Response\Book\AttendanceSuggestion;
 
 class PrioritizedSuggestion {

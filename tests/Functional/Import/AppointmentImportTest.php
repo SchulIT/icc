@@ -2,9 +2,9 @@
 
 namespace App\Tests\Functional\Import;
 
-use App\Entity\Appointment;
-use App\Entity\AppointmentCategory;
-use App\Entity\Section;
+use App\Appointment\Entity\Appointment;
+use App\Appointment\Entity\AppointmentCategory;
+use App\Common\Entity\Section;
 use DateTime;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;

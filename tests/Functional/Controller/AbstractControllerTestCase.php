@@ -2,7 +2,7 @@
 
 namespace App\Tests\Functional\Controller;
 
-use App\Entity\User;
+use App\Common\Entity\User;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpKernel\KernelInterface;

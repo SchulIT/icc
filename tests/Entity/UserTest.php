@@ -2,11 +2,11 @@
 
 namespace App\Tests\Entity;
 
-use App\Entity\Message;
-use App\Entity\Student;
-use App\Entity\Teacher;
-use App\Entity\User;
-use App\Entity\UserType;
+use App\Message\Entity\Message;
+use App\Common\Entity\Student;
+use App\Common\Entity\Teacher;
+use App\Common\Entity\User;
+use App\Common\Entity\UserType;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class UserTest extends WebTestCase {

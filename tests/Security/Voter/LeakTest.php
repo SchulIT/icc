@@ -2,8 +2,8 @@
 
 namespace App\Tests\Security\Voter;
 
-use App\Entity\User;
-use App\Entity\UserType;
+use App\Common\Entity\User;
+use App\Common\Entity\UserType;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;

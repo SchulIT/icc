@@ -2,8 +2,8 @@
 
 namespace App\Dashboard;
 
-use App\Entity\Grade;
-use App\Entity\LessonEntry;
+use App\Common\Entity\Grade;
+use App\Book\Entity\LessonEntry;
 use DateTime;
 
 class ExercisesView {

@@ -2,9 +2,9 @@
 
 namespace App\TeacherAbsence;
 
-use App\Event\TeacherAbsenceCreatedEvent;
-use App\Event\TeacherAbsenceUpdatedEvent;
-use App\Settings\TeacherAbsenceSettings;
+use App\TeacherAbsence\Event\TeacherAbsenceCreatedEvent;
+use App\TeacherAbsence\Event\TeacherAbsenceUpdatedEvent;
+use App\TeacherAbsence\Settings\TeacherAbsenceSettings;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\MailerInterface;

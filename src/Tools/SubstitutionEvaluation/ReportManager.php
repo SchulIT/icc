@@ -2,8 +2,8 @@
 
 namespace App\Tools\SubstitutionEvaluation;
 
-use App\Entity\Substitution;
-use App\Entity\Teacher;
+use App\Substitution\Entity\Substitution;
+use App\Common\Entity\Teacher;
 use Doctrine\ORM\EntityManagerInterface;
 use SebastianBergmann\CodeCoverage\Report\Xml\Report;
 

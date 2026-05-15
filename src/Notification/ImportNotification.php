@@ -2,7 +2,7 @@
 
 namespace App\Notification;
 
-use App\Entity\User;
+use App\Common\Entity\User;
 
 class ImportNotification extends Notification {
     public function __construct(string $type, User $recipient, string $subject, string $content, ?string $link, ?string $linkText, private readonly ?string $sender, private readonly ?string $replyTo) {

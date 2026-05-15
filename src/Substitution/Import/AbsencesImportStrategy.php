@@ -1,0 +1,94 @@
+<?php
+
+namespace App\Substitution\Import;
+
+use App\Framework\Import\ReplaceImportStrategyInterface;
+use App\Framework\Import\ContextAwareTrait;
+use App\Framework\Import\SectionNotResolvableException;
+use App\Substitution\Entity\Absence;
+use App\Substitution\Repository\AbsenceRepositoryInterface;
+use App\Book\Repository\RoomRepositoryInterface;
+use App\Common\Repository\StudyGroupRepositoryInterface;
+use App\Common\Repository\TeacherRepositoryInterface;
+use App\Framework\Repository\TransactionalRepositoryInterface;
+use App\Request\Data\AbsenceData;
+use App\Request\Data\AbsencesData;
+use App\Common\Section\SectionResolverInterface;
+
+class AbsencesImportStrategy implements ReplaceImportStrategyInterface {
+
+    use ContextAwareTrait;
+
+    public function __construct(private AbsenceRepositoryInterface $repository, private TeacherRepositoryInterface $teacherRepository, private StudyGroupRepositoryInterface $studyGroupRepository, private RoomRepositoryInterface $roomRepository, private SectionResolverInterface $sectionResolver)
+    {
+    }
+
+    public function getRepository(): TransactionalRepositoryInterface {
+        return $this->repository;
+    }
+
+    public function removeAll($requestData): void {
+        $dateTime = $this->getContext($requestData);
+        $this->repository->removeAll($dateTime);
+    }
+
+    /**
+     * @param AbsenceData $data
+     * @throws SectionNotResolvableException
+     */
+    public function persist($data, $requestData): void {
+        $absence = (new Absence())
+            ->setDate($data->getDate())
+            ->setLessonStart($data->getLessonStart())
+            ->setLessonEnd($data->getLessonEnd());
+
+        if($data->getType() === 'teacher') {
+            $teacher = $this->teacherRepository->findOneByAcronym($data->getObjective());
+
+            if($teacher !== null) {
+                $absence->setTeacher($teacher);
+            } else {
+                return;
+            }
+        } else if($data->getType() === 'study_group') {
+            $section = $this->sectionResolver->getSectionForDate($absence->getDate());
+
+            if($section === null) {
+                throw new SectionNotResolvableException($absence->getDate());
+            }
+
+            $studyGroup = $this->studyGroupRepository->findOneByExternalId($data->getObjective(), $section);
+
+            if($studyGroup !== null) {
+                $absence->setStudyGroup($studyGroup);
+            } else {
+                return;
+            }
+        } else if($data->getType() === 'room') {
+            $room = $this->roomRepository->findOneByExternalId($data->getObjective());
+
+            if($room !== null) {
+                $absence->setRoom($room);
+            } else {
+                return;
+            }
+        }
+
+        $this->repository->persist($absence);
+    }
+
+    /**
+     * @param AbsencesData $data
+     * @return AbsenceData[]
+     */
+    public function getData($data): array {
+        return $data->getAbsences();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEntityClassName(): string {
+        return Absence::class;
+    }
+}

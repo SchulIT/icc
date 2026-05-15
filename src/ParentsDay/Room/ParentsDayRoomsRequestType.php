@@ -2,7 +2,7 @@
 
 namespace App\ParentsDay\Room;
 
-use App\Form\ParentsDayTeacherRoomType;
+use App\ParentsDay\Form\ParentsDayTeacherRoomType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;

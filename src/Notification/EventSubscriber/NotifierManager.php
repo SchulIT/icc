@@ -2,8 +2,8 @@
 
 namespace App\Notification\EventSubscriber;
 
-use App\Entity\User;
-use App\Entity\UserType;
+use App\Common\Entity\User;
+use App\Common\Entity\UserType;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 readonly class NotifierManager {

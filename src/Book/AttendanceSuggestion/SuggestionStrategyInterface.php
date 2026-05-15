@@ -2,7 +2,7 @@
 
 namespace App\Book\AttendanceSuggestion;
 
-use App\Entity\Tuition;
+use App\Common\Entity\Tuition;
 use DateTime;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 

@@ -2,7 +2,7 @@
 
 namespace App\Book\Excuse;
 
-use App\Repository\LessonAttendanceRepositoryInterface;
+use App\Book\Repository\LessonAttendanceRepositoryInterface;
 use phpDocumentor\Reflection\PseudoTypes\IntegerValue;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 

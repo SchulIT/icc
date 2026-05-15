@@ -2,14 +2,14 @@
 
 namespace App\Book\Student;
 
-use App\Entity\Attendance;
-use App\Entity\AttendanceType;
-use App\Entity\Section;
-use App\Entity\Student;
-use App\Repository\BookCommentRepositoryInterface;
-use App\Repository\LessonAttendanceRepositoryInterface;
-use App\Sorting\AttendanceStrategy;
-use App\Sorting\Sorter;
+use App\Book\Entity\Attendance;
+use App\Book\Entity\AttendanceType;
+use App\Common\Entity\Section;
+use App\Common\Entity\Student;
+use App\Book\Repository\BookCommentRepositoryInterface;
+use App\Book\Repository\LessonAttendanceRepositoryInterface;
+use App\Book\Sorting\AttendanceStrategy;
+use App\Framework\Sorting\Sorter;
 use DateTime;
 
 readonly class StudentInfoResolver {

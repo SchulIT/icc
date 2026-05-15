@@ -3,11 +3,11 @@
 namespace App\Dashboard\Absence;
 
 use App\Dashboard\AbsentExamStudent;
-use App\Entity\Exam;
-use App\Entity\Student;
-use App\Repository\ExamRepositoryInterface;
-use App\Repository\ExamStudentRepositoryInterface;
-use App\Utils\ArrayUtils;
+use App\Exam\Entity\Exam;
+use App\Common\Entity\Student;
+use App\Exam\Repository\ExamRepositoryInterface;
+use App\Exam\Repository\ExamStudentRepositoryInterface;
+use App\Framework\Utils\ArrayUtils;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 

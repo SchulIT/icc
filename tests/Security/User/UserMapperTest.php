@@ -2,13 +2,13 @@
 
 namespace App\Tests\Security\User;
 
-use App\Entity\Student;
-use App\Entity\Teacher;
-use App\Entity\User;
-use App\Entity\UserType;
-use App\Repository\StudentRepositoryInterface;
-use App\Repository\TeacherRepositoryInterface;
-use App\Security\User\UserMapper;
+use App\Common\Entity\Student;
+use App\Common\Entity\Teacher;
+use App\Common\Entity\User;
+use App\Common\Entity\UserType;
+use App\Common\Repository\StudentRepositoryInterface;
+use App\Common\Repository\TeacherRepositoryInterface;
+use App\Common\Security\User\UserMapper;
 use LightSaml\ClaimTypes;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;

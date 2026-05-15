@@ -2,10 +2,10 @@
 
 namespace App\StudentAbsence;
 
-use App\Entity\ExcuseNote;
-use App\Entity\StudentAbsence;
-use App\Entity\Teacher;
-use App\Repository\ExcuseNoteRepositoryInterface;
+use App\Book\Entity\ExcuseNote;
+use App\StudentAbsence\Entity\StudentAbsence;
+use App\Common\Entity\Teacher;
+use App\Book\Repository\ExcuseNoteRepositoryInterface;
 
 readonly class AssociatedExcuseNoteManager {
 

@@ -2,19 +2,19 @@
 
 namespace App\Notification\EventSubscriber;
 
-use App\Entity\BookComment;
-use App\Entity\Teacher;
-use App\Entity\UserType;
-use App\Event\BookCommentCreatedEvent;
-use App\Event\BookCommentUpdatedEvent;
+use App\Book\Entity\BookComment;
+use App\Common\Entity\Teacher;
+use App\Common\Entity\UserType;
+use App\Book\Event\BookCommentCreatedEvent;
+use App\Book\Event\BookCommentUpdatedEvent;
 use App\Notification\Notification;
 use App\Notification\NotificationService;
 use App\ParentsDay\InvolvedUsersResolver;
-use App\Repository\UserRepositoryInterface;
-use App\Section\SectionResolverInterface;
-use App\Settings\BookSettings;
+use App\Common\Repository\UserRepositoryInterface;
+use App\Common\Section\SectionResolverInterface;
+use App\Book\Settings\BookSettings;
 use App\Student\RelatedUsersResolver;
-use App\Utils\ArrayUtils;
+use App\Framework\Utils\ArrayUtils;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;

@@ -2,13 +2,13 @@
 
 namespace App\Tests\Entity;
 
-use App\Entity\Exam;
-use App\Entity\ExamStudent;
-use App\Entity\ExamSupervision;
-use App\Entity\Room;
-use App\Entity\Student;
-use App\Entity\Teacher;
-use App\Entity\Tuition;
+use App\Exam\Entity\Exam;
+use App\Exam\Entity\ExamStudent;
+use App\Exam\Entity\ExamSupervision;
+use App\Common\Entity\Room;
+use App\Common\Entity\Student;
+use App\Common\Entity\Teacher;
+use App\Common\Entity\Tuition;
 use PHPUnit\Framework\TestCase;
 
 class ExamTest extends TestCase {

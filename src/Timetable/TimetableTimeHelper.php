@@ -2,8 +2,8 @@
 
 namespace App\Timetable;
 
-use App\Entity\DateLesson;
-use App\Settings\TimetableSettings;
+use App\Common\Entity\DateLesson;
+use App\Timetable\Settings\TimetableSettings;
 use DateInterval;
 use DateTime;
 use Exception;

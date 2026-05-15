@@ -2,13 +2,13 @@
 
 namespace App\Notification\EventSubscriber;
 
-use App\Converter\StudentStringConverter;
-use App\Entity\UserType;
-use App\Event\StudentAbsentWithoutAnyNoteEvent;
+use App\Common\Converter\StudentStringConverter;
+use App\Common\Entity\UserType;
+use App\StudentAbsence\Event\StudentAbsentWithoutAnyNoteEvent;
 use App\Notification\Notification;
 use App\Notification\NotificationService;
-use App\Repository\UserRepositoryInterface;
-use App\Settings\BookSettings;
+use App\Common\Repository\UserRepositoryInterface;
+use App\Book\Settings\BookSettings;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;

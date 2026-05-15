@@ -4,13 +4,13 @@ namespace App\Book\IntegrityCheck\Checks;
 
 use App\Book\IntegrityCheck\IntegrityCheckInterface;
 use App\Book\IntegrityCheck\IntegrityCheckViolation;
-use App\Date\DateLessonExpander;
-use App\Entity\Attendance;
-use App\Entity\AttendanceType;
-use App\Entity\Student;
-use App\Repository\LessonAttendanceRepositoryInterface;
-use App\Repository\StudentAbsenceRepositoryInterface;
-use App\Utils\ArrayUtils;
+use App\Framework\Date\DateLessonExpander;
+use App\Book\Entity\Attendance;
+use App\Book\Entity\AttendanceType;
+use App\Common\Entity\Student;
+use App\Book\Repository\LessonAttendanceRepositoryInterface;
+use App\StudentAbsence\Repository\StudentAbsenceRepositoryInterface;
+use App\Framework\Utils\ArrayUtils;
 use DateTime;
 use Symfony\Contracts\Translation\TranslatorInterface;
 

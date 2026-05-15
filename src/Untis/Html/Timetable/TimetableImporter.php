@@ -2,16 +2,16 @@
 
 namespace App\Untis\Html\Timetable;
 
-use App\Grouping\Grouper;
-use App\Import\Importer;
-use App\Import\ImportException;
-use App\Import\ImportResult;
-use App\Import\TimetableLessonsImportStrategy;
-use App\Repository\TimetableWeekRepositoryInterface;
+use App\Framework\Grouping\Grouper;
+use App\Framework\Import\Importer;
+use App\Framework\Import\ImportException;
+use App\Framework\Import\ImportResult;
+use App\Timetable\Import\TimetableLessonsImportStrategy;
+use App\Timetable\Repository\TimetableWeekRepositoryInterface;
 use App\Request\Data\TimetableLessonData;
 use App\Request\Data\TimetableLessonsData;
-use App\Settings\UntisHtmlSettings;
-use App\Settings\UntisSettings;
+use App\Untis\Settings\UntisHtmlSettings;
+use App\Untis\Settings\UntisSettings;
 use App\Untis\Html\HtmlParseException;
 use DateMalformedStringException;
 

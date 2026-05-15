@@ -2,7 +2,7 @@
 
 namespace App\Untis\Html\Substitution;
 
-use App\Settings\UntisHtmlSettings;
+use App\Untis\Settings\UntisHtmlSettings;
 use App\Untis\Html\AbstractHtmlReader;
 use DateTime;
 use DOMDocument;

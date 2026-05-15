@@ -2,8 +2,8 @@
 
 namespace App\Notification;
 
-use App\Entity\StudentAbsence;
-use App\Entity\User;
+use App\StudentAbsence\Entity\StudentAbsence;
+use App\Common\Entity\User;
 
 class StudentAbsenceNotification extends Notification {
     public function __construct(string $type, User $recipient, string $subject, string $content, ?string $link, ?string $linkText, private readonly StudentAbsence $absence) {

@@ -2,10 +2,10 @@
 
 namespace App\Exam;
 
-use App\Entity\Exam;
-use App\Entity\ExamStudent;
-use App\Sorting\ExamStudentStrategy;
-use App\Sorting\Sorter;
+use App\Exam\Entity\Exam;
+use App\Exam\Entity\ExamStudent;
+use App\Exam\Sorting\ExamStudentStrategy;
+use App\Framework\Sorting\Sorter;
 
 class ExamSplitter {
 

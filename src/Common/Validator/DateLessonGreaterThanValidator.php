@@ -1,0 +1,78 @@
+<?php
+
+namespace App\Common\Validator;
+
+use App\Common\Entity\DateLesson;
+use App\Common\Validator\DateLessonGreaterThan;
+use App\Timetable\TimetableTimeHelper;
+use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
+class DateLessonGreaterThanValidator extends ConstraintValidator {
+
+    public function __construct(private readonly TimetableTimeHelper $timetableTimeHelper, private readonly TranslatorInterface $translator, private readonly PropertyAccessorInterface $propertyAccessor)
+    {
+    }
+
+    private function formatDate(DateLesson $lesson): string {
+        return $lesson->getDate()->format($this->translator->trans('date.format_short'));
+    }
+
+    private function formatLesson(DateLesson $lesson): string {
+        return $this->translator->trans('label.exam_lessons', [
+            '%start%' => $lesson->getLesson(),
+            '%count%' => 0
+        ]);
+    }
+
+    protected function compareValues($value1, $value2): bool {
+        $date1 = $this->timetableTimeHelper->getLessonEndDateTime($value1->getDate(), $value1->getLesson());
+        $date2 = $this->timetableTimeHelper->getLessonStartDateTime($value2->getDate(), $value2->getLesson());
+
+        return $date2 <= $date1;
+    }
+
+    public function validate($value, Constraint $constraint): void {
+        if(!$value instanceof DateLesson) {
+            throw new UnexpectedTypeException($value, DateLesson::class);
+        }
+
+        if(!$constraint instanceof DateLessonGreaterThan) {
+            throw new UnexpectedTypeException($constraint, DateLessonGreaterThan::class);
+        }
+
+        $path = $constraint->propertyPath;
+
+        if(empty($path)) {
+            throw new ConstraintDefinitionException('propertyPath must not be empty.');
+        }
+
+        $object = $this->context->getObject();
+
+        try {
+            /** @var DateLesson $comparedValue */
+            $comparedValue = $this->propertyAccessor->getValue($object, $path);
+        } catch (NoSuchPropertyException $e) {
+            throw new ConstraintDefinitionException(sprintf('Invalid property path "%s" provided to "%s" constraint: ', $path, get_debug_type($constraint)).$e->getMessage(), 0, $e);
+        }
+
+        if($comparedValue->getDate() > $value->getDate()) {
+            $this->context
+                ->buildViolation($constraint->message)
+                ->setParameter('{{ compared_value }}', $this->formatDate($comparedValue))
+                //->atPath('date')
+                ->addViolation();
+        } else if($comparedValue->getDate() == $value->getDate() && $comparedValue->getLesson() > $value->getLesson()) {
+            $this->context
+                ->buildViolation($constraint->message)
+                ->setParameter('{{ compared_value }}', $this->formatLesson($comparedValue))
+                //->atPath('lesson')
+                ->addViolation();
+        }
+    }
+}

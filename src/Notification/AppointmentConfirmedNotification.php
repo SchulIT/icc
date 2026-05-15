@@ -2,8 +2,8 @@
 
 namespace App\Notification;
 
-use App\Entity\Appointment;
-use App\Entity\User;
+use App\Appointment\Entity\Appointment;
+use App\Common\Entity\User;
 
 class AppointmentConfirmedNotification extends AppointmentNotification {
     public function __construct(string $key, User $recipient, string $subject, string $content, ?string $link, ?string $linkText, Appointment $appointment, private readonly User $confirmedBy) {

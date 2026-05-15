@@ -2,10 +2,10 @@
 
 namespace App\Message\Poll;
 
-use App\Entity\MessagePollVote;
-use App\Entity\Student;
-use App\Entity\Teacher;
-use App\Entity\User;
+use App\Message\Entity\MessagePollVote;
+use App\Common\Entity\Student;
+use App\Common\Entity\Teacher;
+use App\Common\Entity\User;
 
 class PollResultView {
 

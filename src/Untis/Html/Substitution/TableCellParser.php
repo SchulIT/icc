@@ -2,7 +2,7 @@
 
 namespace App\Untis\Html\Substitution;
 
-use App\Settings\TimetableSettings;
+use App\Timetable\Settings\TimetableSettings;
 use Exception;
 use Symfony\Component\String\AbstractString;
 use function Symfony\Component\String\u;

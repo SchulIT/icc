@@ -2,7 +2,7 @@
 
 namespace App\Dashboard;
 
-use App\Entity\TimetableSupervision;
+use App\Timetable\Entity\TimetableSupervision;
 
 class SupervisionViewItem extends AbstractViewItem {
 

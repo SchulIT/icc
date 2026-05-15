@@ -2,7 +2,7 @@
 
 namespace App\Wiki;
 
-use App\Entity\WikiArticle;
+use App\Wiki\Entity\WikiArticle;
 
 class TreeHelper {
 

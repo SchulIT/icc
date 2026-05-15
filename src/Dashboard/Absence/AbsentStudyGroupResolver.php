@@ -4,9 +4,9 @@ namespace App\Dashboard\Absence;
 
 use App\Dashboard\AbsenceReason;
 use App\Dashboard\AbsentStudent;
-use App\Entity\Student;
-use App\Repository\AbsenceRepositoryInterface;
-use App\Utils\ArrayUtils;
+use App\Common\Entity\Student;
+use App\Substitution\Repository\AbsenceRepositoryInterface;
+use App\Framework\Utils\ArrayUtils;
 use DateTime;
 
 /**

@@ -2,7 +2,7 @@
 
 namespace App\ParentsDay;
 
-use App\Entity\Student;
+use App\Common\Entity\Student;
 
 class TeacherOverview {
     /**

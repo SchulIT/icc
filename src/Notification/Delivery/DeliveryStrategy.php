@@ -2,7 +2,7 @@
 
 namespace App\Notification\Delivery;
 
-use App\Entity\UserNotificationSetting;
+use App\Notification\Entity\UserNotificationSetting;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag('app.notifications.delivery_strategy')]

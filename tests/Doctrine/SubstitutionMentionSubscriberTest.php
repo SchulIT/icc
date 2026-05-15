@@ -2,12 +2,12 @@
 
 namespace App\Tests\Doctrine;
 
-use App\Doctrine\SubstitutionMentionSubscriber;
-use App\Entity\Substitution;
-use App\Entity\Teacher;
-use App\Event\SubstitutionMentionCreatedEvent;
-use App\EventSubscriber\DoctrineEventsCollector;
-use App\Repository\TeacherRepositoryInterface;
+use App\Substitution\Doctrine\SubstitutionMentionSubscriber;
+use App\Substitution\Entity\Substitution;
+use App\Common\Entity\Teacher;
+use App\Substitution\Event\SubstitutionMentionCreatedEvent;
+use App\Infrastructure\EventSubscriber\DoctrineEventsCollector;
+use App\Common\Repository\TeacherRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PrePersistEventArgs;
 use PHPUnit\Framework\TestCase;

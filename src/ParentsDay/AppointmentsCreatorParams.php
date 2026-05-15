@@ -2,7 +2,7 @@
 
 namespace App\ParentsDay;
 
-use App\Entity\ParentsDay;
+use App\ParentsDay\Entity\ParentsDay;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class AppointmentsCreatorParams {

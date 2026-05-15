@@ -2,7 +2,7 @@
 
 namespace App\Tests\Entity;
 
-use App\Entity\DateLesson;
+use App\Common\Entity\DateLesson;
 use DateTime;
 use Doctrine\DBAL\Types\DateTimeType;
 use PHPUnit\Framework\TestCase;

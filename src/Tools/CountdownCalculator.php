@@ -2,10 +2,10 @@
 
 namespace App\Tools;
 
-use App\Repository\AppointmentCategoryRepositoryInterface;
-use App\Repository\AppointmentRepositoryInterface;
-use App\Settings\TimetableSettings;
-use App\Utils\ArrayUtils;
+use App\Appointment\Repository\AppointmentCategoryRepositoryInterface;
+use App\Appointment\Repository\AppointmentRepositoryInterface;
+use App\Timetable\Settings\TimetableSettings;
+use App\Framework\Utils\ArrayUtils;
 use DateTime;
 use SchulIT\CommonBundle\Helper\DateHelper;
 

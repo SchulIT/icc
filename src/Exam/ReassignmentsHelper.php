@@ -2,14 +2,14 @@
 
 namespace App\Exam;
 
-use App\Entity\Exam;
-use App\Entity\ExamStudent;
-use App\Entity\Section;
-use App\Entity\Student;
-use App\Entity\StudyGroupMembership;
-use App\Repository\ExamRepositoryInterface;
-use App\Repository\TuitionRepositoryInterface;
-use App\Utils\ArrayUtils;
+use App\Exam\Entity\Exam;
+use App\Exam\Entity\ExamStudent;
+use App\Common\Entity\Section;
+use App\Common\Entity\Student;
+use App\Common\Entity\StudyGroupMembership;
+use App\Exam\Repository\ExamRepositoryInterface;
+use App\Common\Repository\TuitionRepositoryInterface;
+use App\Framework\Utils\ArrayUtils;
 use DateTime;
 
 class ReassignmentsHelper {

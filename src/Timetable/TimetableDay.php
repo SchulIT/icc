@@ -2,8 +2,8 @@
 
 namespace App\Timetable;
 
-use App\Entity\TimetableSupervision;
-use App\Entity\TimetableLesson as TimetableLessonEntity;
+use App\Timetable\Entity\TimetableSupervision;
+use App\Timetable\Entity\TimetableLesson as TimetableLessonEntity;
 use DateTime;
 
 class TimetableDay {

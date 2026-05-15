@@ -2,7 +2,7 @@
 
 namespace App\Exam;
 
-use App\Entity\Exam;
+use App\Exam\Entity\Exam;
 
 class Reassignments {
 

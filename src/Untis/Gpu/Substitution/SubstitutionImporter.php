@@ -2,12 +2,12 @@
 
 namespace App\Untis\Gpu\Substitution;
 
-use App\Import\Importer;
-use App\Import\ImportResult;
-use App\Import\SubstitutionsImportStrategy;
+use App\Framework\Import\Importer;
+use App\Framework\Import\ImportResult;
+use App\Common\Import\SubstitutionsImportStrategy;
 use App\Request\Data\SubstitutionData;
 use App\Request\Data\SubstitutionsData;
-use App\Settings\UntisSettings;
+use App\Untis\Settings\UntisSettings;
 use DateTime;
 use League\Csv\Reader;
 use Ramsey\Uuid\Uuid;

@@ -2,7 +2,7 @@
 
 namespace App\Display;
 
-use App\Entity\Substitution;
+use App\Substitution\Entity\Substitution;
 
 class SubstitutionViewItem extends AbstractViewItem {
 

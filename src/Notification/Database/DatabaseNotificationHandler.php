@@ -2,10 +2,10 @@
 
 namespace App\Notification\Database;
 
-use App\Entity\Notification as NotificationEntity;
+use App\Notification\Entity\Notification as NotificationEntity;
 use App\Notification\Notification;
 use App\Notification\NotificationHandlerInterface;
-use App\Repository\NotificationRepositoryInterface;
+use App\Notification\Repository\NotificationRepositoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**

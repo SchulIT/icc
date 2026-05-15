@@ -2,8 +2,8 @@
 
 namespace App\Book\Statistics;
 
-use App\Entity\Teacher;
-use App\Repository\TimetableLessonRepositoryInterface;
+use App\Common\Entity\Teacher;
+use App\Timetable\Repository\TimetableLessonRepositoryInterface;
 use DateTime;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;

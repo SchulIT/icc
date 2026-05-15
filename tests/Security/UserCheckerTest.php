@@ -2,12 +2,12 @@
 
 namespace App\Tests\Security;
 
-use App\Entity\Student;
-use App\Entity\Teacher;
-use App\Entity\User;
-use App\Entity\UserType;
-use App\Security\InvalidAccountException;
-use App\Security\UserChecker;
+use App\Common\Entity\Student;
+use App\Common\Entity\Teacher;
+use App\Common\Entity\User;
+use App\Common\Entity\UserType;
+use App\Common\Security\InvalidAccountException;
+use App\Common\Security\UserChecker;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Event\AuthenticationSuccessEvent;

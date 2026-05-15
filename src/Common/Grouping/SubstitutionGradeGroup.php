@@ -1,0 +1,47 @@
+<?php
+
+namespace App\Common\Grouping;
+
+use App\Common\Entity\Grade;
+use App\Framework\Grouping\GroupInterface;
+use App\Framework\Grouping\SortableGroupInterface;
+use App\Substitution\Entity\Substitution;
+
+class SubstitutionGradeGroup implements GroupInterface, SortableGroupInterface {
+
+    /** @var Substitution[] */
+    private array $substitutions = [ ];
+
+    public function __construct(private ?Grade $grade)
+    {
+    }
+
+    public function getGrade(): ?Grade {
+        return $this->grade;
+    }
+
+    /**
+     * @return Substitution[]
+     */
+    public function getSubstitutions(): array {
+        return $this->substitutions;
+    }
+
+    /**
+     * @return Grade|null
+     */
+    public function getKey() {
+        return $this->grade;
+    }
+
+    /**
+     * @param Substitution $item
+     */
+    public function addItem($item) {
+        $this->substitutions[] = $item;
+    }
+
+    public function &getItems(): array {
+        return $this->substitutions;
+    }
+}

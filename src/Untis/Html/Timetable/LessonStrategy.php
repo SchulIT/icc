@@ -2,8 +2,8 @@
 
 namespace App\Untis\Html\Timetable;
 
-use App\Grouping\GroupingStrategyInterface;
-use App\Grouping\GroupInterface;
+use App\Framework\Grouping\GroupingStrategyInterface;
+use App\Framework\Grouping\GroupInterface;
 
 class LessonStrategy implements GroupingStrategyInterface {
 

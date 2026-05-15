@@ -2,9 +2,9 @@
 
 namespace App\Book\Student;
 
-use App\Entity\Attendance as LessonAttendanceEntity;
-use App\Entity\AttendanceExcuseStatus;
-use App\Entity\AttendanceFlag;
+use App\Book\Entity\Attendance as LessonAttendanceEntity;
+use App\Book\Entity\AttendanceExcuseStatus;
+use App\Book\Entity\AttendanceFlag;
 use DateTime;
 use JsonSerializable;
 

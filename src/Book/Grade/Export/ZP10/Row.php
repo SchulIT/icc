@@ -2,9 +2,9 @@
 
 namespace App\Book\Grade\Export\ZP10;
 
-use App\Entity\Student;
-use App\Entity\Subject;
-use App\Entity\TuitionGrade;
+use App\Common\Entity\Student;
+use App\Common\Entity\Subject;
+use App\Grade\Entity\TuitionGrade;
 
 class Row {
     public function __construct(private readonly Student $student, private Subject $subject, private readonly TuitionGrade|null $abschluss,

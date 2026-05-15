@@ -2,10 +2,10 @@
 
 namespace App\ParentsDay;
 
-use App\Entity\ParentsDay;
-use App\Entity\ParentsDayAppointment;
-use App\Entity\Teacher;
-use App\Repository\ParentsDayAppointmentRepositoryInterface;
+use App\ParentsDay\Entity\ParentsDay;
+use App\ParentsDay\Entity\ParentsDayAppointment;
+use App\Common\Entity\Teacher;
+use App\ParentsDay\Repository\ParentsDayAppointmentRepositoryInterface;
 use DateTime;
 use SchulIT\CommonBundle\Helper\DateHelper;
 

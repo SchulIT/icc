@@ -3,10 +3,10 @@
 namespace App\Book\IntegrityCheck;
 
 use App\Book\IntegrityCheck\Persistence\IntegrityCheckPersister;
-use App\Entity\Student;
-use App\Settings\BookSettings;
-use App\Sorting\IntegrityCheckViolationStrategy;
-use App\Sorting\Sorter;
+use App\Common\Entity\Student;
+use App\Book\Settings\BookSettings;
+use App\Book\Sorting\IntegrityCheckViolationStrategy;
+use App\Framework\Sorting\Sorter;
 use DateTime;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 

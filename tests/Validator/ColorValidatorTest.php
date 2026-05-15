@@ -2,8 +2,8 @@
 
 namespace App\Tests\Validator;
 
-use App\Validator\Color;
-use App\Validator\ColorValidator;
+use App\Framework\Validator\Color;
+use App\Framework\Validator\ColorValidator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\ConstraintValidatorInterface;

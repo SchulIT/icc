@@ -2,12 +2,12 @@
 
 namespace App\Untis\Gpu\Supervision;
 
-use App\Import\Importer;
-use App\Import\ImportResult;
-use App\Import\TimetableSupervisionsImportStrategy;
+use App\Framework\Import\Importer;
+use App\Framework\Import\ImportResult;
+use App\Timetable\Import\TimetableSupervisionsImportStrategy;
 use App\Request\Data\TimetableSupervisionData;
 use App\Request\Data\TimetableSupervisionsData;
-use App\Settings\UntisSettings;
+use App\Untis\Settings\UntisSettings;
 use DateTime;
 use League\Csv\Reader;
 use Ramsey\Uuid\Uuid;

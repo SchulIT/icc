@@ -2,14 +2,14 @@
 
 namespace App\Tests\Functional\Controller;
 
-use App\Entity\Gender;
-use App\Entity\Grade;
-use App\Entity\GradeMembership;
-use App\Entity\Section;
-use App\Entity\Setting;
-use App\Entity\Student;
-use App\Entity\User;
-use App\Entity\UserType;
+use App\Common\Entity\Gender;
+use App\Common\Entity\Grade;
+use App\Common\Entity\GradeMembership;
+use App\Common\Entity\Section;
+use App\Framework\Settings\Entity\Setting;
+use App\Common\Entity\Student;
+use App\Common\Entity\User;
+use App\Common\Entity\UserType;
 use DateTime;
 use Faker\Generator;
 use Ramsey\Uuid\Uuid;

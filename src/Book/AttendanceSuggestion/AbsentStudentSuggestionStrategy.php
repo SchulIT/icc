@@ -3,17 +3,17 @@
 namespace App\Book\AttendanceSuggestion;
 
 use App\Book\StudentsResolver;
-use App\Entity\DateLesson;
-use App\Entity\AttendanceExcuseStatus;
-use App\Entity\AttendanceFlag;
-use App\Entity\AttendanceType;
-use App\Entity\StudentAbsence;
-use App\Entity\Subject;
-use App\Entity\Tuition;
-use App\Repository\StudentAbsenceRepositoryInterface;
+use App\Common\Entity\DateLesson;
+use App\Book\Entity\AttendanceExcuseStatus;
+use App\Book\Entity\AttendanceFlag;
+use App\Book\Entity\AttendanceType;
+use App\StudentAbsence\Entity\StudentAbsence;
+use App\Common\Entity\Subject;
+use App\Common\Entity\Tuition;
+use App\StudentAbsence\Repository\StudentAbsenceRepositoryInterface;
 use App\Response\Book\AttendanceSuggestion;
-use App\Settings\BookSettings;
-use App\Utils\ArrayUtils;
+use App\Book\Settings\BookSettings;
+use App\Framework\Utils\ArrayUtils;
 use DateTime;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

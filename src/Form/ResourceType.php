@@ -2,11 +2,12 @@
 
 namespace App\Form;
 
-use App\Entity\ResourceEntity;
-use App\Entity\ResourceType as ResourceTypeEntity;
-use App\Entity\Room;
-use App\Exception\UnexpectedTypeException;
-use App\Sorting\ResourceTypeStrategy;
+use App\Common\Entity\ResourceEntity;
+use App\Common\Entity\ResourceType as ResourceTypeEntity;
+use App\Common\Entity\Room;
+use App\Common\Form\Type\SortableEntityType;
+use App\Framework\Exception\UnexpectedTypeException;
+use App\Common\Sorting\ResourceTypeStrategy;
 use Doctrine\ORM\EntityRepository;
 use SchulIT\CommonBundle\Form\FieldsetType;
 use Symfony\Component\Form\AbstractType;

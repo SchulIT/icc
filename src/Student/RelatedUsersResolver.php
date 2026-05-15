@@ -2,12 +2,12 @@
 
 namespace App\Student;
 
-use App\Entity\Grade;
-use App\Entity\GradeTeacher;
-use App\Entity\Student;
-use App\Entity\User;
-use App\Repository\UserRepositoryInterface;
-use App\Section\SectionResolverInterface;
+use App\Common\Entity\Grade;
+use App\Common\Entity\GradeTeacher;
+use App\Common\Entity\Student;
+use App\Common\Entity\User;
+use App\Common\Repository\UserRepositoryInterface;
+use App\Common\Section\SectionResolverInterface;
 use DateTime;
 
 readonly class RelatedUsersResolver {

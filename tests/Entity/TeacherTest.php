@@ -2,9 +2,9 @@
 
 namespace App\Tests\Entity;
 
-use App\Entity\Gender;
-use App\Entity\Grade;
-use App\Entity\Teacher;
+use App\Common\Entity\Gender;
+use App\Common\Entity\Grade;
+use App\Common\Entity\Teacher;
 use PHPUnit\Framework\TestCase;
 
 class TeacherTest extends TestCase {

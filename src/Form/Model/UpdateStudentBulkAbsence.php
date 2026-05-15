@@ -2,8 +2,8 @@
 
 namespace App\Form\Model;
 
-use App\Entity\DateLesson;
-use App\Entity\StudentAbsenceType;
+use App\Common\Entity\DateLesson;
+use App\StudentAbsence\Entity\StudentAbsenceType;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class UpdateStudentBulkAbsence {

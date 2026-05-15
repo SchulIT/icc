@@ -4,8 +4,8 @@ namespace App\Notification\Email;
 
 use App\Notification\ImportNotification;
 use App\Notification\Notification;
-use App\Settings\NotificationSettings;
-use App\Utils\ArrayUtils;
+use App\Notification\Settings\NotificationSettings;
+use App\Framework\Utils\ArrayUtils;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 readonly class ImportStrategy implements EmailStrategyInterface {

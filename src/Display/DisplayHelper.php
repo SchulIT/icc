@@ -2,20 +2,20 @@
 
 namespace App\Display;
 
-use App\Entity\ExamSupervision;
-use App\Entity\Grade;
-use App\Entity\Teacher;
-use App\Entity\Tuition;
-use App\Grouping\Grouper;
-use App\Grouping\SubstitutionGradeGroup;
-use App\Grouping\SubstitutionGradeStrategy;
-use App\Grouping\SubstitutionTeacherGroup;
-use App\Grouping\SubstitutionTeacherStrategy;
-use App\Repository\ExamRepositoryInterface;
-use App\Repository\SubstitutionRepositoryInterface;
-use App\Sorting\DisplayGroupStrategy;
-use App\Sorting\DisplayViewItemStrategy;
-use App\Sorting\Sorter;
+use App\Exam\Entity\ExamSupervision;
+use App\Common\Entity\Grade;
+use App\Common\Entity\Teacher;
+use App\Common\Entity\Tuition;
+use App\Framework\Grouping\Grouper;
+use App\Common\Grouping\SubstitutionGradeGroup;
+use App\Substitution\Grouping\SubstitutionGradeStrategy;
+use App\Substitution\Grouping\SubstitutionTeacherGroup;
+use App\Substitution\Grouping\SubstitutionTeacherStrategy;
+use App\Exam\Repository\ExamRepositoryInterface;
+use App\Substitution\Repository\SubstitutionRepositoryInterface;
+use App\Display\Sorting\DisplayGroupStrategy;
+use App\Display\Sorting\DisplayViewItemStrategy;
+use App\Framework\Sorting\Sorter;
 use DateTime;
 
 class DisplayHelper {

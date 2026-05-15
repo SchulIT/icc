@@ -3,7 +3,7 @@
 namespace App\Dashboard\Absence;
 
 use App\Dashboard\AbsentStudent;
-use App\Entity\Student;
+use App\Common\Entity\Student;
 use DateTime;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 

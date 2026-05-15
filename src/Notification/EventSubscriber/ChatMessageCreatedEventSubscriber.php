@@ -2,8 +2,8 @@
 
 namespace App\Notification\EventSubscriber;
 
-use App\Entity\UserType;
-use App\Event\ChatMessageCreatedEvent;
+use App\Common\Entity\UserType;
+use App\Chat\Event\ChatMessageCreatedEvent;
 use App\Notification\Notification;
 use App\Notification\NotificationService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

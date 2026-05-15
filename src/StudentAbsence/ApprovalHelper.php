@@ -2,10 +2,10 @@
 
 namespace App\StudentAbsence;
 
-use App\Entity\StudentAbsence;
-use App\Entity\User;
-use App\Event\StudentAbsenceApprovalChangedEvent;
-use App\Repository\StudentAbsenceRepositoryInterface;
+use App\StudentAbsence\Entity\StudentAbsence;
+use App\Common\Entity\User;
+use App\StudentAbsence\Event\StudentAbsenceApprovalChangedEvent;
+use App\StudentAbsence\Repository\StudentAbsenceRepositoryInterface;
 use DateTime;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 

@@ -2,7 +2,7 @@
 
 namespace App\Display;
 
-use App\Entity\Grade;
+use App\Common\Entity\Grade;
 
 class GradeGroup extends AbstractGroup {
     public function __construct(private Grade $grade)

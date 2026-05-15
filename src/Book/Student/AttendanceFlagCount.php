@@ -2,7 +2,7 @@
 
 namespace App\Book\Student;
 
-use App\Entity\AttendanceFlag;
+use App\Book\Entity\AttendanceFlag;
 use JsonSerializable;
 
 class AttendanceFlagCount implements JsonSerializable {

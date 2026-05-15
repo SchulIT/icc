@@ -2,8 +2,8 @@
 
 namespace App\Message;
 
-use App\Entity\MessageFile;
-use App\Entity\User;
+use App\Message\Entity\MessageFile;
+use App\Common\Entity\User;
 
 class MessageDownloadView extends AbstractMessageFileView {
 

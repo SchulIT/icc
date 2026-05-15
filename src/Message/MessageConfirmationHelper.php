@@ -2,9 +2,9 @@
 
 namespace App\Message;
 
-use App\Entity\Message;
-use App\Entity\MessageConfirmation;
-use App\Entity\User;
+use App\Message\Entity\Message;
+use App\Message\Entity\MessageConfirmation;
+use App\Common\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 

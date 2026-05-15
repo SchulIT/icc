@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
-use App\Migrations\TimetableSettingsDependentMigrationInterface;
-use App\Migrations\TimetableTimeHelperDependentMigrationInterface;
-use App\Settings\TimetableSettings;
+use App\Infrastructure\Migrations\TimetableSettingsDependentMigrationInterface;
+use App\Infrastructure\Migrations\TimetableTimeHelperDependentMigrationInterface;
+use App\Timetable\Settings\TimetableSettings;
 use App\Timetable\TimetableTimeHelper;
 use DateTime;
 use Doctrine\DBAL\Schema\Schema;

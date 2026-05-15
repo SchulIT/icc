@@ -2,11 +2,11 @@
 
 namespace App\Tests\Entity;
 
-use App\Entity\Message;
-use App\Entity\MessageConfirmation;
-use App\Entity\MessageScope;
-use App\Entity\User;
-use App\Entity\UserType;
+use App\Message\Entity\Message;
+use App\Message\Entity\MessageConfirmation;
+use App\Message\Entity\MessageScope;
+use App\Common\Entity\User;
+use App\Common\Entity\UserType;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 

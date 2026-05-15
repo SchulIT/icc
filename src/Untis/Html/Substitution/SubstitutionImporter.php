@@ -2,11 +2,11 @@
 
 namespace App\Untis\Html\Substitution;
 
-use App\Import\AbsencesImportStrategy;
-use App\Import\FreeTimespanImportStrategy;
-use App\Import\Importer;
-use App\Import\InfotextsImportStrategy;
-use App\Import\SubstitutionsImportStrategy;
+use App\Substitution\Import\AbsencesImportStrategy;
+use App\Substitution\Import\FreeTimespanImportStrategy;
+use App\Framework\Import\Importer;
+use App\Substitution\Import\InfotextsImportStrategy;
+use App\Common\Import\SubstitutionsImportStrategy;
 use App\Request\Data\AbsenceData;
 use App\Request\Data\AbsencesData;
 use App\Request\Data\FreeLessonTimespanData;
@@ -15,7 +15,7 @@ use App\Request\Data\InfotextData;
 use App\Request\Data\InfotextsData;
 use App\Request\Data\SubstitutionData;
 use App\Request\Data\SubstitutionsData;
-use App\Settings\UntisSettings;
+use App\Untis\Settings\UntisSettings;
 use Ramsey\Uuid\Uuid;
 
 class SubstitutionImporter {

@@ -2,8 +2,8 @@
 
 namespace App\Dashboard;
 
-use App\Entity\StudentAbsence;
-use App\Entity\Student;
+use App\StudentAbsence\Entity\StudentAbsence;
+use App\Common\Entity\Student;
 
 class AbsentStudentWithAbsenceNote extends AbsentStudent {
 

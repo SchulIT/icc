@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace DoctrineMigrations;
 
 use App\Exam\ExamStudentsResolver;
-use App\Migrations\ExamRepositoryDependantMigrationInterface;
-use App\Migrations\ExamStudentsResolverDependentMigrationInterface;
-use App\Repository\ExamRepositoryInterface;
+use App\Infrastructure\Migrations\ExamRepositoryDependantMigrationInterface;
+use App\Infrastructure\Migrations\ExamStudentsResolverDependentMigrationInterface;
+use App\Exam\Repository\ExamRepositoryInterface;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 

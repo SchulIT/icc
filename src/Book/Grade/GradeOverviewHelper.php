@@ -3,21 +3,21 @@
 namespace App\Book\Grade;
 
 use App\Book\StudentsResolver;
-use App\Entity\Grade;
-use App\Entity\GradeMembership;
-use App\Entity\Section;
-use App\Entity\Student;
-use App\Entity\StudyGroupMembership;
-use App\Entity\Tuition;
-use App\Entity\TuitionGrade;
-use App\Entity\TuitionGradeCategory;
-use App\Repository\TuitionGradeRepositoryInterface;
-use App\Repository\TuitionRepositoryInterface;
-use App\Sorting\Sorter;
-use App\Sorting\StudentStrategy;
-use App\Sorting\TuitionGradeCategoryStrategy;
-use App\Sorting\TuitionStrategy;
-use App\Utils\ArrayUtils;
+use App\Common\Entity\Grade;
+use App\Common\Entity\GradeMembership;
+use App\Common\Entity\Section;
+use App\Common\Entity\Student;
+use App\Common\Entity\StudyGroupMembership;
+use App\Common\Entity\Tuition;
+use App\Grade\Entity\TuitionGrade;
+use App\Grade\Entity\TuitionGradeCategory;
+use App\Grade\Repository\TuitionGradeRepositoryInterface;
+use App\Common\Repository\TuitionRepositoryInterface;
+use App\Framework\Sorting\Sorter;
+use App\Common\Sorting\StudentStrategy;
+use App\Common\Sorting\TuitionGradeCategoryStrategy;
+use App\Common\Sorting\TuitionStrategy;
+use App\Framework\Utils\ArrayUtils;
 
 class GradeOverviewHelper {
 

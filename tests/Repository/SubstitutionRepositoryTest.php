@@ -2,10 +2,10 @@
 
 namespace App\Tests\Repository;
 
-use App\Entity\Gender;
-use App\Entity\Substitution;
-use App\Entity\Teacher;
-use App\Repository\SubstitutionRepository;
+use App\Common\Entity\Gender;
+use App\Substitution\Entity\Substitution;
+use App\Common\Entity\Teacher;
+use App\Substitution\Repository\SubstitutionRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;

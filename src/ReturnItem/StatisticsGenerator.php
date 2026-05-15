@@ -2,10 +2,10 @@
 
 namespace App\ReturnItem;
 
-use App\Entity\ReturnItemType;
-use App\Repository\ReturnItemRepositoryInterface;
-use App\Section\SectionResolverInterface;
-use App\Utils\ArrayUtils;
+use App\ReturnItem\Entity\ReturnItemType;
+use App\ReturnItem\Repository\ReturnItemRepositoryInterface;
+use App\Common\Section\SectionResolverInterface;
+use App\Framework\Utils\ArrayUtils;
 use DateTime;
 use Psr\Cache\CacheItemInterface;
 use SchulIT\CommonBundle\Helper\DateHelper;

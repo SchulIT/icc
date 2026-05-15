@@ -2,9 +2,9 @@
 
 namespace App\Notification\EventSubscriber;
 
-use App\Entity\User;
-use App\Entity\UserType;
-use App\Event\ReturnItemReturnedEvent;
+use App\Common\Entity\User;
+use App\Common\Entity\UserType;
+use App\ReturnItem\Event\ReturnItemReturnedEvent;
 use App\Notification\Notification;
 use App\Notification\NotificationService;
 use App\Student\RelatedUsersResolver;

@@ -2,11 +2,11 @@
 
 namespace App\Tests\Grouping;
 
-use App\Entity\Appointment;
-use App\Grouping\AppointmentDateGroup;
-use App\Grouping\AppointmentExpirationGroup;
-use App\Grouping\AppointmentExpirationStrategy;
-use App\Grouping\Grouper;
+use App\Appointment\Entity\Appointment;
+use App\Appointment\Grouping\AppointmentDateGroup;
+use App\Appointment\Grouping\AppointmentExpirationGroup;
+use App\Appointment\Grouping\AppointmentExpirationStrategy;
+use App\Framework\Grouping\Grouper;
 use DateTime;
 use PHPUnit\Framework\TestCase;
 use SchulIT\CommonBundle\Helper\DateHelper;

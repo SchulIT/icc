@@ -2,18 +2,18 @@
 
 namespace App\ParentsDay;
 
-use App\Entity\GradeTeacher;
-use App\Entity\ParentsDay;
-use App\Entity\ParentsDayTeacherRoom;
-use App\Entity\Student;
-use App\Repository\ParentsDayAppointmentRepositoryInterface;
-use App\Repository\ParentsDayParentalInformationRepositoryInterface;
-use App\Repository\ParentsDayTeacherRoomRepositoryInterface;
-use App\Repository\TuitionRepositoryInterface;
-use App\Repository\UserRepositoryInterface;
-use App\Section\SectionResolverInterface;
-use App\Sorting\Sorter;
-use App\Sorting\TeacherStrategy;
+use App\Common\Entity\GradeTeacher;
+use App\ParentsDay\Entity\ParentsDay;
+use App\ParentsDay\Entity\ParentsDayTeacherRoom;
+use App\Common\Entity\Student;
+use App\ParentsDay\Repository\ParentsDayAppointmentRepositoryInterface;
+use App\ParentsDay\Repository\ParentsDayParentalInformationRepositoryInterface;
+use App\ParentsDay\Repository\ParentsDayTeacherRoomRepositoryInterface;
+use App\Common\Repository\TuitionRepositoryInterface;
+use App\Common\Repository\UserRepositoryInterface;
+use App\Common\Section\SectionResolverInterface;
+use App\Framework\Sorting\Sorter;
+use App\Common\Sorting\TeacherStrategy;
 
 class TeacherOverviewHelper {
 

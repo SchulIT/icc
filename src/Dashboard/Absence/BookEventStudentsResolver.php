@@ -3,9 +3,9 @@
 namespace App\Dashboard\Absence;
 
 use App\Dashboard\AbsentBookEventStudent;
-use App\Feature\Feature;
-use App\Feature\FeatureManager;
-use App\Repository\BookEventRepositoryInterface;
+use App\Framework\Feature\Feature;
+use App\Framework\Feature\FeatureManager;
+use App\Book\Repository\BookEventRepositoryInterface;
 use DateTime;
 
 class BookEventStudentsResolver implements AbsenceResolveStrategyInterface {

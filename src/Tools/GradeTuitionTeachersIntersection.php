@@ -2,7 +2,7 @@
 
 namespace App\Tools;
 
-use App\Entity\Grade;
+use App\Common\Entity\Grade;
 
 class GradeTuitionTeachersIntersection {
 

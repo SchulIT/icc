@@ -2,8 +2,8 @@
 
 namespace App\Tests\Entity;
 
-use App\Entity\Document;
-use App\Entity\DocumentCategory;
+use App\Document\Entity\Document;
+use App\Document\Entity\DocumentCategory;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 

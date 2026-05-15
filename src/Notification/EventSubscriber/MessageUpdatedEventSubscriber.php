@@ -2,8 +2,8 @@
 
 namespace App\Notification\EventSubscriber;
 
-use App\Entity\UserType;
-use App\Event\MessageUpdatedEvent;
+use App\Common\Entity\UserType;
+use App\Message\Event\MessageUpdatedEvent;
 use App\Message\MessageRecipientResolver;
 use App\Notification\MessageNotification;
 use App\Notification\NotificationService;

@@ -2,8 +2,8 @@
 
 namespace App;
 
-use App\DependencyInjection\Compiler\RemoveDumpCommandPass;
-use App\DependencyInjection\Compiler\RemovePcntlEventSubscriberPass;
+use App\Infrastructure\DependencyInjection\Compiler\RemoveDumpCommandPass;
+use App\Infrastructure\DependencyInjection\Compiler\RemovePcntlEventSubscriberPass;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

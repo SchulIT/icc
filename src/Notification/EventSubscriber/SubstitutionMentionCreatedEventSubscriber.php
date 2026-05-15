@@ -2,14 +2,14 @@
 
 namespace App\Notification\EventSubscriber;
 
-use App\Entity\StudyGroup;
-use App\Entity\UserType;
-use App\Event\SubstitutionMentionCreatedEvent;
+use App\Common\Entity\StudyGroup;
+use App\Common\Entity\UserType;
+use App\Substitution\Event\SubstitutionMentionCreatedEvent;
 use App\Notification\Notification;
 use App\Notification\NotificationService;
-use App\Repository\UserRepositoryInterface;
-use App\Sorting\Sorter;
-use App\Sorting\StudyGroupStrategy;
+use App\Common\Repository\UserRepositoryInterface;
+use App\Framework\Sorting\Sorter;
+use App\Common\Sorting\StudyGroupStrategy;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;

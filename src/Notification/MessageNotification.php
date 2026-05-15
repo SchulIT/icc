@@ -2,8 +2,8 @@
 
 namespace App\Notification;
 
-use App\Entity\Message;
-use App\Entity\User;
+use App\Message\Entity\Message;
+use App\Common\Entity\User;
 
 class MessageNotification extends Notification {
     public function __construct(string $type, User $recipient, string $subject, string $content, ?string $link, ?string $linkText, private readonly Message $message) {

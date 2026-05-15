@@ -2,8 +2,8 @@
 
 namespace App\Tests\Untis\Html\Substitution;
 
-use App\Settings\TimetableSettings;
-use App\Settings\UntisSettings;
+use App\Timetable\Settings\TimetableSettings;
+use App\Untis\Settings\UntisSettings;
 use App\Untis\Html\Substitution\Absence;
 use App\Untis\Html\Substitution\AbsenceCleaner;
 use App\Untis\Html\Substitution\AbsenceObjectiveType;

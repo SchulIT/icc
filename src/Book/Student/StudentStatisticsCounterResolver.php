@@ -2,11 +2,11 @@
 
 namespace App\Book\Student;
 
-use App\Entity\Section;
-use App\Entity\Student;
-use App\Repository\BookCommentRepositoryInterface;
-use App\Repository\LessonAttendanceFlagRepositoryInterface;
-use App\Repository\LessonAttendanceRepositoryInterface;
+use App\Common\Entity\Section;
+use App\Common\Entity\Student;
+use App\Book\Repository\BookCommentRepositoryInterface;
+use App\Book\Repository\LessonAttendanceFlagRepositoryInterface;
+use App\Book\Repository\LessonAttendanceRepositoryInterface;
 use DateTime;
 
 readonly class StudentStatisticsCounterResolver {

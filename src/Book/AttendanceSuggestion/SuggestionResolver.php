@@ -2,7 +2,7 @@
 
 namespace App\Book\AttendanceSuggestion;
 
-use App\Entity\Tuition;
+use App\Common\Entity\Tuition;
 use App\Response\Book\AttendanceSuggestion;
 use DateTime;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;

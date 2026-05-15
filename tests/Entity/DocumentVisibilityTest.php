@@ -2,8 +2,8 @@
 
 namespace App\Tests\Entity;
 
-use App\Entity\UserType;
-use App\Entity\UserTypeEntity;
+use App\Common\Entity\UserType;
+use App\Common\Entity\UserTypeEntity;
 use PHPUnit\Framework\TestCase;
 
 class DocumentVisibilityTest extends TestCase {

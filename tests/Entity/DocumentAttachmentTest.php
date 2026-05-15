@@ -2,8 +2,8 @@
 
 namespace App\Tests\Entity;
 
-use App\Entity\Document;
-use App\Entity\DocumentAttachment;
+use App\Document\Entity\Document;
+use App\Document\Entity\DocumentAttachment;
 use PHPUnit\Framework\TestCase;
 
 class DocumentAttachmentTest extends TestCase {

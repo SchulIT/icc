@@ -2,13 +2,13 @@
 
 namespace App\Book\Grade;
 
-use App\Entity\Student;
-use App\Entity\Tuition;
-use App\Entity\TuitionGrade;
-use App\Repository\StudentRepositoryInterface;
-use App\Repository\TuitionGradeRepositoryInterface;
-use App\Repository\TuitionRepositoryInterface;
-use App\Security\Voter\TuitionGradeVoter;
+use App\Common\Entity\Student;
+use App\Common\Entity\Tuition;
+use App\Grade\Entity\TuitionGrade;
+use App\Common\Repository\StudentRepositoryInterface;
+use App\Grade\Repository\TuitionGradeRepositoryInterface;
+use App\Common\Repository\TuitionRepositoryInterface;
+use App\Grade\Voter\TuitionGradeVoter;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class GradePersister {

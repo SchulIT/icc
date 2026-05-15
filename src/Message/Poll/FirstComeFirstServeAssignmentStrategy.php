@@ -2,10 +2,10 @@
 
 namespace App\Message\Poll;
 
-use App\Entity\Message;
-use App\Entity\MessagePollChoice;
-use App\Entity\MessagePollVote;
-use App\Repository\MessagePollVoteRepositoryInterface;
+use App\Message\Entity\Message;
+use App\Message\Entity\MessagePollChoice;
+use App\Message\Entity\MessagePollVote;
+use App\Message\Repository\MessagePollVoteRepositoryInterface;
 use Override;
 
 readonly class FirstComeFirstServeAssignmentStrategy implements AssignmentStrategyInterface {

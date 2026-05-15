@@ -2,15 +2,15 @@
 
 namespace App\Tests\Import;
 
-use App\Entity\ResourceType;
-use App\Entity\Room;
-use App\Import\Importer;
-use App\Import\RoomImportStrategy;
-use App\Repository\ImportDateTypeRepository;
-use App\Repository\ResourceTypeRepository;
-use App\Repository\ResourceTypeRepositoryInterface;
-use App\Repository\RoomRepository;
-use App\Repository\RoomTagRepository;
+use App\Common\Entity\ResourceType;
+use App\Common\Entity\Room;
+use App\Framework\Import\Importer;
+use App\Common\Import\RoomImportStrategy;
+use App\Framework\Import\Repository\ImportDateTypeRepository;
+use App\Common\Repository\ResourceTypeRepository;
+use App\Common\Repository\ResourceTypeRepositoryInterface;
+use App\Book\Repository\RoomRepository;
+use App\Book\Repository\RoomTagRepository;
 use App\Request\Data\RoomData;
 use App\Request\Data\RoomsData;
 use Psr\Log\NullLogger;

@@ -2,12 +2,12 @@
 
 namespace App\Tests\Entity;
 
-use App\Entity\Message;
-use App\Entity\MessageAttachment;
-use App\Entity\MessageFile;
-use App\Entity\MessageScope;
-use App\Entity\StudyGroup;
-use App\Entity\UserTypeEntity;
+use App\Message\Entity\Message;
+use App\Message\Entity\MessageAttachment;
+use App\Message\Entity\MessageFile;
+use App\Message\Entity\MessageScope;
+use App\Common\Entity\StudyGroup;
+use App\Common\Entity\UserTypeEntity;
 use PHPUnit\Framework\TestCase;
 
 class MessageTest extends TestCase {

@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Book\Doctrine;
+
+use App\Book\Entity\Attendance;
+use App\Book\IntegrityCheck\Messenger\RunIntegrityCheckMessage;
+use App\Common\Section\SectionResolverInterface;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
+use Doctrine\ORM\Event\PostUpdateEventArgs;
+use Doctrine\ORM\Events;
+use Symfony\Component\Messenger\MessageBusInterface;
+
+#[AsDoctrineListener(event: Events::postUpdate)]
+class AttendanceUpdateSubscriber {
+    public function __construct(private readonly MessageBusInterface $messageBus, private readonly SectionResolverInterface $sectionResolver) { }
+
+    public function postUpdate(PostUpdateEventArgs $eventArgs): void {
+        $entity = $eventArgs->getObject();
+
+        if(!$entity instanceof Attendance) {
+            return;
+        }
+
+        $date = null;
+
+        if($entity->getEntry() !== null) {
+            $date = $entity->getEntry()->getLesson()->getDate();
+        } else if($entity->getEvent() !== null) {
+            $date = $entity->getEvent()->getDate();
+        }
+
+        if($date !== null) {
+            $section = $this->sectionResolver->getSectionForDate($date);
+            $this->messageBus->dispatch(new RunIntegrityCheckMessage($entity->getStudent()->getId(), $section->getStart(), $section->getEnd()));
+        }
+    }
+}

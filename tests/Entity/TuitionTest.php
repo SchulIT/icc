@@ -2,10 +2,10 @@
 
 namespace App\Tests\Entity;
 
-use App\Entity\StudyGroup;
-use App\Entity\Subject;
-use App\Entity\Teacher;
-use App\Entity\Tuition;
+use App\Common\Entity\StudyGroup;
+use App\Common\Entity\Subject;
+use App\Common\Entity\Teacher;
+use App\Common\Entity\Tuition;
 use PHPUnit\Framework\TestCase;
 
 class TuitionTest extends TestCase {

@@ -2,7 +2,7 @@
 
 namespace App\Display;
 
-use App\Entity\Exam;
+use App\Exam\Entity\Exam;
 
 class ExamViewItem extends AbstractViewItem {
 

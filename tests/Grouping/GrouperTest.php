@@ -2,8 +2,8 @@
 
 namespace App\Tests\Grouping;
 
-use App\Grouping\Grouper;
-use App\Sorting\AppointmentDateGroupStrategy;
+use App\Framework\Grouping\Grouper;
+use App\Appointment\Sorting\AppointmentDateGroupStrategy;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 

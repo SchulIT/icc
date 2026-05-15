@@ -2,8 +2,8 @@
 
 namespace App\Book\IntegrityCheck;
 
-use App\Entity\BookEvent;
-use App\Entity\TimetableLesson;
+use App\Book\Entity\BookEvent;
+use App\Timetable\Entity\TimetableLesson;
 use DateTime;
 
 class IntegrityCheckViolation {

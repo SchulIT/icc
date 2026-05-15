@@ -2,10 +2,10 @@
 
 namespace App\Message;
 
-use App\Entity\MessageConfirmation;
-use App\Entity\Student;
-use App\Entity\Teacher;
-use App\Entity\User;
+use App\Message\Entity\MessageConfirmation;
+use App\Common\Entity\Student;
+use App\Common\Entity\Teacher;
+use App\Common\Entity\User;
 
 class MessageConfirmationView {
 

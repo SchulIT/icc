@@ -2,7 +2,7 @@
 
 namespace App\Tests\Csv;
 
-use App\Csv\CsvHelper;
+use App\Framework\Csv\CsvHelper;
 use PHPUnit\Framework\TestCase;
 
 class CsvHelperTest extends TestCase {

@@ -2,17 +2,17 @@
 
 namespace App\Tests\Import;
 
-use App\Entity\Gender;
-use App\Entity\Section;
-use App\Entity\Teacher;
-use App\Entity\TeacherTag;
-use App\Import\Importer;
-use App\Import\TeachersImportStrategy;
-use App\Repository\ImportDateTypeRepository;
-use App\Repository\SectionRepository;
-use App\Repository\SubjectRepository;
-use App\Repository\TeacherRepository;
-use App\Repository\TeacherTagRepository;
+use App\Common\Entity\Gender;
+use App\Common\Entity\Section;
+use App\Common\Entity\Teacher;
+use App\Common\Entity\TeacherTag;
+use App\Framework\Import\Importer;
+use App\Common\Import\TeachersImportStrategy;
+use App\Framework\Import\Repository\ImportDateTypeRepository;
+use App\Common\Repository\SectionRepository;
+use App\Common\Repository\SubjectRepository;
+use App\Common\Repository\TeacherRepository;
+use App\Common\Repository\TeacherTagRepository;
 use App\Request\Data\TeacherData;
 use App\Request\Data\TeachersData;
 use DateTime;

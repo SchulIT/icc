@@ -2,10 +2,10 @@
 
 namespace App\Tools;
 
-use App\Entity\Student;
-use App\Entity\User;
-use App\Repository\UserRepositoryInterface;
-use App\Utils\ArrayUtils;
+use App\Common\Entity\Student;
+use App\Common\Entity\User;
+use App\Common\Repository\UserRepositoryInterface;
+use App\Framework\Utils\ArrayUtils;
 
 class MissingUsersReportHelper {
 

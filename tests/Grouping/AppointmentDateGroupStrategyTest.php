@@ -2,10 +2,10 @@
 
 namespace App\Tests\Grouping;
 
-use App\Entity\Appointment;
-use App\Grouping\AppointmentDateGroup;
-use App\Grouping\AppointmentDateStrategy;
-use App\Grouping\Grouper;
+use App\Appointment\Entity\Appointment;
+use App\Appointment\Grouping\AppointmentDateGroup;
+use App\Appointment\Grouping\AppointmentDateStrategy;
+use App\Framework\Grouping\Grouper;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

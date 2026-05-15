@@ -2,10 +2,10 @@
 
 namespace App\Book\Grade;
 
-use App\Entity\Grade;
-use App\Entity\Student;
-use App\Entity\Tuition;
-use App\Utils\ArrayUtils;
+use App\Common\Entity\Grade;
+use App\Common\Entity\Student;
+use App\Common\Entity\Tuition;
+use App\Framework\Utils\ArrayUtils;
 
 class GradeOverview {
 

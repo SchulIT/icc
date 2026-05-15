@@ -2,10 +2,10 @@
 
 namespace App\Tests\Entity;
 
-use App\Entity\Appointment;
-use App\Entity\AppointmentCategory;
-use App\Entity\StudyGroup;
-use App\Entity\Teacher;
+use App\Appointment\Entity\Appointment;
+use App\Appointment\Entity\AppointmentCategory;
+use App\Common\Entity\StudyGroup;
+use App\Common\Entity\Teacher;
 use PHPUnit\Framework\TestCase;
 
 class AppointmentTest extends TestCase {

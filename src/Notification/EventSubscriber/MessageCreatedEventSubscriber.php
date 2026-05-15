@@ -2,12 +2,12 @@
 
 namespace App\Notification\EventSubscriber;
 
-use App\Entity\UserType;
-use App\Event\MessageCreatedEvent;
+use App\Common\Entity\UserType;
+use App\Message\Event\MessageCreatedEvent;
 use App\Message\MessageRecipientResolver;
 use App\Notification\MessageNotification;
 use App\Notification\NotificationService;
-use App\Repository\MessageRepositoryInterface;
+use App\Message\Repository\MessageRepositoryInterface;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

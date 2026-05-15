@@ -2,8 +2,8 @@
 
 namespace App\Display;
 
-use App\Entity\Exam;
-use App\Entity\ExamSupervision;
+use App\Exam\Entity\Exam;
+use App\Exam\Entity\ExamSupervision;
 
 class ExamSupervisionViewItem extends AbstractViewItem {
 

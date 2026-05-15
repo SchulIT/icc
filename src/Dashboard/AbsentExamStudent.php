@@ -2,9 +2,9 @@
 
 namespace App\Dashboard;
 
-use App\Entity\Exam;
-use App\Entity\Student;
-use App\Entity\Tuition;
+use App\Exam\Entity\Exam;
+use App\Common\Entity\Student;
+use App\Common\Entity\Tuition;
 
 class AbsentExamStudent extends AbsentStudent {
 

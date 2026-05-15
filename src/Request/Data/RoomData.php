@@ -2,7 +2,7 @@
 
 namespace App\Request\Data;
 
-use App\Validator\NotAResource;
+use App\Common\Validator\NotAResource;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 

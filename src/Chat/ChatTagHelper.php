@@ -2,12 +2,12 @@
 
 namespace App\Chat;
 
-use App\Entity\Chat;
-use App\Entity\ChatTag;
-use App\Entity\ChatUserTag;
-use App\Entity\User;
-use App\Entity\UserType;
-use App\Repository\ChatTagRepositoryInterface;
+use App\Chat\Entity\Chat;
+use App\Chat\Entity\ChatTag;
+use App\Chat\Entity\ChatUserTag;
+use App\Common\Entity\User;
+use App\Common\Entity\UserType;
+use App\Chat\Repository\ChatTagRepositoryInterface;
 
 class ChatTagHelper {
 

@@ -2,8 +2,8 @@
 
 namespace App\Book\Grade\Export\ZP10;
 
-use App\Repository\TuitionGradeCategoryRepositoryInterface;
-use App\Section\SectionResolverInterface;
+use App\Grade\Repository\TuitionGradeCategoryRepositoryInterface;
+use App\Common\Section\SectionResolverInterface;
 use function Symfony\Component\String\u;
 
 class ConfigurationGuesser {

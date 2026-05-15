@@ -2,8 +2,8 @@
 
 namespace App\Tests\Event;
 
-use App\Entity\Message;
-use App\Event\MessageCreatedEvent;
+use App\Message\Entity\Message;
+use App\Message\Event\MessageCreatedEvent;
 use PHPUnit\Framework\TestCase;
 
 class MessageCreatedEventTest extends TestCase {

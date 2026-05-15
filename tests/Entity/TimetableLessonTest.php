@@ -2,10 +2,10 @@
 
 namespace App\Tests\Entity;
 
-use App\Entity\Room;
-use App\Entity\TimetableLesson;
-use App\Entity\TimetableWeek;
-use App\Entity\Tuition;
+use App\Common\Entity\Room;
+use App\Timetable\Entity\TimetableLesson;
+use App\Timetable\Entity\TimetableWeek;
+use App\Common\Entity\Tuition;
 use DateTime;
 use PHPUnit\Framework\TestCase;
 

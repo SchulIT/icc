@@ -2,7 +2,7 @@
 
 namespace App\Request\Data;
 
-use App\Entity\GradeTeacherType;
+use App\Common\Entity\GradeTeacherType;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 

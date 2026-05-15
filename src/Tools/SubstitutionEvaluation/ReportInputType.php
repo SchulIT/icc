@@ -2,7 +2,7 @@
 
 namespace App\Tools\SubstitutionEvaluation;
 
-use App\Utils\ArrayUtils;
+use App\Framework\Utils\ArrayUtils;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;

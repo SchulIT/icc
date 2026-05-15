@@ -2,8 +2,8 @@
 
 namespace App\Dashboard;
 
-use App\Entity\BookEvent;
-use App\Entity\Student;
+use App\Book\Entity\BookEvent;
+use App\Common\Entity\Student;
 
 class AbsentBookEventStudent extends AbsentStudent {
     public function __construct(Student $student, private readonly BookEvent $bookEvent) {

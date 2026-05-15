@@ -2,9 +2,9 @@
 
 namespace App\Exam\Bulk;
 
-use App\Entity\Grade;
-use App\Entity\Section;
-use App\Entity\Subject;
+use App\Common\Entity\Grade;
+use App\Common\Entity\Section;
+use App\Common\Entity\Subject;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 

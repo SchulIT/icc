@@ -2,14 +2,14 @@
 
 namespace App\Tools\WestermannZvs;
 
-use App\Repository\StudentLearningManagementSystemInformationRepository;
-use App\Repository\StudentRepositoryInterface;
-use App\Section\SectionResolverInterface;
-use App\Sorting\Sorter;
-use App\Sorting\StudentStrategy;
+use App\LearningManagementSystem\Repository\StudentLearningManagementSystemInformationRepository;
+use App\Common\Repository\StudentRepositoryInterface;
+use App\Common\Section\SectionResolverInterface;
+use App\Framework\Sorting\Sorter;
+use App\Common\Sorting\StudentStrategy;
 use App\Tools\WestermannZvs\Check\Action;
 use App\Tools\WestermannZvs\Check\CheckInterface;
-use App\Utils\ArrayUtils;
+use App\Framework\Utils\ArrayUtils;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 

@@ -2,7 +2,7 @@
 
 namespace App\Notification;
 
-use App\Entity\User;
+use App\Common\Entity\User;
 use DateTime;
 
 class Notification {

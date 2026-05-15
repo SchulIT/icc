@@ -2,15 +2,15 @@
 
 namespace App\Overtime;
 
-use App\Entity\Teacher;
-use App\Repository\AppointmentRepositoryInterface;
-use App\Repository\ExamSupervisionRepositoryInterface;
-use App\Repository\SubstitutionRepositoryInterface;
-use App\Repository\TimetableLessonRepositoryInterface;
-use App\Sorting\AppointmentStrategy;
-use App\Sorting\Sorter;
-use App\Sorting\SubstitutionStrategy;
-use App\Sorting\TimetableLessonStrategy;
+use App\Common\Entity\Teacher;
+use App\Appointment\Repository\AppointmentRepositoryInterface;
+use App\Exam\Repository\ExamSupervisionRepositoryInterface;
+use App\Substitution\Repository\SubstitutionRepositoryInterface;
+use App\Timetable\Repository\TimetableLessonRepositoryInterface;
+use App\Appointment\Sorting\AppointmentStrategy;
+use App\Framework\Sorting\Sorter;
+use App\Substitution\Sorting\SubstitutionStrategy;
+use App\Timetable\Sorting\TimetableLessonStrategy;
 use DateInterval;
 use DateTime;
 use InvalidArgumentException;

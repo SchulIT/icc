@@ -2,9 +2,9 @@
 
 namespace App\Tests\Entity;
 
-use App\Entity\Exam;
-use App\Entity\ExamSupervision;
-use App\Entity\Teacher;
+use App\Exam\Entity\Exam;
+use App\Exam\Entity\ExamSupervision;
+use App\Common\Entity\Teacher;
 use PHPUnit\Framework\TestCase;
 
 class ExamSupervisionTest extends TestCase {

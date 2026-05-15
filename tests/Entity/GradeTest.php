@@ -2,11 +2,11 @@
 
 namespace App\Tests\Entity;
 
-use App\Entity\Gender;
-use App\Entity\Grade;
-use App\Entity\GradeMembership;
-use App\Entity\Section;
-use App\Entity\Student;
+use App\Common\Entity\Gender;
+use App\Common\Entity\Grade;
+use App\Common\Entity\GradeMembership;
+use App\Common\Entity\Section;
+use App\Common\Entity\Student;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 

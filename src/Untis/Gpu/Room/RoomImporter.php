@@ -2,9 +2,9 @@
 
 namespace App\Untis\Gpu\Room;
 
-use App\Import\Importer;
-use App\Import\ImportResult;
-use App\Import\RoomImportStrategy;
+use App\Framework\Import\Importer;
+use App\Framework\Import\ImportResult;
+use App\Common\Import\RoomImportStrategy;
 use App\Request\Data\RoomData;
 use App\Request\Data\RoomsData;
 use League\Csv\Reader;

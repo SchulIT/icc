@@ -2,12 +2,12 @@
 
 namespace App\Book\IntegrityCheck\Persistence;
 
-use App\Entity\Section;
-use App\Entity\Student;
-use App\Entity\StudyGroup;
-use App\Entity\Teacher;
-use App\Repository\BookIntegrityCheckRunRepositoryInterface;
-use App\Repository\BookIntegrityCheckViolationRepositoryInterface;
+use App\Common\Entity\Section;
+use App\Common\Entity\Student;
+use App\Common\Entity\StudyGroup;
+use App\Common\Entity\Teacher;
+use App\Book\Repository\BookIntegrityCheckRunRepositoryInterface;
+use App\Book\Repository\BookIntegrityCheckViolationRepositoryInterface;
 
 class ViolationsResolver {
     public function __construct(private readonly BookIntegrityCheckViolationRepositoryInterface $violationRepository,

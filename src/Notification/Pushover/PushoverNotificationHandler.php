@@ -2,12 +2,12 @@
 
 namespace App\Notification\Pushover;
 
-use App\Messenger\SendPushoverNotificationMessage;
+use App\Message\Messenger\SendPushoverNotificationMessage;
 use App\Notification\Delivery\DeliveryDecider;
 use App\Notification\Notification;
 use App\Notification\NotificationDeliveryTarget;
 use App\Notification\NotificationHandlerInterface;
-use App\Settings\NotificationSettings;
+use App\Notification\Settings\NotificationSettings;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\MessageBusInterface;
 

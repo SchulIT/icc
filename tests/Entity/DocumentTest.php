@@ -2,13 +2,13 @@
 
 namespace App\Tests\Entity;
 
-use App\Entity\Document;
-use App\Entity\DocumentAttachment;
-use App\Entity\DocumentCategory;
-use App\Entity\Grade;
-use App\Entity\StudyGroup;
-use App\Entity\Teacher;
-use App\Entity\UserTypeEntity;
+use App\Document\Entity\Document;
+use App\Document\Entity\DocumentAttachment;
+use App\Document\Entity\DocumentCategory;
+use App\Common\Entity\Grade;
+use App\Common\Entity\StudyGroup;
+use App\Common\Entity\Teacher;
+use App\Common\Entity\UserTypeEntity;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class DocumentTest extends WebTestCase {

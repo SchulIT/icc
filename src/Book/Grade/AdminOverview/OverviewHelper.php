@@ -2,12 +2,12 @@
 
 namespace App\Book\Grade\AdminOverview;
 
-use App\Entity\Grade;
-use App\Entity\Section;
-use App\Entity\TuitionGradeCategory;
-use App\Repository\TuitionRepositoryInterface;
-use App\Sorting\Sorter;
-use App\Sorting\TuitionStrategy;
+use App\Common\Entity\Grade;
+use App\Common\Entity\Section;
+use App\Grade\Entity\TuitionGradeCategory;
+use App\Common\Repository\TuitionRepositoryInterface;
+use App\Framework\Sorting\Sorter;
+use App\Common\Sorting\TuitionStrategy;
 
 readonly class OverviewHelper {
 

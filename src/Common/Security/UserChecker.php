@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Common\Security;
+
+use App\Common\Entity\IcsAccessToken;
+use App\Common\Entity\User;
+use App\Common\Entity\UserType;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Event\AuthenticationSuccessEvent;
+use Symfony\Component\Security\Core\Exception\AccountStatusException;
+use Symfony\Component\Security\Core\User\UserCheckerInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+
+/**
+ * Checks whether the user meets certain criteria or sends
+ * an error page:
+ *
+ * - students must have exactly one associated student
+ * - parents must have at least one associated student
+ * - teachers must have one associated teacher
+ */
+class UserChecker implements UserCheckerInterface {
+
+    public function checkPreAuth(UserInterface $user): void {
+        
+    }
+
+    public function checkPostAuth(UserInterface $user, TokenInterface|null $token = null): void {
+        if($user instanceof IcsAccessToken) {
+            $user = $user->getUser();
+        }
+
+        if(!$user instanceof User) {
+            return;
+        }
+
+        if($user->isTeacher() && $user->getTeacher() === null) {
+            throw new InvalidAccountException('invalid_account.teacher');
+        }
+
+        if($user->isStudent() && $user->getStudents()->count() !== 1) {
+            throw new InvalidAccountException('invalid_account.student');
+        }
+
+        if($user->isParent() && $user->getStudents()->count() === 0) {
+            throw new InvalidAccountException('invalid_account.parent');
+        }
+    }
+}

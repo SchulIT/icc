@@ -3,9 +3,9 @@
 namespace App\Book\Attendance\Export\Schild;
 
 use App\Book\Student\StudentStatisticsCounterResolver;
-use App\Entity\Student as StudentEntity;
-use App\Repository\SectionRepositoryInterface;
-use App\Repository\StudentRepositoryInterface;
+use App\Common\Entity\Student as StudentEntity;
+use App\Common\Repository\SectionRepositoryInterface;
+use App\Common\Repository\StudentRepositoryInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 readonly class Exporter {

@@ -2,11 +2,11 @@
 
 namespace App\Form\Model;
 
-use App\Entity\DateLesson;
-use App\Entity\Student;
-use App\Entity\StudentAbsenceType;
-use App\Validator\DateLessonGreaterThan;
-use App\Validator\DateLessonNotInPast;
+use App\Common\Entity\DateLesson;
+use App\Common\Entity\Student;
+use App\StudentAbsence\Entity\StudentAbsenceType;
+use App\Common\Validator\DateLessonGreaterThan;
+use App\Common\Validator\DateLessonNotInPast;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;

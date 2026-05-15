@@ -2,10 +2,10 @@
 
 namespace App\Tests\Sorting;
 
-use App\Entity\Substitution;
-use App\Sorting\Sorter;
-use App\Sorting\StringStrategy;
-use App\Sorting\SubstitutionStrategy;
+use App\Substitution\Entity\Substitution;
+use App\Framework\Sorting\Sorter;
+use App\Framework\Sorting\StringStrategy;
+use App\Substitution\Sorting\SubstitutionStrategy;
 use PHPUnit\Framework\TestCase;
 
 class SubstitutionStrategyTest extends TestCase {

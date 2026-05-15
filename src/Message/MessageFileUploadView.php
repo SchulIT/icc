@@ -2,10 +2,10 @@
 
 namespace App\Message;
 
-use App\Entity\MessageFile;
-use App\Entity\MessageFileUpload;
-use App\Entity\User;
-use App\Utils\ArrayUtils;
+use App\Message\Entity\MessageFile;
+use App\Message\Entity\MessageFileUpload;
+use App\Common\Entity\User;
+use App\Framework\Utils\ArrayUtils;
 use Doctrine\Common\Collections\Collection;
 
 class MessageFileUploadView extends AbstractMessageFileView {

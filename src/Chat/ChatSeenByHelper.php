@@ -2,9 +2,9 @@
 
 namespace App\Chat;
 
-use App\Entity\Chat;
-use App\Entity\User;
-use App\Repository\ChatMessageRepositoryInterface;
+use App\Chat\Entity\Chat;
+use App\Common\Entity\User;
+use App\Chat\Repository\ChatMessageRepositoryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class ChatSeenByHelper {

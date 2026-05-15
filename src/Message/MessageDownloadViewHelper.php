@@ -2,11 +2,11 @@
 
 namespace App\Message;
 
-use App\Entity\Message;
-use App\Filesystem\MessageFilesystem;
-use App\Repository\StudentRepositoryInterface;
-use App\Repository\TeacherRepositoryInterface;
-use App\Repository\UserRepositoryInterface;
+use App\Message\Entity\Message;
+use App\Message\Filesystem\MessageFilesystem;
+use App\Common\Repository\StudentRepositoryInterface;
+use App\Common\Repository\TeacherRepositoryInterface;
+use App\Common\Repository\UserRepositoryInterface;
 use Doctrine\Common\Collections\Collection;
 use League\Flysystem\FilesystemException;
 

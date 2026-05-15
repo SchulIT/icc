@@ -2,7 +2,7 @@
 
 namespace App\Untis\StudentId;
 
-use App\Entity\Student;
+use App\Common\Entity\Student;
 use App\Untis\StudentIdFormat;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 

@@ -2,9 +2,9 @@
 
 namespace App\Book\Student;
 
-use App\Entity\AttendanceFlag;
-use App\Entity\BookComment;
-use App\Entity\Student;
+use App\Book\Entity\AttendanceFlag;
+use App\Book\Entity\BookComment;
+use App\Common\Entity\Student;
 use DateTime;
 
 readonly class StudentInfo {

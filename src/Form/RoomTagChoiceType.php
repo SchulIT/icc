@@ -2,8 +2,8 @@
 
 namespace App\Form;
 
-use App\Entity\RoomTagInfo;
-use App\Repository\RoomTagRepositoryInterface;
+use App\Common\Entity\RoomTagInfo;
+use App\Room\Repository\RoomTagRepositoryInterface;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;

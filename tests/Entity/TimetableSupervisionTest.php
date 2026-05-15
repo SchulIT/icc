@@ -2,8 +2,8 @@
 
 namespace App\Tests\Entity;
 
-use App\Entity\Teacher;
-use App\Entity\TimetableSupervision;
+use App\Common\Entity\Teacher;
+use App\Timetable\Entity\TimetableSupervision;
 use DateTime;
 use PHPUnit\Framework\TestCase;
 

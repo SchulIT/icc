@@ -2,7 +2,7 @@
 
 namespace App\ReturnItem;
 
-use App\Entity\Student;
+use App\Common\Entity\Student;
 use DateTime;
 
 readonly class Statistics {

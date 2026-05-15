@@ -2,8 +2,8 @@
 
 namespace App\Book\IntegrityCheck\Persistence;
 
-use App\Entity\BookIntegrityCheckViolation;
-use App\Entity\Student;
+use App\Book\Entity\BookIntegrityCheckViolation;
+use App\Common\Entity\Student;
 use DateTime;
 
 class PersistedRun {

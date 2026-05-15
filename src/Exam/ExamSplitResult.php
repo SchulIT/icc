@@ -2,8 +2,8 @@
 
 namespace App\Exam;
 
-use App\Entity\Exam;
-use App\Entity\ExamStudent;
+use App\Exam\Entity\Exam;
+use App\Exam\Entity\ExamStudent;
 
 class ExamSplitResult {
 

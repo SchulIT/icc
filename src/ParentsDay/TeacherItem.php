@@ -2,9 +2,9 @@
 
 namespace App\ParentsDay;
 
-use App\Entity\Room;
-use App\Entity\Teacher;
-use App\Entity\Tuition;
+use App\Common\Entity\Room;
+use App\Common\Entity\Teacher;
+use App\Common\Entity\Tuition;
 
 class TeacherItem {
 

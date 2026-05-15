@@ -2,8 +2,8 @@
 
 namespace App\Untis\Html\Substitution;
 
-use App\Settings\TimetableSettings;
-use App\Settings\UntisSettings;
+use App\Timetable\Settings\TimetableSettings;
+use App\Untis\Settings\UntisSettings;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class AbsenceCleaner {

@@ -2,8 +2,8 @@
 
 namespace App\Untis\Html\Timetable;
 
-use App\Settings\TimetableSettings;
-use App\Utils\ArrayUtils;
+use App\Timetable\Settings\TimetableSettings;
+use App\Framework\Utils\ArrayUtils;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class TimetableLessonCombiner {

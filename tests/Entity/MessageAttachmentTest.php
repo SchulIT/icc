@@ -2,8 +2,8 @@
 
 namespace App\Tests\Entity;
 
-use App\Entity\Message;
-use App\Entity\MessageAttachment;
+use App\Message\Entity\Message;
+use App\Message\Entity\MessageAttachment;
 use PHPUnit\Framework\TestCase;
 
 class MessageAttachmentTest extends TestCase {

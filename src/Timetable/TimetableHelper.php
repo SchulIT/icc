@@ -2,15 +2,15 @@
 
 namespace App\Timetable;
 
-use App\Date\WeekOfYear;
-use App\Entity\TimetableLesson as TimetableLessonEntity;
-use App\Entity\TimetableSupervision;
-use App\Repository\AppointmentCategoryRepositoryInterface;
-use App\Repository\AppointmentRepositoryInterface;
-use App\Repository\FreeTimespanRepositoryInterface;
-use App\Repository\TimetableWeekRepositoryInterface;
-use App\Settings\TimetableSettings;
-use App\Utils\ArrayUtils;
+use App\Framework\Date\WeekOfYear;
+use App\Timetable\Entity\TimetableLesson as TimetableLessonEntity;
+use App\Timetable\Entity\TimetableSupervision;
+use App\Appointment\Repository\AppointmentCategoryRepositoryInterface;
+use App\Appointment\Repository\AppointmentRepositoryInterface;
+use App\Substitution\Repository\FreeTimespanRepositoryInterface;
+use App\Timetable\Repository\TimetableWeekRepositoryInterface;
+use App\Timetable\Settings\TimetableSettings;
+use App\Framework\Utils\ArrayUtils;
 use DateTime;
 use SchulIT\CommonBundle\Helper\DateHelper;
 

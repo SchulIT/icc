@@ -2,9 +2,9 @@
 
 namespace App\Tests\Converter;
 
-use App\Converter\TeacherStringConverter;
-use App\Entity\Gender;
-use App\Entity\Teacher;
+use App\Common\Converter\TeacherStringConverter;
+use App\Common\Entity\Gender;
+use App\Common\Entity\Teacher;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 

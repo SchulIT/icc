@@ -2,7 +2,7 @@
 
 namespace App\Book\AttendanceSuggestion;
 
-use App\Entity\Student as StudentEntity;
+use App\Common\Entity\Student as StudentEntity;
 use App\Response\Book\Student;
 
 trait StudentTransformerTrait {

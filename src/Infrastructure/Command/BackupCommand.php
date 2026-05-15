@@ -1,0 +1,103 @@
+<?php
+
+namespace App\Infrastructure\Command;
+
+use DateTime;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Process\Process;
+use ZipArchive;
+use function Symfony\Component\String\u;
+
+#[AsCommand('app:backup:create', 'Erstellt ein Backup aller relevanten Daten (Konfigurationsdatei, Datenbank, Zertifikate & hochgeladene Dateien.')]
+readonly class BackupCommand {
+
+    public function __construct(private string $projectPath,
+                                private string $databaseDsn,
+                                private string $backupDirectory,
+                                private string $tempDirectory,
+                                private array $files,
+                                private array $directories) { }
+
+    public function __invoke(SymfonyStyle $style, OutputInterface $output): int {
+        $filename = sprintf('%s/backup-%s.zip', $this->backupDirectory, (new DateTime())->format('Y-m-d-H-i-s'));
+
+        $zip = new ZipArchive();
+        if(($error = $zip->open($filename, ZipArchive::CREATE)) !== true) {
+            $style->error(sprintf('Fehler (Code: %d): ZIP konnte nicht erstellt werden. Es wurde kein Backup erstellt.', $error));
+            return 1;
+        }
+
+        $filesToRemove = [ ];
+
+        $style->write('Datenbank-Backup... ');
+        $filesToRemove[] = $this->doDatabaseDump($zip);
+        $style->writeln('erstellt.');
+
+        foreach($this->files as $file) {
+            $this->doFileBackup($zip, $file, $style);
+        }
+
+        foreach($this->directories as $directory) {
+            $this->doDirectoryBackup($zip, $directory, $style);
+        }
+
+        $style->write('ZIP-Datei erstellen... ');
+        $zip->close();
+        $style->writeln('erstellt.');
+
+        foreach($filesToRemove as $path) {
+            unlink($path);
+        }
+
+        $style->success(sprintf('Backup erstellt: %s', $filename));
+
+        return Command::SUCCESS;
+    }
+
+    private function doDatabaseDump(ZipArchive $zip): string {
+        $parts = parse_url($this->databaseDsn);
+        $output = sprintf('%s/%s.sql', $this->tempDirectory, uniqid());
+
+        $cmd = ['mysqldump'];
+        $cmd[] = u($parts['path'])->trimStart('/')->toString();
+        $cmd[] = sprintf('--host=%s', $parts['host']);
+        $cmd[] = sprintf('--port=%d', $parts['port']);
+        $cmd[] = sprintf('--user=%s', $parts['user']);
+
+        if(isset($parts['pass'])) {
+            $cmd[] = sprintf('--password=%s', $parts['pass']);
+        }
+
+        $cmd[] = sprintf(' > %s', $output);
+
+        $process = Process::fromShellCommandline(implode(' ', $cmd), $this->projectPath, null, null, null);
+        $process->run();
+
+        $zip->addFile($output, 'dump.sql');
+        return $output;
+    }
+
+    private function doFileBackup(ZipArchive $zip, string $file, SymfonyStyle $style): void {
+        $realpath = sprintf('%s/%s', $this->projectPath, $file);
+        $style->write(sprintf('Sichere Datei %s (%s)... ', $file, $realpath));
+        $zip->addFile($realpath, $file);
+        $style->writeln('gesichert.');
+    }
+
+    private function doDirectoryBackup(ZipArchive $zip, string $directory, SymfonyStyle $style): void {
+        $realpath = sprintf('%s/%s', $this->projectPath, $directory);
+        $style->write(sprintf('Sichere Verzeichnis %s (%s)... ', $directory, $realpath));
+        $finder = new Finder();
+        $finder->ignoreVCS(false)->ignoreDotFiles(false);
+        foreach($finder->in($realpath)->files() as $file) {
+            $zip->addFile($file->getPathname(), sprintf('%s/%s', $directory, $file->getRelativePathname()));
+        }
+
+        $style->writeln('gesichert.');
+    }
+}

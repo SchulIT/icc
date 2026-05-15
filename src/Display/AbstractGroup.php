@@ -2,7 +2,7 @@
 
 namespace App\Display;
 
-use App\Grouping\SortableGroupInterface;
+use App\Framework\Grouping\SortableGroupInterface;
 
 abstract class AbstractGroup implements SortableGroupInterface {
     /** @var AbstractViewItem[] */

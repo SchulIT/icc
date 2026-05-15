@@ -2,10 +2,10 @@
 
 namespace App\Message;
 
-use App\Entity\Message;
-use App\Entity\MessageFile;
-use App\Entity\User;
-use App\Repository\MessageFileUploadRepositoryInterface;
+use App\Message\Entity\Message;
+use App\Message\Entity\MessageFile;
+use App\Common\Entity\User;
+use App\Message\Repository\MessageFileUploadRepositoryInterface;
 
 class MessageFileUploadHelper {
     public function __construct(private MessageFileUploadRepositoryInterface $messageFileUploadRepository)

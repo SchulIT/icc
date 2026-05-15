@@ -2,10 +2,10 @@
 
 namespace App\Tests\Filesystem;
 
-use App\Entity\Message;
-use App\Entity\MessageAttachment;
-use App\Filesystem\FileNotFoundException;
-use App\Filesystem\MessageFilesystem;
+use App\Message\Entity\Message;
+use App\Message\Entity\MessageAttachment;
+use App\Framework\Filesystem\FileNotFoundException;
+use App\Message\Filesystem\MessageFilesystem;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;

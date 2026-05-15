@@ -2,10 +2,10 @@
 
 namespace App\Notification\EventSubscriber;
 
-use App\Doctrine\ParentsDayAppointmentCreatedListener;
-use App\Entity\User;
-use App\Entity\UserType;
-use App\Event\ReturnItemCreatedEvent;
+use App\ParentsDay\Doctrine\ParentsDayAppointmentCreatedListener;
+use App\Common\Entity\User;
+use App\Common\Entity\UserType;
+use App\ReturnItem\Event\ReturnItemCreatedEvent;
 use App\Notification\Notification;
 use App\Notification\NotificationService;
 use App\Student\RelatedUsersResolver;

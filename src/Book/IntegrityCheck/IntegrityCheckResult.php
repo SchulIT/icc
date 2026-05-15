@@ -2,7 +2,7 @@
 
 namespace App\Book\IntegrityCheck;
 
-use App\Entity\Student;
+use App\Common\Entity\Student;
 use DateTime;
 
 class IntegrityCheckResult {

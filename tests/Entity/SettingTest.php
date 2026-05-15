@@ -2,7 +2,7 @@
 
 namespace App\Tests\Entity;
 
-use App\Entity\Setting;
+use App\Framework\Settings\Entity\Setting;
 use PHPUnit\Framework\TestCase;
 
 class SettingTest extends TestCase {

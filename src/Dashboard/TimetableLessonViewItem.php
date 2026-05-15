@@ -2,11 +2,11 @@
 
 namespace App\Dashboard;
 
-use App\Entity\StudentInformation;
-use App\Entity\TeacherAbsenceComment;
-use App\Entity\TimetableLesson;
-use App\Entity\TimetableLessonAdditionalInformation;
-use App\Grouping\AbsentStudentGroup;
+use App\Common\Entity\StudentInformation;
+use App\TeacherAbsence\Entity\TeacherAbsenceComment;
+use App\Timetable\Entity\TimetableLesson;
+use App\Timetable\Entity\TimetableLessonAdditionalInformation;
+use App\Dashboard\Grouping\AbsentStudentGroup;
 
 class TimetableLessonViewItem extends AdditionalExtraAwareViewItem {
 

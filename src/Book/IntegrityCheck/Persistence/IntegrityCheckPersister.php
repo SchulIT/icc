@@ -4,14 +4,14 @@ namespace App\Book\IntegrityCheck\Persistence;
 
 use App\Book\IntegrityCheck\IntegrityCheckResult;
 use App\Book\IntegrityCheck\IntegrityCheckViolation;
-use App\Entity\BookEvent;
-use App\Entity\BookIntegrityCheckRun;
-use App\Entity\BookIntegrityCheckViolation;
-use App\Entity\Student;
-use App\Entity\TimetableLesson;
-use App\Repository\BookIntegrityCheckRunRepositoryInterface;
-use App\Repository\BookIntegrityCheckViolationRepositoryInterface;
-use App\Utils\ArrayUtils;
+use App\Book\Entity\BookEvent;
+use App\Book\Entity\BookIntegrityCheckRun;
+use App\Book\Entity\BookIntegrityCheckViolation;
+use App\Common\Entity\Student;
+use App\Timetable\Entity\TimetableLesson;
+use App\Book\Repository\BookIntegrityCheckRunRepositoryInterface;
+use App\Book\Repository\BookIntegrityCheckViolationRepositoryInterface;
+use App\Framework\Utils\ArrayUtils;
 
 class IntegrityCheckPersister {
     public function __construct(private readonly BookIntegrityCheckViolationRepositoryInterface $repository, private readonly BookIntegrityCheckRunRepositoryInterface $runRepository) { }

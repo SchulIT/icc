@@ -3,12 +3,12 @@
 namespace App\Book\AttendanceSuggestion;
 
 use App\Book\StudentsResolver;
-use App\Entity\AttendanceExcuseStatus;
-use App\Entity\AttendanceType;
-use App\Entity\Tuition;
-use App\Repository\ExcuseNoteRepositoryInterface;
+use App\Book\Entity\AttendanceExcuseStatus;
+use App\Book\Entity\AttendanceType;
+use App\Common\Entity\Tuition;
+use App\Book\Repository\ExcuseNoteRepositoryInterface;
 use App\Response\Book\AttendanceSuggestion;
-use App\Settings\BookSettings;
+use App\Book\Settings\BookSettings;
 use DateTime;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;

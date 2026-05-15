@@ -2,8 +2,8 @@
 
 namespace App\Book\Student;
 
-use App\Entity\AttendanceFlag;
-use App\Entity\Student;
+use App\Book\Entity\AttendanceFlag;
+use App\Common\Entity\Student;
 
 readonly class StudentStatisticsCounter {
     /**

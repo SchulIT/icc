@@ -2,14 +2,14 @@
 
 namespace App\Tests\Message\Poll;
 
-use App\Entity\Message;
-use App\Entity\MessagePollChoice;
-use App\Entity\MessagePollVote;
-use App\Entity\MessagePollVoteRankedChoice;
+use App\Message\Entity\Message;
+use App\Message\Entity\MessagePollChoice;
+use App\Message\Entity\MessagePollVote;
+use App\Message\Entity\MessagePollVoteRankedChoice;
 use App\Message\Poll\FirstComeFirstServeAssignmentStrategy;
 use App\Message\Poll\PollVoteHelper;
-use App\Repository\MessagePollVoteRepositoryInterface;
-use App\Utils\ArrayUtils;
+use App\Message\Repository\MessagePollVoteRepositoryInterface;
+use App\Framework\Utils\ArrayUtils;
 use DateTime;
 use PHPUnit\Framework\TestCase;
 

@@ -2,7 +2,7 @@
 
 namespace App\Notification\Delivery;
 
-use App\Entity\UserNotificationSetting;
+use App\Notification\Entity\UserNotificationSetting;
 
 class AlwaysStrategy implements DeliveryStrategy {
     public function deliver(?UserNotificationSetting $setting): bool {

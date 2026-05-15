@@ -2,13 +2,13 @@
 
 namespace App\Notification\EventSubscriber;
 
-use App\Entity\User;
-use App\Entity\UserType;
-use App\Event\SubstitutionImportEvent;
+use App\Common\Entity\User;
+use App\Common\Entity\UserType;
+use App\Substitution\Event\SubstitutionImportEvent;
 use App\Notification\ImportNotification;
 use App\Notification\NotificationService;
-use App\Repository\UserRepositoryInterface;
-use App\Settings\SubstitutionSettings;
+use App\Common\Repository\UserRepositoryInterface;
+use App\Substitution\Settings\SubstitutionSettings;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;

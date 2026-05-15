@@ -1,0 +1,49 @@
+<?php
+
+namespace App\Exam\Grouping;
+
+use App\Exam\Grouping\ExamWeekGroup;
+use App\Framework\Date\WeekOfYear;
+use App\Exam\Entity\Exam;
+use App\Framework\Grouping\GroupingStrategyInterface;
+use App\Framework\Grouping\GroupInterface;
+
+class ExamWeekStrategy implements GroupingStrategyInterface {
+
+    /**
+     * @param Exam $object
+     * @return WeekOfYear|null
+     */
+    public function computeKey($object, array $options = [ ]) {
+        if($object->getDate() === null) {
+            return null;
+        }
+
+        $weekNumber = (int)$object->getDate()->format('W');
+        $year = (int)$object->getDate()->format('Y');
+
+        return new WeekOfYear($year, $weekNumber);
+    }
+
+    /**
+     * @param WeekOfYear|null $keyA
+     * @param WeekOfYear|null $keyB
+     */
+    public function areEqualKeys($keyA, $keyB, array $options = [ ]): bool {
+        if($keyA === null && $keyB === null) {
+            return true;
+        } else if($keyA === null || $keyB === null) {
+            return false;
+        }
+
+        return $keyA->getWeekNumber() === $keyB->getWeekNumber()
+            && $keyA->getYear() === $keyB->getYear();
+    }
+
+    /**
+     * @param WeekOfYear $key
+     */
+    public function createGroup($key, array $options = [ ]): GroupInterface {
+        return new ExamWeekGroup($key);
+    }
+}

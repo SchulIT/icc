@@ -2,7 +2,7 @@
 
 namespace App\Book\Excuse;
 
-use App\Repository\ExcuseNoteRepositoryInterface;
+use App\Book\Repository\ExcuseNoteRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]

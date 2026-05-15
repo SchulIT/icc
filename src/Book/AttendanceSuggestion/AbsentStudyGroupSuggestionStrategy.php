@@ -3,15 +3,15 @@
 namespace App\Book\AttendanceSuggestion;
 
 use App\Book\StudentsResolver;
-use App\Entity\Absence;
-use App\Entity\AttendanceExcuseStatus;
-use App\Entity\AttendanceType;
-use App\Entity\DateLesson;
-use App\Entity\Tuition;
-use App\Repository\AbsenceRepositoryInterface;
+use App\Substitution\Entity\Absence;
+use App\Book\Entity\AttendanceExcuseStatus;
+use App\Book\Entity\AttendanceType;
+use App\Common\Entity\DateLesson;
+use App\Common\Entity\Tuition;
+use App\Substitution\Repository\AbsenceRepositoryInterface;
 use App\Response\Book\AttendanceSuggestion;
-use App\Settings\BookSettings;
-use App\Utils\ArrayUtils;
+use App\Book\Settings\BookSettings;
+use App\Framework\Utils\ArrayUtils;
 use DateTime;
 use Symfony\Contracts\Translation\TranslatorInterface;
 

@@ -2,14 +2,14 @@
 
 namespace App\Exam;
 
-use App\Entity\Exam;
-use App\Entity\ExamStudent;
-use App\Entity\StudyGroupMembership;
-use App\Entity\Tuition;
-use App\Repository\TuitionRepositoryInterface;
-use App\Section\SectionResolverInterface;
-use App\Settings\ImportSettings;
-use App\Utils\CollectionUtils;
+use App\Exam\Entity\Exam;
+use App\Exam\Entity\ExamStudent;
+use App\Common\Entity\StudyGroupMembership;
+use App\Common\Entity\Tuition;
+use App\Common\Repository\TuitionRepositoryInterface;
+use App\Common\Section\SectionResolverInterface;
+use App\Framework\Import\Settings\ImportSettings;
+use App\Framework\Utils\CollectionUtils;
 use DateTime;
 
 class ExamStudentsResolver {

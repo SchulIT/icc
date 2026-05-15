@@ -2,8 +2,8 @@
 
 namespace App\Tests\Entity;
 
-use App\Entity\Message;
-use App\Entity\MessageFile;
+use App\Message\Entity\Message;
+use App\Message\Entity\MessageFile;
 use PHPUnit\Framework\TestCase;
 
 class MessageFileTest extends TestCase {

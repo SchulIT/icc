@@ -2,9 +2,9 @@
 
 namespace App\Notification\EventSubscriber;
 
-use App\Entity\User;
-use App\Entity\UserType;
-use App\Event\StudentAbsenceMessageCreatedEvent;
+use App\Common\Entity\User;
+use App\Common\Entity\UserType;
+use App\StudentAbsence\Event\StudentAbsenceMessageCreatedEvent;
 use App\Notification\NotificationService;
 use App\Notification\StudentAbsenceNotification;
 use App\StudentAbsence\InvolvedUsersResolver;

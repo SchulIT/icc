@@ -2,10 +2,10 @@
 
 namespace App\Overtime;
 
-use App\Entity\Appointment;
-use App\Entity\ExamSupervision;
-use App\Entity\Substitution;
-use App\Entity\TimetableLesson;
+use App\Appointment\Entity\Appointment;
+use App\Exam\Entity\ExamSupervision;
+use App\Substitution\Entity\Substitution;
+use App\Timetable\Entity\TimetableLesson;
 use DateTime;
 
 readonly class Day {

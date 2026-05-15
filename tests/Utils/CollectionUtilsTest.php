@@ -2,7 +2,7 @@
 
 namespace App\Tests\Utils;
 
-use App\Utils\CollectionUtils;
+use App\Framework\Utils\CollectionUtils;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 

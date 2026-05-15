@@ -2,16 +2,16 @@
 
 namespace App\StudentAbsence;
 
-use App\Entity\Grade;
-use App\Entity\GradeTeacher;
-use App\Entity\StudentAbsence;
-use App\Entity\Subject;
-use App\Entity\User;
-use App\Repository\TuitionRepositoryInterface;
-use App\Repository\UserRepositoryInterface;
-use App\Section\SectionResolverInterface;
+use App\Common\Entity\Grade;
+use App\Common\Entity\GradeTeacher;
+use App\StudentAbsence\Entity\StudentAbsence;
+use App\Common\Entity\Subject;
+use App\Common\Entity\User;
+use App\Common\Repository\TuitionRepositoryInterface;
+use App\Common\Repository\UserRepositoryInterface;
+use App\Common\Section\SectionResolverInterface;
 use App\Student\RelatedUsersResolver;
-use App\Utils\ArrayUtils;
+use App\Framework\Utils\ArrayUtils;
 use SchulIT\CommonBundle\Helper\DateHelper;
 
 readonly class InvolvedUsersResolver {

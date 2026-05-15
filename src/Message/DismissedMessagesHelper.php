@@ -2,9 +2,9 @@
 
 namespace App\Message;
 
-use App\Entity\Message;
-use App\Entity\User;
-use App\Repository\UserRepositoryInterface;
+use App\Message\Entity\Message;
+use App\Common\Entity\User;
+use App\Common\Repository\UserRepositoryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 readonly class DismissedMessagesHelper {

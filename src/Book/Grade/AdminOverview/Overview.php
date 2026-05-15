@@ -2,7 +2,7 @@
 
 namespace App\Book\Grade\AdminOverview;
 
-use App\Entity\TuitionGradeCategory;
+use App\Grade\Entity\TuitionGradeCategory;
 
 readonly class Overview {
 

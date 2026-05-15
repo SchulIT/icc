@@ -2,13 +2,13 @@
 
 namespace App\Notification\EventSubscriber;
 
-use App\Entity\User;
-use App\Entity\UserType;
-use App\Event\ExamImportEvent;
+use App\Common\Entity\User;
+use App\Common\Entity\UserType;
+use App\Exam\Event\ExamImportEvent;
 use App\Notification\ImportNotification;
 use App\Notification\NotificationService;
-use App\Repository\UserRepositoryInterface;
-use App\Settings\ExamSettings;
+use App\Common\Repository\UserRepositoryInterface;
+use App\Exam\Settings\ExamSettings;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;

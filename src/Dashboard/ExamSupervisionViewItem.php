@@ -2,10 +2,10 @@
 
 namespace App\Dashboard;
 
-use App\Entity\StudentInformation;
-use App\Entity\Exam;
-use App\Entity\Room;
-use App\Grouping\AbsentStudentGroup;
+use App\Common\Entity\StudentInformation;
+use App\Exam\Entity\Exam;
+use App\Common\Entity\Room;
+use App\Dashboard\Grouping\AbsentStudentGroup;
 
 class ExamSupervisionViewItem extends AdditionalExtraAwareViewItem {
 

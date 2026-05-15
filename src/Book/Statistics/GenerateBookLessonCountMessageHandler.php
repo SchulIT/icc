@@ -2,7 +2,7 @@
 
 namespace App\Book\Statistics;
 
-use App\Repository\TuitionRepositoryInterface;
+use App\Common\Repository\TuitionRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]

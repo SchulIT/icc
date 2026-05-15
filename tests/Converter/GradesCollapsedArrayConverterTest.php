@@ -2,8 +2,8 @@
 
 namespace App\Tests\Converter;
 
-use App\Entity\Grade;
-use App\Converter\GradesCollapsedArrayConverter;
+use App\Common\Entity\Grade;
+use App\Common\Converter\GradesCollapsedArrayConverter;
 use PHPUnit\Framework\TestCase;
 
 class GradesCollapsedArrayConverterTest extends TestCase {

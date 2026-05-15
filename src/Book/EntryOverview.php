@@ -2,10 +2,10 @@
 
 namespace App\Book;
 
-use App\Entity\BookComment;
-use App\Entity\BookEvent;
-use App\Grouping\LessonDayGroup;
-use App\Repository\BookEventRepositoryInterface;
+use App\Book\Entity\BookComment;
+use App\Book\Entity\BookEvent;
+use App\Book\Grouping\LessonDayGroup;
+use App\Book\Repository\BookEventRepositoryInterface;
 use DateTime;
 
 class EntryOverview {

@@ -2,11 +2,11 @@
 
 namespace App\Exam\Bulk;
 
-use App\Entity\Exam;
-use App\Entity\ExamStudent;
-use App\Entity\StudyGroupMembership;
-use App\Repository\ExamRepositoryInterface;
-use App\Repository\TuitionRepositoryInterface;
+use App\Exam\Entity\Exam;
+use App\Exam\Entity\ExamStudent;
+use App\Common\Entity\StudyGroupMembership;
+use App\Exam\Repository\ExamRepositoryInterface;
+use App\Common\Repository\TuitionRepositoryInterface;
 
 readonly class ExamCreator {
     public function __construct(private ExamRepositoryInterface $repository, private TuitionRepositoryInterface $tuitionRepository) {

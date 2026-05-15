@@ -2,11 +2,11 @@
 
 namespace App\Dashboard;
 
-use App\Entity\Student;
-use App\Entity\Substitution;
-use App\Entity\TeacherAbsenceComment;
-use App\Entity\TimetableLesson;
-use App\Entity\TimetableLessonAdditionalInformation;
+use App\Common\Entity\Student;
+use App\Substitution\Entity\Substitution;
+use App\TeacherAbsence\Entity\TeacherAbsenceComment;
+use App\Timetable\Entity\TimetableLesson;
+use App\Timetable\Entity\TimetableLessonAdditionalInformation;
 
 class SubstitutionViewItem extends AdditionalExtraAwareViewItem {
 

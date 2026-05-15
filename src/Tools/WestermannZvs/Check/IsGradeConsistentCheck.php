@@ -2,7 +2,7 @@
 
 namespace App\Tools\WestermannZvs\Check;
 
-use App\Section\SectionResolverInterface;
+use App\Common\Section\SectionResolverInterface;
 use App\Tools\WestermannZvs\StudentMatch;
 use Override;
 

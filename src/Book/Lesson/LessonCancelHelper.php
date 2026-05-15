@@ -2,9 +2,9 @@
 
 namespace App\Book\Lesson;
 
-use App\Entity\LessonEntry;
-use App\Entity\TimetableLesson;
-use App\Repository\TimetableLessonRepositoryInterface;
+use App\Book\Entity\LessonEntry;
+use App\Timetable\Entity\TimetableLesson;
+use App\Timetable\Repository\TimetableLessonRepositoryInterface;
 
 class LessonCancelHelper {
     public function __construct(private TimetableLessonRepositoryInterface $lessonRepository)

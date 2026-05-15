@@ -2,20 +2,20 @@
 
 namespace App\Notification\EventSubscriber;
 
-use App\Entity\Exam;
-use App\Entity\ResourceReservation;
-use App\Entity\Substitution;
-use App\Entity\Teacher;
-use App\Entity\Tuition;
-use App\Entity\UserType;
-use App\Event\SubstitutionImportEvent;
+use App\Exam\Entity\Exam;
+use App\Room\Entity\ResourceReservation;
+use App\Substitution\Entity\Substitution;
+use App\Common\Entity\Teacher;
+use App\Common\Entity\Tuition;
+use App\Common\Entity\UserType;
+use App\Substitution\Event\SubstitutionImportEvent;
 use App\Notification\Notification;
 use App\Notification\NotificationService;
-use App\Repository\ExamRepositoryInterface;
-use App\Repository\ResourceReservationRepositoryInterface;
-use App\Repository\UserRepositoryInterface;
-use App\Rooms\Reservation\ResourceAvailabilityHelper;
-use App\Validator\NoReservationCollision;
+use App\Exam\Repository\ExamRepositoryInterface;
+use App\Common\Repository\ResourceReservationRepositoryInterface;
+use App\Common\Repository\UserRepositoryInterface;
+use App\Room\Reservation\ResourceAvailabilityHelper;
+use App\Room\Validator\NoReservationCollision;
 use DateTime;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

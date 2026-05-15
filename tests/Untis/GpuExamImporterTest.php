@@ -2,13 +2,13 @@
 
 namespace App\Tests\Untis;
 
-use App\Entity\Student;
-use App\Import\ExamsImportStrategy;
-use App\Import\Importer;
-use App\Import\ImportResult;
-use App\Repository\StudentRepositoryInterface;
+use App\Common\Entity\Student;
+use App\Exam\Import\ExamsImportStrategy;
+use App\Framework\Import\Importer;
+use App\Framework\Import\ImportResult;
+use App\Common\Repository\StudentRepositoryInterface;
 use App\Request\Data\ExamsData;
-use App\Settings\UntisSettings;
+use App\Untis\Settings\UntisSettings;
 use App\Untis\Gpu\Exam\Exam;
 use App\Untis\Gpu\Exam\ExamImporter;
 use App\Untis\Gpu\Exam\ExamReader;

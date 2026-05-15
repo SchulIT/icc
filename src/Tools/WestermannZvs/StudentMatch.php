@@ -2,8 +2,8 @@
 
 namespace App\Tools\WestermannZvs;
 
-use App\Entity\Student;
-use App\Entity\StudentLearningManagementSystemInformation;
+use App\Common\Entity\Student;
+use App\LearningManagementSystem\Entity\StudentLearningManagementSystemInformation;
 
 class StudentMatch {
     public string $username;

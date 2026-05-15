@@ -2,13 +2,13 @@
 
 namespace App\StudentAbsence;
 
-use App\Entity\DateLesson;
-use App\Entity\Attendance;
-use App\Entity\AttendanceExcuseStatus;
-use App\Entity\AttendanceType;
-use App\Entity\LessonEntry;
-use App\Entity\StudentAbsence;
-use App\Entity\TimetableLesson;
+use App\Common\Entity\DateLesson;
+use App\Book\Entity\Attendance;
+use App\Book\Entity\AttendanceExcuseStatus;
+use App\Book\Entity\AttendanceType;
+use App\Book\Entity\LessonEntry;
+use App\StudentAbsence\Entity\StudentAbsence;
+use App\Timetable\Entity\TimetableLesson;
 
 readonly class ExcuseStatusItem {
 

@@ -2,7 +2,7 @@
 
 namespace App\Dashboard;
 
-use App\Entity\Exam;
+use App\Exam\Entity\Exam;
 
 class ExamViewItem extends AdditionalExtraAwareViewItem {
 

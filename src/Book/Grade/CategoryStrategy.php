@@ -2,8 +2,8 @@
 
 namespace App\Book\Grade;
 
-use App\Sorting\SortingStrategyInterface;
-use App\Sorting\TuitionGradeCategoryStrategy;
+use App\Framework\Sorting\SortingStrategyInterface;
+use App\Common\Sorting\TuitionGradeCategoryStrategy;
 
 class CategoryStrategy implements SortingStrategyInterface {
 

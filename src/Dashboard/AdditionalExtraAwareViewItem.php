@@ -2,8 +2,8 @@
 
 namespace App\Dashboard;
 
-use App\Entity\StudentInformation;
-use App\Grouping\AbsentStudentGroup;
+use App\Common\Entity\StudentInformation;
+use App\Dashboard\Grouping\AbsentStudentGroup;
 
 abstract class AdditionalExtraAwareViewItem extends AbstractViewItem {
 

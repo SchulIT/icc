@@ -2,15 +2,15 @@
 
 namespace App\Tools;
 
-use App\Csv\CsvHelper;
-use App\Entity\Grade;
-use App\Entity\Section;
-use App\Entity\StudyGroupMembership;
-use App\Entity\Teacher;
-use App\Entity\Tuition;
-use App\Sorting\GradeNameStrategy;
-use App\Sorting\Sorter;
-use App\Sorting\TeacherStrategy;
+use App\Framework\Csv\CsvHelper;
+use App\Common\Entity\Grade;
+use App\Common\Entity\Section;
+use App\Common\Entity\StudyGroupMembership;
+use App\Common\Entity\Teacher;
+use App\Common\Entity\Tuition;
+use App\Common\Sorting\GradeNameStrategy;
+use App\Framework\Sorting\Sorter;
+use App\Common\Sorting\TeacherStrategy;
 use Doctrine\ORM\EntityManagerInterface;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\HttpFoundation\Response;

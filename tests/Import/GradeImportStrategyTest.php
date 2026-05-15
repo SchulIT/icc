@@ -2,12 +2,12 @@
 
 namespace App\Tests\Import;
 
-use App\Entity\Grade;
-use App\Import\GradesImportStrategy;
-use App\Import\Importer;
-use App\Repository\GradeRepository;
-use App\Repository\ImportDateTypeRepository;
-use App\Repository\SectionRepository;
+use App\Common\Entity\Grade;
+use App\Common\Import\GradesImportStrategy;
+use App\Framework\Import\Importer;
+use App\Common\Repository\GradeRepository;
+use App\Framework\Import\Repository\ImportDateTypeRepository;
+use App\Common\Repository\SectionRepository;
 use App\Request\Data\GradeData;
 use App\Request\Data\GradesData;
 use Psr\Log\NullLogger;

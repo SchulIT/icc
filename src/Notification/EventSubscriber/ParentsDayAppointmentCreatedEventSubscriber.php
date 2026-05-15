@@ -2,16 +2,16 @@
 
 namespace App\Notification\EventSubscriber;
 
-use App\Converter\StudentStringConverter;
-use App\Converter\TeacherStringConverter;
-use App\Entity\Teacher;
-use App\Entity\UserType;
-use App\Event\ParentsDayAppointmentCancelledEvent;
-use App\Event\ParentsDayAppointmentCreatedEvent;
+use App\Common\Converter\StudentStringConverter;
+use App\Common\Converter\TeacherStringConverter;
+use App\Common\Entity\Teacher;
+use App\Common\Entity\UserType;
+use App\ParentsDay\Event\ParentsDayAppointmentCancelledEvent;
+use App\ParentsDay\Event\ParentsDayAppointmentCreatedEvent;
 use App\Notification\Notification;
 use App\Notification\NotificationService;
 use App\ParentsDay\InvolvedUsersResolver;
-use App\Repository\UserRepositoryInterface;
+use App\Common\Repository\UserRepositoryInterface;
 use Doctrine\Common\Collections\Collection;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

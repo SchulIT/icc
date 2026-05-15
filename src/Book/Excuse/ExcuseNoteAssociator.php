@@ -2,11 +2,11 @@
 
 namespace App\Book\Excuse;
 
-use App\Entity\Attendance;
-use App\Entity\AttendanceType;
-use App\Entity\ExcuseNote;
-use App\Repository\ExcuseNoteRepositoryInterface;
-use App\Repository\LessonAttendanceRepositoryInterface;
+use App\Book\Entity\Attendance;
+use App\Book\Entity\AttendanceType;
+use App\Book\Entity\ExcuseNote;
+use App\Book\Repository\ExcuseNoteRepositoryInterface;
+use App\Book\Repository\LessonAttendanceRepositoryInterface;
 
 readonly class ExcuseNoteAssociator {
     public function __construct(

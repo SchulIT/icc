@@ -2,8 +2,8 @@
 
 namespace App\Response\Book;
 
-use App\Entity\AttendanceExcuseStatus;
-use App\Entity\AttendanceType;
+use App\Book\Entity\AttendanceExcuseStatus;
+use App\Book\Entity\AttendanceType;
 use JMS\Serializer\Annotation as Serializer;
 
 class AttendanceSuggestion {

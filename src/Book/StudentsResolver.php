@@ -2,13 +2,13 @@
 
 namespace App\Book;
 
-use App\Entity\Student;
-use App\Entity\StudyGroupMembership;
-use App\Entity\Tuition;
-use App\Repository\StudentRepositoryInterface;
-use App\Settings\BookSettings;
-use App\Sorting\Sorter;
-use App\Sorting\StudentStrategy;
+use App\Common\Entity\Student;
+use App\Common\Entity\StudyGroupMembership;
+use App\Common\Entity\Tuition;
+use App\Common\Repository\StudentRepositoryInterface;
+use App\Book\Settings\BookSettings;
+use App\Framework\Sorting\Sorter;
+use App\Common\Sorting\StudentStrategy;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class StudentsResolver {

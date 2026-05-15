@@ -51,6 +51,16 @@ um eigene Import-Programme zu verwenden.
 Mitmachen ist ausdrücklich erwünscht - Bugmeldungen, Funktionswünsche und Pullrequests sind immer herzlich willkommen. 
 Ein GitHub Account ist erforderlich. 
 
+## Namespaces
+
+Da das Projekt recht groß ist und die Symfony-Konventionen für Namespaces nicht mehr sinnvoll umsetzbar waren, wurde
+das Projekt bzw. die Namespaces nach folgender Konvention umstrukturiert:
+
+* `Framework`-Namespace: Hier sind Hilfsklassen untergebracht, die z.T. auch von anderen Modulen des ICCs genutzt werden. Klassen in diesem Namespace haben keine Abhängigkeiten zu den restlichen Namespaces im Projekt.
+* `Infrastructure`-Namespace: Namespace für sämtlichen Glue-Code für 3rd party Bibliotheken. Klassen in diesem Namespace haben höchstens Abhängigkeiten zum `Common`-Namespace.
+* `Common`-Namespace: Namespace für alle grundlegenden Entitäten etc. Klassen in diesem Namespace haben keine Abhängigkeiten zu den restlichen Namespaces, abgesehen von `Framework`.
+* Alle restlichen Namespaces tragen den Namen des Features. Sowohl hier als auch im `Common`-Namespace werden Symfony-Konventionen für Namespaces genutzt.
+
 ## Lizenz
 
 [AGPL-3.0](LICENSE)

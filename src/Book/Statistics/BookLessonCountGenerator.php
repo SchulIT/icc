@@ -2,8 +2,8 @@
 
 namespace App\Book\Statistics;
 
-use App\Entity\Tuition;
-use App\Repository\TimetableLessonRepositoryInterface;
+use App\Common\Entity\Tuition;
+use App\Timetable\Repository\TimetableLessonRepositoryInterface;
 use Psr\Cache\InvalidArgumentException;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Contracts\Cache\CacheInterface;

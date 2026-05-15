@@ -2,10 +2,10 @@
 
 namespace App\Book\Grade\Export\ZP10;
 
-use App\Entity\TuitionGrade;
-use App\Entity\TuitionGradeCategory;
-use App\Repository\TuitionGradeRepositoryInterface;
-use App\Utils\ArrayUtils;
+use App\Grade\Entity\TuitionGrade;
+use App\Grade\Entity\TuitionGradeCategory;
+use App\Grade\Repository\TuitionGradeRepositoryInterface;
+use App\Framework\Utils\ArrayUtils;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class Exporter {

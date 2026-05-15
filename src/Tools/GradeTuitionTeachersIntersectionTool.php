@@ -2,14 +2,14 @@
 
 namespace App\Tools;
 
-use App\Entity\Grade;
-use App\Entity\GradeTeacher;
-use App\Entity\Section;
-use App\Entity\Subject;
-use App\Entity\Tuition;
-use App\Repository\TuitionRepositoryInterface;
-use App\Sorting\GradeNameStrategy;
-use App\Sorting\Sorter;
+use App\Common\Entity\Grade;
+use App\Common\Entity\GradeTeacher;
+use App\Common\Entity\Section;
+use App\Common\Entity\Subject;
+use App\Common\Entity\Tuition;
+use App\Common\Repository\TuitionRepositoryInterface;
+use App\Common\Sorting\GradeNameStrategy;
+use App\Framework\Sorting\Sorter;
 
 /**
  * This tool computes the intersection of teachers between two grades.

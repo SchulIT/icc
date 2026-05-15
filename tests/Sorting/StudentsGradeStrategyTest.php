@@ -2,14 +2,14 @@
 
 namespace App\Tests\Sorting;
 
-use App\Entity\Grade;
-use App\Entity\Student;
-use App\Grouping\StudentGradeGroup;
-use App\Sorting\GradeNameStrategy;
-use App\Sorting\Sorter;
-use App\Sorting\StringStrategy;
-use App\Sorting\StudentGradeGroupStrategy;
-use App\Sorting\StudentStrategy;
+use App\Common\Entity\Grade;
+use App\Common\Entity\Student;
+use App\Common\Grouping\StudentGradeGroup;
+use App\Common\Sorting\GradeNameStrategy;
+use App\Framework\Sorting\Sorter;
+use App\Framework\Sorting\StringStrategy;
+use App\Common\Sorting\StudentGradeGroupStrategy;
+use App\Common\Sorting\StudentStrategy;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

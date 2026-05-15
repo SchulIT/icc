@@ -2,14 +2,14 @@
 
 namespace App\Message;
 
-use App\Entity\Message;
-use App\Entity\Student;
-use App\Entity\StudyGroup;
-use App\Entity\StudyGroupMembership;
-use App\Entity\User;
-use App\Entity\UserTypeEntity;
-use App\Repository\UserRepositoryInterface;
-use App\Utils\ArrayUtils;
+use App\Message\Entity\Message;
+use App\Common\Entity\Student;
+use App\Common\Entity\StudyGroup;
+use App\Common\Entity\StudyGroupMembership;
+use App\Common\Entity\User;
+use App\Common\Entity\UserTypeEntity;
+use App\Common\Repository\UserRepositoryInterface;
+use App\Framework\Utils\ArrayUtils;
 
 readonly class MessageRecipientResolver {
 

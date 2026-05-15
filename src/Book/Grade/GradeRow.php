@@ -2,10 +2,10 @@
 
 namespace App\Book\Grade;
 
-use App\Entity\Student;
-use App\Entity\Tuition;
-use App\Entity\TuitionGrade;
-use App\Entity\TuitionGradeCategory;
+use App\Common\Entity\Student;
+use App\Common\Entity\Tuition;
+use App\Grade\Entity\TuitionGrade;
+use App\Grade\Entity\TuitionGradeCategory;
 
 class GradeRow {
 

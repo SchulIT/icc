@@ -2,10 +2,10 @@
 
 namespace App\Dashboard;
 
-use App\Entity\Student;
-use App\Entity\Teacher;
-use App\Settings\DashboardSettings;
-use App\Utils\ArrayUtils;
+use App\Common\Entity\Student;
+use App\Common\Entity\Teacher;
+use App\Dashboard\Settings\DashboardSettings;
+use App\Framework\Utils\ArrayUtils;
 use InvalidArgumentException;
 
 /**

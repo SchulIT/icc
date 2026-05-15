@@ -3,11 +3,11 @@
 namespace App\Book\AttendanceSuggestion;
 
 use App\Book\StudentsResolver;
-use App\Entity\Student;
-use App\Entity\StudyGroupMembership;
-use App\Entity\Teacher;
-use App\Entity\Tuition;
-use App\Repository\TimetableLessonRepositoryInterface;
+use App\Common\Entity\Student;
+use App\Common\Entity\StudyGroupMembership;
+use App\Common\Entity\Teacher;
+use App\Common\Entity\Tuition;
+use App\Timetable\Repository\TimetableLessonRepositoryInterface;
 use App\Response\Book\RemoveSuggestion;
 use App\Response\Book\Student as StudentResponse;
 use DateTime;

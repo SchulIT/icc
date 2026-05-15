@@ -2,8 +2,8 @@
 
 namespace App\Tests\Entity;
 
-use App\Entity\Subject;
-use App\Entity\Teacher;
+use App\Common\Entity\Subject;
+use App\Common\Entity\Teacher;
 use PHPUnit\Framework\TestCase;
 
 class SubjectTest extends TestCase {

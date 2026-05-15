@@ -2,8 +2,8 @@
 
 namespace App\Book\Grade;
 
-use App\Entity\Tuition;
-use App\Entity\TuitionGradeCategory;
+use App\Common\Entity\Tuition;
+use App\Grade\Entity\TuitionGradeCategory;
 
 class Category {
     public function __construct(private readonly ?Tuition $tuition, private readonly TuitionGradeCategory $category) { }

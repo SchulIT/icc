@@ -2,7 +2,7 @@
 
 namespace App\Notification\EventSubscriber;
 
-use App\Entity\UserType;
+use App\Common\Entity\UserType;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag('app.notifications.notifier')]

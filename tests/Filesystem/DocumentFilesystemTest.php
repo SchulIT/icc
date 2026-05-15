@@ -2,10 +2,10 @@
 
 namespace App\Tests\Filesystem;
 
-use App\Entity\Document;
-use App\Entity\DocumentAttachment;
-use App\Filesystem\DocumentFilesystem;
-use App\Filesystem\FileNotFoundException;
+use App\Document\Entity\Document;
+use App\Document\Entity\DocumentAttachment;
+use App\Document\Filesystem\DocumentFilesystem;
+use App\Framework\Filesystem\FileNotFoundException;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;

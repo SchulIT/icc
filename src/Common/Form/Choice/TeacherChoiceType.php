@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Common\Form\Choice;
+
+use App\Common\Converter\TeacherStringConverter;
+use App\Common\Entity\Teacher;
+use App\Common\Form\Type\SortableEntityType;
+use App\Common\Sorting\TeacherStrategy;
+use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class TeacherChoiceType extends SortableEntityType {
+
+    public function __construct(private readonly TeacherStrategy $teacherStrategy, private readonly TeacherStringConverter $teacherConverter, ManagerRegistry $registry) {
+        parent::__construct($registry);
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void {
+        parent::configureOptions($resolver);
+
+        $resolver->setDefaults([
+            'attr' => [
+                'data-choice' => 'true'
+            ],
+            'class' => Teacher::class,
+            'choice_label' => fn(Teacher $teacher) => $this->teacherConverter->convert($teacher, true),
+            'sort_by' => $this->teacherStrategy
+        ]);
+    }
+}

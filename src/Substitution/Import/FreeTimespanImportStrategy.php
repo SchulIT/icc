@@ -1,0 +1,55 @@
+<?php
+
+namespace App\Substitution\Import;
+
+use App\Framework\Import\ReplaceImportStrategyInterface;
+use App\Framework\Import\ContextAwareTrait;
+use App\Substitution\Entity\FreeTimespan;
+use App\Substitution\Repository\FreeTimespanRepositoryInterface;
+use App\Framework\Repository\TransactionalRepositoryInterface;
+use App\Request\Data\FreeLessonTimespanData;
+use App\Request\Data\FreeLessonTimespansData;
+
+class FreeTimespanImportStrategy implements ReplaceImportStrategyInterface {
+
+    use ContextAwareTrait;
+
+    public function __construct(private FreeTimespanRepositoryInterface $repository)
+    {
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEntityClassName(): string {
+        return FreeTimespan::class;
+    }
+
+    /**
+     * @param FreeLessonTimespansData $data
+     */
+    public function getData($data): array {
+        return $data->getFreeLessons();
+    }
+
+    public function getRepository(): TransactionalRepositoryInterface {
+        return $this->repository;
+    }
+
+    public function removeAll($requestData): void {
+        $dateTime = $this->getContext($requestData);
+        $this->repository->removeAll($dateTime);
+    }
+
+    /**
+     * @param FreeLessonTimespanData $data
+     */
+    public function persist($data, $requestData): void {
+        $freeTimespan = (new FreeTimespan())
+            ->setStart($data->getStart())
+            ->setEnd($data->getEnd())
+            ->setDate($data->getDate());
+
+        $this->repository->persist($freeTimespan);
+    }
+}

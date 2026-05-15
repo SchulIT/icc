@@ -2,11 +2,11 @@
 
 namespace App\Tests\Utils;
 
-use App\Converter\TeacherStringConverter as OriginalTeacherStringConverter;
-use App\Entity\Gender;
-use App\Entity\Teacher;
-use App\Repository\TeacherRepositoryInterface;
-use App\Utils\AcronymHelper;
+use App\Common\Converter\TeacherStringConverter as OriginalTeacherStringConverter;
+use App\Common\Entity\Gender;
+use App\Common\Entity\Teacher;
+use App\Common\Repository\TeacherRepositoryInterface;
+use App\Framework\Utils\AcronymHelper;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Translation\IdentityTranslator;
 

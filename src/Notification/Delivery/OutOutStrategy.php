@@ -2,7 +2,7 @@
 
 namespace App\Notification\Delivery;
 
-use App\Entity\UserNotificationSetting;
+use App\Notification\Entity\UserNotificationSetting;
 
 class OutOutStrategy implements DeliveryStrategy {
 

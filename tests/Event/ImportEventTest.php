@@ -2,9 +2,9 @@
 
 namespace App\Tests\Event;
 
-use App\Entity\Exam;
-use App\Event\ExamImportEvent;
-use App\Event\ImportEvent;
+use App\Exam\Entity\Exam;
+use App\Exam\Event\ExamImportEvent;
+use App\Framework\Import\Event\ImportEvent;
 use PHPUnit\Framework\TestCase;
 
 class ImportEventTest extends TestCase {

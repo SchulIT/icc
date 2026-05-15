@@ -2,8 +2,8 @@
 
 namespace App\Exam;
 
-use App\Entity\Room;
-use App\Entity\Student;
+use App\Common\Entity\Room;
+use App\Common\Entity\Student;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class ExamSplit {

@@ -2,7 +2,7 @@
 
 namespace App\Message\Poll;
 
-use App\Entity\Message;
+use App\Message\Entity\Message;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 readonly class PollVoteAssigner {

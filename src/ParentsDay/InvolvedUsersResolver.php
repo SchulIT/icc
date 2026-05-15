@@ -2,10 +2,10 @@
 
 namespace App\ParentsDay;
 
-use App\Entity\Student;
-use App\Entity\Teacher;
-use App\Entity\User;
-use App\Repository\UserRepositoryInterface;
+use App\Common\Entity\Student;
+use App\Common\Entity\Teacher;
+use App\Common\Entity\User;
+use App\Common\Repository\UserRepositoryInterface;
 use SchulIT\CommonBundle\Helper\DateHelper;
 
 class InvolvedUsersResolver {

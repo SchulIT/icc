@@ -2,17 +2,17 @@
 
 namespace App\ParentsDay;
 
-use App\Entity\ParentsDay;
-use App\Entity\ParentsDayParentalInformation;
-use App\Entity\Student;
-use App\Entity\StudyGroupMembership;
-use App\Entity\Teacher;
-use App\Entity\Tuition;
-use App\Repository\ParentsDayParentalInformationRepositoryInterface;
-use App\Repository\TuitionRepositoryInterface;
-use App\Section\SectionResolverInterface;
-use App\Sorting\ParentsDayParentalInformationStrategy;
-use App\Sorting\Sorter;
+use App\ParentsDay\Entity\ParentsDay;
+use App\ParentsDay\Entity\ParentsDayParentalInformation;
+use App\Common\Entity\Student;
+use App\Common\Entity\StudyGroupMembership;
+use App\Common\Entity\Teacher;
+use App\Common\Entity\Tuition;
+use App\ParentsDay\Repository\ParentsDayParentalInformationRepositoryInterface;
+use App\Common\Repository\TuitionRepositoryInterface;
+use App\Common\Section\SectionResolverInterface;
+use App\ParentsDay\Sorting\ParentsDayParentalInformationStrategy;
+use App\Framework\Sorting\Sorter;
 
 class ParentsDayParentalInformationResolver {
     public function __construct(private readonly ParentsDayParentalInformationRepositoryInterface $repository,

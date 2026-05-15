@@ -2,11 +2,11 @@
 
 namespace App\Book\Statistics;
 
-use App\Entity\Attendance;
-use App\Entity\AttendanceType;
-use App\Entity\Student;
-use App\Repository\LessonAttendanceRepositoryInterface;
-use App\Settings\TimetableSettings;
+use App\Book\Entity\Attendance;
+use App\Book\Entity\AttendanceType;
+use App\Common\Entity\Student;
+use App\Book\Repository\LessonAttendanceRepositoryInterface;
+use App\Timetable\Settings\TimetableSettings;
 use DateTime;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Contracts\Cache\CacheInterface;

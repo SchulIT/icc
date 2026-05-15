@@ -3,12 +3,12 @@
 namespace App\Dashboard\Absence;
 
 use App\Dashboard\AbsentStudentWithAbsenceNote;
-use App\Entity\AttendanceType;
-use App\Entity\StudentAbsence;
-use App\Feature\Feature;
-use App\Feature\FeatureManager;
-use App\Repository\StudentAbsenceRepositoryInterface;
-use App\Utils\ArrayUtils;
+use App\Book\Entity\AttendanceType;
+use App\StudentAbsence\Entity\StudentAbsence;
+use App\Framework\Feature\Feature;
+use App\Framework\Feature\FeatureManager;
+use App\StudentAbsence\Repository\StudentAbsenceRepositoryInterface;
+use App\Framework\Utils\ArrayUtils;
 use DateTime;
 
 /**

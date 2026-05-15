@@ -2,7 +2,7 @@
 
 namespace App\Notification;
 
-use App\Settings\NotificationSettings;
+use App\Notification\Settings\NotificationSettings;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 readonly class NotificationService {

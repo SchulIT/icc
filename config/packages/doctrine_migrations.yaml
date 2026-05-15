@@ -8,4 +8,4 @@ doctrine_migrations:
     transactional: false
 
     services:
-        'Doctrine\Migrations\Version\MigrationFactory': 'App\Migrations\Factory\MigrationFactoryDecorator'
+        'Doctrine\Migrations\Version\MigrationFactory': 'App\Infrastructure\Migrations\Factory\MigrationFactoryDecorator'

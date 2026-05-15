@@ -7,12 +7,15 @@ use App\Common\Entity\StudyGroup;
 use App\Framework\Grouping\GroupInterface;
 use App\Framework\Grouping\SortableGroupInterface;
 
-class StudyGroupGradeGroup implements GroupInterface, SortableGroupInterface {
+/**
+ * @implements SortableGroupInterface<Grade, StudyGroup>
+ */
+class StudyGroupGradeGroup implements SortableGroupInterface {
 
     /** @var StudyGroup[] */
     private array $studyGroups = [ ];
 
-    public function __construct(private Grade $grade)
+    public function __construct(private readonly Grade $grade)
     {
     }
 
@@ -27,11 +30,11 @@ class StudyGroupGradeGroup implements GroupInterface, SortableGroupInterface {
         return $this->studyGroups;
     }
 
-    public function getKey() {
+    public function getKey(): Grade {
         return $this->grade;
     }
 
-    public function addItem($item) {
+    public function addItem($item): void {
         $this->studyGroups[] = $item;
     }
 

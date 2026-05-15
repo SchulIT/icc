@@ -43,17 +43,17 @@ services:
     App\:
         resource: '../src/'
         exclude:
-            - '../src/DependencyInjection'
-            - '../src/Entity'
+            - '../src/Infrastructure/DependencyInjection'
+            - '../src/**/Entity'
             - '../src/Request/Data'
             - '../src/Kernel.php'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    App\Doctrine\:
-        resource: '../src/Doctrine/*Subscriber.php'
-        tags: ['doctrine.event_subscriber']
+    #App\Doctrine\:
+    #    resource: '../src/Doctrine/*Subscriber.php'
+    #    tags: ['doctrine.event_subscriber']
 
     # SESSIONS
     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
@@ -98,59 +98,43 @@ services:
     JMS\Serializer\ContextFactory\DeserializationContextFactoryInterface:
         alias: 'jms_serializer.configured_deserialization_context_factory'
 
-    # FLYSYSTEM
-    App\Filesystem\DocumentFilesystem:
-        public: true
-        arguments:
-            $filesystem: '@oneup_flysystem.documents_filesystem'
-
-    App\Filesystem\MessageFilesystem:
-        public: true
-        arguments:
-            $filesystem: '@oneup_flysystem.messages_filesystem'
-
-    App\Filesystem\ChatFilesystem:
-        public: true
-        arguments:
-            $filesystem: '@oneup_flysystem.chat_filesystem'
-
-    App\Security\ImportUserAuthenticator:
+    App\Common\Security\ImportUserAuthenticator:
         arguments:
             $presharedKey: '%env(IMPORT_PSK)%'
 
     # SECURITY
-    App\Security\User\UserMapper:
+    App\Common\Security\User\UserMapper:
         arguments:
             $typesMap: '%types_map%'
 
     # MENU
-    App\Menu\Builder:
+    App\Infrastructure\Menu\Builder:
         tags:
             - { name: knp_menu.menu_builder, method: mainMenu, alias: mainMenu }
 
-    App\Menu\ServicesMenuBuilder:
+    App\Infrastructure\Menu\ServicesMenuBuilder:
         tags:
             - { name: knp_menu.menu_builder, method: servicesMenu, alias: servicesMenu }
 
-    App\Menu\ImportMenuBuilder:
+    App\Infrastructure\Menu\ImportMenuBuilder:
         tags:
             - { name: knp_menu.menu_builder, method: importMenu, alias: importMenu }
 
-    App\Menu\UserMenuBuilder:
+    App\Infrastructure\Menu\UserMenuBuilder:
         arguments:
             $idpProfileUrl: '%env(IDP_PROFILE_URL)%'
         tags:
             - { name: knp_menu.menu_builder, method: userMenu, alias: userMenu }
 
-    App\Menu\AdminMenuBuilder:
+    App\Infrastructure\Menu\AdminMenuBuilder:
         tags:
             - { name: knp_menu.menu_builder, method: adminMenu, alias: adminMenu }
 
-    App\Menu\AdminDataMenuBuilder:
+    App\Infrastructure\Menu\AdminDataMenuBuilder:
         tags:
             - { name: knp_menu.menu_builder, method: dataMenu, alias: dataMenu }
 
-    App\Menu\AdminToolsMenuBuilder:
+    App\Infrastructure\Menu\AdminToolsMenuBuilder:
         tags:
             - { name: knp_menu.menu_builder, method: toolsMenu, alias: toolsMenu }
 
@@ -158,31 +142,18 @@ services:
         tags:
             - { name: knp_menu.voter }
 
-    App\Rooms\Status\ServiceCenterRoomStatusHelper:
-        arguments:
-            $client: '@eight_points_guzzle.client.servicecenter'
-            $isEnabled: '%env(bool:ROOM_STATUS)%'
-
     # CONTROLLER
-    App\Controller\WikiAdminController:
+    App\Wiki\Controller\WikiAdminController:
         bind:
             $wikiFilesystem: '@oneup_flysystem.wiki_filesystem'
 
-    App\Controller\WikiController:
+    App\Wiki\Controller\WikiController:
         bind:
             $wikiFilesystem: '@oneup_flysystem.wiki_filesystem'
 
-    App\Controller\StudentAbsenceController:
+    App\StudentAbsence\Controller\StudentAbsenceController:
         bind:
             $studentAbsencesFilesystem: '@oneup_flysystem.student_absence_filesystem'
-
-    App\Controller\Settings\NotificationSettingsController:
-        arguments:
-            $pushoverToken: '%env(PUSHOVER_TOKEN)%'
-
-    App\Controller\ProfileController:
-        arguments:
-            $pushoverToken: '%env(PUSHOVER_TOKEN)%'
 
     # MARKDOWN
     League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension: ~
@@ -202,7 +173,7 @@ services:
             - [ addExtension, [ "@League\\CommonMark\\Extension\\Autolink\\AutolinkExtension"]]
             - [ addExtension, [ "@League\\CommonMark\\Extension\\Table\\TableExtension"]]
             - [ addExtension, [ "@League\\CommonMark\\Extension\\DefaultAttributes\\DefaultAttributesExtension"]]
-            - [ addExtension, [ "@App\\Markdown\\MarkdownExtension" ]]
+            - [ addExtension, [ "@App\\Infrastructure\\Markdown\\MarkdownExtension" ]]
 
     League\CommonMark\ConverterInterface:
         class: League\CommonMark\MarkdownConverter
@@ -212,45 +183,39 @@ services:
     EasySlugger\SluggerInterface:
         class: EasySlugger\Utf8Slugger
 
-    # HELPER
-    App\Ics\IcsHelper:
-        arguments:
-            $appName: '%env(APP_NAME)%'
-            $languageCode: '%env(LANGUAGE)%'
-            $appUrl: '%env(APP_URL)%'
-
     Mimey\MimeTypes: ~
 
     # CONVERTER
-    App\Converter\EnumStringConverter:
+    App\Framework\Converter\EnumStringConverter:
         bind:
             $enumFormKeyMapping:
-                gender: App\Entity\Gender
-                grade_teacher_type: App\Entity\GradeTeacherType
-                message_scope: App\Entity\MessageScope
-                message_priority: App\Entity\MessagePriority
-                study_group_type: App\Entity\StudyGroupType
-                user_type: App\Entity\UserType
-                ics_access_token_type: App\Entity\IcsAccessTokenType
-                display_target_user_type: App\Entity\DisplayTargetUserType
+                gender: App\Common\Entity\Gender
+                grade_teacher_type: App\Common\Entity\GradeTeacherType
+                message_scope: App\Message\Entity\MessageScope
+                message_priority: App\Message\Entity\MessagePriority
+                study_group_type: App\Common\Entity\StudyGroupType
+                user_type: App\Common\Entity\UserType
+                ics_access_token_type: App\Common\Entity\IcsAccessTokenType
+                display_target_user_type: App\Display\Entity\DisplayTargetUserType
                 absence_reason: App\Dashboard\AbsenceReason
-                sick_reason: App\Entity\SickNoteReason
+                sick_reason: App\Book\Entity\SickNoteReason
                 student_id_format: App\Untis\StudentIdFormat
-                student_information_type: App\Entity\StudentInformationType
+                student_information_type: App\Common\Entity\StudentInformationType
 
     # DOCTRINE:
     Doctrine\Persistence\ManagerRegistry:
         alias: 'doctrine'
 
     Doctrine\Migrations\Version\DbalMigrationFactory: ~
-    App\Migrations\Factory\MigrationFactoryDecorator:
+
+    App\Infrastructure\Migrations\Factory\MigrationFactoryDecorator:
         decorates: Doctrine\Migrations\Version\DbalMigrationFactory
         arguments:
-            $migrationFactory: '@App\Migrations\Factory\MigrationFactoryDecorator.inner'
+            $migrationFactory: '@App\Infrastructure\Migrations\Factory\MigrationFactoryDecorator.inner'
 
     # DARK MODE:
     SchulIT\CommonBundle\DarkMode\DarkModeManagerInterface:
-        class: App\DarkMode\DarkModeManager
+        class: App\Infrastructure\DarkMode\DarkModeManager
 
     # NOTIFICATIONS
     App\TeacherAbsence\TeacherAbsenceNotifier:
@@ -259,20 +224,7 @@ services:
             $sender: '%env(MAILER_FROM)%'
 
     # COMMANDS
-    App\Command\RemoveExpiredStudentAbsencesCommand:
-        arguments:
-            $filesystem: '@oneup_flysystem.student_absence_filesystem'
-
-    App\Command\CleanupAuditLogCommand:
-        arguments:
-            $retentionDays: '%env(AUDIT_RETENTION_DAYS)%'
-
-    App\Command\UpdateUsersFromSsoCommand:
-        arguments:
-            $ssoUrl: '%env(SSO_URL)%'
-            $ssoToken: '%env(SSO_APITOKEN)%'
-
-    App\Command\BackupCommand:
+    App\Infrastructure\Command\BackupCommand:
         arguments:
             $projectPath: '%kernel.project_dir%'
             $databaseDsn: '%env(DATABASE_URL)%'
@@ -284,7 +236,7 @@ services:
                 - 'files'
                 - 'saml'
 
-    App\Command\RestoreCommand:
+    App\Infrastructure\Command\RestoreCommand:
         arguments:
             $projectPath: '%kernel.project_dir%'
             $databaseDsn: '%env(DATABASE_URL)%'
@@ -305,16 +257,16 @@ services:
             - { name: scheduler.task, arguments: '', trigger: 'cron', expression: '@daily' }
 
     # SECTION
-    App\Section\SectionResolver: ~
+    App\Common\Section\SectionResolver: ~
 
-    App\Section\CachedSectionResolver:
-        decorates: App\Section\SectionResolver
+    App\Common\Section\CachedSectionResolver:
+        decorates: App\Common\Section\SectionResolver
         bind:
             $sectionResolver: '@.inner'
             $cache: '@app.cache.memory'
 
-    App\Section\SectionResolverInterface:
-        alias: App\Section\CachedSectionResolver
+    App\Common\Section\SectionResolverInterface:
+        alias: App\Common\Section\CachedSectionResolver
 
     # MONOLOG
     SchulIT\CommonBundle\Monolog\DatabaseHandler:
@@ -330,23 +282,12 @@ services:
     SchulIT\CommonBundle\Monolog\RequestProcessor:
         tags:
             - { name: monolog.processor }
-    App\Monolog\SqlAwareExceptionProcessor:
+    App\Infrastructure\Monolog\SqlAwareExceptionProcessor:
         tags:
             - { name: monolog.processor }
 
     # TWIG
-    App\Twig\WebpackEntryCssSourceExtension:
+    App\Infrastructure\Twig\WebpackEntryCssSourceExtension:
         bind:
             $publicDir: '%kernel.project_dir%/public'
-
-    # MESSENGER
-    App\Messenger\UpdateOrRemoveUserHandler:
-        arguments:
-            $client: '@eight_points_guzzle.client.sso'
-            $isDebug: '%kernel.debug%'
-
-    App\Messenger\SendPushoverNotificationHandler:
-        arguments:
-            $pushoverToken: '%env(PUSHOVER_TOKEN)%'
-            $logger: '@monolog.logger.notifications'
 

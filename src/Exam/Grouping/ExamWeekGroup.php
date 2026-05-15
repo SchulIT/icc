@@ -2,27 +2,31 @@
 
 namespace App\Exam\Grouping;
 
+use App\Exam\Entity\Exam;
 use App\Framework\Date\WeekOfYear;
-use App\Framework\Grouping\GroupInterface;
 use App\Framework\Grouping\SortableGroupInterface;
 
-class ExamWeekGroup implements GroupInterface, SortableGroupInterface {
+/**
+ * @implements SortableGroupInterface<WeekOfYear|null, Exam>
+ */
+class ExamWeekGroup implements SortableGroupInterface {
 
-    private $exams;
+    /** @var Exam[] */
+    private array $exams;
 
-    public function __construct(private ?WeekOfYear $weekOfYear)
+    public function __construct(private readonly ?WeekOfYear $weekOfYear)
     {
     }
 
-    public function getWeekOfYear() {
+    public function getWeekOfYear(): ?WeekOfYear {
         return $this->weekOfYear;
     }
 
-    public function getKey() {
+    public function getKey(): ?WeekOfYear {
         return $this->weekOfYear;
     }
 
-    public function addItem($item) {
+    public function addItem($item): void {
         $this->exams[] = $item;
     }
 

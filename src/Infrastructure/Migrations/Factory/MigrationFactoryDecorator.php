@@ -3,12 +3,11 @@
 namespace App\Infrastructure\Migrations\Factory;
 
 use App\Exam\ExamStudentsResolver;
+use App\Exam\Repository\ExamRepositoryInterface;
 use App\Infrastructure\Migrations\ExamRepositoryDependantMigrationInterface;
 use App\Infrastructure\Migrations\ExamStudentsResolverDependentMigrationInterface;
 use App\Infrastructure\Migrations\TimetableSettingsDependentMigrationInterface;
 use App\Infrastructure\Migrations\TimetableTimeHelperDependentMigrationInterface;
-use App\Exam\Repository\ExamRepositoryInterface;
-use App\Framework\Settings\SettingsManager;
 use App\Timetable\Settings\TimetableSettings;
 use App\Timetable\TimetableTimeHelper;
 use Doctrine\Migrations\AbstractMigration;

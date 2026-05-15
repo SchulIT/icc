@@ -7,12 +7,15 @@ use App\Framework\Grouping\GroupInterface;
 use App\Framework\Grouping\SortableGroupInterface;
 use App\Room\Entity\ResourceReservation;
 
-class RoomReservationWeekGroup implements GroupInterface, SortableGroupInterface {
+/**
+ * @implements SortableGroupInterface<WeekOfYear, ResourceReservation>
+ */
+class RoomReservationWeekGroup implements SortableGroupInterface {
 
     /** @var ResourceReservation[] */
-    private $reservations;
+    private array $reservations;
 
-    public function __construct(private WeekOfYear $week)
+    public function __construct(private readonly WeekOfYear $week)
     {
     }
 
@@ -24,11 +27,11 @@ class RoomReservationWeekGroup implements GroupInterface, SortableGroupInterface
         return $this->reservations;
     }
 
-    public function getKey() {
+    public function getKey(): WeekOfYear {
         return $this->week;
     }
 
-    public function addItem($item) {
+    public function addItem($item): void {
         $this->reservations[] = $item;
     }
 

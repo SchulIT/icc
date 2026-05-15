@@ -10,14 +10,18 @@ use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Mimey\MimeTypes;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Response;
 use Vich\UploaderBundle\Mapping\PropertyMapping;
 use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
 
-class DocumentFilesystem implements DirectoryNamerInterface {
+readonly class DocumentFilesystem implements DirectoryNamerInterface {
 
-    public function __construct(private readonly FilesystemOperator $filesystem, private readonly MimeTypes $mimeTypes, private readonly LoggerInterface $logger) {  }
+    public function __construct(
+        #[Autowire('@oneup_flysystem.documents_filesystem')] private FilesystemOperator $filesystem,
+        private MimeTypes $mimeTypes,
+        private LoggerInterface $logger
+    ) {  }
 
     /**
      * @throws FileNotFoundException|FilesystemException

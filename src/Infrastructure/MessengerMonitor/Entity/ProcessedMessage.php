@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Infrastructure\Messenger\Entity;
+namespace App\Infrastructure\MessengerMonitor\Entity;
 
 use App\Common\Entity\IdTrait;
 use Doctrine\ORM\Mapping as ORM;

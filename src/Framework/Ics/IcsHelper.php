@@ -2,12 +2,14 @@
 
 namespace App\Framework\Ics;
 
+use DateInvalidTimeZoneException;
 use DateTimeZone;
 use Jsvrcek\ICS\CalendarExport;
 use Jsvrcek\ICS\CalendarStream;
 use Jsvrcek\ICS\Model\Calendar;
 use Jsvrcek\ICS\Model\CalendarEvent;
 use Jsvrcek\ICS\Utility\Formatter;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -16,12 +18,17 @@ use Twig\Environment;
 readonly class IcsHelper {
     private const int BatchSize = 20;
 
-    public function __construct(private string $appName, private string $languageCode, private string $appUrl)
+    public function __construct(
+        #[Autowire('%env(APP_NAME)%')] private string $appName,
+        #[Autowire('%env(LANGUAGE)%')] private string $languageCode,
+        #[Autowire('%env(APP_URL)%')] private string $appUrl
+    )
     {
     }
 
     /**
      * @param CalendarEvent[] $events
+     * @throws DateInvalidTimeZoneException
      */
     public function getIcsStream(string $name, string $description, array $events): string {
         $calendar = new Calendar();

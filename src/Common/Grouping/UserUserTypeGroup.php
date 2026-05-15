@@ -7,12 +7,15 @@ use App\Common\Entity\UserType;
 use App\Framework\Grouping\GroupInterface;
 use App\Framework\Grouping\SortableGroupInterface;
 
-class UserUserTypeGroup implements GroupInterface, SortableGroupInterface {
+/**
+ * @implements SortableGroupInterface<UserType, User>
+ */
+class UserUserTypeGroup implements SortableGroupInterface {
 
     /** @var User[] */
-    private $users;
+    private array $users;
 
-    public function __construct(private UserType $userType)
+    public function __construct(private readonly UserType $userType)
     {
     }
 
@@ -27,11 +30,11 @@ class UserUserTypeGroup implements GroupInterface, SortableGroupInterface {
         return $this->users;
     }
 
-    public function getKey() {
+    public function getKey(): UserType {
         return $this->userType;
     }
 
-    public function addItem($item) {
+    public function addItem($item): void {
         $this->users[] = $item;
     }
 

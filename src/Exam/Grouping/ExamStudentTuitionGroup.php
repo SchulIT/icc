@@ -7,7 +7,10 @@ use App\Common\Entity\Tuition;
 use App\Framework\Grouping\GroupInterface;
 use App\Framework\Grouping\SortableGroupInterface;
 
-class ExamStudentTuitionGroup implements GroupInterface, SortableGroupInterface {
+/**
+ * @implements SortableGroupInterface<Tuition|null, ExamStudent>
+ */
+class ExamStudentTuitionGroup implements SortableGroupInterface {
 
     /** @var ExamStudent[] */
     private array $students = [ ];
@@ -30,11 +33,11 @@ class ExamStudentTuitionGroup implements GroupInterface, SortableGroupInterface 
         return $this->students;
     }
 
-    public function getKey() {
+    public function getKey(): mixed {
         return $this->tuition;
     }
 
-    public function addItem($item) {
+    public function addItem($item): void {
         $this->students[] = $item;
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Message\Messenger;
+namespace App\Notification\Messenger;
 
 use App\Common\Repository\UserRepositoryInterface;
 use App\Message\Messenger\SendPushoverNotificationMessage;
@@ -12,6 +12,7 @@ use Serhiy\Pushover\Api\Message\Priority;
 use Serhiy\Pushover\Api\Message\Sound;
 use Serhiy\Pushover\Application;
 use Serhiy\Pushover\Recipient;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -19,7 +20,10 @@ class SendPushoverNotificationHandler {
 
     private ?Application $application = null;
 
-    public function __construct(private readonly ?string $pushoverToken, private readonly UserRepositoryInterface $userRepository, private readonly LoggerInterface $logger) {
+    public function __construct(
+        #[Autowire('%env(PUSHOVER_TOKEN)%')] private readonly ?string $pushoverToken,
+        private readonly UserRepositoryInterface $userRepository,
+        #[Autowire('@monolog.logger.notifications')] private readonly LoggerInterface $logger) {
 
     }
 

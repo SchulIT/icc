@@ -7,13 +7,16 @@ use App\Common\Entity\Student;
 use App\Framework\Grouping\GroupInterface;
 use App\Framework\Grouping\SortableGroupInterface;
 
+/**
+ * @implements SortableGroupInterface<Grade|null, Student>
+ */
 class StudentGradeGroup implements GroupInterface, SortableGroupInterface {
     /**
      * @var Student[]
      */
     private array $students = [ ];
 
-    public function __construct(private ?Grade $grade)
+    public function __construct(private readonly ?Grade $grade)
     {
     }
 
@@ -28,17 +31,11 @@ class StudentGradeGroup implements GroupInterface, SortableGroupInterface {
         return $this->students;
     }
 
-    /**
-     * @return Grade|null
-     */
-    public function getKey() {
+    public function getKey(): ?Grade {
         return $this->grade;
     }
 
-    /**
-     * @param Student $item
-     */
-    public function addItem($item) {
+    public function addItem($item): void {
         $this->students[] = $item;
     }
 

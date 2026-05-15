@@ -7,13 +7,16 @@ use App\Framework\Grouping\SortableGroupInterface;
 use DateTime;
 use App\Exam\Entity\Exam;
 
-class ExamDateGroup implements GroupInterface, SortableGroupInterface {
+/**
+ * @implements SortableGroupInterface<DateTime, Exam>
+ */
+class ExamDateGroup implements SortableGroupInterface {
     /**
      * @var Exam[]
      */
     private ?array $exams = null;
 
-    public function __construct(private DateTime $date)
+    public function __construct(private readonly DateTime $date)
     {
     }
 
@@ -24,21 +27,21 @@ class ExamDateGroup implements GroupInterface, SortableGroupInterface {
     /**
      * @return Exam[]
      */
-    public function getExams() {
+    public function getExams(): ?array {
         return $this->exams;
     }
 
     /**
      * @return DateTime
      */
-    public function getKey() {
+    public function getKey(): mixed {
         return $this->date;
     }
 
     /**
      * @param Exam $item
      */
-    public function addItem($item) {
+    public function addItem($item): void {
         $this->exams[] = $item;
     }
 

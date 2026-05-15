@@ -9,6 +9,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Scheduler\Attribute\AsCronTask;
 use function Symfony\Component\String\u;
 
@@ -16,7 +17,11 @@ use function Symfony\Component\String\u;
 #[AsCronTask('@daily')]
 readonly class CleanupAuditLogCommand {
 
-    public function __construct(private int $retentionDays, private EntityManagerInterface $em, private DateHelper $dateHelper) { }
+    public function __construct(
+        #[Autowire('%env(AUDIT_RETENTION_DAYS)%')] private int $retentionDays,
+        private EntityManagerInterface $em,
+        private DateHelper $dateHelper
+    ) { }
 
     public function __invoke(SymfonyStyle $style, OutputInterface $output): int {
         $auditTables = array_filter(

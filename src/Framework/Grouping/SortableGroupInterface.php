@@ -2,6 +2,15 @@
 
 namespace App\Framework\Grouping;
 
-interface SortableGroupInterface {
+/**
+ * @template TKey
+ * @template TValue
+ * @extends GroupInterface<TKey, TValue>
+ */
+interface SortableGroupInterface extends GroupInterface {
+
+    /**
+     * @return TValue[]
+     */
     public function &getItems(): array;
 }

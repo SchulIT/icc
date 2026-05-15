@@ -11,11 +11,14 @@ use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 #[AsCommand('app:filesystem:student_absence:cleanup', description: 'Räumt den Ordner files/student_absence/ auf und synchronisiert ihn mit der Datenbank.')]
 readonly class CleanupStudentAbsenceFilesystemCommand {
-    public function __construct(private FilesystemOperator $student_absenceFilesystem,
-                                private EntityManagerInterface $em) { }
+    public function __construct(
+        #[Autowire('@oneup_flysystem.student_absence_filesystem')] private FilesystemOperator $filesystem,
+        private EntityManagerInterface $em
+    ) { }
 
     public function __invoke(SymfonyStyle $style, OutputInterface $output, #[Option('Nur prüfen und nichts löschen.', 'dry-run', 'd')] bool $dryRun = false): int {
         if($dryRun === true) {
@@ -29,7 +32,7 @@ readonly class CleanupStudentAbsenceFilesystemCommand {
         foreach($attachments as $attachment) {
             $style->write(sprintf('Prüfe %s: ', $attachment->getPath()));
 
-            if($this->student_absenceFilesystem->fileExists($attachment->getPath())) {
+            if($this->filesystem->fileExists($attachment->getPath())) {
                 $style->writeln('existiert. Unternehme nichts.');
             } else if($dryRun) {
                 $style->writeln('existiert nicht. Unternehme nichts (dry-run).');
@@ -43,7 +46,7 @@ readonly class CleanupStudentAbsenceFilesystemCommand {
 
         $style->section('Lösche verwaiste Anhänge vom Dateisystem');
 
-        foreach($this->student_absenceFilesystem->listContents('/') as $item) {
+        foreach($this->filesystem->listContents('/') as $item) {
             if($item->path() === '.gitignore' || !$item instanceof FileAttributes) {
                 continue;
             }
@@ -57,7 +60,7 @@ readonly class CleanupStudentAbsenceFilesystemCommand {
                     $style->writeln('nicht in Datenbank vorhanden. Unternehme nichts (dry-run).');
                 } else {
                     $style->writeln('nicht in Datenbank vorhanden. Lösche Datei.');
-                    $this->student_absenceFilesystem->delete($item->path());
+                    $this->filesystem->delete($item->path());
                 }
             } else {
                 $style->writeln('in Datenbank vorhanden. Unternehme nichts.');

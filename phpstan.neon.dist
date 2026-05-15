@@ -5,7 +5,7 @@ parameters:
 	    - src
 	inferPrivatePropertyTypeFromConstructor: true
 	ignoreErrors:
-	    - "~Parameter \\#1 \\$array of method App\\\\Sorting\\\\Sorter::sort\\(\\) is passed by reference, so it expects variables only\\.~"
+	    - "~Parameter \\#1 \\$array of method App\\\\Framework\\\\Sorting\\\\Sorter::sort\\(\\) is passed by reference, so it expects variables only\\.~"
 	excludePaths:
 		- '%rootDir%/../../../src/Markdown/*'
 		- '%rootDir%/../../../src/DataFixtures/*'

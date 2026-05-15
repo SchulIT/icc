@@ -2,9 +2,19 @@
 
 namespace App\Framework\Grouping;
 
+/**
+ * @template TKey
+ * @template TValue
+ */
 interface GroupInterface {
 
-    public function getKey();
+    /**
+     * @return TKey
+     */
+    public function getKey(): mixed;
 
-    public function addItem($item);
+    /**
+     * @param TValue $item
+     */
+    public function addItem($item): void;
 }

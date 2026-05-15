@@ -5,7 +5,7 @@ namespace App\Display\Sorting;
 use App\Display\AbstractViewItem;
 use App\Framework\Sorting\SortingStrategyInterface;
 
-class DisplayViewItemStrategy implements SortingStrategyInterface {
+readonly class DisplayViewItemStrategy implements SortingStrategyInterface {
 
     /**
      * @param AbstractViewItem $objectA

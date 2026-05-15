@@ -5,6 +5,9 @@ namespace App\Appointment\Grouping;
 use App\Appointment\Entity\Appointment;
 use App\Framework\Grouping\GroupInterface;
 
+/**
+ * @implements GroupInterface<bool, Appointment>
+ */
 class AppointmentExpirationGroup implements GroupInterface {
 
     /** @var Appointment[] */
@@ -21,15 +24,15 @@ class AppointmentExpirationGroup implements GroupInterface {
     /**
      * @return Appointment[]
      */
-    public function getAppointments() {
+    public function getAppointments(): array {
         return $this->appointments;
     }
 
-    public function getKey() {
+    public function getKey(): bool {
         return $this->isExpired;
     }
 
-    public function addItem($item) {
+    public function addItem($item): void {
         $this->appointments[] = $item;
     }
 }

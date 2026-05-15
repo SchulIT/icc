@@ -7,18 +7,16 @@ use App\Common\Entity\Tuition;
 use App\Framework\Grouping\GroupInterface;
 use App\Framework\Grouping\SortableGroupInterface;
 
-class TeacherTuitionsGroup implements GroupInterface, SortableGroupInterface {
-
-    private Teacher $teacher;
-
+/**
+ * @implements SortableGroupInterface<Teacher, Tuition>
+ */
+class TeacherTuitionsGroup implements SortableGroupInterface {
     private bool $isGradeTeacher = false;
 
     /** @var Tuition[] */
     private array $tuitions = [ ];
 
-    public function __construct(Teacher $teacher) {
-        $this->teacher = $teacher;
-    }
+    public function __construct(private readonly Teacher $teacher) { }
 
     public function getTeacher(): Teacher {
         return $this->teacher;
@@ -40,11 +38,11 @@ class TeacherTuitionsGroup implements GroupInterface, SortableGroupInterface {
         return $this;
     }
 
-    public function getKey() {
+    public function getKey(): Teacher {
         return $this->teacher;
     }
 
-    public function addItem($item) {
+    public function addItem($item): void {
         $this->tuitions[] = $item;
     }
 

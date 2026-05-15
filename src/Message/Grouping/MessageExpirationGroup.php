@@ -2,17 +2,19 @@
 
 namespace App\Message\Grouping;
 
-use App\Framework\Grouping\GroupInterface;
 use App\Framework\Grouping\SortableGroupInterface;
 use App\Message\Entity\Message;
 
-class MessageExpirationGroup implements GroupInterface, SortableGroupInterface {
+/**
+ * @implements SortableGroupInterface<bool, Message>
+ */
+class MessageExpirationGroup implements SortableGroupInterface {
     /**
      * @var Message[]
      */
     private array $messages = [ ];
 
-    public function __construct(private bool $isExpired)
+    public function __construct(private readonly bool $isExpired)
     {
     }
 
@@ -23,21 +25,21 @@ class MessageExpirationGroup implements GroupInterface, SortableGroupInterface {
     /**
      * @return Message[]
      */
-    public function getMessages() {
+    public function getMessages(): array {
         return $this->messages;
     }
 
     /**
      * @return bool
      */
-    public function getKey() {
+    public function getKey(): mixed {
         return $this->isExpired;
     }
 
     /**
      * @param Message $item
      */
-    public function addItem($item) {
+    public function addItem($item): void {
         $this->messages[] = $item;
     }
 

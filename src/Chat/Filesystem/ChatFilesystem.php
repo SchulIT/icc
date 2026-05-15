@@ -4,20 +4,25 @@ namespace App\Chat\Filesystem;
 
 use App\Chat\Entity\Chat;
 use App\Chat\Entity\ChatMessageAttachment;
+use App\Framework\Filesystem\FileNotFoundException;
 use App\Framework\Http\FlysystemFileResponse;
 use League\Flysystem\DirectoryAttributes;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
-use League\Flysystem\FilesystemReader;
 use Mimey\MimeTypes;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Response;
 use Vich\UploaderBundle\Mapping\PropertyMapping;
 use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
 
-class ChatFilesystem implements DirectoryNamerInterface {
+readonly class ChatFilesystem implements DirectoryNamerInterface {
 
-    public function __construct(private readonly FilesystemOperator $filesystem, private readonly MimeTypes $mimeTypes, private readonly LoggerInterface $logger) {
+    public function __construct(
+        #[Autowire('@oneup_flysystem.chat_filesystem')] private FilesystemOperator $filesystem,
+        private MimeTypes $mimeTypes,
+        private LoggerInterface $logger
+    ) {
 
     }
 

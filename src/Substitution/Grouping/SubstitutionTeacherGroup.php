@@ -2,17 +2,19 @@
 
 namespace App\Substitution\Grouping;
 
-use App\Framework\Grouping\GroupInterface;
+use App\Common\Entity\Teacher;
 use App\Framework\Grouping\SortableGroupInterface;
 use App\Substitution\Entity\Substitution;
-use App\Common\Entity\Teacher;
 
-class SubstitutionTeacherGroup implements GroupInterface, SortableGroupInterface {
+/**
+ * @implements SortableGroupInterface<Teacher|null, Substitution>
+ */
+class SubstitutionTeacherGroup implements SortableGroupInterface {
 
     /** @var Substitution[] */
     private array $substitutions = [ ];
 
-    public function __construct(private ?Teacher $teacher)
+    public function __construct(private readonly ?Teacher $teacher)
     {
     }
 
@@ -27,17 +29,11 @@ class SubstitutionTeacherGroup implements GroupInterface, SortableGroupInterface
         return $this->substitutions;
     }
 
-    /**
-     * @return Teacher|null
-     */
-    public function getKey() {
+    public function getKey(): ?Teacher {
         return $this->teacher;
     }
 
-    /**
-     * @param Substitution $item
-     */
-    public function addItem($item) {
+    public function addItem($item): void {
         $this->substitutions[] = $item;
     }
 

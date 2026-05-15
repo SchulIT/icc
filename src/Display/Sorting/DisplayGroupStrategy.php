@@ -6,7 +6,7 @@ use App\Display\GradeGroup;
 use App\Framework\Sorting\SortingStrategyInterface;
 use App\Framework\Sorting\StringStrategy;
 
-class DisplayGroupStrategy implements SortingStrategyInterface {
+readonly class DisplayGroupStrategy implements SortingStrategyInterface {
     public function __construct(private StringStrategy $stringStrategy)
     {
     }

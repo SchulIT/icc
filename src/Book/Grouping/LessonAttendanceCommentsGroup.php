@@ -2,13 +2,15 @@
 
 namespace App\Book\Grouping;
 
-use App\Book\Student\LessonAttendance;
 use App\Book\Entity\BookComment;
-use App\Framework\Grouping\GroupInterface;
+use App\Book\Student\LessonAttendance;
 use App\Framework\Grouping\SortableGroupInterface;
 use DateTime;
 
-class LessonAttendanceCommentsGroup implements GroupInterface, SortableGroupInterface {
+/**
+ * @implements SortableGroupInterface<DateTime, LessonAttendance|BookComment>
+ */
+class LessonAttendanceCommentsGroup implements SortableGroupInterface {
 
     /** @var LessonAttendance[] */
     private array $attendances = [ ];
@@ -16,7 +18,7 @@ class LessonAttendanceCommentsGroup implements GroupInterface, SortableGroupInte
     /** @var BookComment[] */
     private array $comments = [ ];
 
-    public function __construct(private DateTime $date)
+    public function __construct(private readonly DateTime $date)
     {
     }
 
@@ -38,7 +40,7 @@ class LessonAttendanceCommentsGroup implements GroupInterface, SortableGroupInte
         return $this->comments;
     }
 
-    public function addItem($item) {
+    public function addItem($item): void {
         if($item instanceof BookComment) {
             $this->comments[] = $item;
         } else {
@@ -46,7 +48,7 @@ class LessonAttendanceCommentsGroup implements GroupInterface, SortableGroupInte
         }
     }
 
-    public function getKey() {
+    public function getKey(): DateTime {
         return $this->date;
     }
 

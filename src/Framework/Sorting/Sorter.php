@@ -2,8 +2,8 @@
 
 namespace App\Framework\Sorting;
 
-use use App\Framework\Grouping\SortableGroupInterface;
-use App\Framework\Sorting\SortDirection;use App\Framework\Sorting\SortingStrategyInterface;use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
+use App\Framework\Grouping\SortableGroupInterface;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 class Sorter {

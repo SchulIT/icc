@@ -5,6 +5,9 @@ namespace App\Appointment\Grouping;
 use App\Appointment\Entity\Appointment;
 use App\Framework\Grouping\GroupInterface;
 
+/**
+ * @implements GroupInterface<int, Appointment>
+ */
 class AppointmentDateGroup implements GroupInterface {
 
     /**
@@ -12,15 +15,17 @@ class AppointmentDateGroup implements GroupInterface {
      */
     private array $appointments = [ ];
 
-    public function __construct(private int $key, private int $month, private int $year)
-    {
-    }
+    public function __construct(
+        private readonly int $key,
+        private readonly int $month,
+        private readonly int $year
+    ) { }
 
-    public function getKey() {
+    public function getKey(): int {
         return $this->key;
     }
 
-    public function addItem($item) {
+    public function addItem($item): void {
         $this->appointments[] = $item;
     }
 
@@ -35,7 +40,7 @@ class AppointmentDateGroup implements GroupInterface {
     /**
      * @return Appointment[]
      */
-    public function getAppointments() {
+    public function getAppointments(): array {
         return $this->appointments;
     }
 }

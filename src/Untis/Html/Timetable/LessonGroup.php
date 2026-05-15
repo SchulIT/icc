@@ -4,12 +4,15 @@ namespace App\Untis\Html\Timetable;
 
 use App\Framework\Grouping\GroupInterface;
 
+/**
+ * @implements GroupInterface<string, Lesson>
+ */
 class LessonGroup implements GroupInterface {
 
     /** @var Lesson[] */
     private array $lessons;
 
-    public function __construct(private string $key)
+    public function __construct(private readonly string $key)
     {
     }
 

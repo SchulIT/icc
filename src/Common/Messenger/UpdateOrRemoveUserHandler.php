@@ -9,18 +9,19 @@ use Exception;
 use GuzzleHttp\ClientInterface;
 use Psr\Log\LoggerInterface;
 use SchulIT\CommonBundle\Helper\DateHelper;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
 readonly class UpdateOrRemoveUserHandler {
 
-    public function __construct(private bool                    $isDebug,
-                                private UserRepositoryInterface $userRepository,
-                                private ClientInterface         $client,
-                                private DateHelper              $dateHelper,
-                                private LoggerInterface         $logger) {
-
-    }
+    public function __construct(
+        #[Autowire('%kernel.debug%')] private bool $isDebug,
+        private UserRepositoryInterface $userRepository,
+        #[Autowire('@eight_points_guzzle.client.sso')] private ClientInterface $client,
+        private DateHelper $dateHelper,
+        private LoggerInterface $logger
+    ) { }
 
     public function __invoke(UpdateOrRemoveUserMessage $message): array {
         try {

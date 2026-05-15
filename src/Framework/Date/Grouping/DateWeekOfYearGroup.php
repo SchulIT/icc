@@ -8,7 +8,10 @@ use App\Framework\Grouping\SortableGroupInterface;
 use DateTime;
 use JsonSerializable;
 
-class DateWeekOfYearGroup implements GroupInterface, SortableGroupInterface, JsonSerializable {
+/**
+ * @implements SortableGroupInterface<WeekOfYear, DateTime>
+ */
+class DateWeekOfYearGroup implements SortableGroupInterface, JsonSerializable {
 
     /** @var DateTime[] */
     private array $days;
@@ -28,11 +31,11 @@ class DateWeekOfYearGroup implements GroupInterface, SortableGroupInterface, Jso
         return $this->days;
     }
 
-    public function getKey() {
+    public function getKey(): WeekOfYear {
         return $this->week;
     }
 
-    public function addItem($item) {
+    public function addItem($item): void {
         $this->days[] = $item;
     }
 

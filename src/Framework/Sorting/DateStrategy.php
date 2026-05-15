@@ -4,6 +4,10 @@ namespace App\Framework\Sorting;
 
 use App\Framework\Sorting\SortingStrategyInterface;
 use DateTimeInterface;
+
+/**
+ * @implements SortingStrategyInterface<DateTimeInterface>
+ */
 class DateStrategy implements SortingStrategyInterface {
 
     /**

@@ -32,13 +32,6 @@ doctrine:
         auto_mapping: true
         controller_resolver:
             auto_mapping: false
-        mappings:
-            App:
-                is_bundle: false
-                dir: '%kernel.project_dir%/src/Entity'
-                prefix: 'App\Entity'
-                alias: App
-                type: attribute
         dql:
             string_functions:
                 match: DoctrineExtensions\Query\Mysql\MatchAgainst

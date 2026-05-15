@@ -10,6 +10,7 @@ use App\Notification\NotificationDeliveryTarget;
 use App\Notification\Settings\NotificationSettings;
 use SchulIT\CommonBundle\Form\FieldsetType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +22,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_ADMIN')]
 class NotificationSettingsController extends AbstractController {
 
-    public function __construct(private readonly ?string $pushoverToken) {
+    public function __construct(
+        #[Autowire('%env(PUSHOVER_TOKEN)%')] private readonly ?string $pushoverToken
+    ) {
 
     }
 

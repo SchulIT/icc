@@ -18,6 +18,7 @@ use App\Notification\Settings\NotificationSettings;
 use SchulIT\CommonBundle\Form\FieldsetType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -34,7 +35,10 @@ class ProfileController extends AbstractController {
 
     private const RemoveAppCrsfTokenKey = '_remove_app_csrf';
 
-    public function __construct(private readonly ?string $pushoverToken, RefererHelper $redirectHelper) {
+    public function __construct(
+        #[Autowire('%env(PUSHOVER_TOKEN)%')] private readonly ?string $pushoverToken,
+        RefererHelper $redirectHelper
+    ) {
         parent::__construct($redirectHelper);
     }
 

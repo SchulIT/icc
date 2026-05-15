@@ -1,11 +1,10 @@
 <?php
 
-namespace App\book\Controller;
+namespace App\Book\Controller;
 
 use App\Book\AttendanceSuggestion\RemoveSuggestionResolver;
 use App\Book\AttendanceSuggestion\SuggestionResolver;
 use App\Book\Lesson\LessonCancelHelper;
-use App\Book\Student\AbsenceExcuseResolver;
 use App\Book\StudentsResolver;
 use App\Book\Entity\Attendance;
 use App\Book\Entity\AttendanceExcuseStatus;

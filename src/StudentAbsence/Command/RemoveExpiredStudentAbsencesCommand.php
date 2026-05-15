@@ -11,15 +11,20 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
 #[AsCronTask('@monthly')]
 #[AsCommand('app:absences:cleanup', 'Löscht abgelaufene Abwesenheitsmeldungen (Lernende).')]
 readonly class RemoveExpiredStudentAbsencesCommand {
 
-    public function __construct(private StudentAbsenceSettings $settings, private StudentAbsenceRepositoryInterface $repository,
-                                private StudentAbsenceAttachmentRepositoryInterface $attachmentRepository, private Filesystem $filesystem,
-                                private DateHelper $dateHelper) { }
+    public function __construct(
+        private StudentAbsenceSettings $settings,
+        private StudentAbsenceRepositoryInterface $repository,
+        private StudentAbsenceAttachmentRepositoryInterface $attachmentRepository,
+        #[Autowire('@oneup_flysystem.student_absence_filesystem')] private Filesystem $filesystem,
+        private DateHelper $dateHelper
+    ) { }
 
     public function __invoke(SymfonyStyle $style, OutputInterface $output): int {
         $days = $this->settings->getRetentionDays();

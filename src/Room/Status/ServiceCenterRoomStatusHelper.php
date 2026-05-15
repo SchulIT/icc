@@ -7,11 +7,15 @@ use JMS\Serializer\SerializerInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class ServiceCenterRoomStatusHelper implements StatusHelperInterface {
-    public function __construct(private bool $isEnabled, private CacheItemPoolInterface $cache, private ClientInterface $client, private LoggerInterface $logger)
-    {
-    }
+    public function __construct(
+        #[Autowire('%env(bool:ROOM_STATUS)%')] private bool $isEnabled,
+        private CacheItemPoolInterface $cache,
+        #[Autowire('@eight_points_guzzle.client.servicecenter')] private ClientInterface $client,
+        private LoggerInterface $logger
+    ) { }
 
     public function retrieveFromRemote(): void {
         if($this->isEnabled !== true) {

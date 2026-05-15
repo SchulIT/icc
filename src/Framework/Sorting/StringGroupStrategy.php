@@ -6,11 +6,14 @@ use App\Framework\Grouping\StringGroup;
 use App\Framework\Sorting\SortingStrategyInterface;
 use App\Framework\Sorting\StringStrategy;
 
-class StringGroupStrategy implements SortingStrategyInterface {
+/**
+ * @implements SortingStrategyInterface<StringGroup>
+ */
+readonly class StringGroupStrategy implements SortingStrategyInterface {
 
-    public function __construct(private StringStrategy $stringStrategy)
-    {
-    }
+    public function __construct(
+        private StringStrategy $stringStrategy
+    ) { }
 
     /**
      * @param StringGroup $objectA

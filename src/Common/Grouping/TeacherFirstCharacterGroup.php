@@ -5,12 +5,15 @@ namespace App\Common\Grouping;
 use App\Common\Entity\Teacher;
 use App\Framework\Grouping\GroupInterface;
 
+/**
+ * @implements GroupInterface<string, Teacher>
+ */
 class TeacherFirstCharacterGroup implements GroupInterface {
 
     /** @var Teacher[]  */
     private array $teachers = [ ];
 
-    public function __construct(private string $firstCharacter)
+    public function __construct(private readonly string $firstCharacter)
     {
     }
 
@@ -25,17 +28,11 @@ class TeacherFirstCharacterGroup implements GroupInterface {
         return $this->teachers;
     }
 
-    /**
-     * @return string
-     */
-    public function getKey() {
+    public function getKey(): string {
         return $this->firstCharacter;
     }
 
-    /**
-     * @param Teacher $item
-     */
-    public function addItem($item) {
+    public function addItem($item): void {
         $this->teachers[] = $item;
     }
 }

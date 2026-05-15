@@ -4,15 +4,17 @@ namespace App\Document\Grouping;
 
 use App\Document\Entity\Document;
 use App\Document\Entity\DocumentCategory;
-use App\Framework\Grouping\GroupInterface;
 use App\Framework\Grouping\SortableGroupInterface;
 
-class DocumentCategoryGroup implements GroupInterface, SortableGroupInterface {
+/**
+ * @implements SortableGroupInterface<DocumentCategory, Document>
+ */
+class DocumentCategoryGroup implements SortableGroupInterface {
 
     /** @var Document[] */
-    private $documents;
+    private array $documents;
 
-    public function __construct(private DocumentCategory $category)
+    public function __construct(private readonly DocumentCategory $category)
     {
     }
 
@@ -24,11 +26,11 @@ class DocumentCategoryGroup implements GroupInterface, SortableGroupInterface {
         return $this->documents;
     }
 
-    public function getKey() {
+    public function getKey(): DocumentCategory {
         return $this->category;
     }
 
-    public function addItem($item) {
+    public function addItem($item): void {
         $this->documents[] = $item;
     }
 

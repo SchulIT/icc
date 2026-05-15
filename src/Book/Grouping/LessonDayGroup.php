@@ -3,16 +3,18 @@
 namespace App\Book\Grouping;
 
 use App\Book\Lesson;
-use App\Framework\Grouping\GroupInterface;
 use App\Framework\Grouping\SortableGroupInterface;
 use DateTime;
 
-class LessonDayGroup implements GroupInterface, SortableGroupInterface {
+/**
+ * @implements SortableGroupInterface<DateTime, Lesson>
+ */
+class LessonDayGroup implements SortableGroupInterface {
 
     /** @var Lesson[] */
-    private $lessons;
+    private array $lessons;
 
-    public function __construct(private DateTime $date)
+    public function __construct(private readonly DateTime $date)
     {
     }
 
@@ -37,11 +39,11 @@ class LessonDayGroup implements GroupInterface, SortableGroupInterface {
         return null;
     }
 
-    public function getKey() {
+    public function getKey(): DateTime {
         return $this->date;
     }
 
-    public function addItem($item) {
+    public function addItem($item): void {
         $this->lessons[] = $item;
     }
 

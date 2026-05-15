@@ -2,10 +2,10 @@
 
 namespace App\Framework\Grouping;
 
-use App\Framework\Grouping\GroupInterface;
-use App\Framework\Grouping\SortableGroupInterface;
-
-class StringGroup implements GroupInterface, SortableGroupInterface {
+/**
+ * @implements SortableGroupInterface<string, string>
+ */
+class StringGroup implements SortableGroupInterface {
 
     private ?array $items = null;
 
@@ -13,11 +13,11 @@ class StringGroup implements GroupInterface, SortableGroupInterface {
     {
     }
 
-    public function getKey() {
+    public function getKey(): ?string {
         return $this->key;
     }
 
-    public function addItem($item) {
+    public function addItem($item): void {
         $this->items[] = $item;
     }
 

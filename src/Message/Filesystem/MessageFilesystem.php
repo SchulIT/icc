@@ -19,6 +19,7 @@ use Mimey\MimeTypes;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use RuntimeException;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -27,7 +28,12 @@ use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
 
 class MessageFilesystem implements DirectoryNamerInterface {
 
-    public function __construct(private readonly TokenStorageInterface $tokenStorage, private readonly FilesystemOperator $filesystem, private readonly MimeTypes $mimeTypes, private readonly LoggerInterface $logger) {    }
+    public function __construct(
+        private readonly TokenStorageInterface $tokenStorage,
+        #[Autowire('@oneup_flysystem.messages_filesystem')] private readonly FilesystemOperator $filesystem,
+        private readonly MimeTypes $mimeTypes,
+        private readonly LoggerInterface $logger
+    ) {    }
 
     /**
      * @throws FileNotFoundException|FilesystemException

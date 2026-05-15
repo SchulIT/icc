@@ -6,6 +6,9 @@ use App\Framework\Grouping\GroupInterface;
 use App\Message\Entity\Message;
 use App\Common\Entity\UserType;
 
+/**
+ * @implements GroupInterface<UserType, Message>
+ */
 class MessageVisibilityGroup implements GroupInterface {
 
     /**
@@ -13,7 +16,7 @@ class MessageVisibilityGroup implements GroupInterface {
      */
     private array $messages = [ ];
 
-    public function __construct(private UserType $userType)
+    public function __construct(private readonly UserType $userType)
     {
     }
 
@@ -24,21 +27,21 @@ class MessageVisibilityGroup implements GroupInterface {
     /**
      * @return Message[]
      */
-    public function getMessages() {
+    public function getMessages(): array {
         return $this->messages;
     }
 
     /**
      * @return UserType
      */
-    public function getKey() {
+    public function getKey(): mixed {
         return $this->userType;
     }
 
     /**
      * @param Message $item
      */
-    public function addItem($item) {
+    public function addItem($item): void {
         $this->messages[] = $item;
     }
 

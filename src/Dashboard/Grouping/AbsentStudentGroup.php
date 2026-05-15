@@ -3,15 +3,17 @@
 namespace App\Dashboard\Grouping;
 
 use App\Book\Entity\BookEvent;
-use App\Common\Entity\Student;
+use App\Dashboard\AbsentStudent;
 use App\Exam\Entity\Exam;
-use App\Framework\Grouping\GroupInterface;
 use App\Framework\Grouping\SortableGroupInterface;
 
-class AbsentStudentGroup implements GroupInterface, SortableGroupInterface {
+/**
+ * @implements SortableGroupInterface<BookEvent|Exam, AbsentStudent>
+ */
+class AbsentStudentGroup implements SortableGroupInterface {
 
-    /** @var Student[] */
-    private $students;
+    /** @var AbsentStudent[] */
+    private array $students;
 
     /**
      * @param BookEvent|Exam|null $objective
@@ -27,11 +29,11 @@ class AbsentStudentGroup implements GroupInterface, SortableGroupInterface {
         return $this->objective;
     }
 
-    public function getKey() {
+    public function getKey(): null|Exam|BookEvent {
         return $this->objective;
     }
 
-    public function addItem($item) {
+    public function addItem($item): void {
         $this->students[] = $item;
     }
 

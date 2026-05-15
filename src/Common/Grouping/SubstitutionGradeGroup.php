@@ -7,12 +7,15 @@ use App\Framework\Grouping\GroupInterface;
 use App\Framework\Grouping\SortableGroupInterface;
 use App\Substitution\Entity\Substitution;
 
+/**
+ * @implements SortableGroupInterface<Grade|null, Substitution>
+ */
 class SubstitutionGradeGroup implements GroupInterface, SortableGroupInterface {
 
     /** @var Substitution[] */
     private array $substitutions = [ ];
 
-    public function __construct(private ?Grade $grade)
+    public function __construct(private readonly ?Grade $grade)
     {
     }
 
@@ -27,17 +30,11 @@ class SubstitutionGradeGroup implements GroupInterface, SortableGroupInterface {
         return $this->substitutions;
     }
 
-    /**
-     * @return Grade|null
-     */
-    public function getKey() {
+    public function getKey(): ?Grade {
         return $this->grade;
     }
 
-    /**
-     * @param Substitution $item
-     */
-    public function addItem($item) {
+    public function addItem($item): void {
         $this->substitutions[] = $item;
     }
 

@@ -10,15 +10,15 @@ security:
     providers:
         database:
             entity:
-                class: App\Entity\User
+                class: App\Common\Entity\User
                 property: idpId
         database_with_username:
             entity:
-                class: App\Entity\User
+                class: App\Common\Entity\User
                 property: username
         oauth2:
             entity:
-                class: App\Entity\User
+                class: App\Common\Entity\User
                 property: username
         import:
             memory:
@@ -146,7 +146,7 @@ security:
             pattern: ^/api/import
             provider: import
             custom_authenticators:
-                - App\Security\ImportUserAuthenticator
+                - App\Common\Security\ImportUserAuthenticator
             stateless: true
 
         #api_token:
@@ -164,7 +164,7 @@ security:
             pattern: ^/(appointments|timetable|exams)/ics/download(?!$)
             stateless: true
             custom_authenticators:
-                - App\Security\DeviceAuthenticator
+                - App\Common\Security\DeviceAuthenticator
             provider: database_with_username
 
         login:
@@ -181,12 +181,12 @@ security:
             provider: database
             saml:
                 provider: database
-                user_creator: App\Security\User\UserCreator
+                user_creator: App\Common\Security\User\UserCreator
                 login_path: /saml/login
                 check_path: /saml/login_check
-                attribute_mapper: App\Security\User\AttributeMapper
+                attribute_mapper: App\Common\Security\User\AttributeMapper
                 failure_path: /auth/error
-            user_checker: App\Security\UserChecker
+            user_checker: App\Common\Security\UserChecker
             logout:
                 path: /logout
                 target: /logout/success

@@ -15,8 +15,8 @@ use Symfony\Component\Scheduler\Attribute\AsCronTask;
 #[AsCommand('app:users:update', 'Aktualisiert alle Benutzer aus dem Single-Sign-On und löscht sie bei Bedarf aus dem System (falls aktiviert)')]
 #[AsCronTask('@daily')]
 readonly class UpdateUsersFromSsoCommand {
-    public function __construct(private string|null $ssoUrl,
-                                private string|null  $ssoToken,
+    public function __construct(#[Autowire('%env(SSO_URL)%')] private string|null $ssoUrl,
+                                #[Autowire('%env(SSO_APITOKEN)%')] private string|null  $ssoToken,
                                 #[Autowire(env: 'SSO_USER_UPDATE')] private bool $enabled,
                                 private UserRepositoryInterface $userRepository,
                                 private MessageBusInterface $messageBus) { }

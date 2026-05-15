@@ -6,7 +6,10 @@ use App\Framework\Grouping\GroupInterface;
 use App\Framework\Grouping\SortableGroupInterface;
 use App\StudentAbsence\Entity\StudentAbsence;
 
-class StudentAbsenceGenericGroup implements GroupInterface, SortableGroupInterface {
+/**
+ * @implements SortableGroupInterface<null, StudentAbsence>
+ */
+class StudentAbsenceGenericGroup implements SortableGroupInterface {
 
     /** @var StudentAbsence[] */
     private array $absences = [ ];
@@ -20,11 +23,11 @@ class StudentAbsenceGenericGroup implements GroupInterface, SortableGroupInterfa
         return $this->absences;
     }
 
-    public function getKey() {
+    public function getKey(): null {
         return null;
     }
 
-    public function addItem($item) {
+    public function addItem($item): void {
         $this->absences[] = $item;
     }
 

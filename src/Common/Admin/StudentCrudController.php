@@ -6,6 +6,7 @@ use App\Common\Entity\Gender;
 use App\Common\Entity\Student;
 use App\LearningManagementSystem\Form\StudentLearningManagementSystemInformationType;
 use App\Book\Repository\LessonAttendanceRepositoryInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -102,10 +103,8 @@ class StudentCrudController extends AbstractCrudController
         ];
     }
 
-    public function removeAttendance(AdminContext $context, Request $request, TranslatorInterface $translator): Response {
-        /** @var Student $student */
-        $student = $context->getEntity()->getInstance();
-
+    #[AdminRoute('/{entityId:student.id}/remove_attendance')]
+    public function removeAttendance(Student $student, AdminContext $context, Request $request, TranslatorInterface $translator): Response {
         $form = $this->createForm(ConfirmType::class, [], [
             'message' => 'admin.ea.students.remove_attendance.confirm',
             'message_parameters' => [
@@ -139,6 +138,7 @@ class StudentCrudController extends AbstractCrudController
 
         return $this->render('admin/ea/form.html.twig', [
             'header' => 'admin.ea.students.remove_attendance.label',
+            'action' => 'actions.confirm',
             'form' => $form->createView()
         ]);
     }

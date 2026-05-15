@@ -2,22 +2,16 @@
 
 namespace App\Common\Admin;
 
-use App\Substitution\Entity\Absence;
-use App\Exam\Entity\Exam;
-use App\Substitution\Entity\FreeTimespan;
-use App\Common\Entity\Grade;
-use App\Substitution\Entity\Infotext;
-use App\LearningManagementSystem\Entity\LearningManagementSystem;
-use App\Privacy\Entity\PrivacyCategory;
-use App\Common\Entity\Room;
-use App\Common\Entity\Student;
-use App\LearningManagementSystem\Entity\StudentLearningManagementSystemInformation;
-use App\Common\Entity\StudyGroup;
-use App\Substitution\Entity\Substitution;
-use App\Timetable\Entity\TimetableLesson;
-use App\Timetable\Entity\TimetableSupervision;
-use App\Common\Entity\Tuition;
-use App\Common\Entity\User;
+use App\Exam\Admin\ExamCrudController;
+use App\LearningManagementSystem\Admin\LearningManagementSystemCrudController;
+use App\Privacy\Admin\PrivacyCategoryCrudController;
+use App\Substitution\Admin\AbsenceCrudController;
+use App\Substitution\Admin\FreeTimespanCrudController;
+use App\Substitution\Admin\InfotextCrudController;
+use App\Substitution\Admin\SubstitutionCrudController;
+use App\Timetable\Admin\TimetableLessonCrudController;
+use App\Timetable\Admin\TimetableSupervisionCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -25,6 +19,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[AdminDashboard]
 class DashboardController extends AbstractDashboardController
 {
     #[Route(path: '/admin/ea')]
@@ -47,33 +42,33 @@ class DashboardController extends AbstractDashboardController
     {
         return [
             MenuItem::section('Stammdaten Schulverwaltung'),
-            MenuItem::linkToCrud('Schülerinnen und Schüler', 'fas fa-user-graduate', Student::class),
-            MenuItem::linkToCrud('Klassen', 'fas fa-users', Grade::class),
-            MenuItem::linkToCrud('Lerngruppen', 'fas fa-users', StudyGroup::class),
+            MenuItem::linkTo(StudentCrudController::class, 'Schülerinnen und Schüler', 'fas fa-user-graduate'),
+            MenuItem::linkTo(GradeCrudController::class, 'Klassen', 'fas fa-users'),
+            MenuItem::linkTo(StudyGroupCrudController::class, 'Lerngruppen', 'fas fa-users'),
             //MenuItem::linkToCrud('StudyGroupMembership', '', StudyGroupMembership::class),
-            MenuItem::linkToCrud('Unterrichte', 'fas fa-chalkboard-teacher', Tuition::class),
+            MenuItem::linkTo(TuitionCrudController::class, 'Unterrichte', 'fas fa-chalkboard-teacher'),
 
             MenuItem::section('SchILD-NRW'),
-            MenuItem::linkToCrud('Datenschutzkategorien', 'fas fa-user-shield', PrivacyCategory::class),
-            MenuItem::linkToCrud('Lernplattformen', 'fas fa-mail-bulk', LearningManagementSystem::class),
-            MenuItem::linkToCrud('Lernplattform-Zustimmungen', 'fas fa-mail-bulk', StudentLearningManagementSystemInformation::class),
+            MenuItem::linkTo(PrivacyCategoryCrudController::class, 'Datenschutzkategorien', 'fas fa-user-shield'),
+            MenuItem::linkTo(LearningManagementSystemCrudController::class, 'Lernplattformen', 'fas fa-mail-bulk'),
+            MenuItem::linkTo(StudentLearningManagementSystemInformationCrudController::class, 'Lernplattform-Zustimmungen', 'fas fa-mail-bulk'),
 
             MenuItem::section('Vertretungsplan'),
-            MenuItem::linkToCrud('Absenzen', 'fas fa-user-times', Absence::class),
-            MenuItem::linkToCrud('Unterrichtsfreie Zeiten', 'far fa-calendar-times', FreeTimespan::class),
-            MenuItem::linkToCrud('Tagestexte', 'fas fa-info-circle', Infotext::class),
-            MenuItem::linkToCrud('Vertretungen', 'fas fa-random', Substitution::class),
+            MenuItem::linkTo(AbsenceCrudController::class, 'Absenzen', 'fas fa-user-times'),
+            MenuItem::linkTo(FreeTimespanCrudController::class, 'Unterrichtsfreie Zeiten', 'far fa-calendar-times'),
+            MenuItem::linkTo(InfotextCrudController::class, 'Tagestexte', 'fas fa-info-circle'),
+            MenuItem::linkTo(SubstitutionCrudController::class, 'Vertretungen', 'fas fa-random'),
 
             MenuItem::section('Stundenplan'),
-            MenuItem::linkToCrud('Räume', 'fas fa-door-open', Room::class),
-            MenuItem::linkToCrud('Stundenplanstunden', 'fas fa-clock', TimetableLesson::class),
-            MenuItem::linkToCrud('Aufsichten', 'fas fa-eye', TimetableSupervision::class),
+            MenuItem::linkTo(RoomCrudController::class, 'Räume', 'fas fa-door-open'),
+            MenuItem::linkTo(TimetableLessonCrudController::class, 'Stundenplanstunden', 'fas fa-clock'),
+            MenuItem::linkTo(TimetableSupervisionCrudController::class, 'Aufsichten', 'fas fa-eye'),
 
             MenuItem::section('Klausurplan'),
-            MenuItem::linkToCrud('Klausuren', 'fas fa-edit', Exam::class),
+            MenuItem::linkTo(ExamCrudController::class, 'Klausuren', 'fas fa-edit'),
 
             MenuItem::section('Sonstiges'),
-            MenuItem::linkToCrud('Benutzer', 'fas fa-users', User::class),
+            MenuItem::linkTo(UserCrudController::class, 'Benutzer', 'fas fa-users'),
 
         ];
     }

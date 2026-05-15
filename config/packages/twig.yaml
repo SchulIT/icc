@@ -10,3 +10,4 @@ twig:
         config: '@SchulIT\CommonBundle\Twig\ConfigVariable'
         user: '@App\Infrastructure\Twig\UserVariable'
         profile_url: "%env(IDP_PROFILE_URL)%"
+        dashboardSettings: '@App\Dashboard\Settings\DashboardSettings'

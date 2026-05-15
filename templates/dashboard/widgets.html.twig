@@ -534,8 +534,8 @@
 {% endmacro %}
 
 {% macro healthInfo(hasStudentsWithHealthInfo) %}
-    {% if settings.dashboard.healthUrl is not empty and hasStudentsWithHealthInfo and is_granted('new-student-info') %}
-        <a href="{{ settings.dashboard.healthUrl }}" target="_blank" class="btn btn-outline-secondary btn-sm align-self-center me-n2">
+    {% if dashboardSettings.healthUrl is not empty and hasStudentsWithHealthInfo and is_granted('new-student-info') %}
+        <a href="{{ dashboardSettings.healthUrl }}" target="_blank" class="btn btn-outline-secondary btn-sm align-self-center me-n2">
             <i class="fa-solid fa-notes-medical"></i>
         </a>
     {% endif %}

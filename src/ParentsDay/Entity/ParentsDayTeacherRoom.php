@@ -15,13 +15,13 @@ class ParentsDayTeacherRoom {
 
     #[ORM\Id]
     #[ORM\ManyToOne(targetEntity: ParentsDay::class)]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     #[Assert\NotNull]
     private ParentsDay $parentsDay;
 
     #[ORM\Id]
     #[ORM\ManyToOne(targetEntity: Teacher::class)]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     #[Assert\NotNull]
     private Teacher $teacher;
 

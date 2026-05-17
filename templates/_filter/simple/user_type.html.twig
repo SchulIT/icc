@@ -1,0 +1,10 @@
+<select name="user_type" id="usertype" class="form-select form-select-sm" data-trigger="submit">
+    {% if userTypeFilter.handleNull %}
+        <option value="" {% if userTypeFilter.currentType is null %}selected="selected"{% endif %}>{{ 'label.select.all'|trans }}</option>
+    {% else %}
+        <option value="" placeholder>{{ 'label.select.usertype'|trans }}</option>
+    {% endif %}
+    {% for t in userTypeFilter.types %}
+        <option value="{{ t.value }}" {% if userTypeFilter.currentType != null and userTypeFilter.currentType.value == t.value %}selected="selected"{% endif %}>{{ t|enum }}</option>
+    {% endfor %}
+</select>

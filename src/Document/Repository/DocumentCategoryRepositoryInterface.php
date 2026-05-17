@@ -3,6 +3,8 @@
 namespace App\Document\Repository;
 
 use App\Document\Entity\DocumentCategory;
+use App\Framework\Repository\PaginatedResult;
+use App\Framework\Repository\PaginationQuery;
 
 interface DocumentCategoryRepositoryInterface {
 
@@ -15,7 +17,13 @@ interface DocumentCategoryRepositoryInterface {
     /**
      * @return DocumentCategory[]
      */
-    public function findAll();
+    public function findAll(): array;
+
+    /**
+     * @param PaginationQuery $paginationQuery
+     * @return PaginatedResult<DocumentCategory>
+     */
+    public function findPaginated(PaginationQuery $paginationQuery): PaginatedResult;
 
     /**
      * @param DocumentCategory $category

@@ -5,7 +5,7 @@ namespace App\Document\Sorting;
 use App\Document\Entity\DocumentCategory;
 use App\Framework\Sorting\AbstractStringPropertyStrategy;
 
-class DocumentCategoryNameStrategy extends AbstractStringPropertyStrategy {
+class SortDocumentCategoryByNameStrategy extends AbstractStringPropertyStrategy {
 
     /**
      * @param DocumentCategory $object

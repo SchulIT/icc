@@ -2,56 +2,82 @@
 
 namespace App\Document\Controller;
 
-use App\Framework\Controller\AbstractController;
-use App\Framework\Feature\Feature;
-use App\Framework\Feature\IsFeatureEnabled;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
-use Symfony\Component\HttpFoundation\Response;
+use App\Common\Entity\User;
+use App\Common\Section\SectionResolverInterface;
+use App\Common\View\Filter\GradeFilter;
+use App\Common\View\Filter\UserTypeFilter;
 use App\Document\Entity\Document;
 use App\Document\Form\DocumentType;
 use App\Document\Grouping\DocumentCategoryStrategy;
-use App\Framework\Grouping\Grouper;
+use App\Document\Repository\DocumentCategoryRepositoryInterface;
 use App\Document\Repository\DocumentRepositoryInterface;
-use App\Repository\LogRepositoryInterface;
-use App\Document\Voter\DocumentVoter;
 use App\Document\Sorting\DocumentCategoryGroupStrategy;
 use App\Document\Sorting\DocumentNameStrategy;
-use App\Sorting\LogEntryStrategy;
-use App\Framework\Sorting\SortDirection;
+use App\Document\View\Filter\DocumentCategoryFilter;
+use App\Document\Voter\DocumentVoter;
+use App\Framework\Controller\AbstractController;
+use App\Framework\Feature\Feature;
+use App\Framework\Feature\IsFeatureEnabled;
+use App\Framework\Grouping\Grouper;
+use App\Framework\Repository\PaginationQuery;
 use App\Framework\Sorting\Sorter;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route(path: '/admin/documents')]
 #[IsFeatureEnabled(Feature::Documents)]
 class DocumentAdminController extends AbstractController {
 
-    public function __construct(private DocumentRepositoryInterface $repository, RefererHelper $refererHelper) {
+    public function __construct(
+        private DocumentRepositoryInterface $repository,
+        RefererHelper $refererHelper
+    ) {
         parent::__construct($refererHelper);
     }
 
     #[Route(path: '', name: 'admin_documents')]
-    public function index(Sorter $sorter, Grouper $grouper): Response {
+    public function index(
+        UserTypeFilter $userTypeFilter,
+        GradeFilter $gradeFilter,
+        DocumentCategoryFilter $documentCategoryFilter,
+        SectionResolverInterface $sectionResolver,
+        #[CurrentUser] User $user,
+        #[MapQueryParameter] int $page = 1,
+        #[MapQueryParameter(name: 'user_type', filter: FILTER_DEFAULT, flags: FILTER_FLAG_EMPTY_STRING_NULL | FILTER_NULL_ON_FAILURE)] string|null $userTypeValue = null,
+        #[MapQueryParameter(name: 'grade', filter: FILTER_DEFAULT, flags: FILTER_FLAG_EMPTY_STRING_NULL | FILTER_NULL_ON_FAILURE)] string|null $gradeUuid = null,
+        #[MapQueryParameter(name: 'category', filter: FILTER_DEFAULT, flags: FILTER_FLAG_EMPTY_STRING_NULL | FILTER_NULL_ON_FAILURE)] string|null $categoryUuid = null,
+        #[MapQueryParameter] string|null $query = null,
+    ): Response {
         $this->denyAccessUnlessGranted(DocumentVoter::Admin);
 
-        $documents = [ ];
+        $userTypeFilterView = $userTypeFilter->handle($userTypeValue);
+        $gradeFilterView = $gradeFilter->handle($gradeUuid, $sectionResolver->getCurrentSection(), $user);
+        $categoryFilterView = $documentCategoryFilter->handle($categoryUuid);
 
-        foreach($this->repository->findAll() as $document) {
-            if($this->isGranted(DocumentVoter::Edit, $document)) {
-                $documents[] = $document;
-            }
-        }
+        dump($userTypeFilterView->getCurrentType());
+        dump($userTypeValue);
 
-        $categories = $grouper->group($documents, DocumentCategoryStrategy::class);
-        $sorter->sort($categories, DocumentCategoryGroupStrategy::class);
-        $sorter->sortGroupItems($categories, DocumentNameStrategy::class);
+        $documents = $this->repository->findPaginated(
+            new PaginationQuery(page: $page),
+            $userTypeFilterView->getCurrentType(),
+            $gradeFilterView->getCurrentGrade(),
+            $categoryFilterView->currentCategory,
+            $query
+        );
 
         return $this->render('admin/documents/index.html.twig', [
-            'categories' => $categories
+            'categoryFilter' => $categoryFilterView,
+            'userTypeFilter' => $userTypeFilterView,
+            'gradeFilter' => $gradeFilterView,
+            'query' => $query,
+            'documents' => $documents,
         ]);
     }
 

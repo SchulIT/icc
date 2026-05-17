@@ -2,19 +2,20 @@
 
 namespace App\Document\Controller;
 
-use App\Framework\Controller\AbstractController;
 use App\Document\Entity\DocumentCategory;
-use App\Framework\Feature\Feature;
-use App\Framework\Feature\IsFeatureEnabled;
 use App\Document\Form\DocumentCategoryType;
 use App\Document\Repository\DocumentCategoryRepositoryInterface;
-use App\Document\Sorting\DocumentCategoryNameStrategy;
+use App\Framework\Controller\AbstractController;
+use App\Framework\Feature\Feature;
+use App\Framework\Feature\IsFeatureEnabled;
+use App\Framework\Repository\PaginationQuery;
 use App\Framework\Sorting\Sorter;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -24,14 +25,18 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[IsGranted('ROLE_DOCUMENTS_ADMIN')]
 class DocumentCategoryAdminController extends AbstractController {
 
-    public function __construct(private DocumentCategoryRepositoryInterface $repository, RefererHelper $refererHelper) {
+    public function __construct(
+        private readonly DocumentCategoryRepositoryInterface $repository,
+        RefererHelper $refererHelper
+    ) {
         parent::__construct($refererHelper);
     }
 
     #[Route(path: '', name: 'admin_document_categories')]
-    public function index(Sorter $sorter): Response {
-        $categories = $this->repository->findAll();
-        $sorter->sort($categories, DocumentCategoryNameStrategy::class);
+    public function index(
+        #[MapQueryParameter] int $page = 1
+    ): Response {
+        $categories = $this->repository->findPaginated(new PaginationQuery($page));
 
         return $this->render('admin/documents/categories/index.html.twig', [
             'categories' => $categories

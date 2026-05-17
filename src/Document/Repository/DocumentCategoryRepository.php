@@ -5,6 +5,8 @@ namespace App\Document\Repository;
 use App\Framework\Repository\AbstractRepository;
 use App\Document\Entity\DocumentCategory;
 use App\Document\Repository\DocumentCategoryRepositoryInterface;
+use App\Framework\Repository\PaginatedResult;
+use App\Framework\Repository\PaginationQuery;
 use Doctrine\ORM\EntityManagerInterface;
 
 class DocumentCategoryRepository extends AbstractRepository implements DocumentCategoryRepositoryInterface {
@@ -19,11 +21,20 @@ class DocumentCategoryRepository extends AbstractRepository implements DocumentC
     /**
      * @return DocumentCategory[]
      */
-    public function findAll() {
+    public function findAll(): array {
         return $this->em->getRepository(DocumentCategory::class)
             ->findBy([], [
                 'name' => 'asc'
             ]);
+    }
+
+    public function findPaginated(PaginationQuery $paginationQuery): PaginatedResult {
+        $qb = $this->em->createQueryBuilder()
+            ->select('c')
+            ->from(DocumentCategory::class, 'c')
+            ->orderBy('c.name', 'ASC');
+
+        return PaginatedResult::fromQueryBuilder($qb, $paginationQuery);
     }
 
     public function persist(DocumentCategory $category): void {

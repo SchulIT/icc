@@ -8,6 +8,8 @@ use App\Common\Entity\Grade;
 use App\Common\Entity\StudyGroup;
 use App\Common\Entity\User;
 use App\Common\Entity\UserType;
+use App\Framework\Repository\PaginatedResult;
+use App\Framework\Repository\PaginationQuery;
 
 interface DocumentRepositoryInterface {
 
@@ -24,25 +26,30 @@ interface DocumentRepositoryInterface {
     public function findOneByUuid(string $uuid): ?Document;
 
     /**
-     * @return Document[]
-     */
-    public function findAllByCategory(DocumentCategory $category);
-
-    /**
      * @param User $user
-     * @return Document[]
+     * @return int
      */
-    public function findAllByAuthor(User $user): array;
+    public function countDocumentsEditableByAuthor(User $user): int;
 
     /**
      * @return Document[]
      */
-    public function findAllFor(UserType $type, ?Grade $grade = null, ?string $q = null);
+    public function findAllFor(UserType $type, ?Grade $grade = null, ?string $q = null): array;
 
     /**
      * @return Document[]
      */
-    public function findAll();
+    public function findAll(): array;
+
+    /**
+     * @param PaginationQuery $paginationQuery
+     * @param UserType|null $userType
+     * @param Grade|null $grade
+     * @param DocumentCategory|null $category
+     * @param string|null $query
+     * @return PaginatedResult<Document>
+     */
+    public function findPaginated(PaginationQuery $paginationQuery, UserType|null $userType, Grade|null $grade = null, DocumentCategory|null $category = null, string|null $query = null): PaginatedResult;
 
     /**
      * @param Document $document

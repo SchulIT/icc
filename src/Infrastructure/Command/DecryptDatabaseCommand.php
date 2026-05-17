@@ -9,7 +9,7 @@ use App\ParentsDay\Entity\ParentsDayParentalInformation;
 use App\StudentAbsence\Entity\StudentAbsenceMessage;
 use App\LearningManagementSystem\Entity\StudentLearningManagementSystemInformation;
 use App\TeacherAbsence\Entity\TeacherAbsence;
-use App\Document\Sorting\DocumentCategoryNameStrategy;
+use App\Document\Sorting\SortDocumentCategoryByNameStrategy;
 use Defuse\Crypto\Crypto;
 use Doctrine\ORM\EntityManagerInterface;
 use SensitiveParameter;

@@ -12,7 +12,7 @@ use App\Common\Form\Choice\GradeChoiceType;
 use App\Common\Form\Type\MarkdownType;
 use App\Common\Form\Type\SortableEntityType;
 use App\Common\Form\UserTypeEntityType;
-use App\Document\Sorting\DocumentCategoryNameStrategy;
+use App\Document\Sorting\SortDocumentCategoryByNameStrategy;
 use App\Common\Sorting\GradeNameStrategy;
 use App\Common\Sorting\UserUsernameStrategy;
 use Doctrine\ORM\EntityRepository;
@@ -25,7 +25,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class DocumentType extends AbstractType {
 
-    public function __construct(private readonly DocumentCategoryNameStrategy $documentCategoryNameStrategy, private readonly UserStringConverter $userConverter, private readonly UserUsernameStrategy $userStrategy, private readonly AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(private readonly SortDocumentCategoryByNameStrategy $documentCategoryNameStrategy, private readonly UserStringConverter $userConverter, private readonly UserUsernameStrategy $userStrategy, private readonly AuthorizationCheckerInterface $authorizationChecker)
     {
     }
 
@@ -109,7 +109,10 @@ class DocumentType extends AbstractType {
                                 'choice_label' => fn(User $user) => $this->userConverter->convert($user),
                                 'sort_by' => $this->userStrategy,
                                 'multiple' => true,
-                                'required' => false
+                                'required' => false,
+                                'attr' => [
+                                    'data-choice' => 'true'
+                                ]
                             ]);
                     }
                 ]);

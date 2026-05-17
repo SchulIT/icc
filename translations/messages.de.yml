@@ -1342,6 +1342,7 @@ admin:
 
     documents:
         label: Dokumente
+        count: '%count% Dokumente'
         overview:
             label: Dokumentenübersicht
             empty: Aktuell gibt es keine Dokumente.
@@ -1359,6 +1360,7 @@ admin:
 
         categories:
             label: Dokument-Kategorien verwalten
+            count: '%count% Dokument-Kategorien'
             overview:
                 empty: Aktuell sind keine Kategorien vorhanden.
                 back: Zurück zu den Dokumenten

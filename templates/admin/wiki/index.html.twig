@@ -1,4 +1,4 @@
-{% extends "admin/_main.html.twig" %}
+{% extends "admin/_main_nosidebar.html.twig" %}
 
 {% block title %}{{ 'admin.wiki.label'|trans }}{% endblock %}
 
@@ -51,48 +51,44 @@
     {% endfor %}
 {% endmacro %}
 
-{% block inner %}
-    {% if tree|length == 0 %}
-        <div class="bs-callout bs-callout-info">
-            <h5>{{ 'info.label'|trans }}</h5>
-
-            <p>{{ 'admin.wiki.overview.empty'|trans }}</p>
-        </div>
-    {% else %}
-        <div class="card">
-            <div class="table-responsive">
-                <table class="table table-hover table-striped card-table">
-                    <colgroup>
-                        <col>
-                        <col class="column-sm">
-                        <col class="column-320">
-                        <col class="column-sm">
-                    </colgroup>
-                    <thead>
-                    <tr>
-                        <th>{{ 'label.title'|trans }}</th>
-                        <th>{{ 'label.status'|trans }}</th>
-                        <th>{{ 'label.visibility'|trans }}</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for article in tree %}
-                        {{ _self.wiki_article(article, 0) }}
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    {% endif %}
+{% block buttons %}
+    <a href="{{ path('add_wiki_article') }}" class="btn btn-primary btn-sm">
+        <i class="fa fa-plus"></i> {{ 'admin.wiki.add.label'|trans }}
+    </a>
 {% endblock %}
 
-{% block sidebar %}
-    <div class="card">
-        <div class="list-group list-group-flush">
-            <a href="{{ path('add_wiki_article') }}" class="list-group-item list-group-item-action">
-                <i class="fa fa-plus"></i> {{ 'admin.wiki.add.label'|trans }}
-            </a>
+{% block table %}
+    {% if tree|length == 0 %}
+        <div class="card-body">
+            <div class="bs-callout bs-callout-info mb-0">
+                <h5>{{ 'info.label'|trans }}</h5>
+
+                <p>{{ 'admin.wiki.overview.empty'|trans }}</p>
+            </div>
         </div>
-    </div>
+    {% else %}
+        <div class="table-responsive">
+            <table class="table table-hover table-striped card-table">
+                <colgroup>
+                    <col>
+                    <col class="column-sm">
+                    <col class="column-320">
+                    <col class="column-sm">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>{{ 'label.title'|trans }}</th>
+                    <th>{{ 'label.status'|trans }}</th>
+                    <th>{{ 'label.visibility'|trans }}</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for article in tree %}
+                    {{ _self.wiki_article(article, 0) }}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
 {% endblock %}

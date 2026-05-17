@@ -61,9 +61,6 @@ class DocumentAdminController extends AbstractController {
         $gradeFilterView = $gradeFilter->handle($gradeUuid, $sectionResolver->getCurrentSection(), $user);
         $categoryFilterView = $documentCategoryFilter->handle($categoryUuid);
 
-        dump($userTypeFilterView->getCurrentType());
-        dump($userTypeValue);
-
         $documents = $this->repository->findPaginated(
             new PaginationQuery(page: $page),
             $userTypeFilterView->getCurrentType(),

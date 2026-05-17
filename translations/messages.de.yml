@@ -1599,6 +1599,7 @@ admin:
 
     sections:
         label: Abschnitte
+        count: '%count% Abschnitte'
         empty: Aktuell sind keine Abschnitte im System.
         add:
             label: Neuer Abschnitt

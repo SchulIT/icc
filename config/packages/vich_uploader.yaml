@@ -8,17 +8,17 @@ vich_uploader:
     mappings:
         messages:
             upload_destination: oneup_flysystem.messages_filesystem
-            directory_namer: App\Filesystem\MessageFilesystem
+            directory_namer: App\Message\Filesystem\MessageFilesystem
             namer: Vich\UploaderBundle\Naming\UniqidNamer
             delete_on_update: false
         documents:
             upload_destination: oneup_flysystem.documents_filesystem
-            directory_namer: App\Filesystem\DocumentFilesystem
+            directory_namer: App\Document\Filesystem\DocumentFilesystem
             namer: Vich\UploaderBundle\Naming\UniqidNamer
         student_absence:
             upload_destination: oneup_flysystem.student_absence_filesystem
             namer: Vich\UploaderBundle\Naming\UniqidNamer
         chat:
             upload_destination: oneup_flysystem.chat_filesystem
-            directory_namer: App\Filesystem\ChatFilesystem
+            directory_namer: App\Chat\Filesystem\ChatFilesystem
             namer: Vich\UploaderBundle\Naming\UniqidNamer

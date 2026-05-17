@@ -27,6 +27,7 @@ class MessageVoter extends Voter {
     public const View = 'view';
     public const Edit = 'edit';
     public const Remove = 'remove';
+    public const RemoveBulk = 'remove-messages-bulk';
     public const Confirm = 'confirm';
     public const Dismiss = 'dismiss';
     public const Download = 'download';
@@ -42,6 +43,10 @@ class MessageVoter extends Voter {
      * @inheritDoc
      */
     protected function supports($attribute, $subject): bool {
+        if($attribute === self::RemoveBulk) {
+            return true;
+        }
+
         $attributes = [
             self::View,
             self::Edit,
@@ -70,6 +75,7 @@ class MessageVoter extends Voter {
             self::View => $this->canView($subject, $token),
             self::Edit => $this->canEdit($subject, $token),
             self::Remove => $this->canRemove($subject, $token),
+            self::RemoveBulk => $this->canRemoveBulk($token),
             self::Confirm => $this->canConfirm($subject, $token),
             self::Dismiss => $this->canDismiss($subject, $token),
             self::Download => $this->canDownload($subject, $token),
@@ -140,6 +146,10 @@ class MessageVoter extends Voter {
 
     private function canRemove(Message $message, TokenInterface $token): bool {
         return $this->canEdit($message, $token);
+    }
+
+    private function canRemoveBulk(TokenInterface $token): bool {
+        return $this->accessDecisionManager->decide($token, ['ROLE_MESSAGE_ADMIN']);
     }
 
     private function canConfirm(Message $message, TokenInterface $token): bool {

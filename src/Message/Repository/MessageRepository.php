@@ -4,6 +4,8 @@ namespace App\Message\Repository;
 
 use App\Framework\Repository\AbstractRepository;
 use App\Common\Entity\Grade;
+use App\Framework\Repository\PaginatedResult;
+use App\Framework\Repository\PaginationQuery;
 use App\Message\Entity\Message;
 use App\Message\Entity\MessageFile;
 use App\Message\Entity\MessageScope;
@@ -14,6 +16,7 @@ use App\Message\Repository\MessageRepositoryInterface;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Symfony\Component\HttpFoundation\RequestMatcher\PathRequestMatcher;
 
 class MessageRepository extends AbstractRepository implements MessageRepositoryInterface {
 
@@ -34,15 +37,28 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
 
     }
 
-    private function getFindByQueryBuilder(MessageScope $scope, UserType $userType, DateTime|null $today = null, array $studyGroups = [], ?string $query = null): QueryBuilder {
+    private function getFindByQueryBuilder(MessageScope|null $scope, UserType|null $userType, DateTime|null $today = null, array $studyGroups = [], ?string $query = null, User|null $author = null): QueryBuilder {
         $qb = $this->createDefaultQueryBuilder();
 
         $qbInner = $this->em->createQueryBuilder()
             ->select('mInner.id')
             ->from(Message::class, 'mInner')
-            ->leftJoin('mInner.visibilities', 'vInner')
-            ->where('vInner.userType IN(:userTypes)')
-            ->andWhere('mInner.scope = :scope');
+            ->leftJoin('mInner.visibilities', 'vInner');
+
+        if($scope !== null) {
+            $qbInner->andWhere('mInner.scope = :scope');
+            $qb->setParameter('scope', $scope);
+        }
+
+        if($userType !== null) {
+            $qbInner->andWhere('vInner.userType IN(:userTypes)');
+
+            if($userType === UserType::Parent) {
+                $qb->setParameter('userTypes', [ $userType->value, UserType::Student->value ]);
+            } else {
+                $qb->setParameter('userTypes', [$userType->value]);
+            }
+        }
 
         if($today !== null) {
             $qbInner
@@ -50,6 +66,11 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
                 ->andWhere('mInner.expireDate >= :today');
 
             $qb->setParameter('today', $today);
+        }
+
+        if($author !== null) {
+            $qbInner->andWhere('mInner.createdBy = :author');
+            $qb->setParameter('author', $author->getId());
         }
 
         if($query !== null) {
@@ -71,14 +92,7 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
         }
 
         $qb
-            ->where($qb->expr()->in('m.id', $qbInner->getDQL()))
-            ->setParameter('scope', $scope);
-
-        if($userType === UserType::Parent) {
-            $qb->setParameter('userTypes', [ $userType->value, UserType::Student->value ]);
-        } else {
-            $qb->setParameter('userTypes', [$userType->value]);
-        }
+            ->where($qb->expr()->in('m.id', $qbInner->getDQL()));
 
         return $qb;
     }
@@ -242,5 +256,31 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
             ->setFirstResult($offset);
 
         return $paginator;
+    }
+
+    public function findPaginated(PaginationQuery $paginationQuery, MessageScope|null $scope = null, UserType|null $userType = null, ?DateTime $today = null, array $studyGroups = [ ], ?string $query = null, User|null $author = null): PaginatedResult {
+        $qb = $this->getFindByQueryBuilder($scope, $userType, $today, $studyGroups, $query, $author);
+        $qb->orderBy('m.expireDate', 'desc');
+
+        return PaginatedResult::fromQueryBuilder($qb, $paginationQuery);
+    }
+
+    private function getExpiredQueryBuilder(DateTime $today): QueryBuilder {
+        return $this->createDefaultQueryBuilder()
+            ->where('m.expireDate < :today')
+            ->setParameter('today', $today);
+    }
+
+    public function findExpired(DateTime $today): array {
+        return $this->getExpiredQueryBuilder($today)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function countExpired(DateTime $today): int {
+        return $this->getExpiredQueryBuilder($today)
+            ->select('COUNT(DISTINCT m.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 }

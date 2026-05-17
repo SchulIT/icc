@@ -3,6 +3,7 @@
 namespace App\Message\Controller;
 
 use App\Framework\Controller\AbstractController;
+use App\Framework\Repository\PaginationQuery;
 use App\Message\Entity\Message;
 use App\Message\Entity\MessageFile;
 use App\Common\Entity\User;
@@ -24,6 +25,7 @@ use App\Message\MessageConfirmationViewHelper;
 use App\Message\MessageDownloadView;
 use App\Message\MessageDownloadViewHelper;
 use App\Message\MessageFileUploadViewHelper;
+use App\Message\Messenger\RemoveMessageMessage;
 use App\Message\Poll\PollResultViewHelper;
 use App\Message\Repository\MessageFileUploadRepositoryInterface;
 use App\Message\Repository\MessageRepositoryInterface;
@@ -53,8 +55,11 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -62,46 +67,37 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[IsFeatureEnabled(Feature::Messages)]
 class MessageAdminController extends AbstractController {
 
-    private const CsrfTokenName = '_csrf_token';
-    private const CsrfTokenId = 'message_files';
+    private const string CsrfTokenName = '_csrf_token';
+    private const string CsrfTokenId = 'message_files';
 
     public function __construct(private MessageRepositoryInterface $repository, private Grouper $grouper, private Sorter $sorter, RefererHelper $refererHelper) {
         parent::__construct($refererHelper);
     }
 
     #[Route(path: '', name: 'admin_messages')]
-    public function index(UserTypeFilter $userTypeFilter, GradeFilter $gradeFilter, Request $request): Response {
+    public function index(
+        UserTypeFilter $userTypeFilter,
+        SectionResolverInterface $sectionResolver,
+        #[CurrentUser] User $user,
+        #[MapQueryParameter] int $page = 1,
+        #[MapQueryParameter(name: 'user_type', filter: FILTER_DEFAULT, flags: FILTER_FLAG_EMPTY_STRING_NULL | FILTER_NULL_ON_FAILURE)] string|null $userTypeValue = null,
+        #[MapQueryParameter(filter: FILTER_DEFAULT, flags: FILTER_FLAG_EMPTY_STRING_NULL | FILTER_NULL_ON_FAILURE)] string|null $query = null,
+        #[MapQueryParameter(name: 'all')] bool $all = false
+    ): Response {
         $this->denyAccessUnlessGranted('ROLE_MESSAGE_CREATOR');
 
-        /** @var User $user */
-        $user = $this->getUser();
-
-        $userTypeFilterView = $userTypeFilter->handle($request->query->get('user_type', null));
-        $userTypeFilterView->setHandleNull(true);
-        $onlyOwn = $request->query->get('all') !== '✓';
-
-        $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), null, $user);
-
-        if($userTypeFilterView->getCurrentType() !== null) {
-            $messages = $this->repository->findAllByUserType($userTypeFilterView->getCurrentType(), $onlyOwn ? $user : null);
-        } else if($gradeFilterView->getCurrentGrade() !== null) {
-            $messages = $this->repository->findAllByGrade($gradeFilterView->getCurrentGrade(), $onlyOwn ? $user : null);
-        } else if($onlyOwn === true) {
-            $messages = $this->repository->findAllByAuthor($user);
-        } else {
-            $messages = $this->repository->findAll();
-        }
-
-        /** @var MessageExpirationGroup[] $groups */
-        $groups = $this->grouper->group($messages, MessageExpirationStrategy::class);
-        $this->sorter->sort($groups, MessageExpirationGroupStrategy::class);
-        $this->sorter->sortGroupItems($groups, MessageExpiryDateStrategy::class, SortDirection::Descending);
+        $userTypeFilterView = $userTypeFilter->handle($userTypeValue);
+        $messages = $this->repository->findPaginated(
+            new PaginationQuery(page: $page),
+            userType: $userTypeFilterView->getCurrentType(),
+            author: $all ? null : $user
+        );
 
         return $this->render('admin/messages/index.html.twig', [
-            'groups' => $groups,
+            'messages' => $messages,
             'userTypeFilter' => $userTypeFilterView,
-            'gradeFilter' => $gradeFilterView,
-            'onlyOwn' => $onlyOwn
+            'query' => $query,
+            'all' => $all,
         ]);
     }
 
@@ -193,6 +189,46 @@ class MessageAdminController extends AbstractController {
         return $this->render('admin/messages/remove.html.twig', [
             'form' => $form->createView(),
             'message' => $message
+        ]);
+    }
+
+    #[Route('/remove_expired', name: 'remove_expired_messages')]
+    public function removeExpired(
+        Request $request,
+        TranslatorInterface $translator,
+        MessageBusInterface $messageBus,
+        DateHelper $dateHelper
+    ): Response {
+        $this->denyAccessUnlessGranted(MessageVoter::RemoveBulk);
+
+        $messageCount = $this->repository->countExpired($dateHelper->getToday());
+
+        if($messageCount === 0) {
+            $this->addFlash('success', 'admin.messages.bulk_remove.empty');
+            return $this->redirectToRoute('admin_messages');
+        }
+
+        $form = $this->createForm(ConfirmType::class, null, [
+            'message' => $translator->trans('admin.messages.bulk_remove.confirm', [
+                '%count%' => $messageCount
+            ])
+        ]);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            foreach($this->repository->findExpired($dateHelper->getToday()) as $message) {
+                if($this->isGranted(MessageVoter::Remove, $message)) {
+                    $messageBus->dispatch(new RemoveMessageMessage($message->getId()));
+                }
+            }
+
+            $this->addFlash('success', 'admin.messages.bulk_remove.success');
+
+            return $this->redirectToRoute('admin_messages');
+        }
+
+        return $this->render('admin/messages/remove_bulk.html.twig', [
+            'form' => $form->createView()
         ]);
     }
 
@@ -485,11 +521,4 @@ class MessageAdminController extends AbstractController {
         return $exporter->getCsvResponse($message);
     }
 
-    #[Route(path: '/{uuid}/remove/xhr', name: 'xhr_remove_message')]
-    public function removeXhr(#[MapEntity(mapping: ['uuid' => 'uuid'])] Message $message, #[JsonPayload] RemoveMessageRequest $request): Response {
-        $this->denyAccessUnlessGranted(MessageVoter::Remove, $message);
-        $this->repository->remove($message);
-
-        return new JsonResponse();
-    }
 }

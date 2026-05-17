@@ -3,6 +3,8 @@
 namespace App\Message\Repository;
 
 use App\Common\Entity\Grade;
+use App\Framework\Repository\PaginatedResult;
+use App\Framework\Repository\PaginationQuery;
 use App\Message\Entity\Message;
 use App\Message\Entity\MessageFile;
 use App\Message\Entity\MessageScope;
@@ -70,6 +72,12 @@ interface MessageRepositoryInterface {
     public function findAll(): array;
 
     /**
+     *
+     * @return PaginatedResult<Message>
+     */
+    public function findPaginated(PaginationQuery $paginationQuery, MessageScope|null $scope = null, UserType|null $userType = null, ?DateTime $today = null, array $studyGroups = [ ], ?string $query = null, User|null $author = null): PaginatedResult;
+
+    /**
      * @param Message $message
      */
     public function persist(Message $message): void;
@@ -90,4 +98,7 @@ interface MessageRepositoryInterface {
      */
     public function findAllNotificationNotSent(DateTime $dateTime): array;
 
+    public function findExpired(DateTime $today): array;
+
+    public function countExpired(DateTime $today): int;
 }

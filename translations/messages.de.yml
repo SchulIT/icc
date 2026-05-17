@@ -1265,6 +1265,10 @@ admin:
 
     messages:
         label: Mitteilungen
+        count: '%count% Mitteilungen'
+        all:
+            "true": Alle Mitteilungen
+            "false": Nur eigene Mitteilungen
         overview:
             label: Mitteilungsübersicht
             expired: Abgelaufene Mitteilungen
@@ -1286,8 +1290,10 @@ admin:
             confirm: 'Soll die Mitteilung "%name%" wirklich gelöscht werden?'
             success: Mitteilung erfolgreich gelöscht
         bulk_remove:
-            label: Mitteilungen löschen
+            label: Abgelaufene Mitteilungen löschen
+            empty: Keine abgelaufenen Mitteilungen zu löschen
             confirm: 'Sollen diese %count% Mitteilungen wirklich gelöscht werden?'
+            success: Die Mitteilungen werden nun im Hintergrund gelöscht. Dieser Vorgang kann einige Zeit in Anspruch nehmen.
         confirmations:
             label: Bestätigungen anzeigen
             num: 'Die Mitteilung wurde %num% mal bestätigt.'

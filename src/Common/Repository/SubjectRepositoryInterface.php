@@ -3,6 +3,8 @@
 namespace App\Common\Repository;
 
 use App\Common\Entity\Subject;
+use App\Framework\Repository\PaginatedResult;
+use App\Framework\Repository\PaginationQuery;
 use App\Framework\Repository\TransactionalRepositoryInterface;
 
 interface SubjectRepositoryInterface extends TransactionalRepositoryInterface {
@@ -33,7 +35,13 @@ interface SubjectRepositoryInterface extends TransactionalRepositoryInterface {
     /**
      * @return Subject[]
      */
-    public function findAll(bool $onlyExternal = false);
+    public function findAll(bool $onlyExternal = false): array;
+
+    /**
+     * @param PaginationQuery $paginationQuery
+     * @return PaginatedResult<Subject>
+     */
+    public function findPaginated(PaginationQuery $paginationQuery): PaginatedResult;
 
     /**
      * @param string[] $externalIds

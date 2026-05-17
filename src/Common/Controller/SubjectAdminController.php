@@ -2,31 +2,35 @@
 
 namespace App\Common\Controller;
 
-use App\Framework\Controller\AbstractController;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
-use Symfony\Component\HttpFoundation\Response;
 use App\Common\Entity\Subject;
 use App\Common\Form\SubjectType;
 use App\Common\Repository\SubjectRepositoryInterface;
 use App\Common\Repository\TuitionRepositoryInterface;
-use App\Framework\Sorting\Sorter;
-use App\Common\Sorting\SubjectAbbreviationStrategy;
+use App\Framework\Controller\AbstractController;
+use App\Framework\Repository\PaginationQuery;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route(path: '/admin/subjects')]
 class SubjectAdminController extends AbstractController {
 
-    public function __construct(private Sorter $sorter, private SubjectRepositoryInterface $repository, RefererHelper $redirectHelper) {
+    public function __construct(
+        private readonly SubjectRepositoryInterface $repository,
+        RefererHelper $redirectHelper
+    ) {
         parent::__construct($redirectHelper);
     }
 
     #[Route(path: '', name: 'admin_subjects')]
-    public function index(): Response {
-        $subjects = $this->repository->findAll();
-        $this->sorter->sort($subjects, SubjectAbbreviationStrategy::class);
+    public function index(
+        #[MapQueryParameter] int $page = 1
+    ): Response {
+        $subjects = $this->repository->findPaginated(new PaginationQuery(page: $page));
 
         return $this->render('admin/subjects/index.html.twig', [
             'subjects' => $subjects

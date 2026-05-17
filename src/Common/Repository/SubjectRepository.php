@@ -5,6 +5,8 @@ namespace App\Common\Repository;
 use App\Framework\Repository\AbstractTransactionalRepository;
 use App\Common\Entity\Subject;
 use App\Common\Repository\SubjectRepositoryInterface;
+use App\Framework\Repository\PaginatedResult;
+use App\Framework\Repository\PaginationQuery;
 
 class SubjectRepository extends AbstractTransactionalRepository implements SubjectRepositoryInterface {
 
@@ -55,7 +57,7 @@ class SubjectRepository extends AbstractTransactionalRepository implements Subje
     /**
      * @return Subject[]
      */
-    public function findAll(bool $onlyExternal = false) {
+    public function findAll(bool $onlyExternal = false): array {
         $subjects = $this->em->getRepository(Subject::class)
             ->findAll();
 
@@ -64,6 +66,15 @@ class SubjectRepository extends AbstractTransactionalRepository implements Subje
         }
 
         return $subjects;
+    }
+
+    public function findPaginated(PaginationQuery $paginationQuery): PaginatedResult {
+        $qb = $this->em->createQueryBuilder()
+            ->select(['s'])
+            ->from(Subject::class, 's')
+            ->orderBy('s.abbreviation', 'ASC');
+
+        return PaginatedResult::fromQueryBuilder($qb, $paginationQuery);
     }
 
     /**

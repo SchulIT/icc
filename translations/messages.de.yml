@@ -1484,6 +1484,7 @@ admin:
 
     subjects:
         label: Fächer
+        count: '%count% Fächer'
         empty: Keine Fächer vorhanden.
         add:
             label: Neues Fach

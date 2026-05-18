@@ -8,6 +8,8 @@ use App\Common\Entity\Subject;
 use App\Common\Entity\Teacher;
 use App\Common\Entity\TeacherTag;
 use App\Common\Repository\TeacherRepositoryInterface;
+use App\Framework\Repository\PaginatedResult;
+use App\Framework\Repository\PaginationQuery;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
 
@@ -113,10 +115,34 @@ class TeacherRepository extends AbstractTransactionalRepository implements Teach
     /**
      * @inheritDoc
      */
-    public function findAll() {
+    public function findAll(): array {
         return $this->createDefaultQueryBuilder()
             ->getQuery()
             ->getResult();
+    }
+
+    public function findPaginated(PaginationQuery $paginationQuery, ?Subject $subject = null, ?TeacherTag $teacherTag = null): PaginatedResult {
+        $qb = $this->createDefaultQueryBuilder();
+
+        $qbInner = $this->em->createQueryBuilder()
+            ->select('tInner.id')
+            ->from(Teacher::class, 'tInner')
+            ->leftJoin('tInner.subjects', 'sInner')
+            ->leftJoin('tInner.tags', 'tagInner');
+
+        if($subject !== null) {
+            $qbInner->andWhere('sInner.id = :subject');
+            $qb->setParameter('subject', $subject->getId());
+        }
+
+        if($teacherTag !== null) {
+            $qbInner->andWhere('tagInner.id = :teacherTag');
+            $qb->setParameter('teacherTag', $teacherTag->getId());
+        }
+
+        $qb->where($qb->expr()->in('t.id', $qbInner->getDQL()));
+
+        return PaginatedResult::fromQueryBuilder($qb, $paginationQuery);
     }
 
     /**

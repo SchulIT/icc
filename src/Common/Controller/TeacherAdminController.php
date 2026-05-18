@@ -2,18 +2,20 @@
 
 namespace App\Common\Controller;
 
-use App\Framework\Controller\AbstractController;
 use App\Common\Converter\TeacherStringConverter;
 use App\Common\Entity\Teacher;
 use App\Common\Form\TeacherType;
 use App\Common\Repository\TeacherRepositoryInterface;
-use App\Framework\Sorting\Sorter;
-use App\Common\Sorting\TeacherStrategy;
+use App\Common\View\Filter\SubjectFilter;
+use App\Common\View\Filter\TeacherTagFilter;
+use App\Framework\Controller\AbstractController;
+use App\Framework\Repository\PaginationQuery;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -22,17 +24,31 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[IsGranted('ROLE_ADMIN')]
 class TeacherAdminController extends AbstractController {
 
-    public function __construct(private Sorter $sorter, private TeacherRepositoryInterface $repository, RefererHelper $redirectHelper) {
+    public function __construct(private TeacherRepositoryInterface $repository, RefererHelper $redirectHelper) {
         parent::__construct($redirectHelper);
     }
 
     #[Route(path: '', name: 'admin_teachers')]
-    public function index(): Response {
-        $teachers = $this->repository->findAll();
-        $this->sorter->sort($teachers, TeacherStrategy::class);
+    public function index(
+        TeacherTagFilter $teacherTagFilter,
+        SubjectFilter $subjectFilter,
+        #[MapQueryParameter] int $page = 1,
+        #[MapQueryParameter(name: 'tag', filter: FILTER_DEFAULT, flags: FILTER_FLAG_EMPTY_STRING_NULL | FILTER_NULL_ON_FAILURE)] string|null $teacherTagUuid = null,
+        #[MapQueryParameter(name: 'subject', filter: FILTER_DEFAULT, flags: FILTER_FLAG_EMPTY_STRING_NULL | FILTER_NULL_ON_FAILURE)] string|null $subjectUuid = null,
+    ): Response {
+        $teacherTagFilterView = $teacherTagFilter->handle($teacherTagUuid);
+        $subjectFilterView = $subjectFilter->handle($subjectUuid);
+
+        $teachers = $this->repository->findPaginated(
+            new PaginationQuery(page: $page),
+            subject: $subjectFilterView->getCurrentSubject(),
+            teacherTag: $teacherTagFilterView->getCurrentTag()
+        );
 
         return $this->render('admin/teachers/index.html.twig', [
-            'teachers' => $teachers
+            'teachers' => $teachers,
+            'teacherTagFilter' => $teacherTagFilterView,
+            'subjectFilter' => $subjectFilterView,
         ]);
     }
 

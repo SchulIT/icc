@@ -6,6 +6,8 @@ use App\Common\Entity\Section;
 use App\Common\Entity\Subject;
 use App\Common\Entity\Teacher;
 use App\Common\Entity\TeacherTag;
+use App\Framework\Repository\PaginatedResult;
+use App\Framework\Repository\PaginationQuery;
 use App\Framework\Repository\TransactionalRepositoryInterface;
 use DateTime;
 
@@ -65,7 +67,15 @@ interface TeacherRepositoryInterface extends TransactionalRepositoryInterface {
     /**
      * @return Teacher[]
      */
-    public function findAll();
+    public function findAll(): array;
+
+    /**
+     * @param PaginationQuery $paginationQuery
+     * @param Subject|null $subject
+     * @param TeacherTag|null $teacherTag
+     * @return PaginatedResult
+     */
+    public function findPaginated(PaginationQuery $paginationQuery, Subject|null $subject = null, TeacherTag|null $teacherTag = null): PaginatedResult;
 
     /**
      * @param Section $section

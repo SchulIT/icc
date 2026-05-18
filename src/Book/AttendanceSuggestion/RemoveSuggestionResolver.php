@@ -8,8 +8,8 @@ use App\Common\Entity\StudyGroupMembership;
 use App\Common\Entity\Teacher;
 use App\Common\Entity\Tuition;
 use App\Timetable\Repository\TimetableLessonRepositoryInterface;
-use App\Response\Book\RemoveSuggestion;
-use App\Response\Book\Student as StudentResponse;
+use App\Book\Xhr\Response\RemoveSuggestion;
+use App\Book\Xhr\Response\Student as StudentResponse;
 use DateTime;
 use Symfony\Contracts\Translation\TranslatorInterface;
 

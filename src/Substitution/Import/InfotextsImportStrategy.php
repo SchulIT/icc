@@ -7,8 +7,8 @@ use App\Framework\Import\ContextAwareTrait;
 use App\Substitution\Entity\Infotext;
 use App\Substitution\Repository\InfotextRepositoryInterface;
 use App\Framework\Repository\TransactionalRepositoryInterface;
-use App\Request\Data\InfotextData;
-use App\Request\Data\InfotextsData;
+use App\Substitution\Import\Json\InfotextData;
+use App\Substitution\Import\Json\InfotextsData;
 
 class InfotextsImportStrategy implements ReplaceImportStrategyInterface {
 

@@ -8,8 +8,8 @@ use App\Framework\Import\Importer;
 use App\Common\Repository\GradeRepository;
 use App\Framework\Import\Repository\ImportDateTypeRepository;
 use App\Common\Repository\SectionRepository;
-use App\Request\Data\GradeData;
-use App\Request\Data\GradesData;
+use App\Common\Import\Json\GradeData;
+use App\Common\Import\Json\GradesData;
 use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 

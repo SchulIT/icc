@@ -4,9 +4,9 @@ namespace App\Infrastructure\EventSubscriber;
 
 use App\Framework\Import\ImportException;
 use App\Framework\Import\ValidationFailedException;
-use App\Response\ErrorResponse;
-use App\Response\Violation;
-use App\Response\ViolationList;
+use App\Framework\Json\Response\ErrorResponse;
+use App\Framework\Json\Response\Violation;
+use App\Framework\Json\Response\ViolationList;
 use JMS\Serializer\SerializerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

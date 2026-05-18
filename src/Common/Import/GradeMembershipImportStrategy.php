@@ -11,8 +11,8 @@ use App\Framework\Import\ReplaceImportStrategyInterface;
 use App\Framework\Import\EntityIgnoredException;
 use App\Framework\Import\SectionNotFoundException;
 use App\Framework\Repository\TransactionalRepositoryInterface;
-use App\Request\Data\GradeMembershipData;
-use App\Request\Data\GradeMembershipsData;
+use App\Common\Import\Json\GradeMembershipData;
+use App\Common\Import\Json\GradeMembershipsData;
 
 class GradeMembershipImportStrategy implements ReplaceImportStrategyInterface {
 

@@ -7,8 +7,8 @@ use App\Timetable\Entity\TimetableSupervision;
 use App\Common\Repository\TeacherRepositoryInterface;
 use App\Timetable\Repository\TimetableSupervisionRepositoryInterface;
 use App\Framework\Repository\TransactionalRepositoryInterface;
-use App\Request\Data\TimetableSupervisionData;
-use App\Request\Data\TimetableSupervisionsData;
+use App\Timetable\Import\Json\TimetableSupervisionData;
+use App\Timetable\Import\Json\TimetableSupervisionsData;
 use Exception;
 use Ramsey\Uuid\Uuid;
 

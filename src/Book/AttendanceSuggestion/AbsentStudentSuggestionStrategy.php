@@ -11,7 +11,7 @@ use App\StudentAbsence\Entity\StudentAbsence;
 use App\Common\Entity\Subject;
 use App\Common\Entity\Tuition;
 use App\StudentAbsence\Repository\StudentAbsenceRepositoryInterface;
-use App\Response\Book\AttendanceSuggestion;
+use App\Book\Xhr\Response\AttendanceSuggestion;
 use App\Book\Settings\BookSettings;
 use App\Framework\Utils\ArrayUtils;
 use DateTime;

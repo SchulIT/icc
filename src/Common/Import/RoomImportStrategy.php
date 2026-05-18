@@ -7,9 +7,9 @@ use App\Common\Repository\ResourceTypeRepositoryInterface;
 use App\Book\Repository\RoomRepositoryInterface;
 use App\Framework\Import\ImportStrategyInterface;
 use App\Framework\Repository\TransactionalRepositoryInterface;
-use App\Request\Data\GradesData;
-use App\Request\Data\RoomData;
-use App\Request\Data\RoomsData;
+use App\Common\Import\Json\GradesData;
+use App\Common\Import\Json\RoomData;
+use App\Common\Import\Json\RoomsData;
 use App\Framework\Utils\ArrayUtils;
 
 class RoomImportStrategy implements ImportStrategyInterface {

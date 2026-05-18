@@ -15,8 +15,8 @@ use App\Privacy\Repository\PrivacyCategoryRepositoryInterface;
 use App\Common\Repository\SectionRepositoryInterface;
 use App\Common\Repository\StudentRepositoryInterface;
 use App\Framework\Repository\TransactionalRepositoryInterface;
-use App\Request\Data\StudentData;
-use App\Request\Data\StudentsData;
+use App\Common\Import\Json\StudentData;
+use App\Common\Import\Json\StudentsData;
 use App\Framework\Utils\ArrayUtils;
 use App\Framework\Utils\CollectionUtils;
 

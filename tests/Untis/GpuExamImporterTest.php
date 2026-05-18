@@ -7,7 +7,7 @@ use App\Exam\Import\ExamsImportStrategy;
 use App\Framework\Import\Importer;
 use App\Framework\Import\ImportResult;
 use App\Common\Repository\StudentRepositoryInterface;
-use App\Request\Data\ExamsData;
+use App\Exam\Import\Json\ExamsData;
 use App\Untis\Settings\UntisSettings;
 use App\Untis\Gpu\Exam\Exam;
 use App\Untis\Gpu\Exam\ExamImporter;

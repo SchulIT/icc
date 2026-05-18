@@ -8,7 +8,7 @@ use App\Book\Entity\Attendance;
 use App\Book\Entity\AttendanceType;
 use App\StudentAbsence\Event\StudentAbsentWithoutAnyNoteEvent;
 use App\Infrastructure\EventSubscriber\DoctrineEventsCollector;
-use App\Response\Book\AttendanceSuggestion;
+use App\Book\Xhr\Response\AttendanceSuggestion;
 use App\Framework\Utils\ArrayUtils;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PostPersistEventArgs;

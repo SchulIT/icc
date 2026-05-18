@@ -12,8 +12,8 @@ use App\LearningManagementSystem\Repository\LearningManagementSystemRepositoryIn
 use App\LearningManagementSystem\Repository\StudentLearningManagementInformationRepositoryInterface;
 use App\Common\Repository\StudentRepositoryInterface;
 use App\Framework\Repository\TransactionalRepositoryInterface;
-use App\Request\Data\StudentLearningManagementSystemData;
-use App\Request\Data\StudentLearningManagementSystemsData;
+use App\LearningManagementSystem\Import\Json\StudentLearningManagementSystemData;
+use App\LearningManagementSystem\Import\Json\StudentLearningManagementSystemsData;
 use App\Framework\Utils\ArrayUtils;
 
 class StudentLearningManagementSystemInformationImportStrategy implements ReplaceImportStrategyInterface, InitializeStrategyInterface {

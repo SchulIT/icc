@@ -1400,6 +1400,7 @@ admin:
 
     teachers:
         label: Lehrkräfte
+        count: '%count% Lehrkräfte'
 
         overview:
             empty: Keine Lehrkräfte vorhanden.

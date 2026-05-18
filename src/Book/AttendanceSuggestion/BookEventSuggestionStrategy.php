@@ -7,7 +7,7 @@ use App\Book\Entity\AttendanceExcuseStatus;
 use App\Book\Entity\AttendanceType;
 use App\Common\Entity\Tuition;
 use App\Book\Repository\BookEventRepositoryInterface;
-use App\Response\Book\AttendanceSuggestion;
+use App\Book\Xhr\Response\AttendanceSuggestion;
 use App\Book\Settings\BookSettings;
 use DateTime;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

@@ -2,7 +2,7 @@
 
 namespace App\Common\Security;
 
-use App\Response\ErrorResponse;
+use App\Framework\Json\Response\ErrorResponse;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

@@ -5,7 +5,7 @@ namespace App\Timetable\Validator;
 use App\Common\Entity\Section;
 use App\Common\Entity\Tuition;
 use App\Common\Repository\TuitionRepositoryInterface;
-use App\Request\Data\TimetableLessonData;
+use App\Timetable\Import\Json\TimetableLessonData;
 use App\Common\Section\SectionResolverInterface;
 use App\Framework\Import\Settings\ImportSettings;
 use App\Timetable\Validator\TuitionResolvable;

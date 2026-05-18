@@ -14,8 +14,8 @@ use App\Framework\Import\ReplaceImportStrategyInterface;
 use App\Framework\Import\EntityIgnoredException;
 use App\Framework\Import\SectionNotFoundException;
 use App\Framework\Repository\TransactionalRepositoryInterface;
-use App\Request\Data\StudyGroupMembershipData;
-use App\Request\Data\StudyGroupMembershipsData;
+use App\Common\Import\Json\StudyGroupMembershipData;
+use App\Common\Import\Json\StudyGroupMembershipsData;
 use App\Framework\Utils\ArrayUtils;
 
 class StudyGroupMembershipImportStrategy implements ReplaceImportStrategyInterface, InitializeStrategyInterface {

@@ -7,8 +7,8 @@ use App\Framework\Import\ContextAwareTrait;
 use App\Substitution\Entity\FreeTimespan;
 use App\Substitution\Repository\FreeTimespanRepositoryInterface;
 use App\Framework\Repository\TransactionalRepositoryInterface;
-use App\Request\Data\FreeLessonTimespanData;
-use App\Request\Data\FreeLessonTimespansData;
+use App\Substitution\Import\Json\FreeLessonTimespanData;
+use App\Substitution\Import\Json\FreeLessonTimespansData;
 
 class FreeTimespanImportStrategy implements ReplaceImportStrategyInterface {
 

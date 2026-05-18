@@ -6,8 +6,8 @@ use App\Framework\Import\ImportStrategyInterface;
 use App\Privacy\Entity\PrivacyCategory;
 use App\Privacy\Repository\PrivacyCategoryRepositoryInterface;
 use App\Framework\Repository\TransactionalRepositoryInterface;
-use App\Request\Data\PrivacyCategoriesData;
-use App\Request\Data\PrivacyCategoryData;
+use App\Privacy\Import\Json\PrivacyCategoriesData;
+use App\Privacy\Import\Json\PrivacyCategoryData;
 use App\Framework\Utils\ArrayUtils;
 
 class PrivacyCategoryImportStrategy implements ImportStrategyInterface {

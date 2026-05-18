@@ -5,8 +5,8 @@ namespace App\Untis\Gpu\Room;
 use App\Framework\Import\Importer;
 use App\Framework\Import\ImportResult;
 use App\Common\Import\RoomImportStrategy;
-use App\Request\Data\RoomData;
-use App\Request\Data\RoomsData;
+use App\Common\Import\Json\RoomData;
+use App\Common\Import\Json\RoomsData;
 use League\Csv\Reader;
 
 class RoomImporter {

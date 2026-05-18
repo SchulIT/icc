@@ -3,7 +3,7 @@
 namespace App\Book\AttendanceSuggestion;
 
 use App\Common\Entity\Student as StudentEntity;
-use App\Response\Book\Student;
+use App\Book\Xhr\Response\Student;
 
 trait StudentTransformerTrait {
     private function getStudent(StudentEntity $entity): Student {

@@ -6,8 +6,8 @@ use App\Appointment\Entity\AppointmentCategory;
 use App\Appointment\Repository\AppointmentCategoryRepositoryInterface;
 use App\Framework\Import\ImportStrategyInterface;
 use App\Framework\Repository\TransactionalRepositoryInterface;
-use App\Request\Data\AppointmentCategoriesData;
-use App\Request\Data\AppointmentCategoryData;
+use App\Appointment\Import\Json\AppointmentCategoriesData;
+use App\Appointment\Import\Json\AppointmentCategoryData;
 use App\Framework\Utils\ArrayUtils;
 
 class AppointmentCategoriesImportStrategy implements ImportStrategyInterface {

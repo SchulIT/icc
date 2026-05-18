@@ -12,8 +12,8 @@ use App\Framework\Import\ImportException;
 use App\Framework\Import\ReplaceImportStrategyInterface;
 use App\Framework\Import\SectionNotFoundException;
 use App\Framework\Repository\TransactionalRepositoryInterface;
-use App\Request\Data\GradeTeacherData;
-use App\Request\Data\GradeTeachersData;
+use App\Common\Import\Json\GradeTeacherData;
+use App\Common\Import\Json\GradeTeachersData;
 
 class GradeTeachersImportStrategy implements ReplaceImportStrategyInterface {
 

@@ -6,8 +6,8 @@ use App\Common\Entity\Grade;
 use App\Common\Repository\GradeRepositoryInterface;
 use App\Framework\Import\ImportStrategyInterface;
 use App\Framework\Repository\TransactionalRepositoryInterface;
-use App\Request\Data\GradeData;
-use App\Request\Data\GradesData;
+use App\Common\Import\Json\GradeData;
+use App\Common\Import\Json\GradesData;
 use App\Framework\Utils\ArrayUtils;
 use Doctrine\ORM\Exception\ORMException;
 

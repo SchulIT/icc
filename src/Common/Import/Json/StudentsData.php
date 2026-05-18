@@ -1,0 +1,58 @@
+<?php
+
+namespace App\Common\Import\Json;
+
+use App\Common\Import\Json\StudentData;
+use App\Framework\Validator\UniqueId;
+use JMS\Serializer\Annotation as Serializer;
+use Symfony\Component\Validator\Constraints as Assert;
+
+class StudentsData {
+
+    #[Serializer\Type('int')]
+    private ?int $year = null;
+
+    #[Serializer\Type('int')]
+    private ?int $section = null;
+
+    /**
+     * @var StudentData[]
+     */
+    #[UniqueId(propertyPath: 'id')]
+    #[Assert\Valid]
+    #[Serializer\Type('array<' . StudentData::class . '>')]
+    private array $students = [ ];
+
+    /**
+     * @return StudentData[]
+     */
+    public function getStudents() {
+        return $this->students;
+    }
+
+    /**
+     * @param StudentData[] $students
+     */
+    public function setStudents($students): StudentsData {
+        $this->students = $students;
+        return $this;
+    }
+
+    public function getYear(): int {
+        return $this->year;
+    }
+
+    public function setYear(int $year): StudentsData {
+        $this->year = $year;
+        return $this;
+    }
+
+    public function getSection(): int {
+        return $this->section;
+    }
+
+    public function setSection(int $section): StudentsData {
+        $this->section = $section;
+        return $this;
+    }
+}

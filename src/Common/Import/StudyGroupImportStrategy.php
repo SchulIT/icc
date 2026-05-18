@@ -12,8 +12,8 @@ use App\Framework\Import\ImportException;
 use App\Framework\Import\ImportStrategyInterface;
 use App\Framework\Import\SectionNotFoundException;
 use App\Framework\Repository\TransactionalRepositoryInterface;
-use App\Request\Data\StudyGroupData;
-use App\Request\Data\StudyGroupsData;
+use App\Common\Import\Json\StudyGroupData;
+use App\Common\Import\Json\StudyGroupsData;
 use App\Framework\Utils\CollectionUtils;
 use App\Framework\Utils\ArrayUtils;
 

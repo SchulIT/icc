@@ -6,8 +6,8 @@ use App\Common\Entity\Subject;
 use App\Common\Repository\SubjectRepositoryInterface;
 use App\Framework\Import\ImportStrategyInterface;
 use App\Framework\Repository\TransactionalRepositoryInterface;
-use App\Request\Data\SubjectData;
-use App\Request\Data\SubjectsData;
+use App\Common\Import\Json\SubjectData;
+use App\Common\Import\Json\SubjectsData;
 use App\Framework\Utils\ArrayUtils;
 
 class SubjectsImportStrategy implements ImportStrategyInterface {

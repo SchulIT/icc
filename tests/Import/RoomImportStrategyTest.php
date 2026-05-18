@@ -11,8 +11,8 @@ use App\Common\Repository\ResourceTypeRepository;
 use App\Common\Repository\ResourceTypeRepositoryInterface;
 use App\Book\Repository\RoomRepository;
 use App\Book\Repository\RoomTagRepository;
-use App\Request\Data\RoomData;
-use App\Request\Data\RoomsData;
+use App\Common\Import\Json\RoomData;
+use App\Common\Import\Json\RoomsData;
 use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 

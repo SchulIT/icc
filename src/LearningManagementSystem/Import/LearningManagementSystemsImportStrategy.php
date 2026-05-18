@@ -6,8 +6,8 @@ use App\Framework\Import\ImportStrategyInterface;
 use App\LearningManagementSystem\Entity\LearningManagementSystem;
 use App\LearningManagementSystem\Repository\LearningManagementSystemRepositoryInterface;
 use App\Framework\Repository\TransactionalRepositoryInterface;
-use App\Request\Data\LearningManagementSystemData;
-use App\Request\Data\LearningManagementSystemsData;
+use App\LearningManagementSystem\Import\Json\LearningManagementSystemData;
+use App\LearningManagementSystem\Import\Json\LearningManagementSystemsData;
 use App\Framework\Utils\ArrayUtils;
 
 class LearningManagementSystemsImportStrategy implements ImportStrategyInterface {

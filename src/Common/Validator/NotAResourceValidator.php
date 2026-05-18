@@ -5,7 +5,7 @@ namespace App\Common\Validator;
 use App\Common\Entity\Room;
 use App\Common\Entity\Room as RoomEntity;
 use App\Common\Repository\ResourceRepositoryInterface;
-use App\Request\Data\RoomData;
+use App\Common\Import\Json\RoomData;
 use App\Common\Validator\NotAResource;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;

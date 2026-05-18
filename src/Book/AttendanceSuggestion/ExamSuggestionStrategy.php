@@ -8,7 +8,7 @@ use App\Dashboard\AbsentExamStudent;
 use App\Book\Entity\AttendanceExcuseStatus;
 use App\Book\Entity\AttendanceType;
 use App\Common\Entity\Tuition;
-use App\Response\Book\AttendanceSuggestion;
+use App\Book\Xhr\Response\AttendanceSuggestion;
 use App\Book\Settings\BookSettings;
 use App\Framework\Utils\ArrayUtils;
 use DateTime;

@@ -11,8 +11,8 @@ use App\Book\Repository\RoomRepositoryInterface;
 use App\Common\Repository\StudyGroupRepositoryInterface;
 use App\Common\Repository\TeacherRepositoryInterface;
 use App\Framework\Repository\TransactionalRepositoryInterface;
-use App\Request\Data\AbsenceData;
-use App\Request\Data\AbsencesData;
+use App\Substitution\Import\Json\AbsenceData;
+use App\Substitution\Import\Json\AbsencesData;
 use App\Common\Section\SectionResolverInterface;
 
 class AbsencesImportStrategy implements ReplaceImportStrategyInterface {

@@ -3,7 +3,7 @@
 namespace App\Book\AttendanceSuggestion;
 
 use App\Common\Entity\Student;
-use App\Response\Book\AttendanceSuggestion;
+use App\Book\Xhr\Response\AttendanceSuggestion;
 
 class PrioritizedSuggestion {
     public function __construct(private readonly int $priority, private readonly Student $student, private readonly AttendanceSuggestion $suggestion) { }

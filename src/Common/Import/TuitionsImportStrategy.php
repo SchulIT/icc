@@ -16,8 +16,8 @@ use App\Framework\Import\ImportStrategyInterface;
 use App\Framework\Import\SectionNotFoundException;
 use App\Framework\Repository\TransactionalRepositoryInterface;
 use App\Common\Repository\TuitionRepositoryInterface;
-use App\Request\Data\TuitionData;
-use App\Request\Data\TuitionsData;
+use App\Common\Import\Json\TuitionData;
+use App\Common\Import\Json\TuitionsData;
 use App\Framework\Utils\CollectionUtils;
 use App\Framework\Utils\ArrayUtils;
 

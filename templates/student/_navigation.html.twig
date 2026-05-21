@@ -10,21 +10,21 @@
         </a>
     </li>
 
-    {% if is_enabled('return_item') %}
+    {% if feature_enabled('return_item') %}
         <li class="nav-item">
             <a class="nav-link {% if active|default('general') == 'return_items' %}active{% endif %}" href="{{ path('student_return_details', { uuid: student.uuid, section: sectionFilter.currentSection.uuid }) }}">
                 <i class="fa-solid fa-repeat"></i> {{ 'students.return_items.label'|trans }}
             </a>
         </li>
     {% endif %}
-    {% if is_enabled('checklists') %}
+    {% if feature_enabled('checklists') %}
         <li class="nav-item">
             <a class="nav-link {% if active|default('general') == 'checklists' %}active{% endif %}" href="{{ path('student_checklists_details', { uuid: student.uuid }) }}">
                 <i class="fa-solid fa-list-check"></i> {{ 'students.checklists.label'|trans }}
             </a>
         </li>
     {% endif %}
-    {% if is_granted('ROLE_BOOK_VIEWER') and is_enabled('book') %}
+    {% if is_granted('ROLE_BOOK_VIEWER') and feature_enabled('book') %}
         <li class="nav-item">
             <a class="nav-link {% if active|default('general') == 'attendance' %}active{% endif %}" href="{{ path('student_attendance_details', { uuid: student.uuid, section: sectionFilter.currentSection.uuid }) }}">
                 <i class="fas fa-user-times"></i> {{ 'students.attendance.label'|trans }}
@@ -49,7 +49,7 @@
             </a>
         </li>
     {% endif %}
-    {% if is_granted('privacy') and is_enabled('privacy') %}
+    {% if is_granted('privacy') and feature_enabled('privacy') %}
         <li class="nav-item">
             <a class="nav-link {% if active|default('general') == 'privacy' %}active{% endif %}" href="{{ path('student_privacy_details', { uuid: student.uuid, section: sectionFilter.currentSection.uuid }) }}">
                 <i class="fas fa-user-shield"></i> {{ 'students.privacy.label'|trans }}

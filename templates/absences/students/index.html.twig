@@ -38,7 +38,7 @@
                     {% for group in groups %}
                         <div class="card">
                             <div class="card-header">
-                                {% if group.tuition is defined and group.tuition is instanceof('App\\Entity\\Tuition') %}
+                                {% if group.tuition is defined and group.tuition is instanceof('App\\Common\\Entity\\Tuition') %}
                                     {% set tuition = group.tuition %}
 
                                     {% if tuition.displayName is not empty %}

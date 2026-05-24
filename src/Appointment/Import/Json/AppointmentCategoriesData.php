@@ -25,7 +25,6 @@ class AppointmentCategoriesData {
 
     /**
      * @param AppointmentCategoryData[] $categories
-     * @return AppointmentCategoriesData
      */
     public function setCategories(array $categories): static {
         $this->categories = $categories;

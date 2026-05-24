@@ -5,7 +5,6 @@ namespace App\Untis\Settings;
 use App\Framework\Settings\AbstractSettings;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Embeddable]
 class UntisHtmlSettings extends AbstractSettings {
     public function getIdColumnName(): string {
         return $this->getValue('untis.import.html.columns.id', 'Vtr-Nr.');

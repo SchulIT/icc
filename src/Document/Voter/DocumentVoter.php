@@ -147,6 +147,6 @@ class DocumentVoter extends Voter {
         /** @var User $user */
         $user = $token->getUser();
 
-        return count($this->documentRepository->countDocumentsEditableByAuthor($user)) > 0;
+        return $this->documentRepository->countDocumentsEditableByAuthor($user) > 0;
     }
 }

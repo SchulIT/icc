@@ -12,19 +12,16 @@
 
 {% block profile_card_body %}
     <div class="card-body">
-        <form method="get" action="{{ path('dashboard') }}">
-            <div class="mb-3 row">
-                <label class="col-form-label col-sm-2 required" for="user">{{ 'label.user'|trans}}</label>
-                <div class="col-sm-10">
-                    <select name="_switch_user" id="user" placeholder="{{ 'label.select.user'|trans }}" data-autocomplete="true" data-autocomplete-url="{{ url('autocomplete_user') }}?q={query}&page={page}"></select>
-                </div>
-            </div>
+        {{ form_start(form) }}
 
-            <div class="buttons">
-                <button type="submit" class="btn btn-primary btn-sm">
-                    <i class="fa fa-arrow-right"></i> {{ 'profile.switch.button'|trans }}
-                </button>
-            </div>
-        </form>
+        {{ form_widget(form) }}
+
+        <div class="buttons">
+            <button type="submit" class="btn btn-primary btn-sm">
+                <i class="fa fa-arrow-right"></i> {{ 'profile.switch.button'|trans }}
+            </button>
+        </div>
+
+        {{ form_end(form) }}
     </div>
 {% endblock %}

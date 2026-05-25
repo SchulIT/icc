@@ -142,7 +142,7 @@ class UserRepository extends AbstractTransactionalRepository implements UserRepo
             ]);
     }
 
-    public function findAllPaginated(PaginationQuery $paginationQuery, string $query): PaginatedResult {
+    public function findAllPaginated(PaginationQuery $paginationQuery, string $query, array|null $userTypes = null): PaginatedResult {
         $qbInner = $this->em->createQueryBuilder()
             ->select('uInner.id')
             ->from(User::class, 'uInner')
@@ -157,6 +157,12 @@ class UserRepository extends AbstractTransactionalRepository implements UserRepo
             ->orWhere('sInner.lastname LIKE :query');
 
         $qb = $this->em->createQueryBuilder();
+
+        if($userTypes !== null && count($userTypes) > 0) {
+            $typeNames = array_map(fn(UserType $type) => $type->value, $userTypes);
+            $qbInner->andWhere($qbInner->expr()->in('uInner.userType', ':types'));
+            $qb->setParameter('types', $typeNames);
+        }
 
         $qb
             ->select(['u', 's'])

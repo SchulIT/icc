@@ -7,25 +7,24 @@ use App\Chat\ChatTagHelper;
 use App\Chat\Entity\Chat;
 use App\Chat\Entity\ChatMessage;
 use App\Chat\Entity\ChatMessageAttachment;
-use App\Common\Entity\User;
-use App\Framework\Controller\AbstractController;
-use App\Framework\Feature\Feature;
-use App\Framework\Feature\IsFeatureEnabled;
 use App\Chat\Filesystem\ChatFilesystem;
-use App\Framework\Filesystem\FileNotFoundException;
 use App\Chat\Form\ChatMessageType;
 use App\Chat\Form\ChatType;
-use App\Chat\Form\ChatUserRecipientType;
+use App\Chat\Form\Field\ChatUserAutocompleteField;
 use App\Chat\Repository\ChatMessageAttachmentRepositoryInterface;
 use App\Chat\Repository\ChatMessageRepositoryInterface;
 use App\Chat\Repository\ChatRepositoryInterface;
-use App\Common\Repository\UserRepositoryInterface;
-use App\Framework\Security\Firewall\Attribute\IsGrantedIfNotImpersonated;
+use App\Chat\Settings\ChatSettings;
+use App\Chat\View\Filter\ChatTagFilter;
 use App\Chat\Voter\ChatMessageAttachmentVoter;
 use App\Chat\Voter\ChatMessageVoter;
 use App\Chat\Voter\ChatVoter;
-use App\Chat\Settings\ChatSettings;
-use App\Chat\View\Filter\ChatTagFilter;
+use App\Common\Entity\User;
+use App\Common\Repository\UserRepositoryInterface;
+use App\Framework\Controller\AbstractController;
+use App\Framework\Feature\Feature;
+use App\Framework\Feature\IsFeatureEnabled;
+use App\Framework\Filesystem\FileNotFoundException;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -39,7 +38,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[Route('/chat')]
 #[IsFeatureEnabled(Feature::Chat)]
 #[IsGranted(ChatVoter::ChatEnabled)]
-#[IsGrantedIfNotImpersonated]
+##[IsGrantedIfNotImpersonated]
 class ChatController extends AbstractController {
 
     public function __construct(RefererHelper                                             $redirectHelper,
@@ -246,7 +245,7 @@ class ChatController extends AbstractController {
             ]);
         }
 
-        $participantsForm = $this->createForm(ChatUserRecipientType::class, null, ['multiple' => true, 'required' => false]);
+        $participantsForm = $this->createForm(ChatUserAutocompleteField::class, null, ['multiple' => true, 'required' => false]);
         $participantsForm->handleRequest($request);
 
         if($this->isGranted(ChatVoter::Participants, $chat) && $participantsForm->isSubmitted() && $participantsForm->isValid()) {

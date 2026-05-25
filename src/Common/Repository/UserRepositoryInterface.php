@@ -82,9 +82,10 @@ interface UserRepositoryInterface extends TransactionalRepositoryInterface {
     public function findAll(): array;
 
     /**
+     * @param UserType[]|null $userTypes
      * @return PaginatedResult<User>
      */
-    public function findAllPaginated(PaginationQuery $paginationQuery, string $query): PaginatedResult;
+    public function findAllPaginated(PaginationQuery $paginationQuery, string $query, array|null $userTypes = null): PaginatedResult;
 
     /**
      * @param User $user

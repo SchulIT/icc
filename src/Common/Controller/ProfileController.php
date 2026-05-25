@@ -3,7 +3,11 @@
 namespace App\Common\Controller;
 
 use App\Common\Entity\User;
+use App\Common\Entity\UserType;
+use App\Common\Form\Autocomplete\UserAutocompleteField;
+use App\Common\Form\SwitchUserType;
 use App\Common\Repository\UserRepositoryInterface;
+use App\Framework\Autocomplete\Checksum\ChecksumCalculatorInterface;
 use App\Framework\Controller\AbstractController;
 use App\Common\Entity\IcsAccessToken;
 use App\Message\Messenger\SendPushoverNotificationMessage;
@@ -198,7 +202,22 @@ class ProfileController extends AbstractController {
 
     #[Route(path: '/switch', name: 'switch_user')]
     #[IsGranted('ROLE_ALLOWED_TO_SWITCH')]
-    public function switchUser(): Response {
-        return $this->render('profile/switch.html.twig');
+    public function switchUser(Request $request): Response {
+        $form = $this->createForm(SwitchUserType::class);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $user = $form->get('user')->getData();
+
+            if($user instanceof User) {
+                return $this->redirectToRoute('dashboard', [
+                    '_switch_user' => $user->getIdpId()
+                ]);
+            }
+        }
+
+        return $this->render('profile/switch.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
 }

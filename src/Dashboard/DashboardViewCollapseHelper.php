@@ -2,6 +2,7 @@
 
 namespace App\Dashboard;
 
+use App\Common\Entity\Room;
 use App\Common\Entity\Student;
 use App\Common\Entity\Teacher;
 use App\Dashboard\Settings\DashboardSettings;
@@ -192,6 +193,8 @@ class DashboardViewCollapseHelper {
         }
 
         // STEP 4: EXAM SUPERVISION
+        $alreadyMergedItems = $lesson->getItems();
+
         /** @var ExamSupervisionViewItem[] $examSupervisions */
         $examSupervisions = ArrayUtils::filterByType($originalItems, ExamSupervisionViewItem::class);
         $examSupervisionCount = count($examSupervisions);
@@ -209,10 +212,40 @@ class DashboardViewCollapseHelper {
                 }
             }
 
+            // compare rooms: same rooms -> no collision!
             if($collision === true) {
-                $lesson->setWarning();
-                $lesson->replaceItems($originalItems);
-                return;
+                $rooms = [ ];
+
+                foreach($lesson->getItems() as $item) {
+                    if($item instanceof TimetableLessonViewItem) {
+                        $rooms[] = $item->getLesson()->getRoom()?->getName();
+                    } else if($item instanceof SubstitutionViewItem) {
+                        if($item->getSubstitution()->getReplacementRoomName() !== null) {
+                            $rooms[] = $item->getSubstitution()->getReplacementRoomName();
+                        } else {
+                            $rooms[] = $item->getSubstitution()->getRoomName();
+                        }
+                    } else if($item instanceof ExamSupervisionViewItem) {
+                        $rooms = array_merge(
+                            $rooms,
+                            array_map(
+                                fn(Room $room) => $room->getName(),
+                                $item->getRooms()
+                            )
+                        );
+                    }
+                }
+
+                $uniqueRooms = array_unique($rooms);
+
+                if(count($uniqueRooms) === 1) {
+                    $lesson->replaceItems($alreadyMergedItems);
+                    $lesson->addItem($examSupervisions[0]);
+                } else {
+                    $lesson->setWarning();
+                    $lesson->replaceItems($originalItems);
+                    return;
+                }
             } else {
                 $lesson->clearItems();
                 $lesson->addItem($examSupervisions[0]);

@@ -25,6 +25,7 @@ use App\Framework\Controller\AbstractController;
 use App\Framework\Feature\Feature;
 use App\Framework\Feature\IsFeatureEnabled;
 use App\Framework\Filesystem\FileNotFoundException;
+use App\Framework\Security\Firewall\Attribute\IsGrantedIfNotImpersonated;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;

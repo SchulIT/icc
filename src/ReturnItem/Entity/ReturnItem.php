@@ -40,6 +40,9 @@ class ReturnItem {
     #[Gedmo\Blameable(on: 'create')]
     private ?User $createdBy;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $comment = null;
+
     #[ORM\Column(type: Types::BOOLEAN)]
     private bool $isReturned = false;
 
@@ -90,6 +93,15 @@ class ReturnItem {
 
     public function setCreatedBy(?User $createdBy): void {
         $this->createdBy = $createdBy;
+    }
+
+    public function getComment(): ?string {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): ReturnItem {
+        $this->comment = $comment;
+        return $this;
     }
 
     public function isReturned(): bool {

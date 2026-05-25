@@ -26,11 +26,23 @@
                             <div class="bs-callout bs-callout-info">
                                 <h5>{{ 'return_items.show.returned.header'|trans }}</h5>
                                 <p>{{ 'return_items.show.returned.text'|trans({'%date%': item.returnedAt|format_date, '%time%': item.returnedAt.format('date.time_format'|trans), '%user%': item.returnedBy|user }) }}</p>
+
+                                {% if item.returnComment is not empty %}
+                                    <hr>
+
+                                    {{ item.returnComment|markdown }}
+                                {% endif %}
                             </div>
                         {% endif %}
 
                         {{ item.type.note|markdown }}
                     </div>
+
+                    {% if item.comment is not empty %}
+                        <div class="card-body border-top">
+                            {{ item.comment|markdown }}
+                        </div>
+                    {% endif %}
                 </div>
             </div>
 

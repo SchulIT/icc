@@ -15,6 +15,12 @@
     </ol>
 {% endblock %}
 
+{% block javascript %}
+    {{ parent() }}
+
+    <script src="{{ asset('build/editor.js') }}"></script>
+{% endblock %}
+
 {% block content %}
     {{ form_start(form) }}
 
@@ -23,11 +29,13 @@
 
         <div class="card-body">
             {{ form_widget(form.group_general.confirm) }}
+
+            {{ form_row(form.comment) }}
         </div>
     </div>
 
     <div class="buttons">
-        <button type="submit" class="btn btn-danger btn-sm">
+        <button type="submit" class="btn btn-primary btn-sm">
             <i class="fa fa-check"></i> {{ 'actions.confirm'|trans }}
         </button>
 

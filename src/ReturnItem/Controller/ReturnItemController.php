@@ -3,6 +3,7 @@
 namespace App\ReturnItem\Controller;
 
 use App\Common\Entity\GradeMembership;
+use App\Common\Form\Type\MarkdownType;
 use App\Framework\Controller\AbstractController;
 use App\ReturnItem\Entity\ReturnItem;
 use App\Common\Entity\Student;
@@ -181,11 +182,17 @@ class ReturnItemController extends AbstractController {
                 '%firstname%' => $item->getStudent()->getFirstname(),
                 '%lastname%' => $item->getStudent()->getLastname()
             ]
-        ]);
+        ])
+            ->add('comment', MarkdownType::class, [
+                'label' => 'label.comment',
+                'required' => false
+            ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $item->setIsReturned(true);
+            $item->setReturnComment($form->get('comment')->getData());
+
             $this->repository->persist($item);
             $this->addFlash('success', 'return_items.return.success');
 

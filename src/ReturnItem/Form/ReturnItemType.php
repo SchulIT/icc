@@ -3,8 +3,10 @@
 namespace App\ReturnItem\Form;
 
 use App\Common\Form\Choice\StudentsType;
+use App\Common\Form\Type\MarkdownType;
 use App\ReturnItem\Entity\ReturnItem;
 use App\ReturnItem\Entity\ReturnItemType as ReturnItemTypeEntity;
+use League\CommonMark\Extension\Highlight\Mark;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,6 +25,10 @@ class ReturnItemType extends AbstractType {
                 'class' => ReturnItemTypeEntity::class,
                 'choice_label' => fn(ReturnItemTypeEntity $type) => $type->getDisplayName(),
                 'expanded' => true
+            ])
+            ->add('comment', MarkdownType::class, [
+                'label' => 'label.comment',
+                'required' => false
             ])
             ->addEventListener(FormEvents::POST_SET_DATA, function(FormEvent $event) {
                 $form = $event->getForm();

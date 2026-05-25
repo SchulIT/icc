@@ -94,7 +94,7 @@
             {% endif %}
             {{ _self.show_warning(hasWarning) }}
 
-            <div class="card-body align-self-center d-flex align-items-sm-center ps-0">
+            <div class="align-self-center w-100 d-flex">
                 <div class="me-auto align-self-center d-flex flex-wrap">
                     <span class="align-self-center mb-1">
                         {% for tuition in exam.tuitions %}
@@ -116,11 +116,13 @@
                     </span>
                 </div>
 
-                {{ _self.healthInfo(item.anyStudentWithHealthInfo) }}
+                <div class="align-self-center d-flex px-3">
+                    {{ _self.healthInfo(item.anyStudentWithHealthInfo) }}
 
-                <a href="{{ path('show_exam', { uuid: exam.uuid }) }}" class="btn btn-outline-primary btn-sm align-self-center ms-3">
-                    {{ 'label.details'|trans }}
-                </a>
+                    <a href="{{ path('show_exam', { uuid: exam.uuid }) }}" class="btn btn-outline-primary btn-sm align-self-center ms-2">
+                        {{ 'label.details'|trans }}
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -273,72 +275,74 @@
                         </div>
                     </div>
 
-                    {{ _self.healthInfo(item.anyStudentWithHealthInfo) }}
+                    <div class="align-self-center d-flex px-3">
+                        {{ _self.healthInfo(item.anyStudentWithHealthInfo) }}
 
-                    {% if lesson.tuition is not null and lesson.tuition.isBookEnabled and is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
-                        {% set editAction = null %}
+                        {% if lesson.tuition is not null and lesson.tuition.isBookEnabled and is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
+                            {% set editAction = null %}
 
-                        {% for entry in lesson.entries %}
-                            {% if entry.lessonStart <= lessonNumber and lessonNumber <= entry.lessonEnd %}
-                                {% set editAction = path('edit_entry', { uuid: entry.uuid }) %}
-                            {% endif %}
-                        {% endfor %}
-                        <div class="align-self-center ps-3">
-                                <entry students-url="{{ url('xhr_students') }}"
-                                       teachers-url="{{ url('xhr_teachers') }}"
-                                       study-groups-url="{{ url('xhr_studygroups') }}"
-                                       url="{{ path('xhr_lesson_entry', { start: lessonNumber, lesson: lesson.uuid.toString }) }}"
-                                       :lesson-number="{{ lessonNumber }}"
-                                       {% if app.user.teacher is not null %}teacher="{{ app.user.teacher.acronym }}"{% endif %}
-                                       csrfname="_token"
-                                       csrftoken="{{ csrf_token('book_entry') }}"
-                                       create-action="{{ path('add_entry', { uuid: lesson.uuid }) }}"
-                                       edit-action="{{ editAction }}"
-                                       cancel-action="{{ path('cancel_lesson', { uuid: lesson.uuid }) }}"></entry>
-                        </div>
-                    {% endif %}
-                    {% if lesson.tuition is not null %}
-                        {% set openLists = is_granted('tuitions') %}
-                        {% set openBook = is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
-                        {% set openGradebook = is_granted('ROLE_BOOK_ENTRY_CREATOR') and lesson.tuition.gradeCategories.count > 0 %}
-                        {% set addAdditionalInfo = is_granted('new-timetablelesson-additionalinformation') %}
-
-                        {% if openLists or openBook or openGradebook or addAdditionalInfo %}
-                            <div class="align-self-center pe-3">
-                                <div class="dropdown ms-1">
-                                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-end">
-                                        <div class="dropdown-header">{{ 'dashboard.links.header'|trans }}</div>
-                                        {% if openLists %}
-                                            <a href="{{ path('list_tuition', { uuid: lesson.tuition.uuid}) }}" class="dropdown-item" target="_blank">
-                                                <i class="fas fa-list"></i> {{ 'dashboard.links.tuition'|trans }} <i class="fas fa-external-link-alt"></i>
-                                            </a>
-                                        {% endif %}
-                                        {% if openBook %}
-                                            <a href="{{ path('book', { section: lesson.tuition.section.uuid, tuition: lesson.tuition.uuid}) }}" class="dropdown-item" target="_blank">
-                                                <i class="fas fa-book-open"></i> {{ 'dashboard.links.book'|trans }} <i class="fas fa-external-link-alt"></i>
-                                            </a>
-                                            <a href="{{ path('redirect_to_last_entry', { uuid: lesson.tuition.uuid, date: lesson.date.format('Y-m-d')}) }}" class="dropdown-item" target="_blank">
-                                                <i class="fas fa-book-open"></i> {{ 'dashboard.links.last_entry'|trans }} <i class="fas fa-external-link-alt"></i>
-                                            </a>
-                                        {% endif %}
-                                        {% if openGradebook %}
-                                            <a href="{{ path('gradebook', { section: lesson.tuition.section.uuid, tuition: lesson.tuition.uuid}) }}" class="dropdown-item" target="_blank">
-                                                <i class="fas fa-user-graduate"></i> {{ 'dashboard.links.gradebook'|trans }} <i class="fas fa-external-link-alt"></i>
-                                            </a>
-                                        {% endif %}
-                                        {% if addAdditionalInfo %}
-                                            <a href="{{ path('add_timetable_lesson_additional_information', { date: lesson.date.format('Y-m-d'), start: lesson.lessonStart, end: lesson.lessonEnd, studygroup: lesson.tuition.studyGroup.uuid }) }}" class="dropdown-item">
-                                                <i class="fas fa-plus"></i> {{ 'dashboard.additional_information.label'|trans }}
-                                            </a>
-                                        {% endif %}
-                                    </div>
-                                </div>
+                            {% for entry in lesson.entries %}
+                                {% if entry.lessonStart <= lessonNumber and lessonNumber <= entry.lessonEnd %}
+                                    {% set editAction = path('edit_entry', { uuid: entry.uuid }) %}
+                                {% endif %}
+                            {% endfor %}
+                            <div class="align-self-center ps-2">
+                                    <entry students-url="{{ url('xhr_students') }}"
+                                           teachers-url="{{ url('xhr_teachers') }}"
+                                           study-groups-url="{{ url('xhr_studygroups') }}"
+                                           url="{{ path('xhr_lesson_entry', { start: lessonNumber, lesson: lesson.uuid.toString }) }}"
+                                           :lesson-number="{{ lessonNumber }}"
+                                           {% if app.user.teacher is not null %}teacher="{{ app.user.teacher.acronym }}"{% endif %}
+                                           csrfname="_token"
+                                           csrftoken="{{ csrf_token('book_entry') }}"
+                                           create-action="{{ path('add_entry', { uuid: lesson.uuid }) }}"
+                                           edit-action="{{ editAction }}"
+                                           cancel-action="{{ path('cancel_lesson', { uuid: lesson.uuid }) }}"></entry>
                             </div>
                         {% endif %}
-                    {% endif %}
+                        {% if lesson.tuition is not null %}
+                            {% set openLists = is_granted('tuitions') %}
+                            {% set openBook = is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
+                            {% set openGradebook = is_granted('ROLE_BOOK_ENTRY_CREATOR') and lesson.tuition.gradeCategories.count > 0 %}
+                            {% set addAdditionalInfo = is_granted('new-timetablelesson-additionalinformation') %}
+
+                            {% if openLists or openBook or openGradebook or addAdditionalInfo %}
+                                <div class="align-self-center ps-2">
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <div class="dropdown-header">{{ 'dashboard.links.header'|trans }}</div>
+                                            {% if openLists %}
+                                                <a href="{{ path('list_tuition', { uuid: lesson.tuition.uuid}) }}" class="dropdown-item" target="_blank">
+                                                    <i class="fas fa-list"></i> {{ 'dashboard.links.tuition'|trans }} <i class="fas fa-external-link-alt"></i>
+                                                </a>
+                                            {% endif %}
+                                            {% if openBook %}
+                                                <a href="{{ path('book', { section: lesson.tuition.section.uuid, tuition: lesson.tuition.uuid}) }}" class="dropdown-item" target="_blank">
+                                                    <i class="fas fa-book-open"></i> {{ 'dashboard.links.book'|trans }} <i class="fas fa-external-link-alt"></i>
+                                                </a>
+                                                <a href="{{ path('redirect_to_last_entry', { uuid: lesson.tuition.uuid, date: lesson.date.format('Y-m-d')}) }}" class="dropdown-item" target="_blank">
+                                                    <i class="fas fa-book-open"></i> {{ 'dashboard.links.last_entry'|trans }} <i class="fas fa-external-link-alt"></i>
+                                                </a>
+                                            {% endif %}
+                                            {% if openGradebook %}
+                                                <a href="{{ path('gradebook', { section: lesson.tuition.section.uuid, tuition: lesson.tuition.uuid}) }}" class="dropdown-item" target="_blank">
+                                                    <i class="fas fa-user-graduate"></i> {{ 'dashboard.links.gradebook'|trans }} <i class="fas fa-external-link-alt"></i>
+                                                </a>
+                                            {% endif %}
+                                            {% if addAdditionalInfo %}
+                                                <a href="{{ path('add_timetable_lesson_additional_information', { date: lesson.date.format('Y-m-d'), start: lesson.lessonStart, end: lesson.lessonEnd, studygroup: lesson.tuition.studyGroup.uuid }) }}" class="dropdown-item">
+                                                    <i class="fas fa-plus"></i> {{ 'dashboard.additional_information.label'|trans }}
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
                 {% endfor %}
                 </div>
             {% endif %}
@@ -455,68 +459,70 @@
                     </div>
                 </div>
 
-                {{ _self.healthInfo(item.anyStudentWithHealthInfo) }}
+                <div class="align-self-center d-flex px-3">
+                    {{ _self.healthInfo(item.anyStudentWithHealthInfo) }}
 
-                {% set timetableLesson = item.timetableLesson %}
-                {% if timetableLesson is not null and timetableLesson.tuition is not null and timetableLesson.tuition.isBookEnabled and is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
-                    {% set editAction = null %}
+                    {% set timetableLesson = item.timetableLesson %}
+                    {% if timetableLesson is not null and timetableLesson.tuition is not null and timetableLesson.tuition.isBookEnabled and is_granted('ROLE_BOOK_ENTRY_CREATOR') %}
+                        {% set editAction = null %}
 
-                    {% for entry in timetableLesson.entries %}
-                        {% if entry.lessonStart <= lesson and lesson <= entry.lessonEnd %}
-                            {% set editAction = path('edit_entry', { uuid: entry.uuid }) %}
-                        {% endif %}
-                    {% endfor %}
-                    <div class="align-self-center ps-3">
-                        <entry students-url="{{ url('xhr_students') }}"
-                               teachers-url="{{ url('xhr_teachers') }}"
-                               study-groups-url="{{ url('xhr_studygroups') }}"
-                               {% if app.user.teacher is not null %}teacher="{{ app.user.teacher.acronym }}"{% endif %}
-                               url="{{ path('xhr_lesson_entry', { start: lesson, lesson: timetableLesson.uuid.toString }) }}"
-                               :lesson-number="{{ lesson }}"
-                               csrfname="_token"
-                               csrftoken="{{ csrf_token('book_entry') }}"
-                               create-action="{{ path('add_entry', { uuid: timetableLesson.uuid }) }}"
-                               edit-action="{{ editAction }}"
-                               cancel-action="{{ path('cancel_lesson', { uuid: timetableLesson.uuid }) }}"></entry>
-                    </div>
-                {% endif %}
+                        {% for entry in timetableLesson.entries %}
+                            {% if entry.lessonStart <= lesson and lesson <= entry.lessonEnd %}
+                                {% set editAction = path('edit_entry', { uuid: entry.uuid }) %}
+                            {% endif %}
+                        {% endfor %}
+                        <div class="ps-2">
+                            <entry students-url="{{ url('xhr_students') }}"
+                                   teachers-url="{{ url('xhr_teachers') }}"
+                                   study-groups-url="{{ url('xhr_studygroups') }}"
+                                   {% if app.user.teacher is not null %}teacher="{{ app.user.teacher.acronym }}"{% endif %}
+                                   url="{{ path('xhr_lesson_entry', { start: lesson, lesson: timetableLesson.uuid.toString }) }}"
+                                   :lesson-number="{{ lesson }}"
+                                   csrfname="_token"
+                                   csrftoken="{{ csrf_token('book_entry') }}"
+                                   create-action="{{ path('add_entry', { uuid: timetableLesson.uuid }) }}"
+                                   edit-action="{{ editAction }}"
+                                   cancel-action="{{ path('cancel_lesson', { uuid: timetableLesson.uuid }) }}"></entry>
+                        </div>
+                    {% endif %}
 
-                {% set openLists = is_granted('tuitions') and timetableLesson is not null and timetableLesson.tuition is not null %}
-                {% set openBook = is_granted('ROLE_BOOK_ENTRY_CREATOR') and timetableLesson is not null and timetableLesson.tuition is not null %}
-                {% set addAdditionalInfo = is_granted('new-timetablelesson-additionalinformation') and (substitution.studyGroups|length == 1 or substitution.replacementStudyGroups|length == 1) %}
+                    {% set openLists = is_granted('tuitions') and timetableLesson is not null and timetableLesson.tuition is not null %}
+                    {% set openBook = is_granted('ROLE_BOOK_ENTRY_CREATOR') and timetableLesson is not null and timetableLesson.tuition is not null %}
+                    {% set addAdditionalInfo = is_granted('new-timetablelesson-additionalinformation') and (substitution.studyGroups|length == 1 or substitution.replacementStudyGroups|length == 1) %}
 
-                {% if openLists or openBook or addAdditionalInfo %}
-                    <div class="align-self-center pe-3">
-                        <div class="dropdown ms-1">
-                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-ellipsis-v"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <div class="dropdown-header">{{ 'dashboard.links.header'|trans }}</div>
-                                {% if openLists %}
-                                    <a href="{{ path('list_tuition', { uuid: timetableLesson.tuition.uuid}) }}" class="dropdown-item" target="_blank">
-                                        <i class="fas fa-list"></i> {{ 'dashboard.links.tuition'|trans }} <i class="fas fa-external-link-alt"></i>
-                                    </a>
-                                {% endif %}
-                                {% if openBook %}
-                                    <a href="{{ path('book', { section: timetableLesson.tuition.section.uuid, tuition: timetableLesson.tuition.uuid}) }}" class="dropdown-item" target="_blank">
-                                        <i class="fas fa-book-open"></i> {{ 'dashboard.links.book'|trans }} <i class="fas fa-external-link-alt"></i>
-                                    </a>
-                                {% endif %}
-                                {% if addAdditionalInfo %}
-                                    {% set studyGroup = substitution.studyGroups.first %}
-
-                                    {% if studyGroup == false %}
-                                        {% set studyGroup = substitution.replacementStudyGroups.first %}
+                    {% if openLists or openBook or addAdditionalInfo %}
+                        <div class="ps-2">
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    <div class="dropdown-header">{{ 'dashboard.links.header'|trans }}</div>
+                                    {% if openLists %}
+                                        <a href="{{ path('list_tuition', { uuid: timetableLesson.tuition.uuid}) }}" class="dropdown-item" target="_blank">
+                                            <i class="fas fa-list"></i> {{ 'dashboard.links.tuition'|trans }} <i class="fas fa-external-link-alt"></i>
+                                        </a>
                                     {% endif %}
-                                    <a href="{{ path('add_timetable_lesson_additional_information', { date: substitution.date.format('Y-m-d'), start: substitution.lessonStart, end: substitution.lessonEnd, studygroup: studyGroup.uuid }) }}" class="dropdown-item">
-                                        <i class="fas fa-plus"></i> {{ 'dashboard.additional_information.label'|trans }}
-                                    </a>
-                                {% endif %}
+                                    {% if openBook %}
+                                        <a href="{{ path('book', { section: timetableLesson.tuition.section.uuid, tuition: timetableLesson.tuition.uuid}) }}" class="dropdown-item" target="_blank">
+                                            <i class="fas fa-book-open"></i> {{ 'dashboard.links.book'|trans }} <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                    {% endif %}
+                                    {% if addAdditionalInfo %}
+                                        {% set studyGroup = substitution.studyGroups.first %}
+
+                                        {% if studyGroup == false %}
+                                            {% set studyGroup = substitution.replacementStudyGroups.first %}
+                                        {% endif %}
+                                        <a href="{{ path('add_timetable_lesson_additional_information', { date: substitution.date.format('Y-m-d'), start: substitution.lessonStart, end: substitution.lessonEnd, studygroup: studyGroup.uuid }) }}" class="dropdown-item">
+                                            <i class="fas fa-plus"></i> {{ 'dashboard.additional_information.label'|trans }}
+                                        </a>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                {% endif %}
+                    {% endif %}
+                </div>
             </div>
         </div>
 
@@ -535,7 +541,7 @@
 
 {% macro healthInfo(hasStudentsWithHealthInfo) %}
     {% if dashboardSettings.healthUrl is not empty and hasStudentsWithHealthInfo and is_granted('new-student-info') %}
-        <a href="{{ dashboardSettings.healthUrl }}" target="_blank" class="btn btn-outline-secondary btn-sm align-self-center me-n2">
+        <a href="{{ dashboardSettings.healthUrl }}" target="_blank" class="btn btn-outline-secondary btn-sm align-self-center">
             <i class="fa-solid fa-notes-medical"></i>
         </a>
     {% endif %}

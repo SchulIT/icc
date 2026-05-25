@@ -38,7 +38,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[Route('/chat')]
 #[IsFeatureEnabled(Feature::Chat)]
 #[IsGranted(ChatVoter::ChatEnabled)]
-##[IsGrantedIfNotImpersonated]
+#[IsGrantedIfNotImpersonated]
 class ChatController extends AbstractController {
 
     public function __construct(RefererHelper                                             $redirectHelper,

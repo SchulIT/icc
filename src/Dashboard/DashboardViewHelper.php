@@ -420,6 +420,19 @@ class DashboardViewHelper {
             $studyGroups = $substitution->getReplacementStudyGroups()->count() > 0 ? $substitution->getReplacementStudyGroups() : $substitution->getStudyGroups();
             $students = $this->getStudents($studyGroups);
 
+            if(count($studyGroups) === 0) {
+                $students = [ ];
+
+                foreach($substitution->getGrades() as $grade) {
+                    $students = array_merge(
+                        $students,
+                        $this->studentRepository->findAllByGrade($grade, $this->sectionResolver->getSectionForDate($substitution->getDate()))
+                    );
+                }
+            }
+
+            $hasAnyStudentWithHealthInfo = $this->bookStudentInformationRepository->countByStudents($students, StudentInformationType::Health, $substitution->getDate(), $substitution->getDate()) > 0 && $this->authorizationChecker->isGranted(StudentVoter::ShowAny);
+
             for ($lesson = $substitution->getLessonStart(); $lesson <= $substitution->getLessonEnd(); $lesson++) {
                 $tuition = $this->tuitionRepository->findOneBySubstitution($substitution, $this->sectionResolver->getSectionForDate($substitution->getDate()));
 
@@ -433,7 +446,6 @@ class DashboardViewHelper {
                 }
 
                 $additionalInfo = ArrayUtils::unique($additionalInfo);
-                $hasAnyStudentWithHealthInfo = $this->bookStudentInformationRepository->countByStudents($students, StudentInformationType::Health, $substitution->getDate(), $substitution->getDate()) > 0 && $this->authorizationChecker->isGranted(StudentVoter::ShowAny);
 
                 $studentInfo = [ ];
 

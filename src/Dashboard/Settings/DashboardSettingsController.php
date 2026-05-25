@@ -2,10 +2,14 @@
 
 namespace App\Dashboard\Settings;
 
+use App\Common\Entity\Grade;
 use App\Common\Form\Collection\TextCollectionEntryType;
+use App\Common\Repository\GradeRepositoryInterface;
 use App\Dashboard\Settings\DashboardSettings;
+use App\Framework\Utils\ArrayUtils;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
@@ -22,7 +26,7 @@ use Symfony\Component\Validator\Constraints\Url;
 #[IsGranted('ROLE_ADMIN')]
 class DashboardSettingsController extends AbstractController {
     #[Route(path: '/dashboard', name: 'admin_settings_dashboard')]
-    public function dashboard(Request $request, DashboardSettings $dashboardSettings): Response {
+    public function dashboard(Request $request, DashboardSettings $dashboardSettings, GradeRepositoryInterface $gradeRepository): Response {
         $builder = $this->createFormBuilder();
         $builder
             ->add('removable_subjects', CollectionType::class, [
@@ -110,14 +114,26 @@ class DashboardSettingsController extends AbstractController {
                 ]
             ])
             ->add('health_url', UrlType::class, [
-                'label' => 'admin.settings.dashboard.health.url',
-                'help' => 'admin.settings.dashboard.health.url',
+                'label' => 'admin.settings.dashboard.health_url.label',
+                'help' => 'admin.settings.dashboard.health_url.help',
                 'required' => false,
                 'constraints' => [
                     new NotBlank(allowNull: true),
                     new Url()
                 ],
                 'data' => $dashboardSettings->getHealthUrl(),
+            ])
+            ->add('no_exam_students_own_tuition_grades', ChoiceType::class, [
+                'label' => 'admin.settings.dashboard.absences.no_exam_students_own_tuition_grades.label',
+                'help' => 'admin.settings.dashboard.absences.no_exam_students_own_tuition_grades.help',
+                'choices' => ArrayUtils::createArrayWithKeysAndValues($gradeRepository->findAll(), fn(Grade $grade) => $grade->getName(), fn(Grade $grade) => $grade->getId()),
+                'multiple' => true,
+                'attr' => [
+                    'data-choice' => 'true'
+                ],
+                'required' => false,
+                'empty_data' => [ ],
+                'data' => $dashboardSettings->getNoExamStudentsOwnTuitionGrades()
             ]);
 
         $form = $builder->getForm();
@@ -151,6 +167,9 @@ class DashboardSettingsController extends AbstractController {
                 },
                 'health_url' => function($url) use ($dashboardSettings) {
                     $dashboardSettings->setHealthUrl($url);
+                },
+                'no_exam_students_own_tuition_grades' => function($grades) use ($dashboardSettings) {
+                    $dashboardSettings->setNoExamStudentsOwnTuitionGrades($grades);
                 }
             ];
 

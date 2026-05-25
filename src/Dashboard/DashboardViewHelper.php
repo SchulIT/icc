@@ -632,6 +632,20 @@ class DashboardViewHelper {
         }
     }
 
+    private function removeExamAbsencesOwnTuition(Tuition $tuition): bool {
+        if(count($this->dashboardSettings->getNoExamStudentsOwnTuitionGrades()) === 0) {
+            return false;
+        }
+
+        foreach($tuition->getStudyGroup()->getGrades() as $grade) {
+            if(in_array($grade->getId(), $this->dashboardSettings->getNoExamStudentsOwnTuitionGrades())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * @param Student[] $students
      * @param string[] $excludedResolvers FQCN of excluded strategies
@@ -641,7 +655,7 @@ class DashboardViewHelper {
     private function computeAbsentStudents(array $students, int $lesson, DateTime $dateTime, array $excludedResolvers = [ ], ?Tuition $tuition = null): array {
         $absentStudents = $this->absenceResolver->resolve($dateTime, $lesson, $students, $excludedResolvers);
 
-        if($tuition !== null) {
+        if($tuition !== null && $this->removeExamAbsencesOwnTuition($tuition)) {
             $absentStudents = array_filter(
                 $absentStudents,
                 fn(AbsentStudent $absentStudent) => !$absentStudent instanceof AbsentExamStudent || $absentStudent->getTuition()?->getId() !== $tuition->getId()

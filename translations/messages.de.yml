@@ -1080,6 +1080,10 @@ admin:
             health_url:
                 label: URL zu Gesundheitsinformationen
                 help: Ein Knopf mit einem Link zu der genannten Seite wird eingeblendet, sofern für mindestens ein Schüler oder eine Schülerin des Unterrichts bzw. der Klausur ein Hinweis vom Typ "Gesundheit" hinterlegt ist.
+            absences:
+                no_exam_students_own_tuition_grades:
+                    label: Keine Klausurabwesenheiten (eigener Unterricht)
+                    help: Für ausgewählten Klassen werden Absenzen aufgrund von Klausur nicht angezeigt. Bei nicht ausgewählten Klassen werden Schülerinnern und Schüler als abwesend markiert, wenn sie eine Klausur schreiben - auch wenn dies den eigenen Unterricht betrifft.
 
         student_absences:
             label: Abwesenheitsmeldungen

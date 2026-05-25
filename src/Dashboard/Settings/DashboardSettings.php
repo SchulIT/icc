@@ -82,4 +82,12 @@ class DashboardSettings extends AbstractSettings {
     public function setHealthUrl(?string $healthUrl): void {
         $this->setValue('dashboard.health.url', $healthUrl);
     }
+
+    public function getNoExamStudentsOwnTuitionGrades(): array {
+        return $this->getValue('dashboard.absences.no_exam_students_own_tuition_grades', [ ]);
+    }
+
+    public function setNoExamStudentsOwnTuitionGrades(array $ids): void {
+        $this->setValue('dashboard.absences.no_exam_students_own_tuition_grades', $ids);
+    }
 }

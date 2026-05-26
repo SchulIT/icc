@@ -10,9 +10,9 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Authentication\Token\SwitchUserToken;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-class DisableChatWhenImpersonatedSubscriber implements EventSubscriberInterface {
+readonly class DisableControllerWhenImpersonatedSubscriber implements EventSubscriberInterface {
 
-    public function __construct(private readonly TokenStorageInterface $tokenStorage) {
+    public function __construct(private TokenStorageInterface $tokenStorage) {
 
     }
 

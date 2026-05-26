@@ -39,20 +39,21 @@
                     </div>
                 {% endif %}
 
-                <div class="row" data-masonry='{"percentPosition": true }'>
+                <div class="row row-cols-1 row-cols-md-2 row-cols-xxl-3 g-2">
                     {% for child in childrenWithChildren %}
-                        <div class="col-sm-6 col-md-4">
-                            <div class="card">
-                                <div class="card-header">
-                                    <i class="{% if child.icon is not empty %}{{ child.icon }}{% else %}far fa-copy{% endif %}"></i>
-                                    <a href="{{ path('show_wiki_article', { uuid: child.uuid }) }}">
-                                        {{ child.title }}
-                                    </a>
-                                </div>
-                                <div class="list-group list-group-flush">
+                        <div class="col">
+                            <div class="card h-100 mb-0">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="{% if child.icon is not empty %}{{ child.icon }}{% else %}far fa-copy{% endif %}"></i>
+                                        <a href="{{ path('show_wiki_article', { uuid: child.uuid }) }}">
+                                            {{ child.title }}
+                                        </a>
+                                    </h5>
+
                                     {% for c in child.children %}
                                         {% if is_granted('view', c) %}
-                                            <a href="{{ path('show_wiki_article', { uuid: c.uuid }) }}" class="list-group-item list-group-item-action">{{ c.title }}</a>
+                                            <a href="{{ path('show_wiki_article', { uuid: c.uuid }) }}" class="btn btn-outline-primary btn-sm mb-1 me-1">{{ c.title }}</a>
                                         {% endif %}
                                     {% endfor %}
                                 </div>
@@ -61,14 +62,16 @@
                     {% endfor %}
 
                     {% if childrenWithoutChildren|length > 0 %}
-                        <div class="col-sm-6 col-md-4">
-                            <div class="card">
-                                <div class="card-header"><i class="far fa-copy"></i> {{ 'wiki.more_articles'|trans }}</div>
+                        <div class="col">
+                            <div class="card h-100 mb-0">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="far fa-copy"></i> {{ 'wiki.more_articles'|trans }}
+                                    </h5>
 
-                                <div class="list-group list-group-flush">
                                     {% for c in childrenWithoutChildren %}
                                         {% if is_granted('view', c) %}
-                                            <a href="{{ path('show_wiki_article', { uuid: c.uuid }) }}" class="list-group-item list-group-item-action">{{ c.title }}</a>
+                                            <a href="{{ path('show_wiki_article', { uuid: c.uuid }) }}" class="btn btn-outline-primary btn-sm me-1 mb-1">{{ c.title }}</a>
                                         {% endif %}
                                     {% endfor %}
                                 </div>

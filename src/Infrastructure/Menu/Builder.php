@@ -100,7 +100,12 @@ class Builder {
         }
 
         if($this->featureManager->isFeatureEnabled(Feature::Wiki)) {
-            $this->wikiMenu($menu);
+            $menu->addChild('wiki.label', [
+                'route' => 'wiki'
+            ])
+                ->setExtra('menu', 'wiki')
+                ->setExtra('icon', 'fab fa-wikipedia-w')
+                ->setExtra('menu-container', '#submenu');
         }
 
         if(($this->featureManager->isFeatureEnabled(Feature::StudentAbsence) || $this->featureManager->isFeatureEnabled(Feature::TeacherAbsence)) && ($this->authorizationChecker->isGranted('ROLE_SICK_NOTE_VIEWER')
@@ -277,30 +282,6 @@ class Builder {
         $this->replaceWithFirstItem($menu, $lists, false, false);
 
         return $lists;
-    }
-
-    private function wikiMenu(ItemInterface $menu): ItemInterface {
-        $wiki = $menu->addChild('wiki.label', [
-            'route' => 'wiki'
-        ])
-            ->setExtra('menu', 'wiki')
-            ->setExtra('icon', 'fab fa-wikipedia-w')
-            ->setExtra('menu-container', '#submenu');
-
-        foreach($this->wikiRepository->findAll() as $article) {
-            if($article->isOnline() && $this->authorizationChecker->isGranted(WikiVoter::View, $article)) {
-                $item = $wiki->addChild(sprintf('wiki.%s', $article->getUuid()), [
-                    'label' => $article->getTitle(),
-                    'route' => 'show_wiki_article',
-                    'routeParameters' => [
-                        'uuid' => (string)$article->getUuid(),
-                    ]
-                ])
-                    ->setExtra('icon', !empty($article->getIcon()) ? $article->getIcon() : 'far fa-file');
-            }
-        }
-
-        return $wiki;
     }
 
     private function bookMenu(ItemInterface $menu): ItemInterface {

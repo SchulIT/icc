@@ -915,7 +915,7 @@ class BookController extends AbstractController {
         return $this->createResponse($xml, 'application/xml', $filename);
     }
 
-    #[Route('/check/{uuid}/toggleSuppress', methods: ['POST'])]
+    #[Route('/check/{uuid}/toggleSuppress', name: 'app_book_togglesuppressviolation', methods: ['POST'])]
     public function toggleSuppressViolation(BookIntegrityCheckViolation $violation, BookIntegrityCheckViolationRepositoryInterface $violationRepository, Request $request): Response {
         $this->denyAccessUnlessGranted(BookIntegrityCheckViolationVoter::Suppress, $violation);
 

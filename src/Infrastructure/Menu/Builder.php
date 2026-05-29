@@ -2,47 +2,39 @@
 
 namespace App\Infrastructure\Menu;
 
-use App\Book\Statistics\BookLessonCountGenerator;
+use App\Book\Settings\BookSettings;
 use App\Book\Statistics\MissingEntriesCalculator;
+use App\Chat\Repository\ChatMessageRepositoryInterface;
+use App\Chat\Voter\ChatVoter;
 use App\Common\Entity\User;
+use App\Common\Section\SectionResolverInterface;
+use App\Common\Voter\ListsVoter;
+use App\Common\Voter\StudentVoter;
 use App\Framework\Feature\Feature;
 use App\Framework\Feature\FeatureManager;
-use App\Chat\Repository\ChatMessageRepositoryInterface;
-use App\ReturnItem\Repository\ReturnItemRepositoryInterface;
-use App\Timetable\Repository\TimetableLessonRepositoryInterface;
-use App\Wiki\Repository\WikiArticleRepositoryInterface;
-use App\Common\Section\SectionResolverInterface;
-use App\Chat\Voter\ChatVoter;
 use App\LearningManagementSystem\Voter\CredentialsVoter;
-use App\Common\Voter\ListsVoter;
 use App\ParentsDay\Voter\ParentsDayAppointmentVoter;
+use App\ReturnItem\Repository\ReturnItemRepositoryInterface;
 use App\Room\Voter\ResourceReservationVoter;
 use App\StudentAbsence\Voter\StudentAbsenceVoter;
-use App\Common\Voter\StudentVoter;
 use App\TeacherAbsence\Voter\TeacherAbsenceVoter;
-use App\Wiki\Voter\WikiVoter;
-use App\Book\Settings\BookSettings;
-use App\Chat\Settings\ChatSettings;
-use App\StudentAbsence\Settings\StudentAbsenceSettings;
-use App\TeacherAbsence\Settings\TeacherAbsenceSettings;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class Builder {
-    public function __construct(private readonly FactoryInterface $factory,
-                                private readonly AuthorizationCheckerInterface $authorizationChecker,
-                                private readonly WikiArticleRepositoryInterface $wikiRepository,
-                                private readonly TokenStorageInterface $tokenStorage,
-                                private readonly DateHelper $dateHelper,
-                                private readonly SectionResolverInterface $sectionResolver,
-                                private readonly BookSettings $bookSettings,
-                                private readonly ChatMessageRepositoryInterface $chatMessageRepository,
-                                private readonly ReturnItemRepositoryInterface $returnItemRepository,
-                                private readonly FeatureManager $featureManager,
-                                private readonly MissingEntriesCalculator $missingEntriesCalculator)
+readonly class Builder {
+    public function __construct(private FactoryInterface $factory,
+                                private AuthorizationCheckerInterface $authorizationChecker,
+                                private TokenStorageInterface $tokenStorage,
+                                private DateHelper $dateHelper,
+                                private SectionResolverInterface $sectionResolver,
+                                private BookSettings $bookSettings,
+                                private ChatMessageRepositoryInterface $chatMessageRepository,
+                                private ReturnItemRepositoryInterface $returnItemRepository,
+                                private FeatureManager $featureManager,
+                                private MissingEntriesCalculator $missingEntriesCalculator)
     {
     }
 

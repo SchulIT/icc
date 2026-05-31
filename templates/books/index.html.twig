@@ -603,6 +603,15 @@
                                                             {{ lesson.entry.topic }}
                                                         </p>
                                                     </div>
+
+                                                    {% if lesson.entry.educationalMaterial is not empty %}
+                                                    <div class="mt-1 d-flex align-items-baseline">
+                                                        <i class="fa-solid fa-chalkboard"></i>
+                                                        <p class="mb-0 ms-1">
+                                                            {{ lesson.entry.educationalMaterial }}
+                                                        </p>
+                                                    </div>
+                                                    {% endif %}
                                                 {% endif %}
 
                                                 {% if lesson.entry.exercises is not empty %}

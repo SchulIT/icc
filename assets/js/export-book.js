@@ -537,7 +537,10 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
                     if(lesson.was_cancelled) {
                         lesson.topic = '[Entfall] ' + lesson.topic;
+                    } else if(lesson.educational_material !== null) {
+                        lesson.topic += '\n' + lesson.educational_material;
                     }
+
                     row.push([ wrapWordsLongerThan(lesson.topic) ]);
                     row.push([ wrapWordsLongerThan(lesson.exercises) ]);
                     row.push([ remarksAndAttendances.join('\n') ]);

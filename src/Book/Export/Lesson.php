@@ -43,6 +43,10 @@ class Lesson {
     private ?string $topic = null;
 
     #[Serializer\Type('string')]
+    #[Serializer\SerializedName('educational_material')]
+    private ?string $educationalMaterial = null;
+
+    #[Serializer\Type('string')]
     #[Serializer\SerializedName('comment')]
     private ?string $comment = null;
 
@@ -135,6 +139,15 @@ class Lesson {
 
     public function setTopic(?string $topic): Lesson {
         $this->topic = $topic;
+        return $this;
+    }
+
+    public function getEducationalMaterial(): ?string {
+        return $this->educationalMaterial;
+    }
+
+    public function setEducationalMaterial(?string $educationalMaterial): Lesson {
+        $this->educationalMaterial = $educationalMaterial;
         return $this;
     }
 

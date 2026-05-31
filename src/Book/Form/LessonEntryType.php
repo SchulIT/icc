@@ -35,6 +35,7 @@ class LessonEntryType extends LessonEntryCreateType {
                         $form->remove('replacementSubject')
                             ->remove('replacementTeacher')
                             ->remove('topic')
+                            ->remove('educationalMaterial')
                             ->remove('comment')
                             ->remove('attendances');
 

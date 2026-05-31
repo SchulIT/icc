@@ -266,6 +266,7 @@ class BookXhrController extends AbstractController {
                 'teacher' => $this->getTeacher($entry->getTeacher()),
                 'replacement_teacher' => $this->getTeacher($entry->getReplacementTeacher()),
                 'topic' => $entry->getTopic(),
+                'educational_material' => $entry->getEducationalMaterial(),
                 'exercises' => $entry->getExercises(),
                 'comment' => $entry->getComment(),
                 'is_cancelled' => $entry->isCancelled(),

@@ -37,6 +37,11 @@ class LessonEntryCreateType extends AbstractType {
             ->add('topic', TextType::class, [
                 'label' => 'label.topic'
             ])
+            ->add('educationalMaterial', TextareaType::class, [
+                'label' => 'book.entry.educational_material.label',
+                'help' => 'book.entry.educational_material.help',
+                'required' => false
+            ])
             ->add('teacher', EntityType::class, [
                 'class' => Teacher::class,
                 'label' => 'label.teacher',

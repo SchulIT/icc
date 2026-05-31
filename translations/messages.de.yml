@@ -2168,6 +2168,9 @@ book:
         comment:
             label: Bemerkungen zur Lerngruppe
             help: Bitte hier keine Kommentare zu einzelnen Schülerinnen und Schülern hinterlassen. Stattdessen die Kommentar-Funktion verwenden.
+        educational_material:
+            label: Unterrichtsstoff
+            help: Optional. Hier können Details zum Unterrichtsstoff notiert werden. Abwesende Schülerinnen und Schüler können diese Informationen nutzen, um den Stoff der Stunde nachzuarbeiten.
         redirect_to_last:
             error:
                 not_found: Es wurde kein Eintrag gefunden.

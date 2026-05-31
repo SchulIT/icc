@@ -333,6 +333,7 @@ class BookExporter {
             ->setReplacementTeacher($this->castTeacher($entry->getReplacementTeacher()))
             ->setWasCancelled($entry->isCancelled())
             ->setTopic($entry->isCancelled() ? $entry->getCancelReason() : $entry->getTopic())
+            ->setEducationalMaterial($entry->getEducationalMaterial())
             ->setComment($entry->getComment())
             ->setExercises($entry->getExercises())
             ->setIsMissing(false);

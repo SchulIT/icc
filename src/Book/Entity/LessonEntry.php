@@ -95,6 +95,10 @@ class LessonEntry {
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $topic = null;
 
+    #[Assert\NotBlank(allowNull: true, groups: ['Default'])]
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $educationalMaterial = null;
+
     /**
      * @var string|null
      */
@@ -204,6 +208,15 @@ class LessonEntry {
 
     public function setTopic(?string $topic): LessonEntry {
         $this->topic = $topic;
+        return $this;
+    }
+
+    public function getEducationalMaterial(): ?string {
+        return $this->educationalMaterial;
+    }
+
+    public function setEducationalMaterial(?string $educationalMaterial): LessonEntry {
+        $this->educationalMaterial = $educationalMaterial;
         return $this;
     }
 

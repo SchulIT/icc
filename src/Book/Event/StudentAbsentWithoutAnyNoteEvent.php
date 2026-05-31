@@ -1,6 +1,6 @@
 <?php
 
-namespace App\StudentAbsence\Event;
+namespace App\Book\Event;
 
 use App\Book\Entity\Attendance;
 use Symfony\Contracts\EventDispatcher\Event;

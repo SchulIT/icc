@@ -4,7 +4,7 @@ namespace App\Notification\EventSubscriber;
 
 use App\Common\Converter\StudentStringConverter;
 use App\Common\Entity\UserType;
-use App\StudentAbsence\Event\StudentAbsentWithoutAnyNoteEvent;
+use App\Book\Event\StudentAbsentWithoutAnyNoteEvent;
 use App\Notification\Notification;
 use App\Notification\NotificationService;
 use App\Common\Repository\UserRepositoryInterface;

@@ -6,7 +6,7 @@ use App\Book\AttendanceSuggestion\PreviousAbsenceSuggestionStrategy;
 use App\Book\AttendanceSuggestion\SuggestionResolver;
 use App\Book\Entity\Attendance;
 use App\Book\Entity\AttendanceType;
-use App\StudentAbsence\Event\StudentAbsentWithoutAnyNoteEvent;
+use App\Book\Event\StudentAbsentWithoutAnyNoteEvent;
 use App\Infrastructure\EventSubscriber\DoctrineEventsCollector;
 use App\Book\Xhr\Response\AttendanceSuggestion;
 use App\Framework\Utils\ArrayUtils;

@@ -30,8 +30,8 @@ const app = createApp({
 let axiosWithoutInterceptors = axios.create();
 axiosWithoutInterceptors.interceptors.request.clear();
 
-let lastAuthCheck = new Date().getTime();
-let checkIntervalInMilliseconds = 1 * 60 * 1000;
+let lastAuthCheck = null;
+let checkIntervalInMilliseconds = 10 * 1000; //10mins
 
 axios.interceptors.request.use(
     async function (config) {
@@ -48,7 +48,7 @@ axios.interceptors.request.use(
     },
     {
         synchronous: false,
-        runWhen: () => lastAuthCheck < (new Date().getTime() - checkIntervalInMilliseconds)
+        runWhen: () => lastAuthCheck === null || lastAuthCheck < (new Date().getTime() - checkIntervalInMilliseconds)
     }
 );
 

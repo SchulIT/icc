@@ -6,6 +6,7 @@ use App\Book\Entity\BookComment;
 use App\Common\Form\Choice\StudentsType;
 use App\Common\Form\Choice\TeacherChoiceType;
 use App\Book\Settings\BookSettings;
+use App\Common\Form\Type\MarkdownType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -30,7 +31,7 @@ class BookCommentType extends AbstractType {
                 'label' => 'label.teacher',
                 'placeholder' => 'label.select.teacher'
             ])
-            ->add('text', TextareaType::class, [
+            ->add('text', MarkdownType::class, [
                 'label' => 'label.comment'
             ])
             ->add('students', StudentsType::class, [

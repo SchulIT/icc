@@ -13,11 +13,17 @@ for(let $element of document.querySelectorAll('select[' + symfonyUxAutocompleteU
     let noResultsText = $element.getAttribute(symfonyUxAutocompleteNoResultsFoundAttributeName);
     let preload = $element.getAttribute(symfonyUxAutocompletePreloadAttributeName);
 
+    let plugins = [ 'virtual_scroll' ];
+
+    if($element.multiple) {
+        plugins.push( 'remove_button' );
+    }
+
     new TomSelect($element, {
         valueField: 'value',
         labelField: 'text',
         searchField: [ 'text', 'sublabel' ],
-        plugins: ['virtual_scroll', 'remove_button'],
+        plugins: plugins,
 
         preload: preload,
         score: () => () => 1,

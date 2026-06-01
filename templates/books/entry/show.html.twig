@@ -63,11 +63,11 @@
                         {% if form.topic is defined %}
                             {{ form_row(form.topic) }}
                         {% endif %}
-                        {% if form.educationalMaterial is defined %}
-                            {{ form_row(form.educationalMaterial) }}
-                        {% endif %}
                         {% if form.exercises is defined %}
                             {{ form_row(form.exercises) }}
+                        {% endif %}
+                        {% if form.educationalMaterial is defined %}
+                            {{ form_row(form.educationalMaterial) }}
                         {% endif %}
                         {% if form.comment is defined %}
                             {{ form_row(form.comment) }}

@@ -90,16 +90,16 @@
                         </div>
 
                         <div class="mb-3">
+                          <label for="exercises" class="control-label">{{ $trans('label.exercises') }}</label>
+                          <textarea v-model="entry.exercises" name="lesson_entry[exercises]" class="form-control" id="exercises"></textarea>
+                        </div>
+
+                        <div class="mb-3">
                           <label for="educationalMaterial" class="control-label">{{ $trans('book.entry.educational_material.label') }}</label>
                           <textarea v-model="entry.educationalMaterial" name="lesson_entry[educationalMaterial]" class="form-control" id="educationalMaterial"></textarea>
                           <small class="form-text text-muted">
                             {{ $trans('book.entry.educational_material.help')}}
                           </small>
-                        </div>
-
-                        <div class="mb-3">
-                          <label for="exercises" class="control-label">{{ $trans('label.exercises') }}</label>
-                          <textarea v-model="entry.exercises" name="lesson_entry[exercises]" class="form-control" id="exercises"></textarea>
                         </div>
 
                         <div class="mb-3">

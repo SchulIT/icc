@@ -38,9 +38,9 @@
                                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
                                     <div class="me-auto">
                                         <div>
-                                            {% if unreadCounter[absence.uuid] is defined and unreadCounter[absence.uuid] > 0 %}
+                                            {% if unreadCounter[absence.uuid.toString] is defined and unreadCounter[absence.uuid.toString] > 0 %}
                                                 <span class="badge text-bg-danger">
-                                                    <i class="fas fa-asterisk"></i> {{ unreadCounter[absence.uuid] }}
+                                                    <i class="fas fa-asterisk"></i> {{ unreadCounter[absence.uuid.toString] }}
                                                 </span>
 
                                                 <span class="fw-semibold">{{ absence.type.name }}</span>

@@ -29,17 +29,13 @@ interface StudentAbsenceRepositoryInterface {
     public function findByBulkUuid(string $uuid): array;
 
     /**
-     * Returns a paginator which paginates on all students (e.g. for a given teacher) which are sick on the
-     * specified date $date.
-     *
      * @param Student[] $students
-     * @param DateTime $date The current date
      * @param StudentAbsenceType|null $type
      * @param int $itemsPerPage
      * @param int $page
      * @return Paginator
      */
-    public function getStudentsPaginator(array $students, DateTime $date, ?StudentAbsenceType $type, int $itemsPerPage, int &$page): Paginator;
+    public function getStudentsPaginator(array $students, ?StudentAbsenceType $type, int $itemsPerPage, int &$page): Paginator;
 
     public function getStudentPaginator(Student $student, ?StudentAbsenceType $type, int $itemsPerPage, int &$page): Paginator;
 

@@ -12,7 +12,6 @@
 {% block content %}
     {% set currentFilter = {
         section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null,
-        teacher: (isTeacherX ? '✗' : (teacherFilter.currentTeacher ? teacherFilter.currentTeacher.uuid.toString : null)),
         student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString : null,
         grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null,
         type: typeFilter.currentType ? typeFilter.currentType.uuid.toString : null
@@ -21,114 +20,89 @@
     <div class="container-fluid px-0">
         <div class="row">
             <div class="col-md-9">
-                {% if groups|length == 0 %}
+                {% if absences|length == 0 %}
                     <div class="bs-callout bs-callout-info">
                         <h5>{{ 'info.label'|trans }}</h5>
 
                         <p>{{ 'absences.students.empty'|trans }}</p>
                     </div>
                 {% else %}
-                    {% if teacherFilter.currentTeacher is not null %}
-                        <div class="bs-callout bs-callout-info">
-                            <h5>{{ 'info.label'|trans }}</h5>
-                            <p>{{ 'absences.students.teacher_info'|trans }}</p>
+                    <div class="card">
+                        <div class="card-header">
+                            {{ 'absences.label'|trans }}
                         </div>
-                    {% endif %}
 
-                    {% for group in groups %}
-                        <div class="card">
-                            <div class="card-header">
-                                {% if group.tuition is defined and group.tuition is instanceof('App\\Common\\Entity\\Tuition') %}
-                                    {% set tuition = group.tuition %}
+                        <div class="list-group list-group-flush">
+                            {% for absence in absences %}
+                                <a href="{{ path('show_student_absence', { uuid: absence.uuid }) }}"
+                                   class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
+                                    <div class="me-auto">
+                                        <div>
+                                            {{ absence.type.name }}
 
-                                    {% if tuition.displayName is not empty %}
-                                        {{ tuition.displayName }}
-                                    {% else %}
-                                        {{ tuition.name }}
-                                    {% endif %} ({{ tuition.subject.name }})
-
-                                    {% for grade in tuition.studyGroup.grades %}<span class="badge text-bg-primary">{{ grade.name }}</span> {% endfor %}
-                                {% elseif group.student is defined and group.student is instanceof('App\\Common\\Entity\\Student') %}
-                                    {{ group.student|student }}
-                                {% elseif group.grade is defined and group.grade is instanceof('App\\Common\\Entity\\Grade') %}
-                                    {{ group.grade.name }}
-                                {% else %}
-                                    {{ 'label.students_simple'|trans }}
-                                {% endif %}
-                            </div>
-
-                            <div class="list-group list-group-flush">
-                                {% for absence in group.absences %}
-                                    <a href="{{ path('show_student_absence', { uuid: absence.uuid }) }}"
-                                       class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
-                                        <div class="me-auto">
-                                            <div>
-                                                {{ absence.type.name }}
-
-                                                {% if absence.type.mustApprove %}
-                                                    {% if absence.approvedAt is null %}
-                                                        <span class="badge text-bg-warning">
-                                                            {{ 'absences.students.approval.pending'|trans }}
+                                            {% if absence.type.mustApprove %}
+                                                {% if absence.approvedAt is null %}
+                                                    <span class="badge text-bg-warning">
+                                                        {{ 'absences.students.approval.pending'|trans }}
+                                                    </span>
+                                                {% else %}
+                                                    {% if absence.isApproved %}
+                                                        <span class="badge text-bg-success">
+                                                            {{ 'absences.students.approval.approved'|trans }}
                                                         </span>
                                                     {% else %}
-                                                        {% if absence.isApproved %}
-                                                            <span class="badge text-bg-success">
-                                                                {{ 'absences.students.approval.approved'|trans }}
-                                                            </span>
-                                                        {% else %}
-                                                            <span class="badge text-bg-danger">
-                                                                {{ 'absences.students.approval.not_approved'|trans }}
-                                                            </span>
-                                                        {% endif %}
+                                                        <span class="badge text-bg-danger">
+                                                            {{ 'absences.students.approval.not_approved'|trans }}
+                                                        </span>
                                                     {% endif %}
                                                 {% endif %}
-
-                                                {% if absence.until.date >= today %}
-                                                    <span class="badge text-bg-primary">
-                                                        {{ 'absences.active'|trans }}
-                                                    </span>
-                                                {% endif %}
-
-                                                {% set status = excuseStatus[absence.uuid.toString]|default(null) %}
-                                                {% if status is not null %}
-                                                    {% if status.isCompletelyExcused %}
-                                                        <span class="badge text-bg-success">{{ 'absences.students.excuse_status.excused'|trans }}</span>
-                                                    {% else %}
-                                                        <span class="badge text-bg-warning">{{ 'absences.students.excuse_status.not_excused'|trans }}</span>
-                                                    {% endif %}
-                                                {% endif %}
-                                            </div>
-
-                                            <div class="d-flex align-items-baseline flex-wrap">
-                                                <div class="me-2">
-                                                    {% set grade = absence.student.grade(section) %}
-                                                    {% if grade is not null %}
-                                                        <span class="badge text-bg-secondary">{{ grade.name }}</span>
-                                                    {% else %}
-                                                        <span class="badge text-bg-warning">{{ 'label.not_available'|trans }}</span>
-                                                    {% endif %}
-
-                                                    {{ absence.student|student }}
-                                                </div>
-                                                <div class="me-2">
-                                                    <i class="fas fa-calendar"></i> {{ absence.from.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.from.lesson, '%count%': 0}) }}) - {{ absence.until.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.until.lesson, '%count%': 0}) }})
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            {% if absence.messages|length > 0 %}
-                                                <span class="badge text-bg-secondary"><i class="fas fa-comment"></i> {{ absence.messages|length }}</span>
                                             {% endif %}
-                                            {% if absence.attachments|length > 0 %}
-                                                <span class="badge text-bg-secondary"><i class="fa-solid fa-paperclip"></i> {{ absence.attachments|length }}</span>
+
+                                            {% if absence.until.date >= today %}
+                                                <span class="badge text-bg-primary">
+                                                    {{ 'absences.active'|trans }}
+                                                </span>
+                                            {% endif %}
+
+                                            {% set status = excuseStatus[absence.uuid.toString]|default(null) %}
+                                            {% if status is not null %}
+                                                {% if status.isCompletelyExcused %}
+                                                    <span class="badge text-bg-success">{{ 'absences.students.excuse_status.excused'|trans }}</span>
+                                                {% else %}
+                                                    <span class="badge text-bg-warning">{{ 'absences.students.excuse_status.not_excused'|trans }}</span>
+                                                {% endif %}
                                             {% endif %}
                                         </div>
-                                    </a>
-                                {% endfor %}
-                            </div>
+
+                                        <div class="d-flex align-items-baseline flex-wrap">
+                                            <div class="me-2">
+                                                {% set grade = absence.student.grade(section) %}
+                                                {% if grade is not null %}
+                                                    <span class="badge text-bg-secondary">{{ grade.name }}</span>
+                                                {% else %}
+                                                    <span class="badge text-bg-warning">{{ 'label.not_available'|trans }}</span>
+                                                {% endif %}
+
+                                                {{ absence.student|student }}
+                                            </div>
+                                            <div class="me-2">
+                                                <i class="fas fa-calendar"></i> {{ absence.from.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.from.lesson, '%count%': 0}) }}) - {{ absence.until.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.until.lesson, '%count%': 0}) }})
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        {% if absence.messages|length > 0 %}
+                                            <span class="badge text-bg-secondary"><i class="fas fa-comment"></i> {{ absence.messages|length }}</span>
+                                        {% endif %}
+                                        {% if absence.attachments|length > 0 %}
+                                            <span class="badge text-bg-secondary"><i class="fa-solid fa-paperclip"></i> {{ absence.attachments|length }}</span>
+                                        {% endif %}
+                                    </div>
+                                </a>
+                            {% endfor %}
                         </div>
-                    {% endfor %}
+                    </div>
 
                     {% include '@Common/includes/pagination.html.twig' with {
                         currentFilters: currentFilter,
@@ -158,10 +132,6 @@
                 <div class="card">
                     <div class="card-body">
                         {% include "_filter/section.html.twig" %}
-
-                        {% if teacherFilter.teachers|length > 0 %}
-                            {% include "_filter/teacher.html.twig" with { allowClear: true, path: 'student_absences' } %}
-                        {% endif %}
 
                         {% include "_filter/student.html.twig" %}
 

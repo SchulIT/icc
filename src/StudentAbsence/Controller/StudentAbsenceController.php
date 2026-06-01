@@ -2,6 +2,7 @@
 
 namespace App\StudentAbsence\Controller;
 
+use App\Common\Entity\GradeTeacher;
 use App\Framework\Controller\AbstractController;
 use App\Framework\Controller\DateTimeHelperTrait;
 use App\Common\Converter\StudyGroupStringConverter;
@@ -258,9 +259,10 @@ class StudentAbsenceController extends AbstractController {
     }
 
     #[Route(path: '', name: 'student_absences')]
-    public function index(SectionFilter                     $sectionFilter, GradeFilter $gradeFilter, TeacherFilter $teacherFilter, StudentFilter $studentFilter,
+    public function index(SectionFilter                     $sectionFilter, GradeFilter $gradeFilter, StudentFilter $studentFilter,
                           StudentAbsenceTypeFilter          $typeFilter, Request $request,
                           StudentAbsenceRepositoryInterface $absenceRepository, TuitionRepositoryInterface $tuitionRepository,
+                          StudentRepositoryInterface $studentRepository,
                           SectionResolverInterface          $sectionResolver, DateHelper $dateHelper, Sorter $sorter, StudentAbsenceSettings $settings, ExcuseStatusResolver $excuseNoteStatusResolver): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::CanViewAny);
 
@@ -275,7 +277,6 @@ class StudentAbsenceController extends AbstractController {
         }
 
         $studentFilterView = $studentFilter->handle($request->query->get('student', null), $sectionFilterView->getCurrentSection(), $user);
-        $teacherFilterView = $teacherFilter->handle($request->query->get('teacher', null), $sectionFilterView->getCurrentSection(), $user, $request->query->get('teacher') !== '✗' && $gradeFilterView->getCurrentGrade() === null && $studentFilterView->getCurrentStudent() === null);
         $typeFilterView = $typeFilter->handle($request->query->get('type'));
 
         $groups = [ ];
@@ -283,95 +284,50 @@ class StudentAbsenceController extends AbstractController {
         $page = $request->query->getInt('page', 1);
 
         $paginator = null;
+        $absences = [ ];
 
-        if($teacherFilterView->getCurrentTeacher() !== null && $sectionFilterView->getCurrentSection() !== null) {
-            $tuitions = $tuitionRepository->findAllByTeacher($teacherFilterView->getCurrentTeacher(), $sectionFilterView->getCurrentSection());
-
-            foreach($tuitions as $tuition) {
-                $students = $tuition->getStudyGroup()->getMemberships()->map(fn(StudyGroupMembership $membership) => $membership->getStudent())->toArray();
-
-                $absences = $absenceRepository->findByStudents($students, $typeFilterView->getCurrentType(), $dateHelper->getToday());
-
-                if(count($absences) > 0) {
-                    $group = new StudentAbsenceTuitionGroup($tuition);
-
-                    foreach($absences as $note) {
-                        if($this->isGranted(StudentAbsenceVoter::View, $note)) {
-                            $group->addItem($note);
-                        }
-                    }
-
-                    $groups[] = $group;
-                }
-            }
-
-            $sorter->sort($groups, StudentAbsenceTuitionGroupStrategy::class);
-
-        } else if($gradeFilterView->getCurrentGrade() !== null) {
+        if($gradeFilterView->getCurrentGrade() !== null) {
             $paginator = $absenceRepository->getGradePaginator($gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection(), $typeFilterView->getCurrentType(), self::ITEMS_PER_PAGE, $page);
-
-            if($paginator->count() > 0) {
-                $group = new StudentAbsenceGradeGroup($gradeFilterView->getCurrentGrade());
-
-                /** @var StudentAbsence $note */
-                foreach ($paginator as $note) {
-                    if($this->isGranted(StudentAbsenceVoter::View, $note)) {
-                        $group->addItem($note);
-                    }
-                }
-
-                $groups[] = $group;
-            }
         } else if($studentFilterView->getCurrentStudent() !== null) {
             $paginator = $absenceRepository->getStudentPaginator($studentFilterView->getCurrentStudent(), $typeFilterView->getCurrentType(), self::ITEMS_PER_PAGE, $page);
+        } else if($user->isTeacher()) {
+            $students = [ ];
 
-            if($paginator->count() > 0) {
-                $group = new StudentAbsenceStudentGroup($studentFilterView->getCurrentStudent());
-
-                /** @var StudentAbsence $note */
-                foreach ($paginator as $note) {
-                    if($this->isGranted(StudentAbsenceVoter::View, $note)) {
-                        $group->addItem($note);
-                    }
-                }
-
-                $groups[] = $group;
+            /** @var GradeTeacher $gradeTeacher */
+            foreach($user->getTeacher()->getGrades()->filter(fn(GradeTeacher $gradeTeacher) => $gradeTeacher->getSection()?->getId() === $sectionFilterView->getCurrentSection()?->getId()) as $gradeTeacher) {
+                $students = array_merge(
+                    $students,
+                    $studentRepository->findAllByGrade($gradeTeacher->getGrade(), $gradeTeacher->getSection())
+                );
             }
+
+            $paginator = $absenceRepository->getStudentsPaginator($students, $typeFilterView->getCurrentType(), self::ITEMS_PER_PAGE, $page);
         } else {
             $paginator = $absenceRepository->getPaginator($typeFilterView->getCurrentType(), self::ITEMS_PER_PAGE, $page);
-
-            if($paginator->count() > 0) {
-                $group = new StudentAbsenceGenericGroup();
-
-                /** @var StudentAbsence $note */
-                foreach ($paginator as $note) {
-                    if($this->isGranted(StudentAbsenceVoter::View, $note)) {
-                        $group->addItem($note);
-                    }
-                }
-
-                $groups[] = $group;
-            }
         }
 
         $pages = 0;
         if($paginator !== null) {
+            /** @var StudentAbsence $note */
+            foreach ($paginator as $note) {
+                if($this->isGranted(StudentAbsenceVoter::View, $note)) {
+                    $absences[] = $note;
+                }
+            }
+
             $pages = ceil((double)$paginator->count() / self::ITEMS_PER_PAGE);
         }
 
         $excuseStatus = [ ];
-        foreach($groups as $group) {
-            /** @var StudentAbsence $absence */
-            foreach($group->getAbsences() as $absence) {
-                $excuseStatus[$absence->getUuid()->toString()] = $excuseNoteStatusResolver->getStatus($absence);
-            }
+        /** @var StudentAbsence $absence */
+        foreach($absences as $absence) {
+            $excuseStatus[$absence->getUuid()->toString()] = $excuseNoteStatusResolver->getStatus($absence);
         }
 
         return $this->render('absences/students/index.html.twig', [
-            'groups' => $groups,
+            'absences' => $absences,
             'sectionFilter' => $sectionFilterView,
             'gradeFilter' => $gradeFilterView,
-            'teacherFilter' => $teacherFilterView,
             'studentFilter' => $studentFilterView,
             'typeFilter' => $typeFilterView,
             'today' => $dateHelper->getToday(),

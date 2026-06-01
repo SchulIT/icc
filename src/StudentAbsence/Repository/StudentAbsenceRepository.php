@@ -204,7 +204,7 @@ class StudentAbsenceRepository extends AbstractRepository implements StudentAbse
     /**
      * @inheritDoc
      */
-    public function getStudentsPaginator(array $students, DateTime $date, ?StudentAbsenceType $type, int $itemsPerPage, int &$page): Paginator {
+    public function getStudentsPaginator(array $students, ?StudentAbsenceType $type, int $itemsPerPage, int &$page): Paginator {
         $ids = array_map(fn(Student $student) => $student->getId(), $students);
 
         $qb = $this->em->createQueryBuilder()
@@ -214,8 +214,6 @@ class StudentAbsenceRepository extends AbstractRepository implements StudentAbse
 
         $qb->where($qb->expr()->in('s.id', ':students'))
             ->setParameter('students', $ids)
-            ->andWhere('sn.from.date <= :date')
-            ->andWhere('sn.until.date >= :date')
             ->orderBy('sn.until.date', 'desc');
 
         $this->applyTypeIfGiven($qb, $type);

@@ -38,7 +38,15 @@
                                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
                                     <div class="me-auto">
                                         <div>
-                                            {{ absence.type.name }}
+                                            {% if unreadCounter[absence.uuid] is defined and unreadCounter[absence.uuid] > 0 %}
+                                                <span class="badge text-bg-danger">
+                                                    <i class="fas fa-asterisk"></i> {{ unreadCounter[absence.uuid] }}
+                                                </span>
+
+                                                <span class="fw-semibold">{{ absence.type.name }}</span>
+                                            {% else %}
+                                                {{ absence.type.name }}
+                                            {% endif %}
 
                                             {% if absence.type.mustApprove %}
                                                 {% if absence.approvedAt is null %}

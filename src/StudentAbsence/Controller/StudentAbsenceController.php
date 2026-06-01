@@ -9,6 +9,7 @@ use App\Common\Converter\StudyGroupStringConverter;
 use App\Book\Entity\AttendanceExcuseStatus;
 use App\Common\Entity\DateLesson;
 use App\Exam\Entity\Exam;
+use App\Notification\Repository\NotificationRepositoryInterface;
 use App\StudentAbsence\Entity\StudentAbsence;
 use App\StudentAbsence\Entity\StudentAbsenceAttachment;
 use App\StudentAbsence\Entity\StudentAbsenceMessage;
@@ -65,6 +66,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -261,9 +263,10 @@ class StudentAbsenceController extends AbstractController {
     #[Route(path: '', name: 'student_absences')]
     public function index(SectionFilter                     $sectionFilter, GradeFilter $gradeFilter, StudentFilter $studentFilter,
                           StudentAbsenceTypeFilter          $typeFilter, Request $request,
-                          StudentAbsenceRepositoryInterface $absenceRepository, TuitionRepositoryInterface $tuitionRepository,
-                          StudentRepositoryInterface $studentRepository,
-                          SectionResolverInterface          $sectionResolver, DateHelper $dateHelper, Sorter $sorter, StudentAbsenceSettings $settings, ExcuseStatusResolver $excuseNoteStatusResolver): Response {
+                          StudentAbsenceRepositoryInterface $absenceRepository,
+                          StudentRepositoryInterface $studentRepository, UrlGeneratorInterface $urlGenerator,
+                          NotificationRepositoryInterface $notificationRepository,
+                          SectionResolverInterface          $sectionResolver, DateHelper $dateHelper, ExcuseStatusResolver $excuseNoteStatusResolver): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::CanViewAny);
 
         /** @var User $user */
@@ -278,8 +281,6 @@ class StudentAbsenceController extends AbstractController {
 
         $studentFilterView = $studentFilter->handle($request->query->get('student', null), $sectionFilterView->getCurrentSection(), $user);
         $typeFilterView = $typeFilter->handle($request->query->get('type'));
-
-        $groups = [ ];
 
         $page = $request->query->getInt('page', 1);
 
@@ -319,10 +320,18 @@ class StudentAbsenceController extends AbstractController {
         }
 
         $excuseStatus = [ ];
+        $unreadCounter = [ ];
         /** @var StudentAbsence $absence */
         foreach($absences as $absence) {
             $excuseStatus[$absence->getUuid()->toString()] = $excuseNoteStatusResolver->getStatus($absence);
+            $unreadCounter[$absence->getUuid()->toString()] = $notificationRepository->countUnreadForUserAndLink(
+                $user,
+                $urlGenerator->generate('show_student_absence', [
+                    'uuid' => $absence->getUuid()
+                ], UrlGeneratorInterface::ABSOLUTE_URL)
+            );
         }
+
 
         return $this->render('absences/students/index.html.twig', [
             'absences' => $absences,
@@ -335,7 +344,8 @@ class StudentAbsenceController extends AbstractController {
             'pages' => $pages,
             'page' => $page,
             'isTeacherX' => $request->query->get('teacher') === '✗',
-            'excuseStatus' => $excuseStatus
+            'excuseStatus' => $excuseStatus,
+            'unreadCounter' => $unreadCounter,
         ]);
     }
 

@@ -84,6 +84,7 @@ class NotificationRepository extends AbstractRepository implements NotificationR
             ->from(Notification::class, 'n')
             ->where('n.recipient = :user')
             ->andWhere('n.link = :link')
+            ->andWhere('n.isRead = false')
             ->setParameter('user', $user->getId())
             ->setParameter('link', $link)
             ->getQuery()

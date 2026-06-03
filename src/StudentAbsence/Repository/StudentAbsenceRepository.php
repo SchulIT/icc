@@ -160,7 +160,7 @@ class StudentAbsenceRepository extends AbstractRepository implements StudentAbse
             ->select('sn', 's')
             ->from(StudentAbsence::class, 'sn')
             ->leftJoin('sn.student', 's')
-            ->orderBy('sn.until.date', 'desc');
+            ->orderBy('sn.from.date', 'desc');
 
         $this->applyTypeIfGiven($qb, $type);
 
@@ -175,7 +175,7 @@ class StudentAbsenceRepository extends AbstractRepository implements StudentAbse
 
         $qb->where('s.id = :student')
             ->setParameter('student', $student->getId())
-            ->orderBy('sn.until.date', 'desc');
+            ->orderBy('sn.from.date', 'desc');
 
         $this->applyTypeIfGiven($qb, $type);
 
@@ -194,7 +194,7 @@ class StudentAbsenceRepository extends AbstractRepository implements StudentAbse
             ->andWhere('sec.id = :section')
             ->setParameter('grade', $grade->getId())
             ->setParameter('section', $section->getId())
-            ->orderBy('sn.until.date', 'desc');
+            ->orderBy('sn.from.date', 'desc');
 
         $this->applyTypeIfGiven($qb, $type);
 
@@ -214,7 +214,7 @@ class StudentAbsenceRepository extends AbstractRepository implements StudentAbse
 
         $qb->where($qb->expr()->in('s.id', ':students'))
             ->setParameter('students', $ids)
-            ->orderBy('sn.until.date', 'desc');
+            ->orderBy('sn.from.date', 'desc');
 
         $this->applyTypeIfGiven($qb, $type);
 

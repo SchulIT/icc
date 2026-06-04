@@ -78,15 +78,23 @@ class NotificationRepository extends AbstractRepository implements NotificationR
             ->getSingleScalarResult();
     }
 
-    public function countUnreadForUserAndLink(User $user, string $link): int {
-        return $this->em->createQueryBuilder()
+    public function countUnreadForUserAndLink(User $user, string $link, bool $includeSubLinks = false): int {
+        $qb = $this->em->createQueryBuilder()
             ->select('COUNT(1)')
             ->from(Notification::class, 'n')
             ->where('n.recipient = :user')
-            ->andWhere('n.link = :link')
             ->andWhere('n.isRead = false')
-            ->setParameter('user', $user->getId())
-            ->setParameter('link', $link)
+            ->setParameter('user', $user->getId());
+
+        if($includeSubLinks === true) {
+            $qb->andWhere('n.link LIKE :link')
+                ->setParameter('link', $link.'%');
+        } else {
+            $qb->andWhere('n.link = :link')
+                ->setParameter('link', $link);
+        }
+
+        return $qb
             ->getQuery()
             ->getSingleScalarResult();
     }

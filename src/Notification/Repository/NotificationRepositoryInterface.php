@@ -29,7 +29,7 @@ interface NotificationRepositoryInterface {
 
     public function markAllReadForUserAndLink(User $user, string $link): int;
 
-    public function countUnreadForUserAndLink(User $user, string $link): int;
+    public function countUnreadForUserAndLink(User $user, string $link, bool $includeSubLinks = false): int;
 
     public function persist(Notification $notification): void;
 

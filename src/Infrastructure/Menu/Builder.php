@@ -13,6 +13,7 @@ use App\Common\Voter\StudentVoter;
 use App\Framework\Feature\Feature;
 use App\Framework\Feature\FeatureManager;
 use App\LearningManagementSystem\Voter\CredentialsVoter;
+use App\Notification\Repository\NotificationRepositoryInterface;
 use App\ParentsDay\Voter\ParentsDayAppointmentVoter;
 use App\ReturnItem\Repository\ReturnItemRepositoryInterface;
 use App\Room\Voter\ResourceReservationVoter;
@@ -21,6 +22,7 @@ use App\TeacherAbsence\Voter\TeacherAbsenceVoter;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use SchulIT\CommonBundle\Helper\DateHelper;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -34,6 +36,8 @@ readonly class Builder {
                                 private ChatMessageRepositoryInterface $chatMessageRepository,
                                 private ReturnItemRepositoryInterface $returnItemRepository,
                                 private FeatureManager $featureManager,
+                                private NotificationRepositoryInterface $notificationRepository,
+                                private UrlGeneratorInterface $urlGenerator,
                                 private MissingEntriesCalculator $missingEntriesCalculator)
     {
     }
@@ -105,7 +109,7 @@ readonly class Builder {
             || $this->authorizationChecker->isGranted(StudentAbsenceVoter::New)
             || $this->authorizationChecker->isGranted(TeacherAbsenceVoter::NewAbsence)
             || $this->authorizationChecker->isGranted(TeacherAbsenceVoter::CanViewAny))) {
-            $this->absencesMenu($menu);
+            $this->absencesMenu($menu, $user);
         }
 
         if($this->featureManager->isFeatureEnabled(Feature::Book) && $user instanceof User) {
@@ -341,11 +345,22 @@ readonly class Builder {
         return $book;
     }
 
-    private function absencesMenu(ItemInterface $menu): ItemInterface {
+    private function absencesMenu(ItemInterface $menu, User $user): ItemInterface {
+        $count = 0;
+
+        if($this->featureManager->isFeatureEnabled(Feature::StudentAbsence)) {
+            $count = $this->notificationRepository->countUnreadForUserAndLink(
+                $user,
+                $this->urlGenerator->generate('student_absences', referenceType: UrlGeneratorInterface::ABSOLUTE_URL),
+                true
+            );
+        }
+
         $plans = $menu->addChild('absences.label')
             ->setExtra('menu', 'absences')
             ->setExtra('menu-container', '#submenu')
-            ->setExtra('icon', 'fas fa-user-times');
+            ->setExtra('icon', 'fas fa-user-times')
+            ->setExtra('count', $count);
 
         if($this->featureManager->isFeatureEnabled(Feature::StudentAbsence)) {
             if ($this->authorizationChecker->isGranted('ROLE_SICK_NOTE_VIEWER')
@@ -354,7 +369,8 @@ readonly class Builder {
                 $plans->addChild('absences.students.label', [
                     'route' => 'student_absences'
                 ])
-                    ->setExtra('icon', 'fas fa-user-graduate');
+                    ->setExtra('icon', 'fas fa-user-graduate')
+                    ->setExtra('count', $count);
             }
 
             if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {

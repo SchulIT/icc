@@ -61,11 +61,16 @@
                                         </span>
                                         {% endif %}
                                     </div>
-                                    <div class="text-muted">
+
+                                    <div class="avatar-list">
                                         {% for user in chat.participants %}
-                                            {% if app.user != user %}
-                                                <i class="fa fa-user"></i> {{ user|fancy_user }}
-                                            {% endif %}
+                                            <div class="avatar" title="{{ user|fancy_user }}">
+                                                {% if user.lastname is not empty and user.firstname is not empty %}
+                                                    {{- user.lastname|slice(0,1) }}{{ user.firstname|slice(0,1) -}}
+                                                {% else %}
+                                                    <i class="fas fa-user"></i>
+                                                {% endif %}
+                                            </div>
                                         {% endfor %}
                                     </div>
                                 </a>

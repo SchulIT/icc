@@ -29,6 +29,7 @@ Encore
     .addEntry('parents_day', './assets/js/parents_day.js')
     .addEntry('chat', './assets/js/chat.js')
     .addEntry('autocomplete', './assets/js/autocomplete.js')
+    .addEntry('checklist', './assets/js/checklist.js')
 
     .configureBabel(() => {}, {
         useBuiltIns: 'usage',

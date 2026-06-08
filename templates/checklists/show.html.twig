@@ -4,6 +4,7 @@
 
 {% block post_javascript %}
     <script src="{{ asset('build/collection.js') }}"></script>
+    <script src="{{ asset('build/checklist.js') }}"></script>
 {% endblock %}
 
 {% block breadcrumb %}
@@ -18,21 +19,16 @@
     <div class="container-fluid px-0">
         <div class="row">
             <div class="col-md-9">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ checklist.title }}</h5>
-                        {{ checklist.description|markdown }}
-                    </div>
-                </div>
-
                 {% if is_granted('edit', checklist) %}
-                    {{ form_start(form) }}
                     <div class="card">
-                        <div class="card-header">
-                            {{ 'label.students_simple'|trans }}
+                        {{ form_start(form) }}
+
+                        <div class="card-body border-bottom">
+                            <h5 class="card-title">{{ checklist.title }}</h5>
+                            {{ checklist.description|markdown }}
                         </div>
 
-                        <div class="bs-callout bs-callout-warning bs-callout-card">
+                        <div class="bs-callout bs-callout-warning bs-callout-card d-print-none">
                             <h5>{{ 'caution'|trans }}</h5>
                             <p>{{ 'checklists.show.students.save'|trans }}</p>
                         </div>
@@ -40,6 +36,21 @@
                         {% if form.students|length == 0 %}
                             <div class="bs-callout bs-callout-info bs-callout-card border-bottom-0">
                                 <p>{{ 'checklists.show.students.empty'|trans }}</p>
+                            </div>
+                        {% else %}
+                            <div class="card-header d-print-none">
+                                <div class="d-flex w-100">
+                                    <div class="input-group input-group-sm flex-fill">
+                                        <select data-checklist-target="form[name=checklist_students]" multiple></select>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm">
+                                            <i class="fas fa-check"></i> {{ 'checklists.check_selected'|trans }}
+                                        </button>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary btn-sm ms-1 flex-shrink-0">
+                                        <i class="fas fa-save"></i> {{ 'actions.save'|trans }}
+                                    </button>
+                                </div>
                             </div>
                         {% endif %}
 
@@ -54,9 +65,9 @@
                                 <i class="fas fa-save"></i> {{ 'actions.save'|trans }}
                             </button>
                         </div>
+                        {% do form.students.setRendered %}
+                        {{ form_end(form) }}
                     </div>
-                    {% do form.students.setRendered %}
-                    {{ form_end(form) }}
 
                     <div class="card">
                         <div class="card-body">
@@ -77,6 +88,11 @@
                     </div>
                 {% else %}
                     <div class="card">
+                        <div class="card-body border-bottom">
+                            <h5 class="card-title">{{ checklist.title }}</h5>
+                            {{ checklist.description|markdown }}
+                        </div>
+
                         <div class="card-header">
                             {{ 'label.students_simple'|trans }}
                         </div>

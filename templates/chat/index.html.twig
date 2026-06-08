@@ -64,9 +64,11 @@
 
                                     <div class="avatar-list">
                                         {% for user in chat.participants %}
-                                            <div class="avatar" title="{{ user|fancy_user }}">
-                                                {% if user.lastname is not empty and user.firstname is not empty %}
-                                                    {{- user.lastname|slice(0,1) }}{{ user.firstname|slice(0,1) -}}
+                                            <div class="avatar {% if user.teacher %}avatar-text-sm{% endif %}" title="{{ user|fancy_user }}">
+                                                {% if user.teacher %}
+                                                    {{ user.teacher.acronym }}
+                                                {% elseif user.lastname is not empty and user.firstname is not empty %}
+                                                    {{ user.firstname|slice(0,1) -}}{{- user.lastname|slice(0,1) }}
                                                 {% else %}
                                                     <i class="fas fa-user"></i>
                                                 {% endif %}

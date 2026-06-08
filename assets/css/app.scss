@@ -561,5 +561,9 @@ table.sticky-header {
     border-radius: 100%;
     justify-content: center;
     align-items: center;
+
+    &.avatar-text-sm {
+      font-size: 0.6rem !important;;
+    }
   }
 }

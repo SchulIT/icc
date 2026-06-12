@@ -1,0 +1,19 @@
+<form role="form" method="get" class="form hidden-print">
+    {% include "_filter/_params.html.twig" %}
+
+    <div class="mb-3 {{ class|default('') }}">
+        <label for="section" class="form-label">{{ 'label.date_range'|trans }}:</label>
+
+        <div class="input-group">
+            <span class="input-group-text">
+                <i class="fas fa-calendar"></i>
+            </span>
+            <input type="date" class="form-control" name="start" value="{{ rangeFilter.start?.format('Y-m-d') }}">
+            <span class="input-group-text">-</span>
+            <input type="date" class="form-control" name="end" value="{{ rangeFilter.end?.format('Y-m-d') }}">
+            <button class="btn btn-outline-secondary" type="submit">
+                <i class="fas fa-check"></i>
+            </button>
+        </div>
+    </div>
+</form>

@@ -14,7 +14,9 @@
         section: sectionFilter.currentSection ? sectionFilter.currentSection.uuid.toString : null,
         student: studentFilter.currentStudent ? studentFilter.currentStudent.uuid.toString : null,
         grade: gradeFilter.currentGrade ? gradeFilter.currentGrade.uuid.toString : null,
-        type: typeFilter.currentType ? typeFilter.currentType.uuid.toString : null
+        type: typeFilter.currentType ? typeFilter.currentType.uuid.toString : null,
+        start: rangeFilter.start ? rangeFilter.start.format('Y-m-d') : null,
+        end: rangeFilter.end ? rangeFilter.end.format('Y-m-d') : null
     } %}
 
     <div class="container-fluid px-0">
@@ -146,6 +148,8 @@
                         {% if gradeFilter.grades|length > 0 %}
                             {% include "_filter/grade.html.twig" %}
                         {% endif %}
+
+                        {% include "_filter/date_range.html.twig" with { params: currentFilter|merge({start: null, end: null}) } %}
 
                         <form role="form" method="get" class="form hidden-print">
                             {% include "_filter/_params.html.twig" with { params: currentFilter|merge({reason: null}) } %}

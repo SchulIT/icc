@@ -54,6 +54,9 @@ label:
         parents_day: Elternsprechtag auswählen
         user: Person auswählen
         grade_category: Notenkategorie auswählen
+    date_range:
+        label: Zeitspanne
+        plus_minus_two_weeks: "+/- zwei Wochen auswählen"
     search:
         student: Lernenden suchen
     scope: Bereich

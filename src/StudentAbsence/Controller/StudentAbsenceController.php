@@ -3,12 +3,14 @@
 namespace App\StudentAbsence\Controller;
 
 use App\Common\Entity\GradeTeacher;
+use App\Common\View\Filter\DateRangeFilter;
 use App\Framework\Controller\AbstractController;
 use App\Framework\Controller\DateTimeHelperTrait;
 use App\Common\Converter\StudyGroupStringConverter;
 use App\Book\Entity\AttendanceExcuseStatus;
 use App\Common\Entity\DateLesson;
 use App\Exam\Entity\Exam;
+use App\Framework\Http\Attribute\MapDateFromQuery;
 use App\Notification\Repository\NotificationRepositoryInterface;
 use App\StudentAbsence\Entity\StudentAbsence;
 use App\StudentAbsence\Entity\StudentAbsenceAttachment;
@@ -54,6 +56,7 @@ use App\Common\View\Filter\SectionFilter;
 use App\StudentAbsence\View\Filter\StudentAbsenceTypeFilter;
 use App\Common\View\Filter\StudentFilter;
 use App\Common\View\Filter\TeacherFilter;
+use DateTime;
 use League\Flysystem\FilesystemOperator;
 use Mimey\MimeTypes;
 use Ramsey\Uuid\Uuid;
@@ -75,9 +78,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[IsGranted(new Expression("is_granted('ROLE_STUDENT_ABSENCE_CREATOR') or is_granted('ROLE_STUDENT_ABSENCE_VIEWER') or is_granted('new-absence')"))]
 class StudentAbsenceController extends AbstractController {
 
-    public const ITEMS_PER_PAGE = 25;
+    public const int ITEMS_PER_PAGE = 25;
 
-    private const CSRF_TOKEN_ID = 'student_absence_approval';
+    private const string CSRF_TOKEN_ID = 'student_absence_approval';
 
     use DateTimeHelperTrait;
 
@@ -261,12 +264,23 @@ class StudentAbsenceController extends AbstractController {
     }
 
     #[Route(path: '', name: 'student_absences')]
-    public function index(SectionFilter                     $sectionFilter, GradeFilter $gradeFilter, StudentFilter $studentFilter,
-                          StudentAbsenceTypeFilter          $typeFilter, Request $request,
-                          StudentAbsenceRepositoryInterface $absenceRepository,
-                          StudentRepositoryInterface $studentRepository, UrlGeneratorInterface $urlGenerator,
-                          NotificationRepositoryInterface $notificationRepository,
-                          SectionResolverInterface          $sectionResolver, DateHelper $dateHelper, ExcuseStatusResolver $excuseNoteStatusResolver): Response {
+    public function index(
+            SectionFilter $sectionFilter,
+            GradeFilter $gradeFilter,
+            StudentFilter $studentFilter,
+            StudentAbsenceTypeFilter $typeFilter,
+            DateRangeFilter $rangeFilter,
+            Request $request,
+            StudentAbsenceRepositoryInterface $absenceRepository,
+            StudentRepositoryInterface $studentRepository,
+            UrlGeneratorInterface $urlGenerator,
+            NotificationRepositoryInterface $notificationRepository,
+            SectionResolverInterface $sectionResolver,
+            DateHelper $dateHelper,
+            ExcuseStatusResolver $excuseNoteStatusResolver,
+            #[MapDateFromQuery] DateTime|null $start = null,
+            #[MapDateFromQuery] DateTime|null $end = null
+    ): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::CanViewAny);
 
         /** @var User $user */
@@ -275,43 +289,48 @@ class StudentAbsenceController extends AbstractController {
         $sectionFilterView = $sectionFilter->handle($request->query->get('section'));
         $gradeFilterView = $gradeFilter->handle($request->query->get('grade', null), $sectionFilterView->getCurrentSection(), $user);
 
-        if($user->isStudentOrParent()) {
+        if ($user->isStudentOrParent()) {
             $gradeFilterView = new GradeFilterView([], null, []);
         }
 
         $studentFilterView = $studentFilter->handle($request->query->get('student', null), $sectionFilterView->getCurrentSection(), $user);
         $typeFilterView = $typeFilter->handle($request->query->get('type'));
+        $rangeFilterView = $rangeFilter->handle($start, $end, $sectionFilterView->getCurrentSection());
 
         $page = $request->query->getInt('page', 1);
 
         $paginator = null;
-        $absences = [ ];
+        $absences = [];
 
-        if($gradeFilterView->getCurrentGrade() !== null) {
+        if ($gradeFilterView->getCurrentGrade() !== null) {
             $paginator = $absenceRepository->getGradePaginator($gradeFilterView->getCurrentGrade(), $sectionFilterView->getCurrentSection(), $typeFilterView->getCurrentType(), self::ITEMS_PER_PAGE, $page);
-        } else if($studentFilterView->getCurrentStudent() !== null) {
-            $paginator = $absenceRepository->getStudentPaginator($studentFilterView->getCurrentStudent(), $typeFilterView->getCurrentType(), self::ITEMS_PER_PAGE, $page);
-        } else if($user->isTeacher()) {
-            $students = [ ];
-
-            /** @var GradeTeacher $gradeTeacher */
-            foreach($user->getTeacher()->getGrades()->filter(fn(GradeTeacher $gradeTeacher) => $gradeTeacher->getSection()?->getId() === $sectionFilterView->getCurrentSection()?->getId()) as $gradeTeacher) {
-                $students = array_merge(
-                    $students,
-                    $studentRepository->findAllByGrade($gradeTeacher->getGrade(), $gradeTeacher->getSection())
-                );
-            }
-
-            $paginator = $absenceRepository->getStudentsPaginator($students, $typeFilterView->getCurrentType(), self::ITEMS_PER_PAGE, $page);
         } else {
-            $paginator = $absenceRepository->getPaginator($typeFilterView->getCurrentType(), self::ITEMS_PER_PAGE, $page);
+            if ($studentFilterView->getCurrentStudent() !== null) {
+                $paginator = $absenceRepository->getStudentPaginator($studentFilterView->getCurrentStudent(), $typeFilterView->getCurrentType(), self::ITEMS_PER_PAGE, $page, $rangeFilterView->start, $rangeFilterView->end);
+            } else {
+                if ($user->isTeacher()) {
+                    $students = [];
+
+                    /** @var GradeTeacher $gradeTeacher */
+                    foreach ($user->getTeacher()->getGrades()->filter(fn(GradeTeacher $gradeTeacher) => $gradeTeacher->getSection()?->getId() === $sectionFilterView->getCurrentSection()?->getId()) as $gradeTeacher) {
+                        $students = array_merge(
+                            $students,
+                            $studentRepository->findAllByGrade($gradeTeacher->getGrade(), $gradeTeacher->getSection())
+                        );
+                    }
+
+                    $paginator = $absenceRepository->getStudentsPaginator($students, $typeFilterView->getCurrentType(), self::ITEMS_PER_PAGE, $page, $rangeFilterView->start, $rangeFilterView->end);
+                } else {
+                    $paginator = $absenceRepository->getPaginator($typeFilterView->getCurrentType(), self::ITEMS_PER_PAGE, $page, $rangeFilterView->start, $rangeFilterView->end);
+                }
+            }
         }
 
         $pages = 0;
-        if($paginator !== null) {
+        if ($paginator !== null) {
             /** @var StudentAbsence $note */
             foreach ($paginator as $note) {
-                if($this->isGranted(StudentAbsenceVoter::View, $note)) {
+                if ($this->isGranted(StudentAbsenceVoter::View, $note)) {
                     $absences[] = $note;
                 }
             }
@@ -319,10 +338,10 @@ class StudentAbsenceController extends AbstractController {
             $pages = ceil((double)$paginator->count() / self::ITEMS_PER_PAGE);
         }
 
-        $excuseStatus = [ ];
-        $unreadCounter = [ ];
+        $excuseStatus = [];
+        $unreadCounter = [];
         /** @var StudentAbsence $absence */
-        foreach($absences as $absence) {
+        foreach ($absences as $absence) {
             $excuseStatus[$absence->getUuid()->toString()] = $excuseNoteStatusResolver->getStatus($absence);
             $unreadCounter[$absence->getUuid()->toString()] = $notificationRepository->countUnreadForUserAndLink(
                 $user,
@@ -339,6 +358,7 @@ class StudentAbsenceController extends AbstractController {
             'gradeFilter' => $gradeFilterView,
             'studentFilter' => $studentFilterView,
             'typeFilter' => $typeFilterView,
+            'rangeFilter' => $rangeFilterView,
             'today' => $dateHelper->getToday(),
             'section' => $sectionResolver->getCurrentSection(),
             'pages' => $pages,

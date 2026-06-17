@@ -2,7 +2,6 @@
 
 namespace App\Common\Entity;
 
-use App\Common\Entity\Section;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -14,7 +13,7 @@ trait SectionAwareTrait {
     #[Assert\NotNull]
     #[ORM\ManyToOne(targetEntity: Section::class)]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
-    private $section;
+    private ?Section $section = null;
 
     public function getSection(): ?Section {
         return $this->section;

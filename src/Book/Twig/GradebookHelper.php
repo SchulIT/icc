@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Grade\Twig;
+namespace App\Book\Twig;
 
-use App\Grade\Entity\TuitionGradeCatalog;
+use App\Book\Entity\TuitionGradeCatalog;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 

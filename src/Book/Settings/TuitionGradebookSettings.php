@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Grade\Settings;
+namespace App\Book\Settings;
 
 use App\Framework\Settings\AbstractSettings;
 

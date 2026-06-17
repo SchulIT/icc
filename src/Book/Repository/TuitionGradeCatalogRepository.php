@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Grade\Repository;
+namespace App\Book\Repository;
 
+use App\Book\Entity\TuitionGradeCatalog;
 use App\Framework\Repository\AbstractRepository;
-use App\Grade\Entity\TuitionGradeCatalog;
-use App\Grade\Repository\TuitionGradeCatalogRepositoryInterface;
 
 class TuitionGradeCatalogRepository extends AbstractRepository implements TuitionGradeCatalogRepositoryInterface {
 

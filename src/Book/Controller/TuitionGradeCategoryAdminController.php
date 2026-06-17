@@ -1,22 +1,21 @@
 <?php
 
-namespace App\Grade\Controller;
+namespace App\Book\Controller;
 
+use App\Book\Entity\TuitionGradeCategory;
+use App\Book\Form\TuitionGradeCategoryType;
 use App\Book\Grade\AdminOverview\OverviewHelper;
+use App\Book\Repository\TuitionGradeCategoryRepositoryInterface;
+use App\Book\Repository\TuitionGradeRepositoryInterface;
 use App\Common\Entity\Tuition;
-use App\Framework\Controller\AbstractController;
-use App\Grade\Entity\TuitionGradeCategory;
-use App\Grade\Entity\TuitionGradeCatalog;
 use App\Common\Entity\User;
-use App\Framework\Feature\Feature;
-use App\Framework\Feature\IsFeatureEnabled;
-use App\Form\AssignTuitionGradeCategoryType;
-use App\Grade\Form\TuitionGradeCategoryType;
-use App\Grade\Repository\TuitionGradeCategoryRepositoryInterface;
-use App\Grade\Repository\TuitionGradeRepositoryInterface;
-use App\Framework\Utils\ArrayUtils;
 use App\Common\View\Filter\GradesFilter;
 use App\Common\View\Filter\SectionFilter;
+use App\Form\AssignTuitionGradeCategoryType;
+use App\Framework\Controller\AbstractController;
+use App\Framework\Feature\Feature;
+use App\Framework\Feature\IsFeatureEnabled;
+use App\Framework\Utils\ArrayUtils;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;

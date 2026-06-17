@@ -6,12 +6,12 @@ namespace App\Student\Controller;
 
 use App\Book\Grade\Category;
 use App\Book\Grade\GradeOverviewHelper;
+use App\Book\Settings\TuitionGradebookSettings;
 use App\Common\Entity\Student;
+use App\Common\View\Filter\SectionFilter;
 use App\Framework\Feature\Feature;
 use App\Framework\Feature\IsFeatureEnabled;
-use App\Grade\Settings\TuitionGradebookSettings;
 use App\Framework\Utils\ArrayUtils;
-use App\Common\View\Filter\SectionFilter;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;

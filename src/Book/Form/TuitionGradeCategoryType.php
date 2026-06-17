@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Grade\Form;
+namespace App\Book\Form;
 
+use App\Book\Entity\TuitionGradeCatalog;
 use App\Common\Form\Choice\TuitionChoiceType;
-use App\Grade\Entity\TuitionGradeCatalog;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;

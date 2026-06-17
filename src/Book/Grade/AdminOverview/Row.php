@@ -2,9 +2,8 @@
 
 namespace App\Book\Grade\AdminOverview;
 
-use App\Common\Entity\Grade;
+use App\Book\Entity\TuitionGradeCategory;
 use App\Common\Entity\Tuition;
-use App\Grade\Entity\TuitionGradeCategory;
 
 readonly class Row {
 

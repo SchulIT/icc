@@ -2,17 +2,16 @@
 
 namespace App\Book\Grade\Export\Schild;
 
-use App\Book\Student\StudentInfoResolver;
+use App\Book\Entity\TuitionGrade;
+use App\Book\Entity\TuitionGradeCategory;
+use App\Book\Repository\TuitionGradeCategoryRepositoryInterface;
+use App\Book\Repository\TuitionGradeRepositoryInterface;
 use App\Book\Student\StudentStatisticsCounterResolver;
 use App\Common\Entity\Student as StudentEntity;
 use App\Common\Entity\StudyGroupType;
 use App\Common\Entity\Tuition as TuitionEntity;
-use App\Grade\Entity\TuitionGrade;
-use App\Grade\Entity\TuitionGradeCategory;
 use App\Common\Repository\SectionRepositoryInterface;
 use App\Common\Repository\StudentRepositoryInterface;
-use App\Grade\Repository\TuitionGradeCategoryRepositoryInterface;
-use App\Grade\Repository\TuitionGradeRepositoryInterface;
 use App\Common\Repository\TuitionRepositoryInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 

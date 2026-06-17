@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Grade\Repository;
+namespace App\Book\Repository;
 
+use App\Book\Entity\TuitionGrade;
+use App\Book\Entity\TuitionGradeCategory;
 use App\Common\Entity\Section;
-use App\Framework\Repository\AbstractTransactionalRepository;
 use App\Common\Entity\Student;
 use App\Common\Entity\Tuition;
-use App\Grade\Entity\TuitionGrade;
-use App\Grade\Entity\TuitionGradeCategory;
-use App\Grade\Repository\TuitionGradeRepositoryInterface;
+use App\Framework\Repository\AbstractTransactionalRepository;
 use Doctrine\ORM\QueryBuilder;
 
 class TuitionGradeRepository extends AbstractTransactionalRepository implements TuitionGradeRepositoryInterface {

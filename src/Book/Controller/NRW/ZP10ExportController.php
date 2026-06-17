@@ -5,7 +5,7 @@ namespace App\Book\Controller\NRW;
 use App\Book\Grade\Export\ZP10\ConfigurationGuesser;
 use App\Book\Grade\Export\ZP10\ConfigurationType;
 use App\Book\Grade\Export\ZP10\Exporter;
-use App\Grade\Settings\TuitionGradebookSettings;
+use App\Book\Settings\TuitionGradebookSettings;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

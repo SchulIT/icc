@@ -1,32 +1,29 @@
 <?php
 
-namespace App\Grade\Controller;
+namespace App\Book\Controller;
 
 use App\Book\Grade\Category;
-use App\Book\Grade\GradeOverview;
 use App\Book\Grade\GradeOverviewHelper;
 use App\Book\Grade\GradePersister;
+use App\Book\Settings\TuitionGradebookSettings;
 use App\Common\Entity\Grade;
 use App\Common\Entity\GradeMembership;
 use App\Common\Entity\GradeTeacher;
 use App\Common\Entity\Section;
 use App\Common\Entity\Student;
-use App\Common\Entity\StudyGroupMembership;
 use App\Common\Entity\Tuition;
-use App\Framework\Controller\AbstractController;
-use App\Grade\Entity\TuitionGradeCategory;
 use App\Common\Entity\User;
-use App\Framework\Feature\Feature;
-use App\Framework\Feature\IsFeatureEnabled;
 use App\Common\Repository\TuitionRepositoryInterface;
-use App\Grade\Settings\TuitionGradebookSettings;
-use App\Framework\Sorting\Sorter;
 use App\Common\Sorting\StudentStrategy;
-use App\Framework\Utils\ArrayUtils;
 use App\Common\View\Filter\GradeFilter;
 use App\Common\View\Filter\SectionFilter;
 use App\Common\View\Filter\StudentFilter;
 use App\Common\View\Filter\TuitionFilter;
+use App\Framework\Controller\AbstractController;
+use App\Framework\Feature\Feature;
+use App\Framework\Feature\IsFeatureEnabled;
+use App\Framework\Sorting\Sorter;
+use App\Framework\Utils\ArrayUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

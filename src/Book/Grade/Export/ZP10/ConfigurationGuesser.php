@@ -2,7 +2,7 @@
 
 namespace App\Book\Grade\Export\ZP10;
 
-use App\Grade\Repository\TuitionGradeCategoryRepositoryInterface;
+use App\Book\Repository\TuitionGradeCategoryRepositoryInterface;
 use App\Common\Section\SectionResolverInterface;
 use function Symfony\Component\String\u;
 

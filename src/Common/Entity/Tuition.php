@@ -2,19 +2,13 @@
 
 namespace App\Common\Entity;
 
-use App\Common\Entity\IdTrait;
-use App\Common\Entity\SectionAwareTrait;
-use App\Common\Entity\Subject;
-use App\Common\Entity\Teacher;
-use App\Common\Entity\UuidTrait;
-use App\Common\Entity\StudyGroup;
-use App\Grade\Entity\TuitionGradeCategory;
-use Stringable;
+use App\Book\Entity\TuitionGradeCategory;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
+use Stringable;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 

@@ -2,9 +2,9 @@
 
 namespace App\Book\Grade\Export\ZP10;
 
-use App\Grade\Entity\TuitionGrade;
-use App\Grade\Entity\TuitionGradeCategory;
-use App\Grade\Repository\TuitionGradeRepositoryInterface;
+use App\Book\Entity\TuitionGrade;
+use App\Book\Entity\TuitionGradeCategory;
+use App\Book\Repository\TuitionGradeRepositoryInterface;
 use App\Framework\Utils\ArrayUtils;
 use Doctrine\Common\Collections\ArrayCollection;
 

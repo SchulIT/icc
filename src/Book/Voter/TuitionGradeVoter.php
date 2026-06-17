@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Grade\Voter;
+namespace App\Book\Voter;
 
-use App\Grade\Entity\TuitionGrade;
+use App\Book\Entity\TuitionGrade;
 use App\Common\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\The;

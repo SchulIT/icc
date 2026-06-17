@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Grade\Entity;
+namespace App\Book\Entity;
 
 use App\Common\Entity\IdTrait;
 use App\Common\Entity\Tuition;
 use App\Common\Entity\UuidTrait;
-use App\Grade\Entity\TuitionGradeCatalog;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Grade\Entity;
+namespace App\Book\Entity;
 
 use App\Common\Entity\IdTrait;
-use App\Grade\Entity\TuitionGradeCatalog;
 use App\Framework\Validator\Color;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;

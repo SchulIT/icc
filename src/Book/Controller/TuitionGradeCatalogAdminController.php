@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Grade\Controller;
+namespace App\Book\Controller;
 
+use App\Book\Entity\TuitionGradeCatalog;
+use App\Book\Entity\TuitionGradeCatalogGrade;
+use App\Book\Form\TuitionGradeCatalogType;
+use App\Book\Repository\TuitionGradeCatalogRepositoryInterface;
+use App\Book\Repository\TuitionGradeCategoryRepositoryInterface;
 use App\Framework\Controller\AbstractController;
-use App\Grade\Entity\TuitionGradeCatalog;
-use App\Grade\Entity\TuitionGradeCatalogGrade;
 use App\Framework\Feature\Feature;
 use App\Framework\Feature\IsFeatureEnabled;
-use App\Grade\Form\TuitionGradeCatalogType;
-use App\Grade\Repository\TuitionGradeCategoryRepositoryInterface;
-use App\Grade\Repository\TuitionGradeCatalogRepositoryInterface;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;

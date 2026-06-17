@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Grade\Settings;
+namespace App\Book\Settings;
 
 use App\Framework\Controller\AbstractController;
-use App\Grade\Settings\TuitionGradebookSettings;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;

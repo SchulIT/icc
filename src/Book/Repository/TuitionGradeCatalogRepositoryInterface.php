@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Grade\Repository;
+namespace App\Book\Repository;
 
-use App\Grade\Entity\TuitionGradeCatalog;
+use App\Book\Entity\TuitionGradeCatalog;
 
 interface TuitionGradeCatalogRepositoryInterface {
 

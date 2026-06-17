@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Grade\Repository;
+namespace App\Book\Repository;
 
+use App\Book\Entity\TuitionGrade;
+use App\Book\Entity\TuitionGradeCategory;
 use App\Common\Entity\Section;
 use App\Common\Entity\Student;
 use App\Common\Entity\Tuition;
-use App\Grade\Entity\TuitionGrade;
-use App\Grade\Entity\TuitionGradeCategory;
 use App\Framework\Repository\TransactionalRepositoryInterface;
 
 interface TuitionGradeRepositoryInterface extends TransactionalRepositoryInterface {

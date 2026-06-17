@@ -18,9 +18,11 @@
         <div class="card-header">{{ 'label.general'|trans }}</div>
 
         <div class="card-body">
-            <div class="bs-callout bs-callout-info">
-                {{ settings.informationText|markdown }}
-            </div>
+            {% if settings.informationText is not empty %}
+                <div class="bs-callout bs-callout-info">
+                    {{ settings.informationText|markdown }}
+                </div>
+            {% endif %}
 
             {{ form_widget(form) }}
         </div>

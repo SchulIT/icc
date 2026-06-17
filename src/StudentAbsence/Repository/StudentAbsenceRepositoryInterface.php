@@ -41,7 +41,7 @@ interface StudentAbsenceRepositoryInterface {
 
     public function getGradePaginator(Grade $grade, Section $section, ?StudentAbsenceType $type, int $itemsPerPage, int &$page, DateTime|null $start = null, DateTime|null $end = null): Paginator;
 
-    public function getPaginator(?StudentAbsenceType $type, int $itemsPerPage, int &$page): Paginator;
+    public function getPaginator(?StudentAbsenceType $type, int $itemsPerPage, int &$page, DateTime|null $start = null, DateTime|null $end = null): Paginator;
 
     /**
      * @param DateTime $start

@@ -164,7 +164,7 @@ class StudentAbsenceRepository extends AbstractRepository implements StudentAbse
         }
     }
 
-    public function getPaginator(?StudentAbsenceType $type, int $itemsPerPage, int &$page): Paginator {
+    public function getPaginator(?StudentAbsenceType $type, int $itemsPerPage, int &$page, DateTime|null $start = null, DateTime|null $end = null): Paginator {
         $qb = $this->em->createQueryBuilder()
             ->select('sn', 's')
             ->from(StudentAbsence::class, 'sn')
@@ -172,6 +172,7 @@ class StudentAbsenceRepository extends AbstractRepository implements StudentAbse
             ->orderBy('sn.from.date', 'desc');
 
         $this->applyTypeIfGiven($qb, $type);
+        $this->applyStartEndDateIfGive($qb, $start, $end);
 
         return $this->createPaginatorForQueryBuilder($qb, $itemsPerPage, $page);
     }

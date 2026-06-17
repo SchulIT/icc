@@ -1,0 +1,30 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'book.report_remarks.remove.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('book') }}">{{ 'book.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('report_remarks') }}">{{ 'book.report_remarks.label'|trans }}</a></li>
+        <li class="breadcrumb-item active">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+
+    {{ form_widget(form) }}
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-danger btn-sm">
+            <i class="fas fa-trash"></i> {{ 'actions.remove'|trans }}
+        </button>
+
+        <a href="javascript:history.back()" class="btn btn-secondary btn-sm">
+            <i class="fas fa-arrow-left"></i> {{ 'actions.back'|trans }}
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}

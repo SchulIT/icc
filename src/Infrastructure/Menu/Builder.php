@@ -325,6 +325,11 @@ readonly class Builder {
                 'route' => 'gradebook'
             ])
                 ->setExtra('icon', 'fas fa-user-graduate');
+
+            $book->addChild('book.report_remarks.label', [
+                'route' => 'report_remarks'
+            ])
+                ->setExtra('icon', 'fas fa-file-pen');
         }
 
         $book->addChild('book.excuse_note.label', [

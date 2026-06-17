@@ -234,6 +234,11 @@ class AdminDataMenuBuilder extends AbstractMenuBuilder {
                         'route' => 'admin_settings_gradebook'
                     ])
                         ->setExtra('icon', 'fa-solid fa-sliders');
+
+                    $root->addChild('admin.settings.report_remarks.label', [
+                        'route' => 'admin_settings_report_remarks'
+                    ])
+                        ->setExtra('icon', 'fa-solid fa-sliders');
                 }
 
                 $root->addChild('admin.attendance_flags.label', [

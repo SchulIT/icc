@@ -1212,6 +1212,12 @@ admin:
                 help: Anzahl der Sekunden, die ein Benutzer das Passwort nicht erneut eingeben muss, um Noten einzusehen oder zu ändern. Diese Funktion nutzt das SessionStorage des Browsers.
                 button: Mehr zur Funktionsweise des SessionStorage
 
+        report_remarks:
+            label: Zeugnisbemerkungen
+            info:
+                label: Infotext
+                help: Dieser Infotext wird oberhalb des Bemerkungen-Feldes beim Eintragen angezeigt und sollte Informationen zu Platzhaltern oder allgemeinen Regelungen enthalten.
+
         chat:
             label: Private Nachrichten
             enabled:
@@ -2317,6 +2323,13 @@ book:
                 label: Stichtag
                 help: Es werden nur Abwesenheiten bis zu diesem Datum (inklusive) berücksichtigt.
 
+        schild_zeugnisbemerkungen:
+            label: SchILD Zeugnisbemerkungen
+            button: Export starten
+
+            filename:
+                label: Dateiname
+
         zp10:
             label: NRW ZP10-Übersicht
 
@@ -2423,6 +2436,24 @@ book:
             label: Veranstaltung löschen
             success: Veranstaltung erfolgreich gelöscht
             confirm: 'Soll die Veranstaltung %title% wirklich gelöscht werden?'
+
+    report_remarks:
+        label: Zeugnisbemerkungen
+        count: '%count% Bemerkungen'
+        empty: Hier können Zeugnisbemerkungen hinterlegt werden.
+
+        add:
+            label: Neue Zeugnisbemerkung
+            success: Zeugnisbemerkung erfolgreich erstellt
+
+        edit:
+            label: Zeugnisbemerkung bearbeiten
+            success: Zeugnisbemerkung erfolgreich aktualisiert
+
+        remove:
+            label: Zeugnisbemerkung löschen
+            confirm: Soll die Zeugnisbemerkung wirklich gelöscht werden?
+            success: Zeugnisbemerkung erfolgreich gelöscht
 
 export:
     caution: Ich bestätige, dass ich die Datei nur auf zugelassenen Endgeräten verarbeite. Die Datei darf nur lokal verarbeitet werden und nicht via E-Mail versendet oder auf Clouddiensten gespeichert werden.

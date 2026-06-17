@@ -1,0 +1,116 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'book.report_remarks.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('book') }}">{{ 'book.label'|trans }}</a></li>
+        <li class="breadcrumb-item active">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex flex-wrap mt-n2">
+                <div class="flex-fill mt-2">
+                    <form method="get" class="row row-cols-lg-auto g-1 align-items-center">
+                        <div class="col">
+                            {% include "_filter/simple/section.html.twig" %}
+                        </div>
+                    </form>
+                </div>
+
+                <div class="ms-auto mt-2">
+                    <a href="{{ path('add_report_remark') }}" class="btn btn-outline-primary btn-sm">
+                        <i class="fa fa-plus"></i> {{ 'book.report_remarks.add.label'|trans }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {% if remarks|length == 0 %}
+            <div class="card-body">
+                <div class="bs-callout bs-callout-info">
+                    <h5>{{ 'info.label'|trans }}</h5>
+
+                    <p>{{ 'book.report_remarks.empty'|trans }}</p>
+                </div>
+            </div>
+        {% else %}
+            <div class="table-responsive">
+                <table class="table table-striped table-hover card-table">
+                    <colgroup>
+                        <col>
+                        <col class="column-md">
+                        <col>
+                        <col class="column-sm">
+                    </colgroup>
+
+                    <thead>
+                    <tr>
+                        <th>{{ 'label.student'|trans }}</th>
+                        <th>{{ 'label.grade'|trans }}</th>
+                        <th>{{ 'label.remark'|trans }}</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for remark in remarks %}
+                        <tr>
+                            <td class="align-middle">
+                                {{ remark.student|student }}
+                            </td>
+                            <td class="align-middle">
+                                {{ remark.student.grade(sectionFilter.currentSection)?.name }}
+                            </td>
+                            <td class="align-middle">
+                                {{ remark.remark }}
+                            </td>
+                            <td class="align-middle">
+                                <div class="dropdown">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <a href="{{ path('edit_report_remark', { uuid: remark.uuid }) }}" class="dropdown-item">
+                                            <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
+                                        </a>
+
+                                        <a href="{{ path('remove_report_remark', { uuid: remark.uuid }) }}" class="dropdown-item text-danger">
+                                            <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+
+        <div class="card-footer">
+            <div class="d-flex">
+                <div class="flex-fill align-self-center">
+                    {{ 'book.report_remarks.count'|trans({'%count%': remarks.totalCount}) }}
+                </div>
+
+                <div class="ms-auto">
+                    {% include '@Common/includes/pagination.html.twig' with {
+                        currentFilters: {
+                            section: sectionFilter.currentSection?.uuid
+                        },
+                        currentPage: remarks.page,
+                        lastPage: remarks.totalPages,
+                        paginationPath: 'report_remarks',
+                        showAlwaysFirstAndLast: true
+                    } %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

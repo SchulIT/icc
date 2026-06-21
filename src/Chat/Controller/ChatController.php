@@ -64,12 +64,8 @@ class ChatController extends AbstractController {
         /** @var User $user */
         $user = $this->getUser();
 
-        $chats = $this->chatRepository->findAllByUserPaginated(new PaginationQuery(page: $page), $user, $isArchive);
         $chatTagFilterView = $chatTagFilter->handle($tag, $user);
-
-        if($chatTagFilterView->getCurrentTag() !== null) {
-            $chats = $chatTagHelper->filterChats($chats, $chatTagFilterView->getCurrentTag(), $user);
-        }
+        $chats = $this->chatRepository->findAllByUserPaginated(new PaginationQuery(page: $page), $user, $isArchive, $chatTagFilterView->getCurrentTag());
 
         $unreadCount = [ ];
         foreach($chats as $chat) {

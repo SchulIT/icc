@@ -5,13 +5,13 @@ namespace App\Chat\View\Filter;
 use App\Chat\Entity\ChatTag;
 use App\Framework\View\Filter\FilterViewInterface;
 
-class ChatTagFilterView implements FilterViewInterface {
+readonly class ChatTagFilterView implements FilterViewInterface {
 
     /**
      * @param ChatTag[] $tags
-     * @param ChatTag $currentTag
+     * @param ChatTag|null $currentTag
      */
-    public function __construct(private readonly array $tags, private readonly ChatTag|null $currentTag) {
+    public function __construct(private array $tags, private ChatTag|null $currentTag) {
 
     }
 

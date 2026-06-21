@@ -79,6 +79,17 @@
                             {% endfor %}
                         </div>
                     </div>
+
+                    {% include '@Common/includes/pagination.html.twig' with {
+                        currentFilters: {
+                            tag: tagFilter.currentTag?.uuid,
+                            archive: isArchive
+                        },
+                        currentPage: chats.page,
+                        paginationPath: 'chats',
+                        lastPage: chats.totalPages,
+                        showAlwaysFirstAndLast: true
+                    } only %}
                 {% endif %}
             </div>
             <div class="col-md-3 sticky-sidebar">
@@ -92,7 +103,7 @@
                                 <i class="fas fa-arrow-left"></i> {{ 'actions.back'|trans }}
                             </a>
                         {% else %}
-                            <a href="{{ path('chats', { tag: tagFilter.currentTag != null ? tagFilter.currentTag.uuid : null, archive: '✓'}) }}" class="list-group-item list-group-item-action">
+                            <a href="{{ path('chats', { tag: tagFilter.currentTag != null ? tagFilter.currentTag.uuid : null, archive: true }) }}" class="list-group-item list-group-item-action">
                                 <i class="fas fa-archive"></i> {{ 'chat.archive.label'|trans }}
                             </a>
                         {% endif %}
@@ -107,14 +118,14 @@
 
                         <div class="list-group list-group-flush">
                             {% for tag in tagFilter.tags %}
-                                <a href="{{ path('chats', { tag: tag.uuid, archive: isArchive ? '✓' : null }) }}" class="list-group-item list-group-item-action {% if tagFilter.currentTag != null and tagFilter.currentTag.uuid == tag.uuid %}active{% endif %}">
+                                <a href="{{ path('chats', { tag: tag.uuid, archive: isArchive }) }}" class="list-group-item list-group-item-action {% if tagFilter.currentTag != null and tagFilter.currentTag.uuid == tag.uuid %}active{% endif %}">
                                     <span class="badge" style="background: {{ tag.color }}; color: {{ foreground(tag.color) }}">{{ tag.name }}</span>
                                 </a>
                             {% endfor %}
                         </div>
 
                         <div class="card-footer">
-                            <a href="{{ path('chats', { archive: isArchive ? '✓' : null }) }}" class="btn btn-primary btn-sm">
+                            <a href="{{ path('chats', { archive: isArchive }) }}" class="btn btn-primary btn-sm">
                                 {{ 'filter.reset'|trans }}
                             </a>
                         </div>

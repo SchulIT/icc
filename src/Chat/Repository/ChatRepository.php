@@ -6,10 +6,12 @@ use App\Chat\Entity\Chat;
 use App\Common\Entity\User;
 use App\Framework\Repository\AbstractRepository;
 use App\Chat\Repository\ChatRepositoryInterface;
+use App\Framework\Repository\PaginatedResult;
+use App\Framework\Repository\PaginationQuery;
 
 class ChatRepository extends AbstractRepository implements ChatRepositoryInterface {
 
-    public function findAllByUser(User $user, bool $archived): array {
+    public function findAllByUserPaginated(PaginationQuery $paginationQuery, User $user, bool $archived): PaginatedResult {
         $qb = $this->em->createQueryBuilder();
         $qbInner = $this->em->createQueryBuilder();
 
@@ -18,7 +20,7 @@ class ChatRepository extends AbstractRepository implements ChatRepositoryInterfa
             ->leftJoin('cInner.participants', 'pInner')
             ->where('pInner = :user');
 
-        return $qb->select(['c', 'p'])
+        $qb->select(['c', 'p'])
             ->from(Chat::class, 'c')
             ->leftJoin('c.participants', 'p')
             ->leftJoin('c.messages', 'm')
@@ -28,9 +30,9 @@ class ChatRepository extends AbstractRepository implements ChatRepositoryInterfa
             ->andWhere('c.isArchived = :isArchived')
             ->setParameter('isArchived', $archived)
             ->addOrderBy('m.createdAt', 'desc')
-            ->setParameter('user', $user->getId())
-            ->getQuery()
-            ->getResult();
+            ->setParameter('user', $user->getId());
+
+        return PaginatedResult::fromQueryBuilder($qb, $paginationQuery);
     }
 
     public function persist(Chat $chat): void {

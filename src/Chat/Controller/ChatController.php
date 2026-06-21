@@ -25,12 +25,15 @@ use App\Framework\Controller\AbstractController;
 use App\Framework\Feature\Feature;
 use App\Framework\Feature\IsFeatureEnabled;
 use App\Framework\Filesystem\FileNotFoundException;
+use App\Framework\Repository\PaginatedResult;
+use App\Framework\Repository\PaginationQuery;
 use App\Framework\Security\Firewall\Attribute\IsGrantedIfNotImpersonated;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -51,14 +54,19 @@ class ChatController extends AbstractController {
     }
 
     #[Route('', name: 'chats')]
-    public function index(ChatTagHelper $chatTagHelper, ChatTagFilter $chatTagFilter, Request $request): Response {
+    public function index(
+        ChatTagHelper $chatTagHelper,
+        ChatTagFilter $chatTagFilter,
+        Request $request,
+        #[MapQueryParameter] int $page = 1,
+        #[MapQueryParameter] string|null $tag = null,
+        #[MapQueryParameter(name: 'archive')] bool $isArchive = false
+    ): Response {
         /** @var User $user */
         $user = $this->getUser();
 
-        $isArchive = $request->query->get('archive') === '✓';
-
-        $chats = $this->chatRepository->findAllByUser($user, $isArchive);
-        $chatTagFilterView = $chatTagFilter->handle($request->query->get('tag', null), $user);
+        $chats = $this->chatRepository->findAllByUserPaginated(new PaginationQuery(page: $page), $user, $isArchive);
+        $chatTagFilterView = $chatTagFilter->handle($tag, $user);
 
         if($chatTagFilterView->getCurrentTag() !== null) {
             $chats = $chatTagHelper->filterChats($chats, $chatTagFilterView->getCurrentTag(), $user);
@@ -90,6 +98,7 @@ class ChatController extends AbstractController {
 
         return $this->render('chat/index.html.twig', [
             'chats' => $chats,
+            'page' => $page,
             'messagesCount' => $messagesCount,
             'unreadCount' => $unreadCount,
             'lastMessageDates' => $lastMessageDates,

@@ -88,7 +88,6 @@ class ChatController extends AbstractController {
 
         return $this->render('chat/index.html.twig', [
             'chats' => $chats,
-            'page' => $page,
             'messagesCount' => $messagesCount,
             'unreadCount' => $unreadCount,
             'lastMessageDates' => $lastMessageDates,

@@ -2,7 +2,7 @@
     {% include "_filter/_params.html.twig" %}
 
     <div class="mb-3 {{ class|default('') }}">
-        <label for="section" class="form-label">{{ 'label.date_range'|trans }}:</label>
+        <label for="section" class="form-label">{{ 'label.date_range.label'|trans }}:</label>
 
         <div class="input-group">
             <span class="input-group-text">
@@ -15,5 +15,10 @@
                 <i class="fas fa-check"></i>
             </button>
         </div>
+
+        <button type="button" class="btn btn-outline-primary btn-sm mt-2"
+                onclick="this.closest('.mb-3').querySelector('input[name=start]').value='{{ "now"|date_modify('-14 days')|date('Y-m-d') }}'; this.closest('.mb-3').querySelector('input[name=end]').value='{{ "now"|date_modify('+14 days')|date('Y-m-d') }}'; ">
+            {{ 'label.date_range.plus_minus_two_weeks'|trans }}
+        </button>
     </div>
 </form>

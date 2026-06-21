@@ -66,8 +66,17 @@
 
                                     <hr>
 
-                                    <div class="fs-small text-muted">
-                                        <i class="fas fa-user"></i> {{ message.createdBy|user }}
+                                    <div class="text-muted">
+                                        <i class="fas fa-user"></i>
+                                        {{ message.createdBy|user }}
+
+                                        <span class="badge text-bg-secondary">{{ message.createdBy.userType|trans }}</span>
+
+                                        {% if message.createdBy.isParent %}
+                                            {% for student in message.createdBy.students %}
+                                                <span class="badge text-bg-secondary"><i class="fas fa-user-graduate"></i> {{ student|student(true) }}</span>
+                                            {% endfor %}
+                                        {% endif %}
 
                                         <i class="fas fa-clock"></i> {{ message.createdAt|format_datetime }}
                                         {% if message.updatedAt is not null %}

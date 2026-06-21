@@ -14,6 +14,11 @@
     </ol>
 {% endblock %}
 
+{% block javascript %}
+    {{ parent() }}
+    <script src="{{ asset('build/editor.js') }}"></script>
+{% endblock %}
+
 {% block content %}
     {{ form_start(form) }}
 

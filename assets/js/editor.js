@@ -208,7 +208,9 @@ for(let el of document.querySelectorAll('[data-editor=markdown]')) {
         }
     )
         .then(editor => {
-
+            if(el.disabled) {
+                editor.enableReadOnlyMode('editor');
+            }
         })
         .catch(error => {
             console.error(error);

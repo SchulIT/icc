@@ -6,6 +6,7 @@ use App\Common\Converter\StudentStringConverter;
 use App\Common\Entity\Student;
 use App\Common\Form\Type\DateLessonType;
 use App\Common\Form\Choice\StudentsType;
+use App\Common\Form\Type\MarkdownType;
 use App\StudentAbsence\Entity\StudentAbsence;
 use App\StudentAbsence\Entity\StudentAbsenceType as StudentAbsenceTypeEntity;
 use App\Common\Entity\User;
@@ -74,7 +75,7 @@ class StudentAbsenceBulkType extends AbstractType {
             ->add('until', DateLessonType::class, [
                 'label' => 'absences.students.add.absent_until'
             ])
-            ->add('message', TextareaType::class, [
+            ->add('message', MarkdownType::class, [
                 'label' => 'absences.students.add.message',
                 'attr' => [
                     'rows' => 5

@@ -1,5 +1,3 @@
-import { Modal, Tooltip, Popover } from "bootstrap";
-
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('button[data-edit]').forEach(function(el) {
         el.addEventListener('click', function(event) {
@@ -9,10 +7,6 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelector('.content-' + messageId).classList.add('hide');
             document.querySelector('.remove-' + messageId).classList.add('hide');
             document.querySelector('.edit-' + messageId).classList.remove('hide');
-
-            let textarea = document.querySelector('.edit-' + messageId + ' textarea');
-            textarea.editor.codemirror.focus();
-            textarea.editor.codemirror.setCursor(textarea.editor.codemirror.lineCount(), 0);
         });
     });
 

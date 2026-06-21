@@ -2384,8 +2384,10 @@ book:
             label: Excel-Datei
             info: Die Excel-Datei ist mit demselben Passwort verschlüsselt, das auch hier eingegeben werden muss.
             download: Download
-
-
+        import:
+            label: Noten importieren
+            info: Pro Zeile die Note eines Schülers bzw. einer Schülerin eingeben. Die Reihenfolge muss mit der Namensliste hier auf der Übersichtsseite übereinstimmen.
+            button: Importieren
 
     integrity_check:
         label: Plausibilitätscheck

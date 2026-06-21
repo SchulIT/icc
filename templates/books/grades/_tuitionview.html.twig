@@ -76,7 +76,7 @@
                                     {% if isReadonly %}
                                         <span id="{{ id }}"><i class="fas fa-lock"></i></span>
                                     {% else %}
-                                        <select class="form-select form-select-sm" tabindex="{{ tabindex + (rowCount*loop.index0) + rowIdx }}" disabled="disabled" id="{{ id }}">
+                                        <select class="form-select form-select-sm" tabindex="{{ tabindex + (rowCount*loop.index0) + rowIdx }}" disabled="disabled" id="{{ id }}" data-import-category="{{ category.category.uuid }}">
                                             <option value=""></option>
                                             {% for value in category.category.catalog.grades %}
                                                 <option value="{{ value.value }}">{{ value.value }}</option>
@@ -95,8 +95,42 @@
     <input type="hidden" name="_csrf_token" value="{{ csrf_token('gradebook') }}">
 
     {% if not isForeignTuition %}
-    <button type="submit" class="btn btn-primary btn-sm">
-        <i class="fas fa-save"></i> {{ 'actions.save'|trans }}
-    </button>
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fas fa-save"></i> {{ 'actions.save'|trans }}
+        </button>
+        <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalGrades">
+            <i class="fas fa-upload"></i> {{ 'actions.import'|trans }}
+        </button>
     {% endif %}
 </form>
+
+<div class="modal fade" id="modalGrades" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">{{ 'book.grades.import.label'|trans }}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="bs-callout bs-callout-info mt-0">
+                    {{ 'book.grades.import.info'|trans }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="gradeCategoryToImport" class="form-label">{{ 'label.gradebook.grade_category'|trans }}</label>
+                    <select id="gradeCategoryToImport" class="form-select form-select-sm">
+                        {% for category in overview.categories %}
+                            <option value="{{ category.category.uuid }}">{{ category.category.displayName }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <textarea id="gradesToImport" class="form-control form-control-sm" rows="30"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btnCancelImport" data-bs-dismiss="modal">{{ 'actions.cancel'|trans }}</button>
+                <button type="button" class="btn btn-primary" id="btnImportGrades">{{ 'book.grades.import.button'|trans }}</button>
+            </div>
+        </div>
+    </div>
+</div>

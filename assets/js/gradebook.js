@@ -114,6 +114,42 @@ async function exportXlsx() {
     document.body.removeChild($a);
 }
 
+function importCsv() {
+    if(decryptedKey === null) {
+        return;
+    }
+
+    let $selectGradeCategory = document.getElementById('gradeCategoryToImport');
+    let $inputTextarea = document.getElementById('gradesToImport');
+
+    let selectorForGradeSelectElements = '[data-import-category="' + $selectGradeCategory.value + '"]';
+    let $gradeSelects = document.querySelectorAll(selectorForGradeSelectElements);
+
+    let grades = $inputTextarea.value.split(/\r?\n/);
+
+    let idx = 0;
+    for(let grade of grades) {
+        let $select = $gradeSelects[idx] ?? null;
+
+        if($select === null) { // more lines than students -> exit
+            break;
+        }
+
+        const validOptions = Array.from($select.options).map(x => x.value);
+
+        if(validOptions.includes(grade)) {
+            $select.value = grade;
+            // IMPORTANT: Trigger change-Event
+            let event = new Event('change', {});
+            $select.dispatchEvent(event);
+        }
+
+        idx++;
+    }
+
+    $inputTextarea.value = '';
+}
+
 async function decryptAll() {
     if(decryptedKey === null) {
         return;
@@ -138,7 +174,7 @@ async function decryptAll() {
 
             select.removeAttribute('disabled');
 
-            select.addEventListener('change', async function (element) {
+            select.addEventListener('change', async function () {
                 preventWindowUnload();
                 let encryptedValue = '';
                 if (this.value !== '') {
@@ -351,5 +387,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('gradeform')?.addEventListener('submit', function() {
         window.onbeforeunload = null;
+    });
+
+    document.querySelector('#btnImportGrades')?.addEventListener('click', function(event) {
+        event.preventDefault();
+        importCsv();
+
+        document.getElementById('btnCancelImport').click();
     })
 });

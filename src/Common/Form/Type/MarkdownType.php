@@ -37,8 +37,4 @@ class MarkdownType extends TextareaType {
             $view->vars['attr']['data-modal-url'] = $this->urlGenerator->generate('editor_links');
         }
     }
-
-    public function getBlockPrefix(): string {
-        return 'markdown';
-    }
 }

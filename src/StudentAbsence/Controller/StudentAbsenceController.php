@@ -70,6 +70,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -86,13 +87,18 @@ class StudentAbsenceController extends AbstractController {
 
     #[Route(path: '/add', name: 'add_student_absence')]
     public function add(Request $request, StudentAbsenceSettings $settings,
-                        StudentAbsenceRepositoryInterface $repository, StudentRepositoryInterface $studentRepository,
+                        #[CurrentUser] User $user,
+                        StudentAbsenceRepositoryInterface $repository,
                         TimetableTimeHelper $timeHelper, TimetableSettings $timetableSettings, DateHelper $dateHelper): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::New);
 
         $students = [ ];
 
         $note = new StudentAbsence();
+        if($user->getStudents()->count() === 1) {
+            $note->setStudent($user->getStudents()->first());
+        }
+
         $note->setFrom($timeHelper->getLessonDateForDateTime($this->getTodayOrNextDay($dateHelper, $settings->getNextDayThresholdTime())));
         $note->setUntil((new DateLesson())->setDate(clone $note->getFrom()->getDate())->setLesson($timetableSettings->getMaxLessons()));
 

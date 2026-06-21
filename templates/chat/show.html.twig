@@ -29,7 +29,7 @@
 
                 {% for message in chat.messages %}
                     <div class="d-flex flex-nowrap">
-                        <div class="{% if message.createdBy == app.user %}order-2 ms-2{% else %}order-1 me-2{% endif %}">
+                        <div class="{% if message.createdBy == app.user %}order-2 ms-2{% else %}order-1 me-2{% endif %} d-print-none">
                             <div class="avatar avatar-lg {% if message.createdBy.teacher %}avatar-text-sm{% endif %}" title="{{ message.createdBy|fancy_user }}">
                                 {% if message.createdBy.teacher %}
                                     {{ message.createdBy.teacher.acronym }}
@@ -48,7 +48,7 @@
                             <div class="card">
                                 <div class="card-body content-{{ message.id }}">
                                     {% if canEdit or canRemove %}
-                                        <div class="float-end">
+                                        <div class="float-end d-print-none">
                                         {% if canEdit %}
                                             <button class="btn btn-outline-primary btn-sm ms-1" title="{{ 'actions.edit'|trans }}" data-edit="{{ message.id }}">
                                                 <i class="fas fa-edit"></i>

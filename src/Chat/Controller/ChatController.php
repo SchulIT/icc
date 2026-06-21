@@ -57,7 +57,6 @@ class ChatController extends AbstractController {
     public function index(
         ChatTagHelper $chatTagHelper,
         ChatTagFilter $chatTagFilter,
-        Request $request,
         #[MapQueryParameter] int $page = 1,
         #[MapQueryParameter] string|null $tag = null,
         #[MapQueryParameter(name: 'archive')] bool $isArchive = false
@@ -71,11 +70,6 @@ class ChatController extends AbstractController {
         if($chatTagFilterView->getCurrentTag() !== null) {
             $chats = $chatTagHelper->filterChats($chats, $chatTagFilterView->getCurrentTag(), $user);
         }
-
-        // Do NOT sort here as it triggers the whole messages collection to be loaded which
-        // leads to decrypting all messages :-(
-        // Sort in database instead!
-        //$sorter->sort($chats, ChatStrategy::class, SortDirection::Descending);
 
         $unreadCount = [ ];
         foreach($chats as $chat) {

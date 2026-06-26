@@ -34,4 +34,17 @@
             {{ form_row(form.exam_color) }}
         </div>
     </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'admin.settings.appointments.import.label'|trans }}</div>
+        <div class="card-body">
+            <div class="bs-callout bs-callout-info">
+                {{ 'admin.settings.appointments.import.info'|trans }}
+            </div>
+
+            {{ form_row(form.import_country) }}
+            {{ form_row(form.import_subdivision) }}
+            {{ form_row(form.import_category) }}
+        </div>
+    </div>
 {% endblock %}

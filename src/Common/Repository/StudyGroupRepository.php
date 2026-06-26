@@ -9,6 +9,7 @@ use App\Common\Entity\Student;
 use App\Common\Entity\StudyGroup;
 use App\Common\Entity\StudyGroupType;
 use App\Common\Repository\StudyGroupRepositoryInterface;
+use Override;
 
 class StudyGroupRepository extends AbstractTransactionalRepository implements StudyGroupRepositoryInterface {
 
@@ -177,5 +178,19 @@ class StudyGroupRepository extends AbstractTransactionalRepository implements St
     public function remove(StudyGroup $studyGroup): void {
         $this->em->remove($studyGroup);
         $this->flushIfNotInTransaction();
+    }
+
+    #[Override]
+    public function findAllByType(StudyGroupType $type, Section $section): array {
+        return $this->em->createQueryBuilder()
+            ->select(['sg'])
+            ->from(StudyGroup::class, 'sg')
+            ->leftJoin('sg.section', 'sec')
+            ->where('sec.id = :section')
+            ->andWhere('sg.type = :type')
+            ->setParameter('section', $section->getId())
+            ->setParameter('type', $type)
+            ->getQuery()
+            ->getResult();
     }
 }

@@ -46,4 +46,29 @@ class AppointmentsSettings extends AbstractSettings {
     public function setExamColor(?string $color): void {
         $this->setValue('appointments.exam_color', $color);
     }
+
+    public function getImportCountry(): string {
+        return $this->getValue('appointments.import.country', 'DE');
+    }
+
+    public function setImportCountry(string $country): void {
+        $this->setValue('appointments.import.country', $country);
+    }
+
+    public function getImportSubdivision(): string {
+        return $this->getValue('appointments.import.subdivision', 'DE-NW');
+    }
+
+    public function setImportSubdivision(string $subdivision): void {
+        $this->setValue('appointments.import.subdivision', $subdivision);
+    }
+
+    public function getImportAppointmentCategoryId(): int|null {
+        return $this->getValue('appointments.import.category_id', null);
+    }
+
+    public function setImportAppointmentCategoryId(int $id): void {
+        $this->setValue('appointments.import.category_id', $id);
+    }
+
 }

@@ -2,6 +2,9 @@
 
 namespace App\Appointment\Controller;
 
+use App\Appointment\Import\OpenHolidaysApi\Importer;
+use App\Appointment\Import\OpenHolidaysApi\ImportRequest;
+use App\Appointment\Import\OpenHolidaysApi\ImportRequestType;
 use App\Framework\Controller\AbstractController;
 use App\Common\Converter\UserStringConverter;
 use App\Appointment\Entity\Appointment;
@@ -16,6 +19,7 @@ use App\Appointment\Sorting\AppointmentDateGroupStrategy;
 use App\Appointment\Sorting\AppointmentDateStrategy as AppointmentSortingStrategy;
 use App\Framework\Sorting\Sorter;
 use App\Appointment\View\Filter\AppointmentCategoryFilter;
+use Exception;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -178,6 +182,43 @@ class AppointmentAdminController extends AbstractController {
         return $this->render('admin/appointments/confirm.html.twig', [
             'appointment' => $appointment,
             'form' => $form->createView()
+        ]);
+    }
+
+    #[Route('/import', name: 'import_appointments')]
+    public function import(
+        Request $request,
+        Importer $importer,
+        TranslatorInterface $translator
+    ): Response {
+        $importRequest = new ImportRequest();
+        $form = $this->createForm(ImportRequestType::class, $importRequest);
+        $form->handleRequest($request);
+
+        $importException = null;
+
+        if($form->isSubmitted() && $form->isValid()) {
+            try {
+                $result = $importer->import($importRequest);
+
+                $this->addFlash('success',
+                    $translator->trans('admin.appointments.import.success',
+                        [
+                            '%added%' => $result->added,
+                            '%updated%' => $result->updated,
+                        ]
+                    )
+                );
+
+                return $this->redirectToRoute('admin_appointments');
+            } catch (Exception $e) {
+                $importException = $e;
+            }
+        }
+
+        return $this->render('admin/appointments/import.html.twig', [
+            'form' => $form->createView(),
+            'exception' => $importException,
         ]);
     }
 }

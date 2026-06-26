@@ -24,6 +24,8 @@ class AppointmentVoter extends Voter {
     public const View = 'view';
     public const Confirm = 'confirm';
 
+    public const Import = 'import-appointments';
+
     public function __construct(private AppointmentsSettings $settings, private DateHelper $dateHelper, private AccessDecisionManagerInterface $accessDecisionManager)
     {
     }
@@ -39,7 +41,7 @@ class AppointmentVoter extends Voter {
             self::Confirm
         ];
 
-        return $attribute === self::New ||
+        return $attribute === self::New || $attribute === self::Import ||
               (in_array($attribute, $attributes) && $subject instanceof Appointment);
     }
 
@@ -54,12 +56,17 @@ class AppointmentVoter extends Voter {
             self::Remove => $this->canRemove($subject, $token),
             self::Confirm => $this->canConfirm($token),
             self::View => $this->canView($subject, $token),
+            self::Import => $this->canImport($token),
             default => throw new LogicException('This code should be reached.'),
         };
     }
 
     private function canCreate(TokenInterface $token): bool {
         return $this->accessDecisionManager->decide($token, ['ROLE_APPOINTMENT_CREATOR']);
+    }
+
+    private function canImport(TokenInterface $token): bool {
+        return $this->accessDecisionManager->decide($token, ['ROLE_APPOINTMENTS_ADMIN']);
     }
 
     private function canConfirm(TokenInterface $token): bool {

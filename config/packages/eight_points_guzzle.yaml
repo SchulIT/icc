@@ -3,6 +3,13 @@
 # https://github.com/8p/EightPointsGuzzleBundle/blob/master/src/Resources/doc/configuration-reference.md
 eight_points_guzzle:
     clients:
+        openholidays:
+            base_url: 'https://openholidaysapi.org'
+            options:
+                headers:
+                    Accept: 'application/json'
+                    User-Agent: 'ICC/%version%'
+
         sso:
             base_url: "%env(SSO_URL)%"
             options:

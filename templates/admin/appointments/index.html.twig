@@ -151,6 +151,12 @@
                 </a>
             {% endif %}
 
+            {% if is_granted('import-appointments') %}
+                <a href="{{ path('import_appointments') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-download"></i> {{ 'admin.appointments.import.label'|trans }}
+                </a>
+            {% endif %}
+
             {% if is_granted('ROLE_APPOINTMENTS_ADMIN') %}
                 <a href="{{ path('admin_appointment_categories') }}" class="list-group-item list-group-item-action">
                     <i class="fa fa-cogs"></i> {{ 'admin.appointments.categories.label'|trans }}

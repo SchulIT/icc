@@ -53,6 +53,13 @@ interface StudyGroupRepositoryInterface extends TransactionalRepositoryInterface
     public function findAllByGrades(Grade $grade, Section $section, ?StudyGroupType $type = null);
 
     /**
+     * @param StudyGroupType $type
+     * @param Section $section
+     * @return StudyGroup[]
+     */
+    public function findAllByType(StudyGroupType $type, Section $section): array;
+
+    /**
      * @return StudyGroup[]
      */
     public function findAll();

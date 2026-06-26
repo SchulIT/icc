@@ -34,7 +34,7 @@ class ImportController extends AbstractImportController {
     #[OA\Response(response: '401', description: 'Kein Authentifizierungstoken angegeben.', content: new Model(type: ErrorResponse::class))]
     #[OA\Response(response: '403', description: 'Fehlerhafte Rechte.', content: new Model(type: ErrorResponse::class))]
     #[OA\Response(response: '500', description: 'Serverfehler')]
-    #[Route(path: '/appointments', name: 'import_appointments', methods: ['POST'])]
+    #[Route(path: '/appointments', name: 'api_appointments', methods: ['POST'])]
     public function appointments(#[JsonPayload] AppointmentsData $appointmentsData, AppointmentsImportStrategy $strategy): Response {
         $result = $this->importer->import($appointmentsData, $strategy);
         return $this->fromResult($result);

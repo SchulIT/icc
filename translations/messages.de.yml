@@ -1130,6 +1130,22 @@ admin:
                 label: Farbe für Klausuren
                 help: Legt die Farbe für Klausuren fest, die im Terminkalender angezeigt werden.
 
+            import:
+                label: Import-Einstellungen
+                info: Diese Einstellungen werden beim Import von der OpenHolidays API verwendet.
+
+                country:
+                    label: Land
+                    help: Gibt das Land an, für das Ferien abgerufen werden sollen.
+
+                subdivision:
+                    label: Bundesland
+                    help: Gibt das Bundesland an, für das Ferien abgerufen werden sollen. Wird das Land geändert, müssen die Einstellungen zunächst gespeichert werden, damit diese Liste aktualisiert wird.
+
+                category:
+                    label: Kategorie
+                    help: Ferien werden mit Kategorie festgelegt.
+
         notifications:
             label: Benachrichtigungen
             pushover:
@@ -1342,6 +1358,11 @@ admin:
             confirm: 'Soll der Termin "%name%" (erstellt von %user%) wirklich bestätigt werden?'
             info: Diese Aktion kann nicht rückgängig gemacht werden. Der Ersteller des Termin erhält eine Bestätigungs-E-Mail.
             success: Termin erfolgreich bestätigt
+
+        import:
+            label: Ferien importieren
+            info: Öffentliche Feiertage und Schulferien werden für das in den Einstellungen hinterlegte Bundesland bei einer öffentlichen API abgefragt.
+            success: '%added% neue Termine hinzugefügt und %updated% Termine aktualisiert'
 
         categories:
             label: Termin-Kategorien

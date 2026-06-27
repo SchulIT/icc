@@ -17,6 +17,7 @@ use App\Appointment\Repository\AppointmentRepositoryInterface;
 use App\Appointment\Voter\AppointmentVoter;
 use App\Appointment\Sorting\AppointmentDateGroupStrategy;
 use App\Appointment\Sorting\AppointmentDateStrategy as AppointmentSortingStrategy;
+use App\Framework\Repository\PaginationQuery;
 use App\Framework\Sorting\Sorter;
 use App\Appointment\View\Filter\AppointmentCategoryFilter;
 use Exception;
@@ -51,27 +52,10 @@ class AppointmentAdminController extends AbstractController {
         /** @var User|null $createdBy */
         $createdBy = $this->isGranted('ROLE_APPOINTMENTS_ADMIN') ? null : $this->getUser();
 
-        $paginator = $this->repository->getPaginator(self::NumberOfAppointments, $page, $categories, $q, $createdBy, $onlyConfirmed ?? null);
-        $pages = 1;
-
-        if($paginator->count() > 0) {
-            $pages = ceil((float)$paginator->count() / self::NumberOfAppointments);
-        }
-
-        $appointments = [ ];
-
-        foreach($paginator->getIterator() as $appointment) {
-            $appointments[] = $appointment;
-        }
-
-        $groups = $this->grouper->group($appointments, AppointmentGroupingStrategy::class);
-        $this->sorter->sortGroupItems($groups, AppointmentSortingStrategy::class);
-        $this->sorter->sort($groups, AppointmentDateGroupStrategy::class);
+        $appointments = $this->repository->findPaginated(new PaginationQuery(page: $page, limit: self::NumberOfAppointments), $categories, $q, $createdBy, $onlyConfirmed ?? null);
 
         return $this->render('admin/appointments/index.html.twig', [
-            'groups' => $groups,
-            'pages' => $pages,
-            'page' => $page,
+            'appointments' => $appointments,
             'categoryFilter' => $categoryFilterView,
             'q' => $q,
             'confirmed' => $onlyConfirmed,

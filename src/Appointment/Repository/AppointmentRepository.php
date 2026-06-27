@@ -12,6 +12,8 @@ use App\Common\Entity\Teacher;
 use App\Common\Entity\User;
 use App\Common\Entity\UserType;
 use App\Appointment\Repository\AppointmentRepositoryInterface;
+use App\Framework\Repository\PaginatedResult;
+use App\Framework\Repository\PaginationQuery;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -305,7 +307,7 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
             ->getSingleScalarResult();
     }
 
-    public function getPaginator(int $itemsPerPage, int &$page, array $categories = [ ], ?string $q = null, ?User $createdBy = null, ?bool $confirmed = null): Paginator {
+    public function findPaginated(PaginationQuery $paginationQuery, array $categories = [], ?string $query = null, ?User $createdBy = null, ?bool $onlyConfirmed = null): PaginatedResult {
         $qbIds = $this->em->createQueryBuilder();
         $params = [ ];
 
@@ -321,7 +323,7 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
             $params['categories'] = array_map(fn(AppointmentCategory $category) => $category->getId(), $categories);
         }
 
-        if($q !== null) {
+        if($query !== null) {
             $qbIds
                 ->andWhere(
                     $qbIds->expr()->orX(
@@ -330,7 +332,7 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
                     )
                 );
 
-            $params['query'] = '%' . $q . '%';
+            $params['query'] = '%' . $query . '%';
         }
 
         if($createdBy !== null) {
@@ -338,25 +340,15 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
             $params['user'] = $createdBy;
         }
 
-        if($confirmed !== null) {
+        if($onlyConfirmed !== null) {
             $qbIds->andWhere('aInner.isConfirmed = :confirmed');
-            $params['confirmed'] = $confirmed;
+            $params['confirmed'] = $onlyConfirmed;
         }
 
-        $qb = $this->getAppointments($qbIds->getDQL(), $params, null);
+        $qb = $this->getAppointments($qbIds->getDQL(), $params, null)
+            ->orderBy('a.start', 'DESC');
 
-        if(!is_numeric($page) || $page < 1) {
-            $page = 1;
-        }
-
-        $offset = ($page - 1) * $itemsPerPage;
-
-        $paginator = new Paginator($qb);
-        $paginator->getQuery()
-            ->setMaxResults($itemsPerPage)
-            ->setFirstResult($offset);
-
-        return $paginator;
+        return PaginatedResult::fromQueryBuilder($qb, $paginationQuery);
     }
 
     public function persist(Appointment $appointment): void {

@@ -10,6 +10,8 @@ use App\Common\Entity\StudyGroup;
 use App\Common\Entity\Teacher;
 use App\Common\Entity\User;
 use App\Common\Entity\UserType;
+use App\Framework\Repository\PaginatedResult;
+use App\Framework\Repository\PaginationQuery;
 use App\Framework\Repository\TransactionalRepositoryInterface;
 use DateTime;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -67,6 +69,11 @@ interface AppointmentRepositoryInterface extends TransactionalRepositoryInterfac
      */
     public function findAllStartEnd(DateTime $start, DateTime $end, array $categories = [ ]): array;
 
+    /**
+     * @return PaginatedResult<Appointment>
+     */
+    public function findPaginated(PaginationQuery $paginationQuery, array $categories = [ ], string|null $query = null, User|null $createdBy = null, bool|null $onlyConfirmed = null): PaginatedResult;
+
     public function countNotConfirmed(): int;
 
     public function persist(Appointment $appointment): void;
@@ -74,6 +81,4 @@ interface AppointmentRepositoryInterface extends TransactionalRepositoryInterfac
     public function remove(Appointment $appointment): void;
 
     public function removeBetween(DateTime $start, DateTime $end): int;
-
-    public function getPaginator(int $itemsPerPage, int &$page, array $categories = [ ], ?string $q = null, ?User $createdBy = null, ?bool $confirmed = null): Paginator;
 }

@@ -1,4 +1,4 @@
-{% extends "admin/_main.html.twig" %}
+{% extends "admin/_main_nosidebar.html.twig" %}
 
 {% block title %}{{ 'admin.appointments.categories.label'|trans }}{% endblock %}
 
@@ -11,72 +11,72 @@
     </ol>
 {% endblock %}
 
-{% block inner %}
+{% block table %}
     {% if categories|length == 0 %}
-        <div class="bs-callout bs-callout-info">
-            <h5>{{ 'info.label'|trans }}</h5>
+        <div class="card-body">
+            <div class="bs-callout bs-callout-info mb-0">
+                <h5>{{ 'info.label'|trans }}</h5>
 
-            <p>{{ 'admin.appointments.categories.overview.empty'|trans }}</p>
+                <p>{{ 'admin.appointments.categories.overview.empty'|trans }}</p>
+            </div>
         </div>
     {% else %}
-        <div class="card">
-            <div class="table-responsive">
-                <table class="table table-striped table-hover card-table">
-                    <colgroup>
-                        <col>
-                        <col class="column-sm">
-                    </colgroup>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover card-table">
+                <colgroup>
+                    <col>
+                    <col class="column-sm">
+                </colgroup>
 
-                    <thead>
+                <thead>
+                <tr>
+                    <th>{{ 'label.name'|trans }} </th>
+                    <th> </th>
+                </tr>
+                </thead>
+
+                <tbody>
+                {% for category in categories %}
                     <tr>
-                        <th>{{ 'label.name'|trans }} </th>
-                        <th> </th>
-                    </tr>
-                    </thead>
+                        <td class="align-middle">
+                            {{ category.name }}
+                            {% include "_includes/_id.html.twig" with { id: category.id } %}
+                        </td>
+                        <td class="align-middle">
+                            <div class="dropdown">
+                                <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
 
-                    <tbody>
-                    {% for category in categories %}
-                        <tr>
-                            <td class="align-middle">
-                                {{ category.name }}
-                                {% include "_includes/_id.html.twig" with { id: category.id } %}
-                            </td>
-                            <td class="align-middle">
-                                <div class="dropdown">
-                                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </button>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    <a href="{{ path('edit_appointment_category', { uuid: category.uuid }) }}" class="dropdown-item">
+                                        <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
+                                    </a>
 
-                                    <div class="dropdown-menu dropdown-menu-end">
-                                        <a href="{{ path('edit_appointment_category', { uuid: category.uuid }) }}" class="dropdown-item">
-                                            <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
-                                        </a>
-
-                                        <a href="{{ path('remove_appointment_category', { uuid: category.uuid }) }}" class="dropdown-item text-danger">
-                                            <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
-                                        </a>
-                                    </div>
+                                    <a href="{{ path('remove_appointment_category', { uuid: category.uuid }) }}" class="dropdown-item text-danger">
+                                        <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
+                                    </a>
                                 </div>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
     {% endif %}
 {% endblock %}
 
-{% block sidebar %}
-    <div class="card">
-        <div class="list-group list-group-flush">
-            <a href="{{ path('add_appointment_category') }}" class="list-group-item list-group-item-action">
-                <i class="fa fa-plus"></i> {{ 'admin.appointments.categories.add.label'|trans }}
-            </a>
+{% block count %}
+    {{ 'admin.appointments.categories.count'|trans({'%count%': categories|length}) }}
+{% endblock %}
 
-            <a href="{{ path('admin_appointments') }}" class="list-group-item list-group-item-action">
-                <i class="fa fa-arrow-left"></i> {{ 'admin.appointments.categories.overview.back'|trans }}
-            </a>
-        </div>
-    </div>
+{% block buttons %}
+    <a href="{{ path('admin_appointments') }}" class="btn btn-outline-primary btn-sm">
+        <i class="fa fa-arrow-left"></i> {{ 'admin.appointments.categories.overview.back'|trans }}
+    </a>
+
+    <a href="{{ path('add_appointment_category') }}" class="btn btn-primary btn-sm">
+        <i class="fa fa-plus"></i> {{ 'admin.appointments.categories.add.label'|trans }}
+    </a>
 {% endblock %}

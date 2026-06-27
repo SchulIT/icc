@@ -1,4 +1,4 @@
-{% extends "admin/_main.html.twig" %}
+{% extends "admin/_main_nosidebar.html.twig" %}
 
 {% block title %}{{ 'admin.appointments.label'|trans }}{% endblock %}
 
@@ -16,6 +16,128 @@
     confirmed: confirmed is null ? null : (not confirmed ? '✗' : '✓' )}
 %}
 
+{% block table %}
+    {% if appointments|length == 0 %}
+        <div class="card-body">
+            <div class="bs-callout bs-callout-info mb-0">
+                <h5>{{ 'info.label'|trans }}</h5>
+
+                <p>{{ 'admin.appointments.overview.empty'|trans }}</p>
+            </div>
+        </div>
+    {% else %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover card-table">
+                <colgroup>
+                    <col>
+                    <col class="column-md">
+                    <col class="column-md">
+                    <col class="column-md">
+                    <col class="column-lg">
+                    <col class="column-md">
+                    <col class="column-sm">
+                </colgroup>
+
+                <thead>
+                <tr>
+                    <th>{{ 'label.title'|trans }} </th>
+                    <th>{{ 'label.category'|trans }}</th>
+                    <th>{{ 'label.start'|trans }}</th>
+                    <th>{{ 'label.end'|trans }}</th>
+                    <th>{{ 'label.study_groups'|trans({'%count%': 0}) }}</th>
+                    <th>{{ 'label.confirmed'|trans }}</th>
+                    <th> </th>
+                </tr>
+                </thead>
+
+                <tbody>
+                {% for appointment in appointments %}
+                    {% if appointment.isAllDay %}
+                        {% set start = appointment.start|format_date %}
+                    {% else %}
+                        {% set start = appointment.start|format_datetime %}
+                    {% endif %}
+                    {% if appointment.end is not null %}
+                        {% if appointment.isAllDay %}
+                            {% set end = appointment.end|format_date %}
+                        {% else %}
+                            {% set end = appointment.end|format_datetime %}
+                        {% endif %}
+
+                        {% set date = 'date.range'|trans({'%from%': start, '%to%': end }) %}
+                    {% else %}
+                        {% set date = start %}
+                    {% endif %}
+
+                    <tr>
+                        <td class="align-middle">
+                            {{ appointment.title }}
+
+                            {% include "_includes/_id.html.twig" with { id: appointment.id } %}
+                        </td>
+                        <td class="align-middle">
+                            <span class="badge" style="background: {{ appointment.category.color }}; color: {{ foreground(appointment.category.color) }}">{{ appointment.category.name }}</span>
+                        </td>
+                        <td class="align-middle">{{ start }}</td>
+                        <td class="align-middle">{{ end }}</td>
+                        <td class="align-middle">
+                            {% include '_includes/study_groups.html.twig' with { studyGroups: appointment.studyGroups, id: appointment.uuid } only %}
+                        </td>
+                        <td class="align-middle">
+                            {% if appointment.confirmed %}
+                                <i class="fa fa-check"></i>
+                            {% else %}
+                                <i class="fa fa-times"></i>
+                            {% endif %}
+                        </td>
+                        <td class="align-middle">
+                            <div class="dropdown">
+                                <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    {% if is_granted('edit', appointment) %}
+                                        <a href="{{ path('edit_appointment', { uuid: appointment.uuid }) }}" class="dropdown-item">
+                                            <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
+                                        </a>
+                                    {% endif %}
+                                    {% if not appointment.confirmed and is_granted('confirm', appointment) %}
+                                        <a href="{{ path('confirm_appointment', { uuid: appointment.uuid }) }}" class="dropdown-item">
+                                            <i class="fa fa-check"></i> {{ 'actions.confirm'|trans }}
+                                        </a>
+                                    {% endif %}
+                                    {% if is_granted('remove', appointment) %}
+                                        <a href="{{ path('remove_appointment', { uuid: appointment.uuid }) }}" class="dropdown-item text-danger">
+                                            <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block count %}
+    {{ 'admin.appointments.count'|trans({'%count%': appointments.totalPages}) }}
+{% endblock %}
+
+{% block pagination %}
+    {% include '@Common/includes/pagination.html.twig' with {
+        currentFilters: currentFilter,
+        currentPage: appointments.page,
+        paginationPath: 'admin_appointments',
+        lastPage: appointments.totalPages,
+        showAlwaysFirstAndLast: true
+    } only %}
+{% endblock %}
+
+{#
 {% block inner %}
     {% if notConfirmedCount > 0 and is_granted('ROLE_APPOINTMENTS_ADMIN') %}
     <div class="bs-callout bs-callout-info">
@@ -26,186 +148,61 @@
         </a>
     </div>
     {% endif %}
+#}
 
-    {% if groups|length == 0 %}
-        <div class="bs-callout bs-callout-info">
-            <h5>{{ 'info.label'|trans }}</h5>
-
-            <p>{{ 'admin.appointments.overview.empty'|trans }}</p>
+{% block filter %}
+    <form method="get" class="row row-cols-lg-auto g-1 align-items-center">
+        <div class="col">
+            <select name="category" id="category" class="form-select form-select-sm" data-trigger="submit">
+                <option value="" placeholder>{{ 'label.select.category'|trans }}</option>
+                {% for c in categoryFilter.categories %}
+                    <option value="{{ c.uuid }}" {% if categoryFilter.currentCategory != null and categoryFilter.currentCategory.id == c.id %}selected="selected"{% endif %}>{{ c.name }}</option>
+                {% endfor %}
+            </select>
         </div>
-    {% else %}
-        {% for group in groups %}
-            <div class="card">
-                <div class="card-header">{{ ('date.months.' ~ group.month)|trans }} {{ group.year }} <span class="badge rounded-pill badge-primary">{{ group.appointments|length }}</span> </div>
 
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover card-table">
-                        <colgroup>
-                            <col>
-                            <col class="column-md">
-                            <col class="column-md">
-                            <col class="column-lg">
-                            <col class="column-md">
-                            <col class="column-sm">
-                        </colgroup>
+        <div class="col">
+            {% include "_filter/simple/query.html.twig" with { query: q } %}
+        </div>
 
-                        <thead>
-                        <tr>
-                            <th>{{ 'label.title'|trans }} </th>
-                            <th>{{ 'label.start'|trans }}</th>
-                            <th>{{ 'label.end'|trans }}</th>
-                            <th>{{ 'label.study_groups'|trans({'%count%': 0}) }}</th>
-                            <th>{{ 'label.confirmed'|trans }}</th>
-                            <th> </th>
-                        </tr>
-                        </thead>
+        <div class="col">
+            <div class="btn-group btn-group-sm" role="group">
+                <button name="confirmed" value="" class="btn btn-outline-secondary {% if confirmed is null %}active{% endif %}">
+                    {{ 'label.all'|trans }}
+                </button>
 
-                        <tbody>
-                        {% for appointment in group.appointments %}
-                            {% if appointment.isAllDay %}
-                                {% set start = appointment.start|format_date %}
-                            {% else %}
-                                {% set start = appointment.start|format_datetime %}
-                            {% endif %}
-                            {% if appointment.end is not null %}
-                                {% if appointment.isAllDay %}
-                                    {% set end = appointment.end|format_date %}
-                                {% else %}
-                                    {% set end = appointment.end|format_datetime %}
-                                {% endif %}
+                <button name="confirmed" value="✓" class="btn btn-outline-secondary {% if confirmed %}active{% endif %}">
+                    {{ 'label.confirmed'|trans }}
+                </button>
 
-                                {% set date = 'date.range'|trans({'%from%': start, '%to%': end }) %}
-                            {% else %}
-                                {% set date = start %}
-                            {% endif %}
-
-                            <tr>
-                                <td class="align-middle">
-                                    {{ appointment.title }}
-
-                                    <span class="badge" style="background: {{ appointment.category.color }}; color: {{ foreground(appointment.category.color) }}">{{ appointment.category.name }}</span>
-
-                                    {% include "_includes/_id.html.twig" with { id: appointment.id } %}
-                                </td>
-                                <td class="align-middle">{{ start }}</td>
-                                <td class="align-middle">{{ end }}</td>
-                                <td class="align-middle">
-                                    {% include '_includes/study_groups.html.twig' with { studyGroups: appointment.studyGroups, id: appointment.uuid } only %}
-                                </td>
-                                <td class="align-middle">
-                                    {% if appointment.confirmed %}
-                                        <i class="fa fa-check"></i>
-                                    {% else %}
-                                        <i class="fa fa-times"></i>
-                                    {% endif %}
-                                </td>
-                                <td class="align-middle">
-                                    <div class="dropdown">
-                                        <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
-                                            <i class="fas fa-ellipsis-v"></i>
-                                        </button>
-
-                                        <div class="dropdown-menu dropdown-menu-end">
-                                            {% if is_granted('edit', appointment) %}
-                                                <a href="{{ path('edit_appointment', { uuid: appointment.uuid }) }}" class="dropdown-item">
-                                                    <i class="fa fa-edit"></i> {{ 'actions.edit'|trans }}
-                                                </a>
-                                            {% endif %}
-                                            {% if not appointment.confirmed and is_granted('confirm', appointment) %}
-                                                <a href="{{ path('confirm_appointment', { uuid: appointment.uuid }) }}" class="dropdown-item">
-                                                    <i class="fa fa-check"></i> {{ 'actions.confirm'|trans }}
-                                                </a>
-                                            {% endif %}
-                                            {% if is_granted('remove', appointment) %}
-                                                <a href="{{ path('remove_appointment', { uuid: appointment.uuid }) }}" class="dropdown-item text-danger">
-                                                    <i class="fa fa-trash"></i> {{ 'actions.remove'|trans }}
-                                                </a>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                <button name="confirmed" value="✗" class="btn btn-outline-secondary {% if confirmed is same as(false) %}active{% endif %}">
+                    {{ 'label.not_confirmed'|trans }}
+                </button>
             </div>
-        {% endfor %}
+        </div>
 
-        {% include '@Common/includes/pagination.html.twig' with {
-            currentFilters: currentFilter,
-            currentPage: page,
-            paginationPath: 'admin_appointments',
-            lastPage: pages,
-            showAlwaysFirstAndLast: true
-        } only %}
-    {% endif %}
+        <div class="col">
+            <a href="{{ path('admin_appointments') }}" class="btn btn-outline-primary btn-sm" title="{{ 'filter.reset'|trans }}"><i class="fas fa-times-circle"></i></a>
+        </div>
+    </form>
 {% endblock %}
 
-{% block sidebar %}
-    <div class="card">
-        <div class="list-group list-group-flush">
-            {% if is_granted('new-appointment') %}
-                <a href="{{ path('add_appointment') }}" class="list-group-item list-group-item-action">
-                    <i class="fa fa-plus"></i> {{ 'admin.appointments.add.label'|trans }}
-                </a>
-            {% endif %}
+{% block buttons %}
+    {% if is_granted('ROLE_APPOINTMENTS_ADMIN') %}
+        <a href="{{ path('admin_appointment_categories') }}" class="btn btn-outline-primary btn-sm">
+            <i class="fa fa-cogs"></i> {{ 'admin.appointments.categories.label'|trans }}
+        </a>
+    {% endif %}
 
-            {% if is_granted('import-appointments') %}
-                <a href="{{ path('import_appointments') }}" class="list-group-item list-group-item-action">
-                    <i class="fas fa-download"></i> {{ 'admin.appointments.import.label'|trans }}
-                </a>
-            {% endif %}
+    {% if is_granted('import-appointments') %}
+        <a href="{{ path('import_appointments') }}" class="btn btn-outline-primary btn-sm">
+            <i class="fas fa-download"></i> {{ 'admin.appointments.import.label'|trans }}
+        </a>
+    {% endif %}
 
-            {% if is_granted('ROLE_APPOINTMENTS_ADMIN') %}
-                <a href="{{ path('admin_appointment_categories') }}" class="list-group-item list-group-item-action">
-                    <i class="fa fa-cogs"></i> {{ 'admin.appointments.categories.label'|trans }}
-                </a>
-            {% endif %}
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-body">
-            <form role="form" method="get" class="form hidden-print">
-                {% include "_filter/_params.html.twig" with { params: currentFilter } %}
-
-                <div class="mb-3">
-                    <label for="category" class="form-label">{{ 'label.category'|trans }}:</label>
-                    <select name="category" id="category" class="form-control" data-trigger="submit" data-choice="true">
-                        <option value="" placeholder>{{ 'label.select.category'|trans }}</option>
-                        {% for c in categoryFilter.categories %}
-                            <option value="{{ c.uuid }}" {% if categoryFilter.currentCategory != null and categoryFilter.currentCategory.id == c.id %}selected="selected"{% endif %}>{{ c.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </form>
-
-            {% include "_filter/query.html.twig" with { params: currentFilter, route: 'admin_appointments' } %}
-
-            <form role="form" method="get" class="form hidden-print">
-                {% include "_filter/_params.html.twig" with { params: currentFilter|merge({confirmed: null}) } %}
-
-                <div class="mb-3 mb-0">
-                    <div class="btn-group" role="group" aria-label="Ansicht" data-original-title="Ansicht">
-                        <button name="confirmed" value="" class="btn btn-outline-secondary {% if confirmed is null %}active{% endif %}">
-                            {{ 'label.all'|trans }}
-                        </button>
-
-                        <button name="confirmed" value="✓" class="btn btn-outline-secondary {% if confirmed %}active{% endif %}">
-                            {{ 'label.confirmed'|trans }}
-                        </button>
-
-                        <button name="confirmed" value="✗" class="btn btn-outline-secondary {% if confirmed is same as(false) %}active{% endif %}">
-                            {{ 'label.not_confirmed'|trans }}
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </div>
-
-        <div class="card-footer">
-            <a href="{{ path('admin_appointments') }}" class="btn btn-primary btn-sm">{{ 'filter.reset'|trans }}</a>
-        </div>
-    </div>
+    {% if is_granted('new-appointment') %}
+        <a href="{{ path('add_appointment') }}" class="btn btn-primary btn-sm">
+            <i class="fa fa-plus"></i> {{ 'admin.appointments.add.label'|trans }}
+        </a>
+    {% endif %}
 {% endblock %}

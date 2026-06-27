@@ -1335,6 +1335,8 @@ admin:
 
     appointments:
         label: Termine
+        count: '%count% Termine'
+
         overview:
             label: Terminübersicht
             empty: Aktuell gibt es keine Termine.
@@ -1366,6 +1368,8 @@ admin:
 
         categories:
             label: Termin-Kategorien
+            count: '%count% Kategorien'
+            
             overview:
                 empty: Aktuell sind keine Kategorien vorhanden.
                 back: Zurück zu den Terminen

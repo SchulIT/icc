@@ -1369,7 +1369,7 @@ admin:
         categories:
             label: Termin-Kategorien
             count: '%count% Kategorien'
-            
+
             overview:
                 empty: Aktuell sind keine Kategorien vorhanden.
                 back: Zurück zu den Terminen

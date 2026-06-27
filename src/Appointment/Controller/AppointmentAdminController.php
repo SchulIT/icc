@@ -2,24 +2,19 @@
 
 namespace App\Appointment\Controller;
 
+use App\Appointment\Entity\Appointment;
+use App\Appointment\Event\AppointmentConfirmedEvent;
+use App\Appointment\Form\AppointmentType;
 use App\Appointment\Import\OpenHolidaysApi\Importer;
 use App\Appointment\Import\OpenHolidaysApi\ImportRequest;
 use App\Appointment\Import\OpenHolidaysApi\ImportRequestType;
-use App\Framework\Controller\AbstractController;
-use App\Common\Converter\UserStringConverter;
-use App\Appointment\Entity\Appointment;
-use App\Common\Entity\User;
-use App\Appointment\Event\AppointmentConfirmedEvent;
-use App\Appointment\Form\AppointmentType;
-use App\Appointment\Grouping\AppointmentDateStrategy as AppointmentGroupingStrategy;
-use App\Framework\Grouping\Grouper;
 use App\Appointment\Repository\AppointmentRepositoryInterface;
-use App\Appointment\Voter\AppointmentVoter;
-use App\Appointment\Sorting\AppointmentDateGroupStrategy;
-use App\Appointment\Sorting\AppointmentDateStrategy as AppointmentSortingStrategy;
-use App\Framework\Repository\PaginationQuery;
-use App\Framework\Sorting\Sorter;
 use App\Appointment\View\Filter\AppointmentCategoryFilter;
+use App\Appointment\Voter\AppointmentVoter;
+use App\Common\Converter\UserStringConverter;
+use App\Common\Entity\User;
+use App\Framework\Controller\AbstractController;
+use App\Framework\Repository\PaginationQuery;
 use Exception;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Utils\RefererHelper;
@@ -37,7 +32,7 @@ class AppointmentAdminController extends AbstractController {
 
     private const NumberOfAppointments = 25;
 
-    public function __construct(private AppointmentRepositoryInterface $repository, private Grouper $grouper, private Sorter $sorter, RefererHelper $refererHelper) {
+    public function __construct(private AppointmentRepositoryInterface $repository, RefererHelper $refererHelper) {
         parent::__construct($refererHelper);
     }
 

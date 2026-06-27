@@ -2,6 +2,7 @@
 
 {% block post_javascript %}
     <script src="{{ asset('build/editor.js') }}"></script>
+    <script src="{{ asset('build/collection.js') }}"></script>
 {% endblock %}
 
 {% block title %}{{ 'admin.appointments.edit.label'|trans }}{% endblock %}
@@ -17,8 +18,42 @@
 {% endblock %}
 
 {% block inner %}
+
     {{ form_start(form) }}
-    {{ form_widget(form) }}
+
+    {{ form_row(form.group_general) }}
+    {{ form_row(form.group_people) }}
+
+    {% if form.group_recurring is defined %}
+        <div class="card">
+            <div class="card-header">{{ 'admin.appointments.recurring.label'|trans }}</div>
+
+            <div class="card-body">
+                {{ form_row(form.group_recurring.isRecurring) }}
+
+                <div class="mb-3 row">
+                    {{ form_label(form.group_recurring.recurringGradeNames) }}
+
+                    <div class="col-md-10">
+                        <div class="grade_names" data-collection="grades" data-prototype="{{ form_widget(form.group_recurring.recurringGradeNames.vars.prototype)|e('html_attr') }}" data-id="{{ form.group_recurring.recurringGradeNames.vars.id }}">
+                            {% for gradeName in form.group_recurring.recurringGradeNames %}
+                                {{ form_widget(gradeName) }}
+                            {% endfor %}
+                        </div>
+
+                        <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="grades">
+                            <i class="fas fa-plus"></i> {{ 'actions.add'|trans }}
+                        </button>
+
+                        {{ form_errors(form.group_recurring.recurringGradeNames) }}
+                        {{ form_help(form.group_recurring.recurringGradeNames) }}
+
+                        {% do form.group_recurring.recurringGradeNames.setRendered %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 
     <div class="buttons">
         <button type="submit" class="btn btn-primary btn-sm">

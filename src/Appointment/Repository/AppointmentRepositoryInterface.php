@@ -72,7 +72,7 @@ interface AppointmentRepositoryInterface extends TransactionalRepositoryInterfac
     /**
      * @return PaginatedResult<Appointment>
      */
-    public function findPaginated(PaginationQuery $paginationQuery, array $categories = [ ], string|null $query = null, User|null $createdBy = null, bool|null $onlyConfirmed = null): PaginatedResult;
+    public function findPaginated(PaginationQuery $paginationQuery, array $categories = [ ], string|null $query = null, User|null $createdBy = null, bool|null $onlyConfirmed = null, ?bool $onlyRecurring = null): PaginatedResult;
 
     public function countNotConfirmed(): int;
 
@@ -81,4 +81,11 @@ interface AppointmentRepositoryInterface extends TransactionalRepositoryInterfac
     public function remove(Appointment $appointment): void;
 
     public function removeBetween(DateTime $start, DateTime $end): int;
+
+    /**
+     * @param DateTime $start
+     * @param DateTime $end
+     * @return Appointment[]
+     */
+    public function findRecurring(DateTime $start, DateTime $end): array;
 }

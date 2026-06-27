@@ -5,6 +5,7 @@ namespace App\Appointment\Form;
 use App\Common\Converter\TeacherStringConverter;
 use App\Appointment\Entity\AppointmentCategory;
 use App\Common\Entity\Teacher;
+use App\Common\Form\Collection\TextCollectionEntryType;
 use App\Common\Form\Type\MarkdownType;
 use App\Common\Form\Type\SortableEntityType;
 use App\Common\Form\Choice\StudyGroupType;
@@ -15,6 +16,7 @@ use Doctrine\ORM\EntityRepository;
 use SchulIT\CommonBundle\Form\FieldsetType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,7 +25,12 @@ use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class AppointmentType extends AbstractType {
-    public function __construct(private readonly TeacherStringConverter $teacherConverter, private readonly TeacherStrategy $teacherStrategy, private readonly AppointmentCategoryStrategy $appointmentCategoryStrategy, private readonly AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(
+        private readonly TeacherStringConverter $teacherConverter,
+        private readonly TeacherStrategy $teacherStrategy,
+        private readonly AppointmentCategoryStrategy $appointmentCategoryStrategy,
+        private readonly AuthorizationCheckerInterface $authorizationChecker
+    )
     {
     }
 
@@ -124,5 +131,27 @@ class AppointmentType extends AbstractType {
                         ]);
                 }
             ]);
+
+        if($this->authorizationChecker->isGranted('ROLE_APPOINTMENTS_ADMIN') === true) {
+            $builder
+                ->add('group_recurring', FieldsetType::class, [
+                    'legend' => 'admin.appointments.recurring.label',
+                    'fields' => function(FormBuilderInterface $builder) {
+                        $builder
+                            ->add('isRecurring', CheckboxType::class, [
+                                'label' => 'admin.appointments.recurring.enabled.label',
+                                'help' => 'admin.appointments.recurring.enabled.help',
+                                'required' => false
+                            ])
+                            ->add('recurringGradeNames', CollectionType::class, [
+                                'label' => 'admin.appointments.recurring.grades.label',
+                                'help' => 'admin.appointments.recurring.grades.help',
+                                'entry_type' => TextCollectionEntryType::class,
+                                'allow_add' => true,
+                                'allow_delete' => true
+                            ]);
+                    }
+                ]);
+        }
     }
 }

@@ -14,8 +14,10 @@ use DateTime;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[Auditable]
@@ -100,6 +102,15 @@ class Appointment {
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true)]
     private ?User $createdBy = null;
+
+    #[ORM\Column(type: Types::BOOLEAN)]
+    private bool $isRecurring = false;
+
+    #[ORM\Column(type: 'uuid', nullable: true)]
+    private UuidInterface|null $recurringUuid = null;
+
+    #[ORM\Column(type: 'json', nullable: true)]
+    private array|null $recurringGradeNames = null;
 
     public function __construct() {
         $this->uuid = Uuid::uuid4();
@@ -232,9 +243,9 @@ class Appointment {
     }
 
     /**
-     * @return ArrayCollection<StudyGroup>
+     * @return Collection<StudyGroup>
      */
-    public function getStudyGroups() {
+    public function getStudyGroups(): Collection {
         return $this->studyGroups;
     }
 
@@ -281,5 +292,32 @@ class Appointment {
 
     public function getDuration(): DateInterval {
         return $this->getStart()->diff($this->getEnd());
+    }
+
+    public function isRecurring(): bool {
+        return $this->isRecurring;
+    }
+
+    public function setIsRecurring(bool $isRecurring): Appointment {
+        $this->isRecurring = $isRecurring;
+        return $this;
+    }
+
+    public function getRecurringUuid(): ?UuidInterface {
+        return $this->recurringUuid;
+    }
+
+    public function setRecurringUuid(?UuidInterface $recurringUuid): Appointment {
+        $this->recurringUuid = $recurringUuid;
+        return $this;
+    }
+
+    public function getRecurringGradeNames(): ?array {
+        return $this->recurringGradeNames;
+    }
+
+    public function setRecurringGradeNames(?array $recurringGradeNames): Appointment {
+        $this->recurringGradeNames = $recurringGradeNames;
+        return $this;
     }
 }

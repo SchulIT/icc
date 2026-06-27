@@ -8,6 +8,9 @@ use App\Appointment\Form\AppointmentType;
 use App\Appointment\Import\OpenHolidaysApi\Importer;
 use App\Appointment\Import\OpenHolidaysApi\ImportRequest;
 use App\Appointment\Import\OpenHolidaysApi\ImportRequestType;
+use App\Appointment\Recurring\RecurringAppointmentsManager;
+use App\Appointment\Recurring\RecurringRequest;
+use App\Appointment\Recurring\RecurringRequestType;
 use App\Appointment\Repository\AppointmentRepositoryInterface;
 use App\Appointment\View\Filter\AppointmentCategoryFilter;
 use App\Appointment\Voter\AppointmentVoter;
@@ -21,6 +24,7 @@ use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -37,23 +41,32 @@ class AppointmentAdminController extends AbstractController {
     }
 
     #[Route(path: '', name: 'admin_appointments')]
-    public function index(AppointmentCategoryFilter $categoryFilter, Request $request): Response {
-        $q = $request->query->get('q', null);
-        $categoryFilterView = $categoryFilter->handle($request->query->get('category', null));
+    public function index(
+        AppointmentCategoryFilter $categoryFilter,
+        #[MapQueryParameter] int $page = 1,
+        #[MapQueryParameter(name: 'q', filter: FILTER_DEFAULT, flags: FILTER_FLAG_EMPTY_STRING_NULL | FILTER_NULL_ON_FAILURE)] string|null $query = null,
+        #[MapQueryParameter(name: 'category', filter: FILTER_DEFAULT, flags: FILTER_FLAG_EMPTY_STRING_NULL | FILTER_NULL_ON_FAILURE)] string|null $categoryUuid = null,
+        #[MapQueryParameter(name: 'confirmed', filter: FILTER_DEFAULT, flags: FILTER_FLAG_EMPTY_STRING_NULL | FILTER_NULL_ON_FAILURE)] bool|null $confirmed = null,
+        #[MapQueryParameter(name: 'recurring', filter: FILTER_DEFAULT, flags: FILTER_FLAG_EMPTY_STRING_NULL | FILTER_NULL_ON_FAILURE)] bool|null $recurring = null,
+    ): Response {
+        $categoryFilterView = $categoryFilter->handle($categoryUuid);
         $categories = $categoryFilterView->getCurrentCategory() === null ? [ ] : [$categoryFilterView->getCurrentCategory()];
-        $onlyConfirmed = $request->query->get('confirmed') === '✓' ? true : ($request->query->get('confirmed') === '✗' ? false : null);
 
-        $page = $request->query->getInt('page');
+        if(!$this->isGranted('ROLE_APPOINTMENTS_ADMIN')) {
+            $recurring = null;
+        }
+
         /** @var User|null $createdBy */
         $createdBy = $this->isGranted('ROLE_APPOINTMENTS_ADMIN') ? null : $this->getUser();
 
-        $appointments = $this->repository->findPaginated(new PaginationQuery(page: $page, limit: self::NumberOfAppointments), $categories, $q, $createdBy, $onlyConfirmed ?? null);
+        $appointments = $this->repository->findPaginated(new PaginationQuery(page: $page, limit: self::NumberOfAppointments), $categories, $query, $createdBy, $confirmed ?? null, $recurring ?? null);
 
         return $this->render('admin/appointments/index.html.twig', [
             'appointments' => $appointments,
             'categoryFilter' => $categoryFilterView,
-            'q' => $q,
-            'confirmed' => $onlyConfirmed,
+            'q' => $query,
+            'confirmed' => $confirmed,
+            'recurring' => $recurring,
             'notConfirmedCount' => $this->repository->countNotConfirmed()
         ]);
     }
@@ -164,6 +177,47 @@ class AppointmentAdminController extends AbstractController {
         ]);
     }
 
+    #[IsGranted('ROLE_APPOINTMENTS_ADMIN')]
+    #[Route('/recurring', name: 'create_recurring_appointments')]
+    public function recurring(
+        Request $request,
+        RecurringAppointmentsManager $manager,
+        TranslatorInterface $translator,
+    ): Response {
+        $recurringRequest = new RecurringRequest();
+        $form = $this->createForm(RecurringRequestType::class, $recurringRequest);
+        $form->handleRequest($request);
+
+        $lastException = null;
+
+        if($form->isSubmitted() && $form->isValid()) {
+            try {
+                $result = $manager->persistRecurringAppointments($recurringRequest);
+
+                $this->addFlash('success',
+                    $translator->trans('admin.appointments.recurring.create.success',
+                        [
+                            '%added%' => $result->added,
+                            '%updated%' => $result->updated,
+                        ]
+                    )
+                );
+
+                return $this->redirectToRoute('admin_appointments', [
+                    'recurring' => true
+                ]);
+            } catch (Exception $exception) {
+                $lastException = $exception;
+            }
+        }
+
+        return $this->render('admin/appointments/recurring.html.twig', [
+            'form' => $form->createView(),
+            'exception' => $lastException,
+        ]);
+    }
+
+    #[IsGranted(AppointmentVoter::Import)]
     #[Route('/import', name: 'import_appointments')]
     public function import(
         Request $request,

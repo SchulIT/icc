@@ -18,6 +18,7 @@ use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Override;
 
 class AppointmentRepository extends AbstractTransactionalRepository implements AppointmentRepositoryInterface {
     public function findOneById(int $id): ?Appointment {
@@ -307,7 +308,7 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
             ->getSingleScalarResult();
     }
 
-    public function findPaginated(PaginationQuery $paginationQuery, array $categories = [], ?string $query = null, ?User $createdBy = null, ?bool $onlyConfirmed = null): PaginatedResult {
+    public function findPaginated(PaginationQuery $paginationQuery, array $categories = [], ?string $query = null, ?User $createdBy = null, ?bool $onlyConfirmed = null, ?bool $onlyRecurring = null): PaginatedResult {
         $qbIds = $this->em->createQueryBuilder();
         $params = [ ];
 
@@ -345,6 +346,11 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
             $params['confirmed'] = $onlyConfirmed;
         }
 
+        if($onlyRecurring !== null) {
+            $qbIds->andWhere('aInner.isRecurring = :recurring');
+            $params['recurring'] = $onlyRecurring;
+        }
+
         $qb = $this->getAppointments($qbIds->getDQL(), $params, null)
             ->orderBy('a.start', 'DESC');
 
@@ -370,5 +376,19 @@ class AppointmentRepository extends AbstractTransactionalRepository implements A
             ->setParameter('end', $end)
             ->getQuery()
             ->execute();
+    }
+
+    #[Override]
+    public function findRecurring(DateTime $start, DateTime $end): array {
+        return $this->em->createQueryBuilder()
+            ->select('a')
+            ->from(Appointment::class, 'a')
+            ->where('a.start >= :start')
+            ->andWhere('a.end <= :end')
+            ->andWhere('a.isRecurring = true')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getQuery()
+            ->getResult();
     }
 }

@@ -12,8 +12,10 @@
 
 {% set currentFilter = {
     q: q,
-    category: categoryFilter.currentCategory != null ? categoryFilter.currentCategory.uuid.toString : null,
-    confirmed: confirmed is null ? null : (not confirmed ? '✗' : '✓' )}
+    category: categoryFilter.currentCategory?.uuid.toString,
+    confirmed: confirmed,
+    recurring: recurring
+    }
 %}
 
 {% block table %}
@@ -74,6 +76,10 @@
                             {{ appointment.title }}
 
                             {% include "_includes/_id.html.twig" with { id: appointment.id } %}
+
+                            {% if appointment.recurring %}
+                                <i class="fas fa-history" title="{{ 'admin.appointments.recurring.label'|trans }}"></i>
+                            {% endif %}
                         </td>
                         <td class="align-middle">
                             <span class="badge" style="background: {{ appointment.category.color }}; color: {{ foreground(appointment.category.color) }}">{{ appointment.category.name }}</span>
@@ -171,15 +177,33 @@
                     {{ 'label.all'|trans }}
                 </button>
 
-                <button name="confirmed" value="✓" class="btn btn-outline-secondary {% if confirmed %}active{% endif %}">
+                <button name="confirmed" value="1" class="btn btn-outline-secondary {% if confirmed %}active{% endif %}">
                     {{ 'label.confirmed'|trans }}
                 </button>
 
-                <button name="confirmed" value="✗" class="btn btn-outline-secondary {% if confirmed is same as(false) %}active{% endif %}">
+                <button name="confirmed" value="0" class="btn btn-outline-secondary {% if confirmed is same as(false) %}active{% endif %}">
                     {{ 'label.not_confirmed'|trans }}
                 </button>
             </div>
         </div>
+
+        {% if is_granted('ROLE_APPOINTMENTS_ADMIN') %}
+        <div class="col">
+            <div class="btn-group btn-group-sm" role="group">
+                <button name="recurring" value="" class="btn btn-outline-secondary {% if recurring is null %}active{% endif %}">
+                    {{ 'label.all'|trans }}
+                </button>
+
+                <button name="recurring" value="1" class="btn btn-outline-secondary {% if recurring %}active{% endif %}">
+                    {{ 'label.recurring'|trans }}
+                </button>
+
+                <button name="recurring" value="0" class="btn btn-outline-secondary {% if recurring is same as(false) %}active{% endif %}">
+                    {{ 'label.not_recurring'|trans }}
+                </button>
+            </div>
+        </div>
+        {% endif %}
 
         <div class="col">
             <a href="{{ path('admin_appointments') }}" class="btn btn-outline-primary btn-sm" title="{{ 'filter.reset'|trans }}"><i class="fas fa-times-circle"></i></a>
@@ -197,6 +221,12 @@
     {% if is_granted('import-appointments') %}
         <a href="{{ path('import_appointments') }}" class="btn btn-outline-primary btn-sm">
             <i class="fas fa-download"></i> {{ 'admin.appointments.import.label'|trans }}
+        </a>
+    {% endif %}
+
+    {% if is_granted('ROLE_APPOINTMENTS_ADMIN') %}
+        <a href="{{ path('create_recurring_appointments') }}" class="btn btn-outline-primary btn-sm">
+            <i class="fas fa-history"></i> {{ 'admin.appointments.recurring.create.label'|trans }}
         </a>
     {% endif %}
 

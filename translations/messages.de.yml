@@ -350,6 +350,8 @@ label:
         label: Geteilt mit
         help: Personen in dieser Liste können die Checkliste einsehen und bearbeiten (jedoch nicht löschen).
     delimiter: Trennzeichen
+    recurring: wiederholend
+    not_recurring: nicht wiederholend
 
 markdown:
     label: Markdown
@@ -1383,6 +1385,23 @@ admin:
                 label: Kategorie löschen
                 confirm: 'Soll die Termin-Kategorie "%name%" wirklich gelöscht werden?'
                 success: Kategorie erfolgreich gelöscht
+
+        recurring:
+            label: Wiederkehrend
+
+            create:
+                label: Wiederkehrende Termine erstellen
+                info: Alle wiederkehrende Termine aus dem angegebenen Zeitraum werden dupliziert und genau um ein Jahr modifiziert. Bereits duplizierte Termine werden nicht erneut dupliziert, allerdings werden Klassen neu ausgewertet. Die neuen Schuljahres-Abschnitte müssen vorab angelegt werden.
+
+                success: '%added% neue Termine angelegt und %updated% Termine aktualisiert'
+
+            enabled:
+                label: Wiederkehrender Termin
+                help: Wenn diese Option aktiv ist, kann der Termin bspw. für das nächste Schuljahr automatisch übertragen werden. Die Jahreszahl wird automatisch angepasst.
+
+            grades:
+                label: Klassen
+                help: Hier die Namen der Klassen angeben (so wie sie im System gespeichert sind), um bei der Erstellung des neuen Termin die richtigen Klassen zu übernehmen.
 
     documents:
         label: Dokumente

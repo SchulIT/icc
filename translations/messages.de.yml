@@ -1390,7 +1390,7 @@ admin:
             label: Wiederkehrend
 
             create:
-                label: Wiederkehrende Termine erstellen
+                label: Wiederkehrende Termine übertragen
                 info: Alle wiederkehrende Termine aus dem angegebenen Zeitraum werden dupliziert und genau um ein Jahr modifiziert. Bereits duplizierte Termine werden nicht erneut dupliziert, allerdings werden Klassen neu ausgewertet. Die neuen Schuljahres-Abschnitte müssen vorab angelegt werden.
 
                 success: '%added% neue Termine angelegt und %updated% Termine aktualisiert'

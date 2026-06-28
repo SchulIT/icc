@@ -33,10 +33,10 @@ class Request {
     #[Serializer\Type('integer')]
     public int $section;
 
-    #[Assert\NotBlank]
-    #[Serializer\SerializedName('grade')]
-    #[Serializer\Type('string')]
-    public string $grade;
+    #[Serializer\SerializedName('grades')]
+    #[Serializer\Type('array<string>')]
+    #[Assert\Count(min: 1)]
+    public array $grades = [ ];
 
     #[Serializer\SerializedName('until')]
     #[Serializer\Type('DateTime<"Y-m-d">')]

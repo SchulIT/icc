@@ -57,9 +57,9 @@ readonly class Exporter {
         }
 
         try {
-            $category = $this->getGradeCategory($request);
+            $categories = $this->getGradeCategories($request);
         } catch (GradeCategoryNotFoundException $e) {
-            return new ErrorResponse(sprintf('Notenkategorie mit der ID %s nicht gefunden.', $request->grade));
+            return new ErrorResponse(sprintf('Notenkategorie mit der ID %s nicht gefunden.', $e->uuid));
         }
 
         $response = new Response();
@@ -77,7 +77,13 @@ readonly class Exporter {
             $tuitionResponse->subject = $tuition->getSubject()?->getAbbreviation();
             $tuitionResponse->course = $tuition->getStudyGroup()->getType() === StudyGroupType::Course ? $tuition->getName() : null;
 
-            $tuitionResponse->grade = $this->getGradeOrNull($grades, $tuition, $category)?->getEncryptedGrade();
+            foreach($categories as $category) {
+                $tuitionResponse->grade = $this->getGradeOrNull($grades, $tuition, $category)?->getEncryptedGrade();
+
+                if($tuitionResponse->grade !== null) {
+                    break;
+                }
+            }
 
             $counter = $this->studentStatisticsCounterResolver->resolve($student, $section, [$tuition], untilDate: $request->untilDate);
 
@@ -127,13 +133,28 @@ readonly class Exporter {
     }
 
     /**
+     * @param Request $request
+     * @return TuitionGradeCategory[]
      * @throws GradeCategoryNotFoundException
      */
-    private function getGradeCategory(Request $request): TuitionGradeCategory {
-        $category = $this->tuitionGradeCategoryRepository->findOneByUuid($request->grade);
+    private function getGradeCategories(Request $request): array {
+        $categories = [ ];
+
+        foreach($request->grades as $uuid) {
+            $categories[] = $this->getGradeCategory($uuid);
+        }
+
+        return $categories;
+    }
+
+    /**
+     * @throws GradeCategoryNotFoundException
+     */
+    private function getGradeCategory(string $uuid): TuitionGradeCategory {
+        $category = $this->tuitionGradeCategoryRepository->findOneByUuid($uuid);
 
         if($category === null) {
-            throw new GradeCategoryNotFoundException();
+            throw new GradeCategoryNotFoundException($uuid);
         }
 
         return $category;

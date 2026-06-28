@@ -86,7 +86,7 @@ button.addEventListener('click', async () => {
                 birthday: line.Geburtsdatum,
                 year: line.Jahr,
                 section: line.Abschnitt,
-                grade: categoryInput.value,
+                grades: Array.from(categoryInput.options).filter(o => o.selected).map(o => o.value),
                 until: dateInput.value
             };
 

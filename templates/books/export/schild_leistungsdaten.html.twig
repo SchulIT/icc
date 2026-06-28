@@ -24,9 +24,7 @@
                         <div class="row mb-3">
                             <label class="col-form-label col-sm-2" for="category">{{ 'label.gradebook.grade_category'|trans }}</label>
                             <div class="col-sm-10">
-                                <select class="form-select" id="category">
-                                    <option value="">{{ 'label.select.grade_category'|trans }}</option>
-
+                                <select class="form-select" id="category" multiple data-choice="true">
                                     {% for category in categories %}
                                         <option value="{{ category.uuid }}">
                                             {{ category.displayName }}

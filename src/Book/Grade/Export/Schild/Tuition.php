@@ -17,6 +17,9 @@ class Tuition {
     #[Serializer\SerializedName('grade')]
     public ?string $grade = null;
 
+    #[Serializer\SerializedName('grade_category')]
+    public ?string $gradeCategory = null;
+
     #[Serializer\SerializedName('absent_lessons')]
     public int $absentLessons = 0;
 

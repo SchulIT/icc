@@ -33,4 +33,7 @@ class Response {
     public int $year;
 
     public array $tuitions = [ ];
+
+    #[Serializer\SerializedName('categories')]
+    public array $categories = [ ];
 }

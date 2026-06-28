@@ -2342,9 +2342,6 @@ book:
         schild_leistungsdaten:
             label: SchILD Leistungsdaten-Export
             info: Hier kann eine SchILD Leistungsdaten.dat hochgeladen werden, sodass Noten und Fehlstunden automatisch eingetragen werden.
-            convert:
-                label: Konvertiere Notenpunkte
-                help: Wenn diese Option aktiv ist, werden Notenpunkte in die zugehörige Note umgewandelt. Also bspw. 15 →  1+, 14 →  1 usw.
 
             until_date:
                 label: Stichtag

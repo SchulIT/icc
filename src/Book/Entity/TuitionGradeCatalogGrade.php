@@ -25,6 +25,10 @@ class TuitionGradeCatalogGrade {
     #[Color]
     private ?string $color = null;
 
+    #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\NotBlank(allowNull: true)]
+    private ?string $exportValue = null;
+
     public function getCatalog(): TuitionGradeCatalog {
         return $this->catalog;
     }
@@ -49,6 +53,15 @@ class TuitionGradeCatalogGrade {
 
     public function setColor(?string $color): TuitionGradeCatalogGrade {
         $this->color = $color;
+        return $this;
+    }
+
+    public function getExportValue(): ?string {
+        return $this->exportValue;
+    }
+
+    public function setExportValue(?string $exportValue): TuitionGradeCatalogGrade {
+        $this->exportValue = $exportValue;
         return $this;
     }
 }

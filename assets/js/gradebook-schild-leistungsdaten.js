@@ -9,7 +9,6 @@ let output = document.getElementById('output');
 let categoryInput = document.getElementById('category');
 let fileInput = document.getElementById('file');
 let passwordInput = document.getElementById('password');
-let convertInput = document.getElementById('convert');
 let dateInput = document.getElementById('date');
 let includeLessonsInput = document.getElementById('absent_lessons');
 let includeGradesInput = document.getElementById('grades');
@@ -69,6 +68,7 @@ button.addEventListener('click', async () => {
 
     let errors = [ ];
     let map = new Map();
+    let conversionMaps = new Map();
 
     let idx = 0;
     while(idx < uniqueStudents.length) {
@@ -109,6 +109,16 @@ button.addEventListener('click', async () => {
                     let key = singleResponse.firstname + "-" + singleResponse.lastname + "-" + singleResponse.birthday + "-" + (tuition.subject ?? '') + "-" + (tuition.course ?? '') + "-" + (tuition.teacher ?? '');
                     map.set(key, tuition);
                 }
+
+                for(let gradeCategory of singleResponse.categories) {
+                    let conversionMap = new Map();
+                    for(let [ value, exportValue ] of Object.entries(gradeCategory.conversion_map)) {
+                        conversionMap.set(value, exportValue);
+                    }
+                    if(conversionMap.size > 0) {
+                        conversionMaps.set(gradeCategory.uuid, conversionMap);
+                    }
+                }
             }
         }
 
@@ -134,11 +144,11 @@ button.addEventListener('click', async () => {
             continue;
         }
 
-        if(includeGradesInput.checked && data.grade !== null) {
+        if(includeGradesInput.checked && data.grade !== null ) {
             lines[i].Note = await crypto.decrypt(decryptedKey, JSON.parse(data.grade));
 
-            if(convertInput.checked) {
-                lines[i].Note = convert(lines[i].Note);
+            if(data.grade_category !== null && conversionMaps.has(data.grade_category)) {
+                lines[i].Note = convert(lines[i].Note, conversionMaps.get(data.grade_category));
             }
         }
 
@@ -195,40 +205,9 @@ function appendError(text) {
     appendOutput("⚠ " + text);
 }
 
-function convert(grade) {
-    switch(grade) {
-        case '15':
-            return '1+'
-        case '14':
-            return '1'
-        case '13':
-            return '1-'
-        case '12':
-            return '2+'
-        case '11':
-            return '2'
-        case '10':
-            return '2-'
-        case '9':
-            return '3+'
-        case '8':
-            return '3'
-        case '7':
-            return '3-'
-        case '6':
-            return '4+'
-        case '5':
-            return '4'
-        case '4':
-            return '4-'
-        case '3':
-            return '5+'
-        case '2':
-            return '5'
-        case '1':
-            return '5-'
-        case '0':
-            return '6'
+function convert(grade, conversionMap) {
+    if(conversionMap.has(grade)) {
+        return conversionMap.get(grade);
     }
 
     console.error('Ungültige Note: ' + grade);

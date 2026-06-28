@@ -72,6 +72,20 @@ readonly class Exporter {
         $tuitions = $this->tuitionRepository->findAllByStudents([$student], $section);
         $grades = $this->tuitionGradeRepository->findAllByStudent($student, $section);
 
+        foreach($categories as $category) {
+            $c = new Category();
+            $c->uuid = $category->getUuid();
+            $c->conversionMap = [ ];
+
+            foreach($category->getCatalog()->getGrades() as $grade) {
+                if(!empty($grade->getExportValue())) {
+                    $c->conversionMap[$grade->getValue()] = $grade->getExportValue();
+                }
+            }
+
+            $response->categories[] = $c;
+        }
+
         foreach($tuitions as $tuition) {
             $tuitionResponse = new Tuition();
             $tuitionResponse->subject = $tuition->getSubject()?->getAbbreviation();
@@ -79,6 +93,7 @@ readonly class Exporter {
 
             foreach($categories as $category) {
                 $tuitionResponse->grade = $this->getGradeOrNull($grades, $tuition, $category)?->getEncryptedGrade();
+                $tuitionResponse->gradeCategory = $category->getUuid();
 
                 if($tuitionResponse->grade !== null) {
                     break;

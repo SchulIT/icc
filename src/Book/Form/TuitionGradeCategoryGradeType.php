@@ -5,6 +5,7 @@ namespace App\Book\Form;
 use App\Book\Entity\TuitionGradeCatalogGrade;
 use App\Common\Form\Type\ColorType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -17,6 +18,10 @@ class TuitionGradeCategoryGradeType extends AbstractType {
             ])
             ->add('color', ColorType::class, [
                 'label' => 'label.color',
+                'required' => false
+            ])
+            ->add('exportValue', TextType::class, [
+                'label' => 'label.export_value',
                 'required' => false
             ]);
     }

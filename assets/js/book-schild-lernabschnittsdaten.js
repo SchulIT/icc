@@ -23,7 +23,7 @@ button.addEventListener('click', async () => {
     let data = papa.parse(csvInput, {
         delimiter: '|',
         header: true,
-        dynamicTyping: true
+        dynamicTyping: false
     });
 
     if(data.errors.length > 0) {

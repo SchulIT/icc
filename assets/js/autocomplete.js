@@ -24,6 +24,7 @@ for(let $element of document.querySelectorAll('select[' + symfonyUxAutocompleteU
         labelField: 'text',
         searchField: [ 'text', 'sublabel' ],
         plugins: plugins,
+        clearAfterSelect: true,
 
         preload: preload,
         score: () => () => 1,

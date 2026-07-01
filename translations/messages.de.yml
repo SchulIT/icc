@@ -680,6 +680,7 @@ lists:
         export:
             copy: E-Mail Adressen kopieren
             mail: E-Mail an alle Lehrkräfte verfassen
+            chat: Private Nachricht an alle Lehrkräfte
         substitute:
             short: (stv.)
             long: stellvertretend

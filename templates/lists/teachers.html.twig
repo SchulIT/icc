@@ -90,6 +90,10 @@
                             <i class="fa fa-envelope"></i> {{ 'lists.teachers.export.mail'|trans }}
                         </a>
 
+                        <a href="{{ path('new_chat', { recipients: users|map(u => "#{u.uuid}")})}}" class="list-group-item list-group-item-action">
+                            <i class="fa fa-envelope"></i> {{ 'lists.teachers.export.chat'|trans }}
+                        </a>
+
                         {% if is_granted('ROLE_WIKI_ADMIN') %}
                             <a href="{{ path('admin_teachers') }}" class="list-group-item list-group-item-action">
                                 <i class="fa fa-cogs"></i> {{ 'admin.label'|trans }}

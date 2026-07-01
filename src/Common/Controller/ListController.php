@@ -292,6 +292,7 @@ class ListController extends AbstractControllerWithMessages {
 
     #[Route(path: '/teachers', name: 'list_teachers')]
     public function teachers(SubjectFilter $subjectFilter, TeacherTagFilter $tagFilter, TeacherRepositoryInterface $teacherRepository,
+                             UserRepositoryInterface $userRepository,
                              SectionResolverInterface $sectionResolver, Request $request): Response {
         $this->denyAccessUnlessGranted(ListsVoter::Teachers);
 
@@ -308,11 +309,15 @@ class ListController extends AbstractControllerWithMessages {
         $this->sorter->sort($groups, TeacherFirstCharacterGroupStrategy::class);
         $this->sorter->sortGroupItems($groups, TeacherStrategy::class);
 
+        $users = $userRepository->findAllTeachers($teachers);
+
+
         return $this->renderWithMessages('lists/teachers.html.twig', [
             'groups' => $groups,
             'subjectFilter' => $subjectFilterView,
             'tagFilter' => $tagFilterView,
             'section' => $sectionResolver->getCurrentSection(),
+            'users' => $users,
             'last_import' => $this->importDateTimeRepository->findOneByEntityClass(Teacher::class)
         ]);
     }

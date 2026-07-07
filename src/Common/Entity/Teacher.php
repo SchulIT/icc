@@ -75,6 +75,12 @@ class Teacher implements Stringable {
     private $subjects;
 
     /**
+     * @var Collection<SubjectChair>
+     */
+    #[ORM\OneToMany(targetEntity: SubjectChair::class, mappedBy: 'teacher', cascade: ['persist'], orphanRemoval: true)]
+    private Collection $chairs;
+
+    /**
      * @var Collection<GradeTeacher>
      */
     #[ORM\OneToMany(mappedBy: 'teacher', targetEntity: GradeTeacher::class)]
@@ -208,6 +214,19 @@ class Teacher implements Stringable {
      */
     public function getGrades(): Collection {
         return $this->grades;
+    }
+
+    public function addChair(SubjectChair $chair): void {
+        $chair->setTeacher($this);
+        $this->chairs->add($chair);
+    }
+
+    public function removeChair(SubjectChair $chair): void {
+        $this->chairs->removeElement($chair);
+    }
+
+    public function getChairs(): Collection {
+        return $this->chairs;
     }
 
     public function addSubject(Subject $subject) {

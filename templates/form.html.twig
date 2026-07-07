@@ -363,3 +363,19 @@
 
 
 {%- endblock -%}
+
+{%- block subject_chair_widget -%}
+    <div class="input-group mb-2">
+        {% if form.subject is defined %}
+            {{ form_widget(form.subject) }}
+        {% endif %}
+        {% if form.teacher is defined %}
+            {{ form_widget(form.teacher) }}
+        {% endif %}
+        {{ form_widget(form.chairType) }}
+
+        <button type="button" class="btn btn-danger btn-sm btn-delete float-right" data-selector=".input-group">
+            <i class="fa fa-trash"></i>
+        </button>
+    </div>
+{%- endblock -%}

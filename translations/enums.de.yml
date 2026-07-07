@@ -73,3 +73,7 @@ student_information_type:
   lessons: Unterricht
   exams: Klausuren
   health: Gesundheit
+
+chair_type:
+  primary: Vorsitz
+  substitute: Vertretung

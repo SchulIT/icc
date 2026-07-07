@@ -2,6 +2,7 @@
 
 namespace App\Common\Form;
 
+use App\Common\Entity\ChairType;
 use App\Common\Entity\Gender;
 use App\Common\Entity\Section;
 use App\Common\Entity\TeacherTag;
@@ -11,6 +12,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\DataMapper\CheckboxListMapper;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
@@ -80,6 +82,16 @@ class TeacherType extends AbstractType {
                     'class' => 'checkbox-custom'
                 ],
                 'required' => false
+            ])
+            ->add('chairs', CollectionType::class, [
+                'entry_type' => SubjectChairType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'entry_options' => [
+                    'hide_teacher' => true,
+                    'hide_subject' => false
+                ]
             ])
             ->add('sections', EntityType::class, [
                 'class' => Section::class,

@@ -5,6 +5,7 @@ namespace App\Common\Entity;
 use App\Common\Entity\IdTrait;
 use App\Common\Entity\UuidTrait;
 use App\Common\Entity\Teacher;
+use Doctrine\Common\Collections\Collection;
 use Stringable;
 use App\Framework\Validator\Color;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
@@ -69,9 +70,16 @@ class Subject implements Stringable {
     #[ORM\ManyToMany(targetEntity: Teacher::class, mappedBy: 'subjects')]
     private $teachers;
 
+    /**
+     * @var Collection<SubjectChair>
+     */
+    #[ORM\OneToMany(targetEntity: SubjectChair::class, mappedBy: 'subject', cascade: ['persist'], orphanRemoval: true)]
+    private Collection $chairs;
+
     public function __construct() {
         $this->uuid = Uuid::uuid4();
         $this->teachers = new ArrayCollection();
+        $this->chairs = new ArrayCollection();
     }
 
     public function getExternalId(): ?string {
@@ -178,6 +186,22 @@ class Subject implements Stringable {
      */
     public function getTeachers(): ArrayCollection {
         return $this->teachers;
+    }
+
+    public function addChair(SubjectChair $chair): void {
+        $chair->setSubject($this);
+        $this->chairs->add($chair);
+    }
+
+    public function removeChair(SubjectChair $chair): void {
+        $this->chairs->removeElement($chair);
+    }
+
+    /**
+     * @return Collection<SubjectChair>
+     */
+    public function getChairs(): Collection {
+        return $this->chairs;
     }
 
     public function __toString(): string {

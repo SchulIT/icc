@@ -4,6 +4,7 @@
 
 {% block post_javascript %}
     <script src="{{ asset('build/picker.js') }}"></script>
+    <script src="{{ asset('build/collection.js') }}"></script>
 {% endblock %}
 
 {% block breadcrumb %}
@@ -22,7 +23,31 @@
         <div class="card-header">{{ 'label.general'|trans }}</div>
 
         <div class="card-body">
-            {{ form_widget(form) }}
+            {% for child in form.children %}
+                {% if child.vars.name != 'chairs' %}
+                    {{ form_row(child) }}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'label.chairs'|trans }}</div>
+        <div class="card-body">
+            <div class="chairs" data-collection="chairs" data-prototype="{{ form_widget(form.chairs.vars.prototype)|e('html_attr') }}" data-id="{{ form.chairs.vars.id }}">
+                {% for chair in form.chairs %}
+                    {{ form_widget(chair) }}
+                {% endfor %}
+            </div>
+
+            {{ form_errors(form.chairs) }}
+            {% do form.chairs.setRendered %}
+        </div>
+
+        <div class="card-footer">
+            <button class="btn btn-outline-primary btn-sm btn-add" type="button" data-collection="chairs">
+                <i class="fas fa-plus"></i> {{ 'actions.add'|trans }}
+            </button>
         </div>
     </div>
 

@@ -5,6 +5,7 @@ namespace App\Book\Settings;
 use App\Framework\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,6 +40,12 @@ class TuitionGradebookSettingsController extends AbstractController {
                 'data' => $settings->getTtlForSessionStorage(),
                 'label' => 'admin.settings.tuition_grades.ttl.label',
                 'help' => 'admin.settings.tuition_grades.ttl.help'
+            ])
+            ->add('dueDate', DateTimeType::class, [
+                'required' => false,
+                'data' => $settings->getDueDateForGrades(),
+                'label' => 'admin.settings.tuition_grades.due_date.label',
+                'help' => 'admin.settings.tuition_grades.due_date.help'
             ]);
 
         $form = $builder->getForm();
@@ -50,6 +57,7 @@ class TuitionGradebookSettingsController extends AbstractController {
             }
             $this->addFlash('success', 'admin.settings.success');
             $settings->setTtlForSessionStorage($form->get('ttlSessionStorage')->getData());
+            $settings->setDueDateForGrades($form->get('dueDate')->getData());
 
             return $this->redirectToRoute('admin_settings_gradebook');
         }

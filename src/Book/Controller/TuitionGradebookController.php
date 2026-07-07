@@ -24,6 +24,7 @@ use App\Framework\Feature\Feature;
 use App\Framework\Feature\IsFeatureEnabled;
 use App\Framework\Sorting\Sorter;
 use App\Framework\Utils\ArrayUtils;
+use SchulIT\CommonBundle\Helper\DateHelper;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -46,7 +47,7 @@ class TuitionGradebookController extends AbstractController {
     public function index(Request $request, TuitionFilter $tuitionFilter, StudentFilter $studentFilter,
                           SectionFilter $sectionFilter, TuitionRepositoryInterface $tuitionRepository,
                           GradeOverviewHelper $gradeOverviewHelper, TuitionGradebookSettings $gradebookSettings,
-                          GradePersister $gradePersister, GradeFilter $gradeFilter, Sorter $sorter): Response {
+                          GradePersister $gradePersister, GradeFilter $gradeFilter, Sorter $sorter, DateHelper $dateHelper): Response {
         /** @var User $user */
         $user = $this->getUser();
         
@@ -87,7 +88,7 @@ class TuitionGradebookController extends AbstractController {
             }
         }
 
-        if($request->isMethod('POST')) {
+        if($request->isMethod('POST') && ($gradebookSettings->getDueDateForGrades() === null || $dateHelper->getNow() < $gradebookSettings->getDueDateForGrades())) {
             if($this->isCsrfTokenValid('gradebook', $request->request->get('_csrf_token')) !== true) {
                 $this->addFlash('error', 'CSRF token invalid.');
             } else {
@@ -139,7 +140,9 @@ class TuitionGradebookController extends AbstractController {
             'categories' => $categories,
             'hiddenCategories' => $hiddenCategories,
             'page' => $page,
-            'pages' => $pages
+            'pages' => $pages,
+            'dueDate' => $gradebookSettings->getDueDateForGrades(),
+            'isReadonly' => $gradebookSettings->getDueDateForGrades() !== null && $dateHelper->getNow() > $gradebookSettings->getDueDateForGrades()
         ]);
     }
 

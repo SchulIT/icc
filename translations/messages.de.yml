@@ -1230,6 +1230,9 @@ admin:
                 label: Schlüssel zwischenspeichern
                 help: Anzahl der Sekunden, die ein Benutzer das Passwort nicht erneut eingeben muss, um Noten einzusehen oder zu ändern. Diese Funktion nutzt das SessionStorage des Browsers.
                 button: Mehr zur Funktionsweise des SessionStorage
+            due_date:
+                label: Ende Zeitfenster
+                help: Optional. Wenn hier ein Datum und eine Uhrzeit eingetragen sind, können keine Noten nach diesem Datum eingetragen werden.
 
         report_remarks:
             label: Zeugnisbemerkungen
@@ -2411,6 +2414,7 @@ book:
         none: Es wurde kein Unterricht bzw. kein Lernender ausgewählt. Bitte zunächst rechts auswählen.
         not_enabled: Für den ausgewählten Unterricht wurden keine Noten festgelegt.
         caution: Die geänderten Noten wurden bisher nicht gespeichert.
+        readonly_after_due_date: Das Zeitfenster zur Noteneintragung ist am %date% um %hour% abgelaufen. Aktuell sind keine Noteneintragungen möglich.
         info:
             foreign_tuition: Nur die Lehrkraft eines Unterrichtes kann Noten eintragen bzw. ändern.
             no_edit_in_student_view: In der Lernenden-Ansicht sind Notenänderungen nicht möglich. Bitte den Unterricht rechts auswählen und die Note dort ändern.

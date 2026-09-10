@@ -14,7 +14,7 @@ common:
     autoconfig:
         entity_id: "%env(SAML_ENTITY_ID)%"
         app_name: "%env(APP_NAME)%"
-        app_icon: "fa-solid fa-bus"
+        app_icon: "fa-solid fa-school"
         saml_cert_file: '%sp_cert_file%'
         role_hierarchy: '%security.role_hierarchy.roles%'
 

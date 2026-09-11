@@ -2,9 +2,10 @@
 
 namespace App\Dashboard;
 
+use App\Common\Entity\Room;
 use App\Common\Entity\Student;
+use App\Framework\Utils\ArrayUtils;
 use App\Substitution\Entity\Substitution;
-use App\TeacherAbsence\Entity\TeacherAbsenceComment;
 use App\Timetable\Entity\TimetableLesson;
 use App\Timetable\Entity\TimetableLessonAdditionalInformation;
 
@@ -31,6 +32,23 @@ class SubstitutionViewItem extends AdditionalExtraAwareViewItem implements RoomS
 
     public function getSubstitution(): Substitution {
         return $this->substitution;
+    }
+
+    /**
+     * @return Room[]
+     */
+    public function getRooms(): array {
+        $rooms = [ ];
+
+        foreach($this->getSubstitution()->getRooms() as $room) {
+            $rooms[] = $room;
+        }
+
+        foreach($this->getSubstitution()->getReplacementRooms() as $room) {
+            $rooms[] = $room;
+        }
+
+        return ArrayUtils::unique($rooms);
     }
 
     public function getTimetableLesson(): ?TimetableLesson {

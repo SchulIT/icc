@@ -11,3 +11,7 @@ twig:
         user: '@App\Infrastructure\Twig\UserVariable'
         profile_url: "%env(IDP_PROFILE_URL)%"
         dashboardSettings: '@App\Dashboard\Settings\DashboardSettings'
+        servicecenter:
+            enabled: '%env(bool:ROOM_STATUS)%'
+            url: '%env(SERVICECENTER_URL)%'
+            new_problem: '%env(SERVICECENTER_NEWPROBLEM_PATH)%'

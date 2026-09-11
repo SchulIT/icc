@@ -277,15 +277,7 @@ readonly class DashboardViewHelper {
                 if($item instanceof SubstitutionViewItem) {
                     $allStatus = [ ];
 
-                    /** @var Room $room */
-                    foreach($item->getSubstitution()->getRooms() as $room) {
-                        if(($status = $this->roomStatusHelper->getStatus($room->getName())) !== null && $status->hasBadgeCountGreaterThanZero()) {
-                            $allStatus[] = $status;
-                        }
-                    }
-
-                    /** @var Room $room */
-                    foreach($item->getSubstitution()->getReplacementRooms() as $room) {
+                    foreach($item->getRooms() as $room) {
                         if(($status = $this->roomStatusHelper->getStatus($room->getName())) !== null && $status->hasBadgeCountGreaterThanZero()) {
                             $allStatus[] = $status;
                         }

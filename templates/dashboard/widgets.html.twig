@@ -356,6 +356,16 @@
                                                     <i class="fas fa-plus"></i> {{ 'dashboard.additional_information.label'|trans }}
                                                 </a>
                                             {% endif %}
+
+                                            {% if servicecenter.enabled %}
+                                                {% if servicecenter.url is not empty and servicecenter.new_problem is not empty %}
+                                                    <div class="dropdown-divider"></div>
+                                                    <div class="dropdown-header">{{ 'dashboard.links.servicecenter'|trans }}</div>
+                                                    <a href="{{ servicecenter.url }}{{ servicecenter.new_problem|replace({'{room}': lesson.room.name}) }}" class="dropdown-item" target="_blank">
+                                                        <i class="fas fa-plus"></i> {{ 'dashboard.links.new_problem'|trans }} <span class="badge text-bg-primary">{{ lesson.room.name }}</span> <i class="fas fa-external-link-alt"></i>
+                                                    </a>
+                                                {% endif %}
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
@@ -537,6 +547,19 @@
                                         <a href="{{ path('add_timetable_lesson_additional_information', { date: substitution.date.format('Y-m-d'), start: substitution.lessonStart, end: substitution.lessonEnd, studygroup: studyGroup.uuid }) }}" class="dropdown-item">
                                             <i class="fas fa-plus"></i> {{ 'dashboard.additional_information.label'|trans }}
                                         </a>
+                                    {% endif %}
+
+                                    {% if servicecenter.enabled %}
+                                        {% if servicecenter.url is not empty and servicecenter.new_problem is not empty %}
+                                            <div class="dropdown-divider"></div>
+                                            <div class="dropdown-header">{{ 'dashboard.links.servicecenter'|trans }}</div>
+                                            {% set rooms = item.rooms %}
+                                            {% for room in rooms %}
+                                                <a href="{{ servicecenter.url }}{{ servicecenter.new_problem|replace({'{room}': room.name}) }}" class="dropdown-item" target="_blank">
+                                                    <i class="fas fa-plus"></i> {{ 'dashboard.links.new_problem'|trans }} <span class="badge text-bg-primary">{{ room.name }}</span> <i class="fas fa-external-link-alt"></i>
+                                                </a>
+                                            {% endfor %}
+                                        {% endif %}
                                     {% endif %}
                                 </div>
                             </div>

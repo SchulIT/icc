@@ -105,7 +105,7 @@ class WikiController extends AbstractController {
             $pages = ceil((float)count($results) / self::ResultsPerPage);
         }
 
-        if(!is_numeric($p) || $p <= 0 || $p > $pages) {
+        if($p <= 0 || $p > $pages) {
             $p = 1;
         }
 

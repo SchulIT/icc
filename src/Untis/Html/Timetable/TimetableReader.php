@@ -36,14 +36,11 @@ class TimetableReader extends AbstractHtmlReader {
         $objective = $this->parseObjective($xpath);
         $lessons = $this->parseLessons($xpath, $type);
 
-        if($type === TimetableType::Grade) {
-            foreach($lessons as $lesson) {
-                $lesson->setGrade($objective);
-            }
-        } else if($type === TimetableType::Subject) {
-            foreach($lessons as $lesson) {
-                $lesson->setSubject($objective);
-            }
+        foreach($lessons as $lesson) {
+            match($type) {
+                TimetableType::Grade => $lesson->setGrade($objective),
+                TimetableType::Subject => $lesson->setSubject($objective)
+            };
         }
 
         return new TimetableResult($objective, $lessons);

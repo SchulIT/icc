@@ -721,7 +721,7 @@ class BookController extends AbstractController {
         }
 
         /**
-         * @var int $key
+         * @var positive-int $key
          * @var BookEvent $event
          */
         foreach($events as $key => $event) {

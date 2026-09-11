@@ -8,7 +8,9 @@ use App\Timetable\Entity\TimetableLesson;
 use App\Timetable\Entity\TimetableLessonAdditionalInformation;
 use App\Dashboard\Grouping\AbsentStudentGroup;
 
-class TimetableLessonViewItem extends AdditionalExtraAwareViewItem {
+class TimetableLessonViewItem extends AdditionalExtraAwareViewItem implements RoomStatusAware {
+
+    use RoomStatusAwareTrait;
 
     /** @var TimetableLesson[] */
     private array $additionalLessons = [ ];

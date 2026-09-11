@@ -82,6 +82,25 @@
     {% endif %}
 {% endmacro %}
 
+{% macro roomStatus(roomStatus) %}
+    {% if roomStatus|length > 0 %}
+        <div class="card-footer">
+            {% for status in roomStatus %}
+                {% for badge in status.badges %}
+                    {% if badge.counter > 0 %}
+                        <a href="{{ status.link }}" target="_blank" class="me-2 btn btn-sm btn-outline-{% if badge.counter > 0 %}danger{% else %}success{% endif %}" title="{{ badge.label|trans }}">
+                            {% if roomStatus|length > 1 %}{{ status.name }} {% endif %}
+                            {%- if badge.icon is not null -%}<i class="{{ badge.icon }}"></i>{%- endif -%}
+                            <span class="ms-1 fw-bold" style="font-size: 90%">{{ badge.counter }}</span>
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            {% endfor
+            %}
+        </div>
+    {% endif %}
+{% endmacro %}
+
 {% macro exam(item, lesson, start, end, hasWarning) %}
     {% set exam = item.exam %}
     <div class="card">
@@ -193,7 +212,7 @@
     </div>
 {% endmacro %}
 
-{% macro lesson(item, lesson, start, end, hasWarning, isCurrent, gradesWithCourseNames) %}
+{% macro lesson(item, lesson, start, end, hasWarning, isCurrent, gradesWithCourseNames, view) %}
     <div class="card {% if hasWarning %}border-danger bg-danger-subtle{% elseif item.lesson is not null %}border-primary{% endif %} {% if isCurrent %}border-right-3{% endif %}">
         <div class="d-flex">
             {{ _self.show_lesson(lesson, start, end) }}
@@ -348,6 +367,7 @@
             {% endif %}
         </div>
 
+        {{ _self.roomStatus(item.roomStatus) }}
         {{ _self.additionalInfo(item.additionalInformation, lesson) }}
 
         {% if item.lesson is not null and item.lesson.tuition is not null and item.lesson.tuition.studyGroup is not null %}
@@ -396,7 +416,7 @@
     </div>
 {% endmacro %}
 
-{% macro substitution(item, lesson, start, end, hasWarning, isCurrent) %}
+{% macro substitution(item, lesson, start, end, hasWarning, isCurrent, view) %}
     {% import "_macros/replacement.html.twig" as _macro %}
 
     {% set substitution = item.substitution %}
@@ -532,6 +552,7 @@
             </div>
         {% endif %}
 
+        {{ _self.roomStatus(item.roomStatus) }}
         {{ _self.additionalInfo(item.additionalInformation, lesson) }}
 
         {{ _self.absences(item.absentStudentGroups, item.absentStudentsCount, substitution.uuid ~ lesson|replace({'.': '', '/': ''}), item.students|length ) }}
@@ -691,7 +712,7 @@
     </div>
 {% endmacro %}
 
-{% macro reservation(item, lesson, start, end) %}
+{% macro reservation(item, lesson, start, end, view) %}
     {% set reservation = item.reservation %}
     {% set violations = item.violations %}
 
@@ -717,5 +738,7 @@
                 </div>
             </div>
         </div>
+
+        {{ _self.roomStatus(item.roomStatus) }}
     </div>
 {% endmacro %}

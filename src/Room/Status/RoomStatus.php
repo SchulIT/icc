@@ -42,4 +42,8 @@ class RoomStatus {
         $this->badges[] = $badge;
         return $this;
     }
+
+    public function hasBadgeCountGreaterThanZero(): bool {
+        return array_any($this->badges, fn($badge) => $badge->getCounter() > 0);
+    }
 }

@@ -8,7 +8,9 @@ use App\TeacherAbsence\Entity\TeacherAbsenceComment;
 use App\Timetable\Entity\TimetableLesson;
 use App\Timetable\Entity\TimetableLessonAdditionalInformation;
 
-class SubstitutionViewItem extends AdditionalExtraAwareViewItem {
+class SubstitutionViewItem extends AdditionalExtraAwareViewItem implements RoomStatusAware {
+
+    use RoomStatusAwareTrait;
 
     /**
      * @param Substitution $substitution

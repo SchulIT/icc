@@ -1,3 +1,5 @@
+description: Die Informationszentrale mit Vertretungs-, Stunden-, Klausur- und Terminplan, Listen und Dokumenten sowie einem Wiki mit hilfreichen Anleitungen.
+
 roles:
   ROLE_USER: Benutzer
   ROLE_ADMIN: Administrator

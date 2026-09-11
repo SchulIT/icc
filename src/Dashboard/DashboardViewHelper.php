@@ -8,6 +8,7 @@ use App\Appointment\Entity\Appointment;
 use App\Exam\Entity\Exam;
 use App\Exam\Entity\ExamStudent;
 use App\Exam\Entity\ExamSupervision;
+use App\Room\Status\StatusHelperInterface;
 use App\Substitution\Entity\FreeTimespan;
 use App\Common\Entity\Grade;
 use App\Common\Entity\GradeTeacher;
@@ -79,21 +80,44 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class DashboardViewHelper {
+readonly class DashboardViewHelper {
 
-    public function __construct(private SubstitutionRepositoryInterface                $substitutionRepository, private ExamRepositoryInterface $examRepository, private TimetableLessonRepositoryInterface $timetableRepository,
-                                private TimetableSupervisionRepositoryInterface        $supervisionRepository, private MessageRepositoryInterface $messageRepository, private InfotextRepositoryInterface $infotextRepository,
-                                private AbsenceRepositoryInterface                     $absenceRepository, private StudyGroupRepositoryInterface $studyGroupRepository, private AppointmentRepositoryInterface $appointmentRepository,
-                                private ResourceReservationRepositoryInterface         $roomReservationRepository, private FreeTimespanRepositoryInterface $freeTimespanRepository, private StudyGroupHelper $studyGroupHelper,
-                                private TimetableTimeHelper                            $timetableTimeHelper, private Sorter $sorter, private Grouper $grouper, private TimetableSettings $timetableSettings, private DashboardSettings $dashboardSettings,
-                                private AuthorizationCheckerInterface                  $authorizationChecker, private ValidatorInterface $validator, private DateHelper $dateHelper, private AbsenceResolver $absenceResolver,
-                                private SectionResolverInterface                       $sectionResolver, private readonly TuitionRepositoryInterface $tuitionRepository, private readonly TimetableLessonAdditionalInformationRepositoryInterface $timetableLessonAdditionalInformationRepository,
-                                private readonly BookSettings                          $bookSettings, private readonly LessonEntryRepositoryInterface $lessonEntryRepository, private readonly TeacherRepositoryInterface $teacherRepository,
-                                private readonly StudentRepositoryInterface            $studentRepository, private readonly TokenStorageInterface $tokenStorage,
-                                private readonly ParentsDayRepositoryInterface         $parentsDayRepository, private readonly ParentsDayAppointmentRepositoryInterface $parentsDayAppointmentRepository,
-                                private readonly StudentInformationRepositoryInterface $bookStudentInformationRepository, private readonly FeatureManager $featureManager)
-    {
-    }
+    public function __construct(
+        private SubstitutionRepositoryInterface $substitutionRepository,
+        private ExamRepositoryInterface $examRepository,
+        private TimetableLessonRepositoryInterface $timetableRepository,
+        private TimetableSupervisionRepositoryInterface $supervisionRepository,
+        private MessageRepositoryInterface $messageRepository,
+        private InfotextRepositoryInterface $infotextRepository,
+        private AbsenceRepositoryInterface $absenceRepository,
+        private StudyGroupRepositoryInterface $studyGroupRepository,
+        private AppointmentRepositoryInterface $appointmentRepository,
+        private ResourceReservationRepositoryInterface $roomReservationRepository,
+        private FreeTimespanRepositoryInterface $freeTimespanRepository,
+        private StudyGroupHelper $studyGroupHelper,
+        private TimetableTimeHelper $timetableTimeHelper,
+        private Sorter $sorter,
+        private Grouper $grouper,
+        private TimetableSettings $timetableSettings,
+        private DashboardSettings $dashboardSettings,
+        private AuthorizationCheckerInterface $authorizationChecker,
+        private ValidatorInterface $validator,
+        private DateHelper $dateHelper,
+        private AbsenceResolver $absenceResolver,
+        private SectionResolverInterface $sectionResolver,
+        private TuitionRepositoryInterface $tuitionRepository,
+        private TimetableLessonAdditionalInformationRepositoryInterface $timetableLessonAdditionalInformationRepository,
+        private BookSettings $bookSettings,
+        private LessonEntryRepositoryInterface $lessonEntryRepository,
+        private TeacherRepositoryInterface $teacherRepository,
+        private StudentRepositoryInterface $studentRepository,
+        private TokenStorageInterface $tokenStorage,
+        private ParentsDayRepositoryInterface $parentsDayRepository,
+        private ParentsDayAppointmentRepositoryInterface $parentsDayAppointmentRepository,
+        private StudentInformationRepositoryInterface $bookStudentInformationRepository,
+        private FeatureManager $featureManager,
+        private StatusHelperInterface $roomStatusHelper
+    )  { }
 
     private function getTimetableStartDate(): ?DateTime {
         $user = $this->tokenStorage->getToken()?->getUser();
@@ -131,6 +155,8 @@ class DashboardViewHelper {
         $this->addRoomReservations($this->roomReservationRepository->findAllByResourceAndDate($room, $dateTime), $view);
         $this->addFreeTimespans($this->freeTimespanRepository->findAllByDate($dateTime), $view);
         $this->setCurrentLesson($view);
+
+        $this->resolveRoomStatus($view);
 
         return $view;
     }
@@ -183,6 +209,7 @@ class DashboardViewHelper {
         }
 
         $this->addParentsDayAppointments($view, $appointments);
+        $this->resolveRoomStatus($view);
 
         return $view;
     }
@@ -242,6 +269,44 @@ class DashboardViewHelper {
         $this->addBirthdays($view, $dateTime);
 
         return $view;
+    }
+
+    private function resolveRoomStatus(DashboardView $view): void {
+        foreach($view->getLessons() as $lesson) {
+            foreach($lesson->getItems() as $item) {
+                if($item instanceof SubstitutionViewItem) {
+                    $allStatus = [ ];
+
+                    /** @var Room $room */
+                    foreach($item->getSubstitution()->getRooms() as $room) {
+                        if(($status = $this->roomStatusHelper->getStatus($room->getName())) !== null && $status->hasBadgeCountGreaterThanZero()) {
+                            $allStatus[] = $status;
+                        }
+                    }
+
+                    /** @var Room $room */
+                    foreach($item->getSubstitution()->getReplacementRooms() as $room) {
+                        if(($status = $this->roomStatusHelper->getStatus($room->getName())) !== null && $status->hasBadgeCountGreaterThanZero()) {
+                            $allStatus[] = $status;
+                        }
+                    }
+
+                    $item->setRoomStatus($allStatus);
+                } else if($item instanceof TimetableLessonViewItem && $item->getLesson()?->getRoom() !== null) {
+                    $status = $this->roomStatusHelper->getStatus($item->getLesson()->getRoom());
+
+                    if($status !== null && $status->hasBadgeCountGreaterThanZero()) {
+                        $item->setRoomStatus([$status]);
+                    }
+                } else if($item instanceof RoomReservationViewItem && $item->getReservation()->getResource() instanceof Room) {
+                    $status = $this->roomStatusHelper->getStatus($item->getReservation()->getResource());
+
+                    if($status !== null && $status->hasBadgeCountGreaterThanZero()) {
+                        $item->setRoomStatus([$status]);
+                    }
+                }
+            }
+        }
     }
 
     private function addBirthdays(DashboardView $view, DateTime $dateTime): DashboardView {

@@ -332,15 +332,18 @@ class DashboardViewCollapseHelper {
 
         $absentGroups = [ ];
         $studentInfo = [ ];
+        $roomStatus = [ ];
 
         foreach($lessonViews as $lessonView) {
             $absentGroups = array_merge($lessonView->getAbsentStudentGroups());
             $studentInfo = array_merge($studentInfo, $lessonView->getStudentInfo());
+            $roomStatus = array_merge($roomStatus, $lessonView->getRoomStatus());
         }
 
         $firstView = array_shift($lessonViews);
 
         $view = new TimetableLessonViewItem($firstView->getLesson(), $absentGroups, $studentInfo, $firstView->getAdditionalInformation(), $firstView->hasAnyStudentWithHealthInfo());
+        $view->setRoomStatus($roomStatus);
 
         foreach($lessonViews as $lessonView) {
             $view->addAdditionalLesson($lessonView->getLesson());
@@ -460,6 +463,7 @@ class DashboardViewCollapseHelper {
             if($isMerged === false) {
                 $clonedSubstitution = $substitution->clone(); // Somehow, clone $substitution does not work (when renameing clone() to __clone())
                 $item = new SubstitutionViewItem($clonedSubstitution, false, $substitutionViewItem->getStudents(), $substitutionViewItem->getAbsentStudentGroups(), $substitutionViewItem->getStudentInfo(), $substitutionViewItem->getTimetableLesson(), $substitutionViewItem->getAdditionalInformation(), $substitutionViewItem->hasAnyStudentWithHealthInfo());
+                $item->setRoomStatus($substitutionViewItem->getRoomStatus());
                 $merged[] = $item;
             }
         }

@@ -4,14 +4,19 @@ namespace App\Dashboard;
 
 use App\Common\Entity\StudentInformation;
 use App\Dashboard\Grouping\AbsentStudentGroup;
+use App\Room\Status\RoomStatus;
 
-abstract class AdditionalExtraAwareViewItem extends AbstractViewItem {
+abstract class AdditionalExtraAwareViewItem extends AbstractViewItem{
 
     /**
      * @param AbsentStudentGroup[] $absentStudentGroups
      * @param StudentInformation[] $studentInfo
      */
-    public function __construct(private readonly array $absentStudentGroups, private readonly array $studentInfo, private readonly bool $hasAnyStudentWithHealthInfo)
+    public function __construct(
+        private readonly array $absentStudentGroups,
+        private readonly array $studentInfo,
+        private readonly bool $hasAnyStudentWithHealthInfo
+    )
     {
     }
 
@@ -47,5 +52,12 @@ abstract class AdditionalExtraAwareViewItem extends AbstractViewItem {
         }
 
         return $count;
+    }
+
+    /**
+     * @return RoomStatus[]
+     */
+    public function getRoomStatus(): array {
+        return $this->roomStatus;
     }
 }

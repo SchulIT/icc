@@ -5,7 +5,9 @@ namespace App\Dashboard;
 use App\Room\Entity\ResourceReservation;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
-class RoomReservationViewItem extends AbstractViewItem {
+class RoomReservationViewItem extends AbstractViewItem implements RoomStatusAware {
+
+    use RoomStatusAwareTrait;
 
     public function __construct(private ResourceReservation $reservation, private ConstraintViolationListInterface $violations)
     {

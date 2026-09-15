@@ -353,6 +353,7 @@ label:
     recurring: wiederholend
     not_recurring: nicht wiederholend
     chairs: Fachschaftsvorsitz
+    days: "{0} %count% Tage|{1} %count% Tag|]1,Inf[ %count% Tage"
 
 markdown:
     label: Markdown

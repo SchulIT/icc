@@ -275,4 +275,13 @@ class StudentAbsence {
     public function removeMessage(StudentAbsenceMessage $message): void {
         $this->messages->removeElement($message);
     }
+
+    public function getDurationInDays(): int {
+        if($this->from === null || $this->until === null) {
+            return 0;
+        }
+
+        $diff = $this->until->getDate()->diff($this->from->getDate());
+        return $diff->d + 1;
+    }
 }

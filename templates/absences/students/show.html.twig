@@ -58,7 +58,12 @@
                         </h4>
 
                         <div class="mb-2">
-                            <i class="fas fa-calendar"></i> {{ absence.from.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.from.lesson, '%count%': 0}) }}) - {{ absence.until.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.until.lesson, '%count%': 0}) }})
+                            <i class="fas fa-calendar"></i>
+                            {{ absence.from.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.from.lesson, '%count%': 0}) }})
+                            -
+                            {{ absence.until.date|format_date }} ({{ 'label.exam_lessons'|trans({'%start%': absence.until.lesson, '%count%': 0}) }})
+
+                            <span class="badge text-bg-primary">{{ 'label.days'|trans({'%count%': absence.durationInDays}) }}</span>
                         </div>
 
                         {{ absence.message|markdown }}

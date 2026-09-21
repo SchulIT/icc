@@ -358,6 +358,7 @@ label:
 markdown:
     label: Markdown
     editor: Dieser Editor unterstützt Markdown.
+    interal_link: Interne Verlinkung
     link:
         label: Syntax-Beispiele auf Wikipedia
         url: https://de.wikipedia.org/wiki/Markdown#Auszeichnungsbeispiele

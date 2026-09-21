@@ -16,7 +16,8 @@ class ChatMessageType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
             ->add('content', MarkdownType::class, [
-                'label' => 'label.content'
+                'label' => 'label.content',
+                'enable_links' => false
             ])
             ->add('attachments', CollectionType::class, [
                 'entry_type' => ChatMessageAttachmentType::class,

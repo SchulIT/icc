@@ -379,3 +379,22 @@
         </button>
     </div>
 {%- endblock -%}
+
+{%- block markdown_widget -%}
+    {{ block('textarea_widget') }}
+
+    {% if form.vars.attr['data-modal'] is defined %}
+    <div class="modal fade" id="modal-{{ form.vars.id }}" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ 'markdown.interal_link'|trans }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body p-0"></div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{%- endblock -%}

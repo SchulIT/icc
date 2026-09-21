@@ -54,10 +54,11 @@ class InsertInternalLink extends Plugin {
                 }
 
                 const modal = new Modal(modalSelector);
-                const $content = $modal.querySelector('.modal-content');
+                const $content = $modal.querySelector('.modal-body');
                 const $iframe = document.createElement('iframe');
                 $iframe.setAttribute('src', modalUrl);
                 $iframe.setAttribute('height', '500');
+                $iframe.setAttribute('width', '100%');
 
                 $content.innerHTML = '';
                 $content.appendChild($iframe);

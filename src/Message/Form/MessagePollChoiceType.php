@@ -18,7 +18,8 @@ class MessagePollChoiceType extends AbstractType {
             ])
             ->add('description', MarkdownType::class, [
                 'label' => 'label.description',
-                'required' => false
+                'required' => false,
+                'enable_links' => true
             ])
             ->add('minimum', IntegerType::class, [
                 'label' => 'label.messages_poll.choice.minimum.label',

@@ -67,7 +67,8 @@ class WikiArticleType extends AbstractType {
             ->add('content', MarkdownType::class, [
                 'label' => 'label.content',
                 'upload_enabled' => true,
-                'upload_url' => $this->urlGenerator->generate('wiki_upload')
+                'upload_url' => $this->urlGenerator->generate('wiki_upload'),
+                'enable_links' => true
             ]);
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use($articles) {

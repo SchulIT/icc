@@ -76,7 +76,8 @@ class DocumentType extends AbstractType {
                     $builder
                         ->add('content', MarkdownType::class, [
                             'label' => 'label.content',
-                            'upload_enabled' => false
+                            'upload_enabled' => false,
+                            'enable_links' => true
                         ]);
                 }
             ])

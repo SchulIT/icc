@@ -16,10 +16,10 @@ class MarkdownType extends TextareaType {
 
     public function configureOptions(OptionsResolver $resolver): void {
         $resolver
-            ->setDefault('upload_enabled', true)
+            ->setDefault('upload_enabled', false)
             ->setDefault('upload_url', null)
             ->setDefault('required', false)
-            ->setDefault('enable_links', true);
+            ->setDefault('enable_links', false);
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options): void {

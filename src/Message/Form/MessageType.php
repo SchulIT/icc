@@ -87,7 +87,8 @@ class MessageType extends AbstractType {
                         ])
                         ->add('content', MarkdownType::class, [
                             'label' => 'label.content',
-                            'upload_enabled' => false
+                            'upload_enabled' => false,
+                            'enable_links' => true
                         ]);
                 }
             ]);
@@ -204,7 +205,8 @@ class MessageType extends AbstractType {
                         ])
                         ->add('uploadDescription', MarkdownType::class, [
                             'label' => 'label.messages_files.upload_description',
-                            'required' => false
+                            'required' => false,
+                            'enable_links' => true
                         ])
                         ->add('uploadEnabledUserTypes', UserTypeEntityType::class, [
                             'label' => 'label.usertypes',

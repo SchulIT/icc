@@ -122,7 +122,8 @@ class AppointmentType extends AbstractType {
                             'choice_label' => fn(Teacher $teacher) => $this->teacherConverter->convert($teacher),
                             'sort_by' => $this->teacherStrategy,
                             'attr' => [
-                                'size' => 10
+                                'size' => 10,
+                                'data-choice' => 'true'
                             ]
                         ])
                         ->add('externalOrganizers', TextType::class, [

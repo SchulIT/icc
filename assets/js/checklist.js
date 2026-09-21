@@ -27,7 +27,8 @@ for(let $element of document.querySelectorAll('[data-checklist-target]')) {
         valueField: 'id',
         labelField: 'label',
         searchField: 'label',
-        create: false
+        create: false,
+        clearAfterSelect: true
     });
 
     const $button = $element.parentNode.querySelector('button');

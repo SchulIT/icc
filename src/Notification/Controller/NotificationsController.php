@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/notifications')]
 class NotificationsController extends AbstractController {
 
-    private const NotificationsPerPage = 5;
+    private const NotificationsPerPage = 25;
 
     public function __construct(RefererHelper $redirectHelper, private readonly NotificationRepositoryInterface $repository) {
         parent::__construct($redirectHelper);

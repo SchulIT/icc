@@ -25,6 +25,8 @@ use App\Common\View\Filter\StudentFilter;
 use App\Common\View\Filter\StudentFilterView;
 use DateTime;
 use SchulIT\CommonBundle\Form\ConfirmType;
+use SchulIT\CommonBundle\Http\Attribute\ForbiddenRedirect;
+use SchulIT\CommonBundle\Http\Attribute\NotFoundRedirect;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,6 +36,8 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 #[Route('/returns')]
 #[IsFeatureEnabled(Feature::ReturnItem)]
+#[NotFoundRedirect(redirectRoute: 'dashboard', flashMessage: 'return_items.not_found')]
+#[ForbiddenRedirect(redirectRoute: 'dashboard', flashMessage: 'return_items.not_found')]
 class ReturnItemController extends AbstractController {
 
     public function __construct(RefererHelper $redirectHelper, private readonly ReturnItemRepositoryInterface $repository, private readonly StudentRepositoryInterface $studentRepository) {

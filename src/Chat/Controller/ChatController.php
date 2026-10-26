@@ -29,6 +29,8 @@ use App\Framework\Repository\PaginatedResult;
 use App\Framework\Repository\PaginationQuery;
 use App\Framework\Security\Firewall\Attribute\IsGrantedIfNotImpersonated;
 use SchulIT\CommonBundle\Form\ConfirmType;
+use SchulIT\CommonBundle\Http\Attribute\ForbiddenRedirect;
+use SchulIT\CommonBundle\Http\Attribute\NotFoundRedirect;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
@@ -137,6 +139,8 @@ class ChatController extends AbstractController {
     }
 
     #[Route('/attachment/{uuid}/remove', name: 'remove_chat_attachment')]
+    #[NotFoundRedirect(redirectRoute: 'chats', flashMessage: 'chat.not_found')]
+    #[ForbiddenRedirect(redirectRoute: 'chats', flashMessage: 'chat.not_found')]
     public function removeAttachment(#[MapEntity(mapping: ['uuid' => 'uuid'])] ChatMessageAttachment $attachment, Request $request): Response {
         $this->denyAccessUnlessGranted(ChatMessageAttachmentVoter::Remove, $attachment);
 
@@ -164,6 +168,8 @@ class ChatController extends AbstractController {
     }
 
     #[Route('/attachment/{uuid}/download', name: 'download_chat_attachment')]
+    #[NotFoundRedirect(redirectRoute: 'chats', flashMessage: 'chat.not_found')]
+    #[ForbiddenRedirect(redirectRoute: 'chats', flashMessage: 'chat.not_found')]
     public function downloadAttachment(#[MapEntity(mapping: ['uuid' => 'uuid'])] ChatMessageAttachment $attachment, ChatFilesystem $chatFilesystem): Response {
         $this->denyAccessUnlessGranted(ChatMessageAttachmentVoter::Download, $attachment);
 
@@ -175,6 +181,8 @@ class ChatController extends AbstractController {
     }
 
     #[Route('/{uuid}', name: 'show_chat')]
+    #[NotFoundRedirect(redirectRoute: 'chats', flashMessage: 'chat.not_found')]
+    #[ForbiddenRedirect(redirectRoute: 'chats', flashMessage: 'chat.not_found')]
     public function showChat(#[MapEntity(mapping: ['uuid' => 'uuid'])] Chat $chat, Request $request, ChatSeenByHelper $chatSeenByHelper, ChatTagHelper $chatTagHelper, EventDispatcherInterface $dispatcher, TranslatorInterface $translator): Response {
         $this->denyAccessUnlessGranted(ChatVoter::View, $chat);
 
@@ -330,6 +338,8 @@ class ChatController extends AbstractController {
     }
 
     #[Route('/{uuid}/archive', name: 'archive_chat')]
+    #[NotFoundRedirect(redirectRoute: 'chats', flashMessage: 'chat.not_found')]
+    #[ForbiddenRedirect(redirectRoute: 'chats', flashMessage: 'chat.forbidden')]
     public function archive(#[MapEntity(mapping: ['uuid' => 'uuid'])] Chat $chat, Request $request): Response {
         $this->denyAccessUnlessGranted(ChatVoter::Archive, $chat);
 
@@ -345,6 +355,8 @@ class ChatController extends AbstractController {
     }
 
     #[Route('/{uuid}/unarchive', name: 'unarchive_chat')]
+    #[NotFoundRedirect(redirectRoute: 'chats', flashMessage: 'chat.not_found')]
+    #[ForbiddenRedirect(redirectRoute: 'chats', flashMessage: 'chat.forbidden')]
     public function unarchive(#[MapEntity(mapping: ['uuid' => 'uuid'])] Chat $chat, Request $request): Response {
         $this->denyAccessUnlessGranted(ChatVoter::Unarchive, $chat);
 
@@ -360,6 +372,8 @@ class ChatController extends AbstractController {
     }
 
     #[Route('/{uuid}/remove', name: 'remove_chat')]
+    #[NotFoundRedirect(redirectRoute: 'chats', flashMessage: 'chat.not_found')]
+    #[ForbiddenRedirect(redirectRoute: 'chats', flashMessage: 'chat.forbidden')]
     public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] Chat $chat, Request $request): Response {
         $this->denyAccessUnlessGranted(ChatVoter::Remove, $chat);
 

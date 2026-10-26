@@ -27,6 +27,8 @@ use App\Common\View\Filter\TeacherFilter;
 use DateTime;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Http\Attribute\ForbiddenRedirect;
+use SchulIT\CommonBundle\Http\Attribute\NotFoundRedirect;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,6 +37,8 @@ use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/absence/teachers')]
 #[IsFeatureEnabled(Feature::TeacherAbsence)]
+#[NotFoundRedirect(redirectRoute: 'dashboard', flashMessage: 'absences.teachers.not_found')]
+#[ForbiddenRedirect(redirectRoute: 'dashboard', flashMessage: 'absences.teachers.not_found')]
 class TeacherAbsenceController extends AbstractController {
 
     public const ItemsPerPage = 25;

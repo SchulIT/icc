@@ -36,6 +36,8 @@ use App\Common\View\Filter\UserTypeFilter;
 use Doctrine\ORM\EntityManagerInterface;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Http\Attribute\ForbiddenRedirect;
+use SchulIT\CommonBundle\Http\Attribute\NotFoundRedirect;
 use SchulIT\CommonBundle\Utils\RefererHelper;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
@@ -115,6 +117,8 @@ class MessageController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}', name: 'show_message')]
+    #[NotFoundRedirect(redirectRoute: 'messages', flashMessage: 'messages.not_found')]
+    #[ForbiddenRedirect(redirectRoute: 'messages', flashMessage: 'messages.not_found')]
     public function show(#[MapEntity(mapping: ['uuid' => 'uuid'])] Message $message, MessageRepositoryInterface $messageRepository,
                          MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $messageFilesystem,
                          PollVoteHelper $voteHelper, Request $request, DateHelper $dateHelper): Response {
@@ -224,6 +228,8 @@ class MessageController extends AbstractController {
     }
 
     #[Route(path: '/attachments/{uuid}', name: 'download_message_attachment')]
+    #[NotFoundRedirect(redirectRoute: 'messages', flashMessage: 'messages.not_found')]
+    #[ForbiddenRedirect(redirectRoute: 'messages', flashMessage: 'messages.not_found')]
     public function downloadAttachment(#[MapEntity(mapping: ['uuid' => 'uuid'])] MessageAttachment $attachment, MessageFilesystem $messageFilesystem): Response {
         $this->denyAccessUnlessGranted(MessageVoter::View, $attachment->getMessage());
 
@@ -235,6 +241,8 @@ class MessageController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/downloads/{filename}', name: 'download_user_file')]
+    #[NotFoundRedirect(redirectRoute: 'messages', flashMessage: 'messages.not_found')]
+    #[ForbiddenRedirect(redirectRoute: 'messages', flashMessage: 'messages.not_found')]
     public function downloadUserFile(#[MapEntity(mapping: ['uuid' => 'uuid'])] Message $message, string $filename, MessageFilesystem $messageFilesystem): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -249,6 +257,8 @@ class MessageController extends AbstractController {
     }
 
     #[Route(path: '/uploads/{uuid}/download', name: 'download_uploaded_user_file')]
+    #[NotFoundRedirect(redirectRoute: 'messages', flashMessage: 'messages.not_found')]
+    #[ForbiddenRedirect(redirectRoute: 'messages', flashMessage: 'messages.not_found')]
     public function downloadUploadedUserFile(#[MapEntity(mapping: ['uuid' => 'uuid'])] MessageFile $file, MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $messageFilesystem): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -269,6 +279,8 @@ class MessageController extends AbstractController {
     }
 
     #[Route(path: '/uploads/{uuid}/remove', name: 'remove_uploaded_user_file')]
+    #[NotFoundRedirect(redirectRoute: 'messages', flashMessage: 'messages.not_found')]
+    #[ForbiddenRedirect(redirectRoute: 'messages', flashMessage: 'messages.not_found')]
     public function removeUploadedUserFile(#[MapEntity(mapping: ['uuid' => 'uuid'])] MessageFile $file, MessageFileUploadRepositoryInterface $fileUploadRepository, MessageFilesystem $filesystem, Request $request): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -312,6 +324,8 @@ class MessageController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/confirm', name: 'confirm_message')]
+    #[NotFoundRedirect(redirectRoute: 'messages', flashMessage: 'messages.not_found')]
+    #[ForbiddenRedirect(redirectRoute: 'messages', flashMessage: 'messages.not_found')]
     public function confirm(#[MapEntity(mapping: ['uuid' => 'uuid'])] Message $message, EntityManagerInterface $entityManager): Response {
         $this->denyAccessUnlessGranted(MessageVoter::Confirm, $message);
 
@@ -334,6 +348,8 @@ class MessageController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/dismiss', name: 'dismiss_message')]
+    #[NotFoundRedirect(redirectRoute: 'messages', flashMessage: 'messages.not_found')]
+    #[ForbiddenRedirect(redirectRoute: 'messages', flashMessage: 'messages.not_found')]
     public function dismiss(#[MapEntity(mapping: ['uuid' => 'uuid'])] Message $message, UserRepositoryInterface $userRepository): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -347,6 +363,8 @@ class MessageController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/reenable', name: 'reenable_message')]
+    #[NotFoundRedirect(redirectRoute: 'messages', flashMessage: 'messages.not_found')]
+    #[ForbiddenRedirect(redirectRoute: 'messages', flashMessage: 'messages.not_found')]
     public function reenable(#[MapEntity(mapping: ['uuid' => 'uuid'])] Message $message, UserRepositoryInterface $userRepository): Response {
         /** @var User $user */
         $user = $this->getUser();

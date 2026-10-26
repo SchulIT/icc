@@ -719,6 +719,8 @@ teachers:
             subject: "Fach %i%"
 
 messages:
+    not_found: Die aufgerufene Mitteilung existiert nicht (mehr) oder der aktuelle Benutzer hat keine Berechtigung, die Mitteilung zu öffnen.
+
     overview:
         label: Mitteilungen
         empty: Es wurden keine Mitteilungen gefunden.
@@ -803,6 +805,8 @@ documents:
     empty: Aktuell wurden keine Dokumente hinterlegt.
     empty_search: Die Suche ergab keinen Treffer.
 
+    not_found: Das aufgerufene Dokument existiert nicht (mehr) oder der aktuelle Benutzer hat keine Berechtigung, das Dokument zu öffnen.
+
 message:
     visibility: Sichtbarkeit der Mitteilung
     date: Start- und Ablaufdatum
@@ -822,6 +826,7 @@ wiki:
     navigation: Navigation
     toc: Inhaltsverzeichnis
     search: Wiki durchsuchen
+    not_found: Das aufgerufene Dokument existiert nicht (mehr) oder der aktuelle Benutzer hat keine Berechtigung, das Dokument zu öffnen.
 
 studygroup:
     name: "%name% [%type%]"
@@ -2014,6 +2019,7 @@ absences:
     teachers:
         label: Lehrkräfte
         empty: Aktuell liegen keine Abwesenheitsmeldungen vor.
+        not_found: Die aufgerufene Abwesenheitsmeldung existiert nicht (mehr) oder der aktuell angemeldete Benutzer hat keine Berechtigung, die Meldung einzusehen.
         processed:
             label: eingearbeitet
             header: Bearbeitungsstatus
@@ -2059,6 +2065,8 @@ absences:
         teacher_info: Diese Ansicht zeigt die für den heutigen Tag vorliegenden Absenzmeldungen an. Vergangene Meldungen können über den Lernenden- oder Klassenfilter auf der rechten Seite abgerufen werden.
         retention: Abwesenheitsmeldungen werden automatisch %count% Tage nach dem Ablauf gelöscht.
         empty: Es liegen keine Abwesenheitsmeldungen vor.
+        forbidden: Die Aktion darf vom aktuell angemeldeten Benutzer nicht durchgeführt werden.
+        not_found: Die aufgerufene Abwesenheitsmeldung existiert nicht (mehr) oder der aktuell angemeldete Benutzer hat keine Berechtigung, die Meldung einzusehen.
         add:
             label: Neue Abwesenheitsmeldung
             info: Hier besteht die Möglichkeit, eine Abwesenheitsmeldung an die Schule zu versenden. Diese wird automatisch sowohl an das Sekretariat als auch an die Klassen- bzw. Stufenleitungen weitergeleitet.
@@ -2799,6 +2807,8 @@ chat:
     label: Private Nachrichten
     empty: Aktuell gibt es keine privaten Nachrichten.
     last_message: Letzte Nachricht von %createdBy% am %createdAt%
+    not_found: Das aufgerufene Gespräch existiert nicht (mehr) oder der aktuelle Benutzer hat keine Berechtigung für das Gespräch.
+    forbidden: Der aktuelle Benutzer hat keine Berechtigung zur Ausführung dieser Aktion.
     add:
         label: Neue Nachricht
         success: Nachricht erfolgreich erstellt
@@ -2995,6 +3005,7 @@ notifications:
 return_items:
     label: Rückgaben
     empty: Aktuell sind keine Rückgaben eingetragen
+    not_found: Die aufgerufene Rückgabe existiert nicht (mehr) oder der aktuell angemeldete Benutzer hat keine Berechtigung, Details zur Rückgabe einzusehen.
 
     add:
         label: Neue Rückgabe

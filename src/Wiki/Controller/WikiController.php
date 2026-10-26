@@ -4,6 +4,8 @@ namespace App\Wiki\Controller;
 
 use App\Framework\Feature\Feature;
 use App\Framework\Feature\IsFeatureEnabled;
+use SchulIT\CommonBundle\Http\Attribute\ForbiddenRedirect;
+use SchulIT\CommonBundle\Http\Attribute\NotFoundRedirect;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
 use App\Wiki\Entity\WikiArticle;
@@ -34,6 +36,8 @@ class WikiController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}', name: 'show_wiki_article')]
+    #[NotFoundRedirect(redirectRoute: 'wiki', flashMessage: 'wiki.not_found')]
+    #[ForbiddenRedirect(redirectRoute: 'wiki', flashMessage: 'wiki.not_found')]
     public function show(#[MapEntity(mapping: ['uuid' => 'uuid'])] ?WikiArticle $article): Response {
         if($article !== null) {
             $this->denyAccessUnlessGranted(WikiVoter::View, $article);
@@ -65,6 +69,8 @@ class WikiController extends AbstractController {
     }
 
     #[Route(path: '/image/{filename}', name: 'wiki_image')]
+    #[NotFoundRedirect(redirectRoute: 'wiki', flashMessage: 'wiki.not_found')]
+    #[ForbiddenRedirect(redirectRoute: 'wiki', flashMessage: 'wiki.not_found')]
     public function image($filename, Filesystem $wikiFilesystem, MimeTypes $mimeTypes): Response {
         if($wikiFilesystem->fileExists($filename) !== true) {
             throw new NotFoundHttpException();

@@ -62,6 +62,8 @@ use Mimey\MimeTypes;
 use Ramsey\Uuid\Uuid;
 use SchulIT\CommonBundle\Form\ConfirmType;
 use SchulIT\CommonBundle\Helper\DateHelper;
+use SchulIT\CommonBundle\Http\Attribute\ForbiddenRedirect;
+use SchulIT\CommonBundle\Http\Attribute\NotFoundRedirect;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -77,6 +79,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route(path: '/absence/students')]
 #[IsFeatureEnabled(Feature::StudentAbsence)]
 #[IsGranted(new Expression("is_granted('ROLE_STUDENT_ABSENCE_CREATOR') or is_granted('ROLE_STUDENT_ABSENCE_VIEWER') or is_granted('new-absence')"))]
+#[ForbiddenRedirect(redirectRoute: 'dashboard', flashMessage: 'absences.students.forbidden')]
 class StudentAbsenceController extends AbstractController {
 
     public const int ITEMS_PER_PAGE = 25;
@@ -247,6 +250,7 @@ class StudentAbsenceController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/edit', name: 'edit_student_absence')]
+    #[NotFoundRedirect(redirectRoute: 'dashboard', flashMessage: 'absences.students.not_found')]
     public function edit(#[MapEntity(mapping: ['uuid' => 'uuid'])] StudentAbsence $absence, Request $request, StudentAbsenceSettings $settings, StudentAbsenceRepositoryInterface $repository): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::New);
 
@@ -376,6 +380,7 @@ class StudentAbsenceController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}', name: 'show_student_absence')]
+    #[NotFoundRedirect(redirectRoute: 'dashboard', flashMessage: 'absences.students.not_found')]
     public function show(
         #[MapEntity(mapping: ['uuid' => 'uuid'])] StudentAbsence $absence,
         StudentAbsenceSettings $settings,
@@ -435,6 +440,7 @@ class StudentAbsenceController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/excuse_note', name: 'add_excuse_note_from_absence')]
+    #[NotFoundRedirect(redirectRoute: 'dashboard', flashMessage: 'absences.students.not_found')]
     public function createExcuseNote(
         #[MapEntity(mapping: ['uuid' => 'uuid'])] StudentAbsence $absence,
         Request $request,
@@ -462,6 +468,7 @@ class StudentAbsenceController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/approve', name: 'approve_student_absence')]
+    #[NotFoundRedirect(redirectRoute: 'dashboard', flashMessage: 'absences.students.not_found')]
     public function approve(#[MapEntity(mapping: ['uuid' => 'uuid'])] StudentAbsence $absence, Request $request, ApprovalHelper $approvalHelper): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::Approve, $absence);
 
@@ -481,6 +488,7 @@ class StudentAbsenceController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}/deny', name: 'deny_student_absence')]
+    #[NotFoundRedirect(redirectRoute: 'dashboard', flashMessage: 'absences.students.not_found')]
     public function deny(#[MapEntity(mapping: ['uuid' => 'uuid'])] StudentAbsence $absence, Request $request, ApprovalHelper $approvalHelper): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::Deny, $absence);
 
@@ -500,6 +508,7 @@ class StudentAbsenceController extends AbstractController {
     }
 
     #[Route(path: '/attachments/{uuid}', name: 'download_student_absence_attachment', priority: 10)]
+    #[NotFoundRedirect(redirectRoute: 'dashboard', flashMessage: 'absences.students.not_found')]
     public function downloadAttachment(#[MapEntity(mapping: ['uuid' => 'uuid'])] StudentAbsenceAttachment $attachment, FilesystemOperator $studentAbsencesFilesystem, MimeTypes $mimeTypes, StudentAbsenceSettings $settings): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::View, $attachment->getAbsence());
 
@@ -518,6 +527,7 @@ class StudentAbsenceController extends AbstractController {
     }
 
     #[Route('/{uuid}/remove', name: 'remove_student_absence')]
+    #[NotFoundRedirect(redirectRoute: 'dashboard', flashMessage: 'absences.students.not_found')]
     public function remove(#[MapEntity(mapping: ['uuid' => 'uuid'])] StudentAbsence $absence, Request $request, StudentAbsenceRepositoryInterface $repository): Response {
         $this->denyAccessUnlessGranted(StudentAbsenceVoter::Remove, $absence);
 

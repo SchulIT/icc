@@ -291,3 +291,7 @@ services:
         bind:
             $publicDir: '%kernel.project_dir%/public'
 
+
+    SchulIT\CommonBundle\Http\AttributeResolver: ~
+    SchulIT\CommonBundle\Http\HttpNotFoundExceptionSubscriber: ~
+    SchulIT\CommonBundle\Http\ForbiddenRedirectSubscriber: ~

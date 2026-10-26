@@ -68,7 +68,7 @@ class StudentLearningManagementSystemInformationRepository extends AbstractTrans
 
     public function removeAll(): void {
         $this->em->createQueryBuilder()
-            ->delete(StudentLearningManagementSystemInformation::class)
+            ->delete(StudentLearningManagementSystemInformation::class, 'i')
             ->getQuery()
             ->execute();
     }

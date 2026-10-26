@@ -5,6 +5,8 @@ namespace App\Document\Controller;
 use App\Framework\Controller\AbstractController;
 use App\Framework\Feature\Feature;
 use App\Framework\Feature\IsFeatureEnabled;
+use SchulIT\CommonBundle\Http\Attribute\ForbiddenRedirect;
+use SchulIT\CommonBundle\Http\Attribute\NotFoundRedirect;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
 use App\Document\Entity\Document;
@@ -63,6 +65,8 @@ class DocumentsController extends AbstractController {
     }
 
     #[Route(path: '/attachment/{uuid}', name: 'download_document_attachment')]
+    #[NotFoundRedirect(redirectRoute: 'documents', flashMessage: 'documents.not_found')]
+    #[ForbiddenRedirect(redirectRoute: 'documents', flashMessage: 'documents.not_found')]
     public function downloadAttachment(#[MapEntity(mapping: ['uuid' => 'uuid'])] DocumentAttachment $attachment, DocumentFilesystem $documentFilesystem): Response {
         $this->denyAccessUnlessGranted(DocumentVoter::View, $attachment->getDocument());
 
@@ -74,6 +78,8 @@ class DocumentsController extends AbstractController {
     }
 
     #[Route(path: '/{uuid}', name: 'show_document')]
+    #[NotFoundRedirect(redirectRoute: 'documents', flashMessage: 'documents.not_found')]
+    #[ForbiddenRedirect(redirectRoute: 'documents', flashMessage: 'documents.not_found')]
     public function show(#[MapEntity(mapping: ['uuid' => 'uuid'])] Document $document): Response {
         $this->denyAccessUnlessGranted(DocumentVoter::View, $document);
 

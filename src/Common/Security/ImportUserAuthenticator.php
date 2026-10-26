@@ -49,7 +49,7 @@ class ImportUserAuthenticator extends AbstractAuthenticator implements Authentic
             new ErrorResponse($exception->getMessage())
             , 'json');
 
-        return new Response($json, Response::HTTP_OK, ['Content-Type' => 'application/json']);
+        return new Response($json, Response::HTTP_UNAUTHORIZED, ['Content-Type' => 'application/json']);
     }
 
     /**

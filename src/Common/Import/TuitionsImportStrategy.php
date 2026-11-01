@@ -7,6 +7,8 @@ use App\Common\Entity\StudyGroup;
 use App\Common\Entity\Subject;
 use App\Common\Entity\Teacher;
 use App\Common\Entity\Tuition;
+use App\Common\Import\Event\RemoveEvent;
+use App\Common\Import\Event\TuitionRemoveEvent;
 use App\Common\Repository\SectionRepositoryInterface;
 use App\Common\Repository\StudyGroupRepositoryInterface;
 use App\Common\Repository\SubjectRepositoryInterface;
@@ -20,6 +22,7 @@ use App\Common\Import\Json\TuitionData;
 use App\Common\Import\Json\TuitionsData;
 use App\Framework\Utils\CollectionUtils;
 use App\Framework\Utils\ArrayUtils;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class TuitionsImportStrategy implements ImportStrategyInterface {
 
@@ -29,7 +32,14 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
     private array $teacherCache = [ ];
     private array $studyGroupCache = [ ];
 
-    public function __construct(private TuitionRepositoryInterface $tuitionRepository, private SubjectRepositoryInterface $subjectRepository, private TeacherRepositoryInterface $teacherRepository, private StudyGroupRepositoryInterface $studyGroupRepository, private SectionRepositoryInterface $sectionRepository)
+    public function __construct(
+        private TuitionRepositoryInterface $tuitionRepository,
+        private SubjectRepositoryInterface $subjectRepository,
+        private TeacherRepositoryInterface $teacherRepository,
+        private StudyGroupRepositoryInterface $studyGroupRepository,
+        private SectionRepositoryInterface $sectionRepository,
+        private EventDispatcherInterface $eventDispatcher
+    )
     {
     }
 
@@ -171,6 +181,13 @@ class TuitionsImportStrategy implements ImportStrategyInterface {
      * @param Tuition $entity
      */
     public function remove($entity, $requestData): bool {
+        $event = new TuitionRemoveEvent($entity);
+        $this->eventDispatcher->dispatch($event);
+
+        if($event->preventRemoval === true) {
+            return false;
+        }
+
         $this->tuitionRepository->remove($entity);
         return true;
     }

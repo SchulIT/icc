@@ -6,6 +6,8 @@ use App\Common\Entity\Gender;
 use App\Common\Entity\Subject;
 use App\Common\Entity\Teacher;
 use App\Common\Entity\TeacherTag;
+use App\Common\Import\Event\RemoveEvent;
+use App\Common\Import\Event\TeacherRemoveEvent;
 use App\Common\Repository\SectionRepositoryInterface;
 use App\Common\Repository\SubjectRepositoryInterface;
 use App\Common\Repository\TeacherRepositoryInterface;
@@ -18,10 +20,16 @@ use App\Common\Import\Json\TeachersData;
 use App\Framework\Utils\ArrayUtils;
 use App\Framework\Utils\CollectionUtils;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class TeachersImportStrategy implements ImportStrategyInterface {
 
-    public function __construct(private TeacherRepositoryInterface $teacherRepository, private SubjectRepositoryInterface $subjectRepository, private TeacherTagRepositoryInterface $teacherTagRepository, private SectionRepositoryInterface $sectionRepository)
+    public function __construct(
+        private TeacherRepositoryInterface $teacherRepository,
+        private SubjectRepositoryInterface $subjectRepository,
+        private TeacherTagRepositoryInterface $teacherTagRepository,
+        private SectionRepositoryInterface $sectionRepository,
+        private EventDispatcherInterface $eventDispatcher)
     {
     }
 
@@ -115,6 +123,13 @@ class TeachersImportStrategy implements ImportStrategyInterface {
      * @param Teacher $entity
      */
     public function remove($entity, $requestData): bool {
+        $event = new TeacherRemoveEvent($entity);
+        $this->eventDispatcher->dispatch($event);
+
+        if($event->preventRemoval === true) {
+            return false;
+        }
+
         $section = $this->sectionRepository->findOneByNumberAndYear($requestData->getSection(), $requestData->getYear());
 
         if($entity->getSections()->count() === 0) {

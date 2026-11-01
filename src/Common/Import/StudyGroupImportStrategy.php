@@ -5,6 +5,10 @@ namespace App\Common\Import;
 use App\Common\Entity\Grade;
 use App\Common\Entity\StudyGroup;
 use App\Common\Entity\StudyGroupType;
+use App\Common\Import\Event\RemoveEvent;
+use App\Common\Import\Event\StudyGroupRemoveEvent;
+use App\Common\Import\Json\StudyGroupData;
+use App\Common\Import\Json\StudyGroupsData;
 use App\Common\Repository\GradeRepositoryInterface;
 use App\Common\Repository\SectionRepositoryInterface;
 use App\Common\Repository\StudyGroupRepositoryInterface;
@@ -12,14 +16,17 @@ use App\Framework\Import\ImportException;
 use App\Framework\Import\ImportStrategyInterface;
 use App\Framework\Import\SectionNotFoundException;
 use App\Framework\Repository\TransactionalRepositoryInterface;
-use App\Common\Import\Json\StudyGroupData;
-use App\Common\Import\Json\StudyGroupsData;
-use App\Framework\Utils\CollectionUtils;
 use App\Framework\Utils\ArrayUtils;
+use App\Framework\Utils\CollectionUtils;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class StudyGroupImportStrategy implements ImportStrategyInterface {
 
-    public function __construct(private StudyGroupRepositoryInterface $studyGroupRepository, private GradeRepositoryInterface $gradeRepository, private SectionRepositoryInterface $sectionRepository)
+    public function __construct(
+        private StudyGroupRepositoryInterface $studyGroupRepository,
+        private GradeRepositoryInterface $gradeRepository,
+        private SectionRepositoryInterface $sectionRepository,
+        private EventDispatcherInterface $eventDispatcher)
     {
     }
 
@@ -109,6 +116,13 @@ class StudyGroupImportStrategy implements ImportStrategyInterface {
      * @param StudyGroupsData $requestData
      */
     public function remove($entity, $requestData): bool {
+        $event = new StudyGroupRemoveEvent($entity);
+        $this->eventDispatcher->dispatch($event);
+
+        if($event->preventRemoval === true) {
+            return false;
+        }
+
         $this->studyGroupRepository->remove($entity);
         return true;
     }

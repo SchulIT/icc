@@ -138,7 +138,7 @@ class ExamsImportStrategy implements ImportStrategyInterface, PostActionStrategy
                 continue;
             }
 
-            $teacher = $this->teacherRepository->findOneByExternalId($supervisions[$idx]);
+            $teacher = $this->teacherRepository->findOneByAcronym($supervisions[$idx]);
 
             if($teacher !== null) {
                 $supervision->setTeacher($teacher);

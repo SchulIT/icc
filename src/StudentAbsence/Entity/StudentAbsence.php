@@ -282,6 +282,11 @@ class StudentAbsence {
         }
 
         $diff = $this->until->getDate()->diff($this->from->getDate());
-        return $diff->d + 1;
+
+        if($diff->days === false) {
+            return 0;
+        }
+
+        return $diff->days + 1;
     }
 }

@@ -18,6 +18,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
+use SortDirection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[Auditable]
@@ -75,7 +76,7 @@ class Exam {
      * @var Collection<ExamSupervision>
      */
     #[ORM\OneToMany(mappedBy: 'exam', targetEntity: ExamSupervision::class, cascade: ['persist'], orphanRemoval: true)]
-    #[ORM\OrderBy(['lesson' => 'asc'])]
+    #[ORM\OrderBy(['lesson' => SortDirection::Ascending])]
     private $supervisions;
 
     #[ORM\ManyToOne(targetEntity: Room::class)]

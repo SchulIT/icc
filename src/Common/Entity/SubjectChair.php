@@ -5,6 +5,7 @@ namespace App\Common\Entity;
 use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[Auditable]
 #[ORM\Entity]
@@ -13,11 +14,11 @@ class SubjectChair {
     use IdTrait;
 
     #[ORM\ManyToOne(targetEntity: Subject::class, inversedBy: 'chairs')]
-    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public Subject $subject;
 
     #[ORM\ManyToOne(targetEntity: Teacher::class, inversedBy: 'chairs')]
-    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     public Teacher $teacher;
 
     #[ORM\Column(type: Types::STRING, enumType: ChairType::class)]

@@ -25,7 +25,7 @@ class PollResultCsvExporter {
         $view = $this->viewHelper->createView($message);
 
         /** @var UserType[] $visibilities */
-        $visibilities = $message->getPollUserTypes()->map(fn(UserTypeEntity $visibility) => $visibility->getUserType());
+        $visibilities = $message->getPollUserTypes()->map(fn(UserTypeEntity $visibility) => $visibility->getUserType())->toArray();
         $isParentsPollEnabled = ArrayUtils::inArray(UserType::Parent, $visibilities);
 
         $header = [

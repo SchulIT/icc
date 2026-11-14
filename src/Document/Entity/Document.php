@@ -18,6 +18,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
+use SortDirection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[Auditable]
@@ -59,7 +60,7 @@ class Document {
      * @var Collection<DocumentAttachment>
      */
     #[ORM\OneToMany(mappedBy: 'document', targetEntity: DocumentAttachment::class, cascade: ['persist'])]
-    #[ORM\OrderBy(['filename' => 'asc'])]
+    #[ORM\OrderBy(['filename' => SortDirection::Ascending])]
     private $attachments;
 
     /**

@@ -26,7 +26,7 @@ class MessageFileUploadType extends AbstractType {
                 'required' => false
             ])
             ->addEventListener(FormEvents::POST_SET_DATA, function(FormEvent $event) {
-                /** @var MessageFileUpload $fileUpload */
+                /** @var MessageFileUpload|null $fileUpload */
                 $fileUpload = $event->getData();
                 $form = $event->getForm();
 

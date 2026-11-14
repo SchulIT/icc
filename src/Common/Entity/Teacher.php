@@ -112,6 +112,7 @@ class Teacher implements Stringable {
         $this->grades = new ArrayCollection();
         $this->tags = new ArrayCollection();
         $this->sections = new ArrayCollection();
+        $this->chairs = new ArrayCollection();
     }
 
     public function getExternalId(): ?string {

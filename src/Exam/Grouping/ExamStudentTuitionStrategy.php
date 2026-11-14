@@ -32,7 +32,7 @@ class ExamStudentTuitionStrategy implements GroupingStrategyInterface {
     /**
      * @param Tuition|null $key
      * @param array $options
-     * @return GroupInterface#
+     * @return GroupInterface
      */
     public function createGroup($key, array $options = []): GroupInterface {
         return new ExamStudentTuitionGroup($key);

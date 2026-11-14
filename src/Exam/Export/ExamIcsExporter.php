@@ -76,7 +76,6 @@ class ExamIcsExporter {
         }
 
         if($user->getTeacher() !== null) {
-            /** @var ExamSupervision[] $supervisions */
             $supervisions = $exam->getSupervisions();
 
             foreach($supervisions as $supervision) {

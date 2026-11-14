@@ -30,7 +30,7 @@ class CsvHelper {
      * Gets a HttpResponse with CSV content which can be send to the client.
      *
      * @param string $filename The filename which is used for downloading the file.
-     * @param string[][] $fields CSV data (see fputcsv())
+     * @param array[] $fields CSV data (see fputcsv())
      * @param string $separator The separator which is used to separate the values (default: ;)
      * @throws Exception
      */

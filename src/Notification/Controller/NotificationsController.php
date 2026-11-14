@@ -34,7 +34,7 @@ class NotificationsController extends AbstractController {
             $page
         );
 
-        $pages = ceil((double)$paginator->count() / self::NotificationsPerPage);
+        $pages = ceil((float)$paginator->count() / self::NotificationsPerPage);
 
         return $this->render('notifications/index.html.twig', [
             'notifications' => $paginator->getIterator(),

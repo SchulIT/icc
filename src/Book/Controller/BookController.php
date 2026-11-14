@@ -774,7 +774,7 @@ class BookController extends AbstractController {
             'numberOfLessons' => $timetableSettings->getMaxLessons(),
             'entries' => array_values($entries),
             'events' => array_values($events),
-            'missing' => array_values($missing)
+            'missing' => $missing
         ]);
     }
 

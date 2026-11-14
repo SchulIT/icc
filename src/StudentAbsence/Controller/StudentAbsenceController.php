@@ -336,17 +336,14 @@ class StudentAbsenceController extends AbstractController {
             }
         }
 
-        $pages = 0;
-        if ($paginator !== null) {
-            /** @var StudentAbsence $note */
-            foreach ($paginator as $note) {
-                if ($this->isGranted(StudentAbsenceVoter::View, $note)) {
-                    $absences[] = $note;
-                }
+        /** @var StudentAbsence $note */
+        foreach ($paginator as $note) {
+            if ($this->isGranted(StudentAbsenceVoter::View, $note)) {
+                $absences[] = $note;
             }
-
-            $pages = ceil((double)$paginator->count() / self::ITEMS_PER_PAGE);
         }
+
+        $pages = ceil((float)$paginator->count() / self::ITEMS_PER_PAGE);
 
         $excuseStatus = [];
         $unreadCounter = [];

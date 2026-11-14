@@ -46,7 +46,6 @@ readonly class Builder {
         $menu = $this->factory->createItem('root')
             ->setChildrenAttribute('class', 'navbar-nav me-auto');
 
-        /** @var User $user */
         $user = $this->tokenStorage->getToken()?->getUser();
 
         $menu->addChild('dashboard.label', [
@@ -80,7 +79,7 @@ readonly class Builder {
                 ->setExtra('icon', 'fas fa-key');
         }
 
-        if($user->isStudentOrParent() && $this->featureManager->isFeatureEnabled(Feature::Consents)) {
+        if($user instanceof User && $user->isStudentOrParent() && $this->featureManager->isFeatureEnabled(Feature::Consents)) {
             $menu
                 ->addChild('consents.label', [
                     'route' => 'student_consents'
@@ -104,7 +103,7 @@ readonly class Builder {
                 ->setExtra('menu-container', '#submenu');
         }
 
-        if(($this->featureManager->isFeatureEnabled(Feature::StudentAbsence) || $this->featureManager->isFeatureEnabled(Feature::TeacherAbsence)) && ($this->authorizationChecker->isGranted('ROLE_SICK_NOTE_VIEWER')
+        if($user instanceof User && ($this->featureManager->isFeatureEnabled(Feature::StudentAbsence) || $this->featureManager->isFeatureEnabled(Feature::TeacherAbsence)) && ($this->authorizationChecker->isGranted('ROLE_SICK_NOTE_VIEWER')
             || $this->authorizationChecker->isGranted('ROLE_SICK_NOTE_CREATOR')
             || $this->authorizationChecker->isGranted(StudentAbsenceVoter::New)
             || $this->authorizationChecker->isGranted(TeacherAbsenceVoter::NewAbsence)

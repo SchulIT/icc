@@ -6,7 +6,7 @@ use App\Common\Entity\StudyGroup;
 use App\Framework\Import\Event\RemoveEvent;
 
 /**
- * @implements RemoveEvent<StudyGroup>
+ * @extends RemoveEvent<StudyGroup>
  */
 class StudyGroupRemoveEvent extends RemoveEvent {
 

@@ -20,7 +20,6 @@ abstract class AbstractMessageFileViewHelper {
     }
 
     public function createView(Message $message): AbstractMessageFileView {
-        /** @var UserType[] $visibilities */
         $visibilities = $this->getUserTypes($message)->map(fn(UserTypeEntity $visibility) => $visibility->getUserType());
 
         $students = [ ];

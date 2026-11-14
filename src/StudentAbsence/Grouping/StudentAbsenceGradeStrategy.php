@@ -30,7 +30,7 @@ class StudentAbsenceGradeStrategy implements GroupingStrategyInterface, OptionsA
             return true;
         }
 
-        if(($keyA === null && $keyB !== null) || ($keyA !== null && $keyB === null)) {
+        if($keyA === null || $keyB === null) {
             return false;
         }
 

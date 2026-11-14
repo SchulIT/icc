@@ -5,7 +5,7 @@ namespace App\Framework\Import\Event;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * @template T
+ * @template T of object
  */
 abstract class RemoveEvent extends Event {
 

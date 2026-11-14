@@ -37,7 +37,7 @@ class UserMapper extends AbstractUserMapper {
     public function mapUser(User $user, Response|array $data): User {
         if(is_array($data)) {
             return $this->mapUserFromArray($user, $data);
-        } else if($data instanceof Response) {
+        } else {
             return $this->mapUserFromResponse($user, $data);
         }
     }

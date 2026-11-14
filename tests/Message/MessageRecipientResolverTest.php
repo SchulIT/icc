@@ -37,7 +37,6 @@ class MessageRecipientResolverTest extends TestCase {
 
         $reflectionClass = new ReflectionClass(StudyGroup::class);
         $property = $reflectionClass->getProperty('id');
-        $property->setAccessible(true);
 
         $this->studyGroupEF = (new StudyGroup())
             ->setName('EF')

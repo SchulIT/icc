@@ -3,6 +3,7 @@
 namespace App\Book\Grade\Export\Schild;
 
 use Exception;
+use Throwable;
 
 class GradeCategoryNotFoundException extends Exception {
     public function __construct(public readonly string $uuid, string $message = "", int $code = 0, ?Throwable $previous = null) {

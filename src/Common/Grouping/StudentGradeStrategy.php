@@ -30,11 +30,7 @@ class StudentGradeStrategy implements GroupingStrategyInterface, OptionsAwareGro
             return true;
         }
 
-        if($keyA === null && $keyB !== null) {
-            return false;
-        }
-
-        if($keyB === null && $keyA !== null) {
+        if($keyA === null || $keyB === null) {
             return false;
         }
 

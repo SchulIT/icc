@@ -216,14 +216,10 @@ class BookXhrController extends AbstractController {
 
         $lesson = $lessonRepository->findOneByUuid($request->query->get('lesson'));
         if($lesson === null) {
-            throw new NotFoundHttpException('Lesson not found.');
+            throw $this->createNotFoundException('Lesson not found.');
         }
 
         $start = $request->query->getInt('start');
-        if(!is_numeric($start)) {
-            throw new BadRequestHttpException('Start must be numeric values.');
-        }
-
         if($start < $lesson->getLessonStart() || $start > $lesson->getLessonEnd()) {
             throw new BadRequestHttpException('Start must be inside lesson boundaries.');
         }

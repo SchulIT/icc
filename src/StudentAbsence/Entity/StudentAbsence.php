@@ -18,6 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use SortDirection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[Auditable]
@@ -119,7 +120,7 @@ class StudentAbsence {
      * @var Collection<StudentAbsenceAttachment>
      */
     #[ORM\OneToMany(mappedBy: 'absence', targetEntity: StudentAbsenceAttachment::class, cascade: ['persist'])]
-    #[ORM\OrderBy(['filename' => 'asc'])]
+    #[ORM\OrderBy(['filename' => SortDirection::Ascending])]
     #[Assert\Count(max: self::MaxNumberOfAttachments)]
     private Collection $attachments;
 
@@ -282,11 +283,6 @@ class StudentAbsence {
         }
 
         $diff = $this->until->getDate()->diff($this->from->getDate());
-
-        if($diff->days === false) {
-            return 0;
-        }
-
         return $diff->days + 1;
     }
 }

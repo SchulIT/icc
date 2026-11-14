@@ -192,14 +192,12 @@ class ResourceReservationController extends AbstractController {
 
         $reservation = (new ResourceReservation())
             ->setLessonStart($request->query->getInt('lessonStart', 0))
-            ->setLessonEnd($request->query->getInt('lessonStart', 0));
+            ->setLessonEnd($request->query->getInt('lessonStart', 0))
+            ->setDate($date);
 
         /** @var User $user */
         $user = $this->getUser();
 
-        if($date !== null) {
-            $reservation->setDate($date);
-        }
         if($room !== null) {
             $reservation->setResource($room);
         }

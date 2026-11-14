@@ -35,7 +35,7 @@ class ChecklistStudentType extends AbstractType {
             ->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
                 $checklistStudent = $event->getData();
 
-                if($checklistStudent instanceof ChecklistStudent && $checklistStudent->getStudent() !== null) {
+                if($checklistStudent instanceof ChecklistStudent) {
                     $form = $event->getForm();
                     $form->add('isChecked', CheckboxType::class, [
                         'required' => false,

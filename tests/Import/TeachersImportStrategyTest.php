@@ -18,6 +18,7 @@ use App\Common\Import\Json\TeachersData;
 use DateTime;
 use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class TeachersImportStrategyTest extends WebTestCase {
 
@@ -105,7 +106,7 @@ class TeachersImportStrategyTest extends WebTestCase {
         $dateTimeRepository = new ImportDateTypeRepository($this->em);
         $sectionRepository = new SectionRepository($this->em);
         $importer = new Importer($this->validator, $dateTimeRepository, new NullLogger());
-        $strategy = new TeachersImportStrategy($repository, $subjectRepository, $tagRepository, $sectionRepository);
+        $strategy = new TeachersImportStrategy($repository, $subjectRepository, $tagRepository, $sectionRepository, new EventDispatcher());
         $result = $importer->import((new TeachersData())->setTeachers($teachersData)->setYear(2020)->setSection(1), $strategy);
 
         /** @var Teacher[] $addedTeachers */
@@ -143,7 +144,7 @@ class TeachersImportStrategyTest extends WebTestCase {
         $dateTimeRepository = new ImportDateTypeRepository($this->em);
         $sectionRepository = new SectionRepository($this->em);
         $importer = new Importer($this->validator, $dateTimeRepository, new NullLogger());
-        $strategy = new TeachersImportStrategy($repository, $subjectRepository, $tagRepository, $sectionRepository);
+        $strategy = new TeachersImportStrategy($repository, $subjectRepository, $tagRepository, $sectionRepository, new EventDispatcher());
         $result = $importer->import((new TeachersData())->setTeachers($teachersData)->setYear(2020)->setSection(1), $strategy);
 
         /** @var Teacher[] $updatedTeachers */

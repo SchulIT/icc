@@ -27,7 +27,6 @@ readonly class SetupCommand {
     }
 
     private function addMissingUserTypeEntities(SymfonyStyle $style) {
-        /** @var UserType[] $types */
         $types = UserType::cases();
         $existingTypes = ArrayUtils::createArrayWithKeys(
             $this->userTypeEntityRepository->findAll(),

@@ -105,17 +105,15 @@ class ExamController extends AbstractControllerWithMessages {
                 $paginator = $examRepository->getPaginator(self::$ItemsPerPage, $page, null, null, null, null, true, $threshold);
             }
 
-            if($paginator !== null) {
-                /** @var Exam $exam */
-                foreach ($paginator->getIterator() as $exam) {
-                    if ($this->isGranted(ExamVoter::Show, $exam)) {
-                        $exams[] = $exam;
-                    }
+            /** @var Exam $exam */
+            foreach ($paginator->getIterator() as $exam) {
+                if ($this->isGranted(ExamVoter::Show, $exam)) {
+                    $exams[] = $exam;
                 }
+            }
 
-                if($paginator->count() > 0) {
-                    $pages = ceil((float)$paginator->count() / self::$ItemsPerPage);
-                }
+            if($paginator->count() > 0) {
+                $pages = ceil((float)$paginator->count() / self::$ItemsPerPage);
             }
         }
 

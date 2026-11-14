@@ -112,7 +112,7 @@ class ResourceReservationRepository extends AbstractRepository implements Resour
     /**
      * @inheritDoc
      */
-    public function findAllByTeacherAndDate(Teacher $teacher, DateTime $date): array {
+    public function findAllByTeacherAndDate(Teacher $teacher, DateTime|null $date): array {
         $qb = $this->em->createQueryBuilder()
             ->select('r')
             ->from(ResourceReservation::class, 'r')

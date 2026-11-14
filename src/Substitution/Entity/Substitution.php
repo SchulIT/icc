@@ -15,6 +15,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
+use SortDirection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -83,7 +84,7 @@ class Substitution {
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
     #[ORM\ManyToMany(targetEntity: Room::class)]
-    #[ORM\OrderBy(['name' => 'asc'])]
+    #[ORM\OrderBy(['name' => SortDirection::Ascending])]
     private $rooms;
 
     /**
@@ -93,7 +94,7 @@ class Substitution {
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
     #[ORM\ManyToMany(targetEntity: Room::class)]
-    #[ORM\OrderBy(['name' => 'asc'])]
+    #[ORM\OrderBy(['name' => SortDirection::Ascending])]
     private $replacementRooms;
 
     #[ORM\Column(type: 'string', nullable: true, options: ['comment' => 'Plain room name in case room resolve is not possible when importing substitutions.'])]
@@ -224,7 +225,7 @@ class Substitution {
     }
 
     /**
-     * @return Collection<Teacher>s
+     * @return Collection<Teacher>
      */
     public function getTeachers(): Collection {
         return $this->teachers;

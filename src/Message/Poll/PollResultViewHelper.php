@@ -20,7 +20,7 @@ class PollResultViewHelper {
 
     public function createView(Message $message): PollResultView {
         /** @var UserType[] $visibilities */
-        $visibilities = $message->getPollUserTypes()->map(fn(UserTypeEntity $visibility) => $visibility->getUserType());
+        $visibilities = $message->getPollUserTypes()->map(fn(UserTypeEntity $visibility) => $visibility->getUserType())->toArray();
 
         $students = [ ];
         $teachers = [ ];

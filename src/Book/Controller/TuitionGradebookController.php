@@ -78,7 +78,7 @@ class TuitionGradebookController extends AbstractController {
             $sorter->sort($gradeStudents, StudentStrategy::class);
 
             if(count($gradeStudents) > self::StudentPaginationThreshold) {
-                $pages = ceil(count($gradeStudents) / (double)self::NumberOfStudentsPerPage);
+                $pages = ceil(count($gradeStudents) / (float)self::NumberOfStudentsPerPage);
                 $gradeStudents = array_slice($gradeStudents, self::NumberOfStudentsPerPage * ($page - 1), self::NumberOfStudentsPerPage);
             }
 

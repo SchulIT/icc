@@ -471,7 +471,7 @@ readonly class ExportDataCommand {
                 ->setDate($exam->getDate())
                 ->setLessonStart($exam->getLessonStart())
                 ->setLessonEnd($exam->getLessonEnd())
-                ->setRooms(array_values(array_fill($exam->getLessonStart(), $exam->getLessonEnd(), $exam->getRoom())))
+                ->setRooms(array_values(array_fill($exam->getLessonStart(), $exam->getLessonEnd(), $exam->getRoom()->getName())))
                 ->setStudents($exam->getStudents()->map(fn(Student $student) => $student->getExternalId())->toArray())
                 ->setTuitions($exam->getTuitions()->map(function(Tuition $tuition) {
                     return (new ExamTuition())

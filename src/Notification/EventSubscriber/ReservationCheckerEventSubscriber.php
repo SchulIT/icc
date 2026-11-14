@@ -42,10 +42,10 @@ readonly class ReservationCheckerEventSubscriber implements EventSubscriberInter
 
     public function onSubstitutionImportEvent(SubstitutionImportEvent $event): void {
         $substitutions = array_merge($event->getAdded(), $event->getUpdated());
-        /** @var DateTime $start */
+        /** @var DateTime|null $start */
         $start = null;
 
-        /** @var DateTime $end */
+        /** @var DateTime|null $end */
         $end = null;
 
         /** @var Substitution $substitution */

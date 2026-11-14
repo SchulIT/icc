@@ -19,7 +19,7 @@ class MessageConfirmationViewHelper {
 
     public function createView(Message $message): MessageConfirmationView {
         /** @var UserType[] $visibilities */
-        $visibilities = $message->getConfirmationRequiredUserTypes()->map(fn(UserTypeEntity $visibility) => $visibility->getUserType());
+        $visibilities = $message->getConfirmationRequiredUserTypes()->map(fn(UserTypeEntity $visibility) => $visibility->getUserType())->toArray();
 
         $students = [ ];
         $teachers = [ ];
@@ -73,7 +73,8 @@ class MessageConfirmationViewHelper {
     private function getParentConfirmations(Message $message): array {
         /** @var MessageConfirmation[] $confirmedParentUsers */
         $confirmedParentUsers = $message->getConfirmations()
-            ->filter(fn(MessageConfirmation $confirmation) => $confirmation->getUser()->isParent());
+            ->filter(fn(MessageConfirmation $confirmation) => $confirmation->getUser()->isParent())
+            ->toArray();
 
         $confirmations = [ ];
 

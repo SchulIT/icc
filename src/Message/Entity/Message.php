@@ -3,18 +3,10 @@
 namespace App\Message\Entity;
 
 use App\Common\Entity\IdTrait;
+use App\Common\Entity\StudyGroup;
 use App\Common\Entity\User;
 use App\Common\Entity\UserTypeEntity;
 use App\Common\Entity\UuidTrait;
-use App\Message\Entity\MessageAttachment;
-use App\Message\Entity\MessageConfirmation;
-use App\Message\Entity\MessageFile;
-use App\Message\Entity\MessagePollChoice;
-use App\Message\Entity\MessagePollVote;
-use App\Message\Entity\MessagePriority;
-use App\Message\Entity\MessageScope;
-use App\Common\Entity\StudyGroup;
-use Stringable;
 use App\Framework\Validator\CollectionNotEmpty;
 use App\Framework\Validator\SubsetOf;
 use DateTime;
@@ -24,6 +16,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
+use SortDirection;
+use Stringable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[Auditable]
@@ -60,7 +54,7 @@ class Message implements Stringable {
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
     #[ORM\ManyToMany(targetEntity: StudyGroup::class)]
-    #[ORM\OrderBy(['name' => 'ASC'])]
+    #[ORM\OrderBy(['name' => SortDirection::Ascending])]
     #[CollectionNotEmpty(propertyPath: 'visibilities')]
     private $studyGroups;
 
@@ -68,7 +62,7 @@ class Message implements Stringable {
      * @var ArrayCollection<MessageAttachment>
      */
     #[ORM\OneToMany(mappedBy: 'message', targetEntity: MessageAttachment::class, cascade: ['persist'])]
-    #[ORM\OrderBy(['filename' => 'asc'])]
+    #[ORM\OrderBy(['filename' => SortDirection::Ascending])]
     private $attachments;
 
     /**

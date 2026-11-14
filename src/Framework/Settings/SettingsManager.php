@@ -6,8 +6,11 @@ use App\Framework\Settings\Entity\Setting;
 use App\Framework\Settings\Repository\SettingRepositoryInterface;
 use DateTime;
 use DateTimeInterface;
+use Error;
 use Exception;
+use TypeError;
 use UnitEnum;
+use ValueError;
 
 /**
  * Manager for application settings which can be configured online
@@ -40,7 +43,7 @@ class SettingsManager {
         $value = $this->settings[$key]->getValue();
         try {
             return unserialize($value);
-        } catch(Exception) {
+        } catch(Error) {
             return $default;
         }
     }

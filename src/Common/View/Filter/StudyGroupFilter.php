@@ -31,9 +31,7 @@ class StudyGroupFilter {
         $studyGroups = [ ];
 
         if($isStudentOrParent) {
-            /** @var Student[] $students */
             $students = $user->getStudents();
-            $studyGroups = [ ];
 
             foreach($students as $student) {
                 $studyGroups = array_merge(

@@ -63,7 +63,7 @@ class BookStudentsParentsReportController extends AbstractController {
 
         $overview = null;
 
-        if($selectedDate !== null && $studentFilterView->getCurrentStudent() !== null) {
+        if($studentFilterView->getCurrentStudent() !== null) {
             $overview = $entryOverviewHelper->computeOverviewForStudentWithoutComment($studentFilterView->getCurrentStudent(), $selectedDate, (clone $selectedDate)->modify('+6 days'));
         }
 

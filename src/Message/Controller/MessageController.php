@@ -100,7 +100,7 @@ class MessageController extends AbstractController {
 
         $messages = array_filter($messages, fn(Message $message) => $this->isGranted(MessageVoter::View, $message));
 
-        $pages = ceil((double)$paginator->count() / self::MessagesPerPage);
+        $pages = ceil((float)$paginator->count() / self::MessagesPerPage);
 
         $groups = $grouper->group($messages, MessageWeekStrategy::class);
         $this->sorter->sort($groups, MessageWeekGroupStrategy::class, SortDirection::Descending);

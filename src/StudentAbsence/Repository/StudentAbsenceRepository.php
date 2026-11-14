@@ -133,7 +133,7 @@ class StudentAbsenceRepository extends AbstractRepository implements StudentAbse
     }
 
     private function createPaginatorForQueryBuilder(QueryBuilder $queryBuilder, int $itemsPerPage, int &$page): Paginator {
-        if(!is_numeric($page) || $page < 1) {
+        if($page < 1) {
             $page = 1;
         }
 

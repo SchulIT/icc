@@ -21,10 +21,9 @@ abstract class AbstractControllerWithMessages extends AbstractController {
     protected abstract function getMessageScope(): MessageScope;
 
     public function renderWithMessages(string $view, array $parameters = [], Response|null $response = null): Response {
-        /** @var User $user */
         $user = $this->getUser();
 
-        if($user !== null) {
+        if($user instanceof User) {
             $messages = $this->messageRepository->findBy(
                 $this->getMessageScope(),
                 $user->getUserType(),

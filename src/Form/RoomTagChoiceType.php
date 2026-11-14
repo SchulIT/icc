@@ -55,7 +55,6 @@ class RoomTagChoiceType extends AbstractType implements DataMapperInterface {
         /** @var FormInterface[] $forms */
         $forms = iterator_to_array($forms);
 
-        /** @var RoomTagInfo $tagInfo */
         foreach($viewData as $tagInfo) {
             if(!$tagInfo instanceof RoomTagInfo) {
                 throw new UnexpectedTypeException($tagInfo, RoomTagInfo::class);
@@ -93,9 +92,6 @@ class RoomTagChoiceType extends AbstractType implements DataMapperInterface {
         foreach($viewData as $idx => $tagInfo) {
             $existingTagInfos[$tagInfo->getTag()->getId()] = $tagInfo;
         }
-
-        /** @var RoomTagInfo $toBeRemoved */
-        $toBeRemoved = [ ];
 
         foreach($this->tagRepository->findAll() as $tag) {
             $id = sprintf('tag-%s', $tag->getId());

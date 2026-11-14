@@ -2,21 +2,20 @@
 
 namespace App\Message\Repository;
 
-use App\Framework\Repository\AbstractRepository;
 use App\Common\Entity\Grade;
+use App\Common\Entity\StudyGroup;
+use App\Common\Entity\User;
+use App\Common\Entity\UserType;
+use App\Framework\Repository\AbstractRepository;
 use App\Framework\Repository\PaginatedResult;
 use App\Framework\Repository\PaginationQuery;
 use App\Message\Entity\Message;
 use App\Message\Entity\MessageFile;
 use App\Message\Entity\MessageScope;
-use App\Common\Entity\StudyGroup;
-use App\Common\Entity\User;
-use App\Common\Entity\UserType;
-use App\Message\Repository\MessageRepositoryInterface;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use Symfony\Component\HttpFoundation\RequestMatcher\PathRequestMatcher;
+use SortDirection;
 
 class MessageRepository extends AbstractRepository implements MessageRepositoryInterface {
 
@@ -243,9 +242,9 @@ class MessageRepository extends AbstractRepository implements MessageRepositoryI
      */
     public function getPaginator(int $itemsPerPage, int &$page, MessageScope $scope, UserType $userType, ?DateTime $today = null, array $studyGroups = [], ?string $query = null): Paginator {
         $qb = $this->getFindByQueryBuilder($scope, $userType, $today, $studyGroups, $query)
-            ->orderBy('m.expireDate', 'desc');
+            ->orderBy('m.expireDate', SortDirection::Descending);
 
-        if(!is_numeric($page) || $page < 1) {
+        if($page < 1) {
             $page = 1;
         }
 

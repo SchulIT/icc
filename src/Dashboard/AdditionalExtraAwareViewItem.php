@@ -53,11 +53,4 @@ abstract class AdditionalExtraAwareViewItem extends AbstractViewItem{
 
         return $count;
     }
-
-    /**
-     * @return RoomStatus[]
-     */
-    public function getRoomStatus(): array {
-        return $this->roomStatus;
-    }
 }

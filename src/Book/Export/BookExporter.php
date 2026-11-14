@@ -379,7 +379,7 @@ class BookExporter {
                 $info = $studentInfo[$attendance->getStudent()->getId()] ?? null;
 
                 if($info !== null) {
-                    /** @var LessonAttendance $possibleAttendance */
+                    /** @var LessonAttendance|null $possibleAttendance */
                     $possibleAttendance = ArrayUtils::first($info->getAbsentLessonAttendances(), fn(LessonAttendance $lessonAttendance) => $lessonAttendance->getAttendance()->getId() === $attendance->getId()
                         && ($lessonAttendance->getAttendance()->getEntry() === $entryOrEvent || $lessonAttendance->getAttendance()->getEvent() === $entryOrEvent));
 

@@ -7,7 +7,14 @@ use Doctrine\Common\Collections\Collection;
 
 class CollectionUtils {
 
-    public static function add(Collection $collection, array $addEntities, Closure $idSelector) {
+    /**
+     * @param Collection<T> $collection
+     * @param T[] $addEntities
+     * @param Closure(T): string $idSelector
+     * @return void
+     * @template T
+     */
+    public static function add(Collection $collection, array $addEntities, Closure $idSelector): void {
         $currentIds = array_map($idSelector, $collection->toArray());
         $addedIds = [ ];
 
@@ -22,9 +29,14 @@ class CollectionUtils {
     }
 
     /**
-     * Synchronises a Collection with $targetEntities based on the given $idSelector.
+     * Synchronizes a Collection with $targetEntities based on the given $idSelector.
+     * @param Collection<T> $collection
+     * @param T[] $targetEntities
+     * @param Closure(T): (string|int) $idSelector
+     * @param Closure(T, T): mixed|null $updateFunc
+     * @template T
      */
-    public static function synchronize(Collection $collection, array $targetEntities, Closure $idSelector, Closure|null $updateFunc = null) {
+    public static function synchronize(Collection $collection, array $targetEntities, Closure $idSelector, Closure|null $updateFunc = null): void {
         $currentCollection = clone $collection;
         $currentIds = array_map($idSelector, $collection->toArray());
 
@@ -34,7 +46,7 @@ class CollectionUtils {
         foreach($targetEntities as $entity) {
             $entityId = $idSelector($entity);
             $targetEntitiesIds[] = $entityId;
-            $targetEntitiesById[$entityId] = $entity;
+            $targetEntitiesById[$entityId ?: ''] = $entity;
 
             if(!in_array($entityId, $currentIds)) {
                 $collection->add($entity);

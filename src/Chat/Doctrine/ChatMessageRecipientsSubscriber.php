@@ -39,7 +39,6 @@ class ChatMessageRecipientsSubscriber {
             }
 
             $chat = $collectionUpdate->getOwner();
-            assert($chat instanceof Chat);
 
             $addedParticipants = [ ];
             $removedParticipants = [ ];

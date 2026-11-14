@@ -1,14 +1,3 @@
-<template>
-  <button class="btn btn-outline-primary btn-sm" type="button"
-          @click="save()">
-    <i class="fas fa-eye" v-if="isLoading === false && isSuppressed === true"></i>
-    <i class="fas fa-eye-slash" v-if="isLoading === false && isSuppressed === false"></i>
-    <i class="fa-solid fa-spinner fa-spin" v-if="isLoading === true"></i>
-  </button>
-</template>
-<script>
-
-
 export default {
   name: 'suppress_button',
   props: {
@@ -46,6 +35,13 @@ export default {
         this.isLoading = false;
       }
     }
-  }
+  },
+  template: `
+        <button class="btn btn-outline-primary btn-sm" type="button"
+                @click="save()">
+            <i class="fas fa-eye" v-if="isLoading === false && isSuppressed === true"></i>
+            <i class="fas fa-eye-slash" v-if="isLoading === false && isSuppressed === false"></i>
+            <i class="fa-solid fa-spinner fa-spin" v-if="isLoading === true"></i>
+        </button>
+    `
 }
-</script>

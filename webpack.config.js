@@ -42,7 +42,6 @@ Encore
 
     .enableSassLoader()
     .enablePostCssLoader()
-    .enableVueLoader()
     .enableVersioning(Encore.isProduction())
 
     .addPlugin(new NodePolyfillPlugin())

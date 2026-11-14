@@ -6,9 +6,9 @@ import Translations from "./plugins/trans";
 import LessonCancelBulkButton from "./components/book/LessonCancelBulkButton";
 import LessonAttendanceInfo from "./components/book/LessonAttendanceInfo";
 import Entry from "./components/entry/Entry";
-import SuppressButton from "./components/integrity_check/SuppressButton.vue";
+import SuppressButton from "./components/integrity_check/SuppressButton.js";
 import Attendance from "./components/student/Attendance";
-import AttendanceOverview from "./components/student/AttendanceOverview.vue";
+import AttendanceOverview from "./components/student/AttendanceOverview.js";
 import Students from "./components/entry/Students";
 
 const app = createApp({

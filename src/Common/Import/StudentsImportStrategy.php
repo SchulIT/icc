@@ -4,6 +4,7 @@ namespace App\Common\Import;
 
 use App\Common\Entity\Gender;
 use App\Common\Entity\Grade;
+use App\Common\Import\Event\StudentRemoveEvent;
 use App\Framework\Import\ImportException;
 use App\Framework\Import\ImportStrategyInterface;
 use App\Framework\Import\InitializeStrategyInterface;
@@ -19,12 +20,21 @@ use App\Common\Import\Json\StudentData;
 use App\Common\Import\Json\StudentsData;
 use App\Framework\Utils\ArrayUtils;
 use App\Framework\Utils\CollectionUtils;
+use Monolog\Attribute\WithMonologChannel;
+use Psr\Log\LoggerInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class StudentsImportStrategy implements ImportStrategyInterface, InitializeStrategyInterface {
 
     private array $privacyCategoriesCache = [ ];
 
-    public function __construct(private StudentRepositoryInterface $studentRepository, private PrivacyCategoryRepositoryInterface $privacyCategoryRepository, private SectionRepositoryInterface $sectionRepository)
+    public function __construct(
+        private StudentRepositoryInterface $studentRepository,
+        private PrivacyCategoryRepositoryInterface $privacyCategoryRepository,
+        private SectionRepositoryInterface $sectionRepository,
+        private EventDispatcherInterface $eventDispatcher,
+        #[WithMonologChannel('import')] private LoggerInterface $logger
+    )
     {
     }
 
@@ -124,6 +134,15 @@ class StudentsImportStrategy implements ImportStrategyInterface, InitializeStrat
      * @param StudentsData $requestData
      */
     public function remove($entity, $requestData): bool {
+        $event = new StudentRemoveEvent($entity);
+        $this->eventDispatcher->dispatch($event);
+
+        if($event->preventRemoval === true) {
+            $this->logger->info(sprintf('Loesche Schüler/Schülerin (ID: %d, Externe ID: %s, Vorname: %s, Nachname: %s) NICHT', $entity->getId(), $entity->getExternalId(), $entity->getFirstname(), $entity->getLastname()));
+            return false;
+        }
+
+        $this->logger->info(sprintf('Loesche Schüler/Schülerin (ID: %d, Externe ID: %s, Vorname: %s, Nachname: %s)', $entity->getId(), $entity->getExternalId(), $entity->getFirstname(), $entity->getLastname()));
         $section = $this->sectionRepository->findOneByNumberAndYear($requestData->getSection(), $requestData->getYear());
 
         if($section !== null && $entity->getSections()->contains($section)) {

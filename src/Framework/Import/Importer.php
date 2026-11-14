@@ -14,13 +14,18 @@ use App\Framework\Import\ReplaceImportStrategyInterface;
 use App\Framework\Import\Repository\ImportDateTypeRepositoryInterface;
 use App\Framework\Import\ValidationFailedException;
 use DateTime;
+use Monolog\Attribute\WithMonologChannel;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Throwable;
 
 class Importer {
 
-    public function __construct(private ValidatorInterface $validator, private ImportDateTypeRepositoryInterface $importDateTimeRepository, private LoggerInterface $logger)
+    public function __construct(
+        private ValidatorInterface $validator,
+        private ImportDateTypeRepositoryInterface $importDateTimeRepository,
+        #[WithMonologChannel('import')] private LoggerInterface $logger
+    )
     {
     }
 
